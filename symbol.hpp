@@ -9,7 +9,9 @@ class Symbol
 {
 public:
 
-    Symbol();
+    Symbol(string name);
+
+    virtual string getName();
     
 protected:
 
