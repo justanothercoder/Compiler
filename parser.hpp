@@ -17,8 +17,8 @@ private:
 
     string id();
 
-    AST* declaration();
-    AST* structDecl();
+    DeclarationNode* declaration();
+    DeclarationNode* structDecl();
 
     AST* statement();
     

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "declarationnode.hpp"
+#include "structsymbol.hpp"
 
 using std::vector;
 
@@ -11,7 +12,7 @@ class StructDeclarationNode : public DeclarationNode
 {
 public:
 
-    StructDeclarationNode(string name, const vector<AST*>& inner);
+    StructDeclarationNode(string name, const vector<DeclarationNode*>& inner);
 
     virtual void define();
     virtual void gen();
@@ -19,7 +20,7 @@ public:
 private:
 
     string name;
-    vector<AST*> inner;
+    vector<DeclarationNode*> inner;
 };
 
 #endif

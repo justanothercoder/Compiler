@@ -12,12 +12,12 @@ AST* Parser::statement()
     return declaration();
 }
 
-AST* Parser::declaration()
+DeclarationNode* Parser::declaration()
 {
     return structDecl();
 }
 
-AST* Parser::structDecl()
+DeclarationNode* Parser::structDecl()
 {
     match(TokenType::STRUCT);
 
@@ -25,7 +25,7 @@ AST* Parser::structDecl()
 
     match(TokenType::LBRACE);
 
-    vector<AST*> struct_in;
+    vector<DeclarationNode*> struct_in;
     
     while ( getTokenType(1) != TokenType::RBRACE )
 	struct_in.push_back(declaration());
