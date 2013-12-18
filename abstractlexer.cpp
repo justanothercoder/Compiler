@@ -4,6 +4,9 @@ AbstractLexer::AbstractLexer(string input) : input(input)
 {
     pos = 0;
     consume();
+
+    line = 1;
+    symbol = 1;
 }
 
 void AbstractLexer::consume()
@@ -12,6 +15,14 @@ void AbstractLexer::consume()
 	cur = EOF;
     else
     {
+	if ( cur == '\n' )
+	{
+	    ++line;
+	    symbol = 0;
+	}
+
+	++symbol;
+	
 	cur = input[pos];
 	++pos;
     }

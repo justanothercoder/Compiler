@@ -5,7 +5,7 @@
 
 using string = std::string;
 
-enum class TokenType { ID, NUMBER, LPAREN, RPAREN, LBRACE, RBRACE, COMMA };
+enum class TokenType { EOF_TYPE, ID, NUMBER, LPAREN, RPAREN, LBRACE, RBRACE, COMMA };
 
 struct Token
 {

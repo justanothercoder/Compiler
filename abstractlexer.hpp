@@ -25,7 +25,9 @@ protected:
 
     char cur;
     int pos;   
-    string input;    
+    string input;
+
+    int line, symbol;
 };
 
 #endif
