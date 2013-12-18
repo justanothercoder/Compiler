@@ -12,5 +12,5 @@ RecognitionError::~RecognitionError() noexcept
 
 const char* RecognitionError::what() const noexcept
 {
-    return "Error: " + error;
+    return ("Error: " + error).c_str();
 }

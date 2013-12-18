@@ -3,6 +3,9 @@
 
 #include <string>
 
+#include "token.hpp"
+#include "recognitionerror.hpp"
+
 using string = std::string;
 
 class AbstractLexer

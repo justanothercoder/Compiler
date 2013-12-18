@@ -8,7 +8,7 @@ AbstractLexer::AbstractLexer(string input) : input(input)
 
 void AbstractLexer::consume()
 {
-    if ( pos >= input.length() )
+    if ( pos >= (int)input.length() )
 	cur = EOF;
     else
     {

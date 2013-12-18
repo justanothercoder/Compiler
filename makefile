@@ -1,7 +1,7 @@
-CC=g++
+CC=clang++
 CFLAGS=-std=c++11 -g -c -Wall -Wextra
 LDFLAGS=
-SOURCES=token.cpp recognitionerror.cpp abstractlexer.cpp
+SOURCES=main.cpp token.cpp recognitionerror.cpp abstractlexer.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=comp
 
@@ -12,3 +12,6 @@ $(EXECUTABLE) : $(OBJECTS)
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm $(OBJECTS) $(EXECUTABLE)
