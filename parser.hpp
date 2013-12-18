@@ -3,6 +3,8 @@
 
 #include "abstractparser.hpp"
 
+#include "structdeclarationnode.hpp"
+
 class Parser : public AbstractParser
 {
 public:

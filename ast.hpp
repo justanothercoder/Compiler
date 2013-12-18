@@ -1,6 +1,8 @@
 #ifndef _AST_HPP_
 #define _AST_HPP_
 
+#include "scope.hpp"
+
 class AST
 {
 public:

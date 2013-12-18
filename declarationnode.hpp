@@ -3,6 +3,8 @@
 
 #include "ast.hpp"
 
+class Symbol;
+
 class DeclarationNode : public AST
 {
 public:

@@ -1,6 +1,6 @@
 #include "declarationnode.hpp"
 
-DeclarationNode::process()
+void DeclarationNode::process()
 {
     define();
     gen();

@@ -1,7 +1,11 @@
 #ifndef _STRUCTDECLARATIONNODE_HPP_
 #define _STRUCTDECLARATIONNODE_HPP_
 
+#include <vector>
+
 #include "declarationnode.hpp"
+
+using std::vector;
 
 class StructDeclarationNode : public DeclarationNode
 {
