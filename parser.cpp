@@ -1,5 +1,10 @@
 #include "parser.hpp"
 
+Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer)
+{
+    
+}
+
 AST* Parser::parse()
 {
     AST* root = statement();

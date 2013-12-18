@@ -16,7 +16,7 @@ void StructDeclarationNode::define()
 }
 
 void StructDeclarationNode::gen()
-{
+{    
     for ( auto i : inner )
 	i->gen();
 }

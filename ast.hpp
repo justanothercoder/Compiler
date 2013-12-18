@@ -10,9 +10,7 @@ public:
     virtual ~AST();
 
     virtual void process() = 0;
-    
-protected:
-    
+
     Scope *scope;    
 };
 

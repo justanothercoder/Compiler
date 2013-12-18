@@ -9,6 +9,8 @@ class Symbol
 {
 public:
 
+    virtual ~Symbol();
+    
     Symbol(string name);
 
     virtual string getName();
