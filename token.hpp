@@ -7,6 +7,8 @@ using string = std::string;
 
 enum class TokenType { EOF_TYPE, ID, NUMBER, LPAREN, RPAREN, LBRACE, RBRACE, COMMA };
 
+string to_string(TokenType tt);
+
 struct Token
 {
     Token(TokenType type, string text, int line, int symbol);
