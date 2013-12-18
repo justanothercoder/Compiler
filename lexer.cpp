@@ -29,6 +29,12 @@ Token Lexer::getToken()
 		buf += cur;
 		consume();		
 	    }
+
+	    TokenType token_type;
+
+	    if ( buf == "struct" ) token_type = TokenType::STRUCT;
+	    else                   token_type = TokenType::ID;
+	    
 	    return Token(TokenType::ID, buf, l, s);
 	}
 	else if ( std::isdigit(cur) )

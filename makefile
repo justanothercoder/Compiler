@@ -1,7 +1,7 @@
 CC=clang++
 CFLAGS=-std=c++11 -g -c -Wall -Wextra
 LDFLAGS=
-SOURCES=main.cpp token.cpp recognitionerror.cpp abstractlexer.cpp lexer.cpp abstractparser.cpp
+SOURCES=main.cpp token.cpp recognitionerror.cpp abstractlexer.cpp lexer.cpp abstractparser.cpp parser.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=comp
 
