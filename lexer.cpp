@@ -11,11 +11,11 @@ Token Lexer::getToken()
     {
 	int l = line, s = symbol;
 	
-	if      ( cur == '(' ) consume(); return Token(TokenType::LPAREN, "(", l, s);
-	else if ( cur == ')' ) consume(); return Token(TokenType::RPAREN, ")", l, s);
-	else if ( cur == ',' ) consume(); return Token(TokenType::COMMA, ",", l, s);
-	else if ( cur == '{' ) consume(); return Token(TokenType::LBRACE, "{", l, s);
-	else if ( cur == '}' ) consume(); return Token(TokenType::RBRACE, "}", l, s);
+	if      ( cur == '(' ) { consume(); return Token(TokenType::LPAREN, "(", l, s); }
+	else if ( cur == ')' ) { consume(); return Token(TokenType::RPAREN, ")", l, s); }
+	else if ( cur == ',' ) { consume(); return Token(TokenType::COMMA, ",", l, s); }
+	else if ( cur == '{' ) { consume(); return Token(TokenType::LBRACE, "{", l, s); }
+	else if ( cur == '}' ) { consume(); return Token(TokenType::RBRACE, "}", l, s); }
 	else if ( std::isspace(cur) )
 	{
 	    while ( std::isspace(cur) )
@@ -45,5 +45,5 @@ Token Lexer::getToken()
 	    throw RecognitionError("unknown character");
     }
 
-    return Token(TokenType::EOF_TYPE, "", l, s);
+    return Token(TokenType::EOF_TYPE, "", line, symbol);
 }
