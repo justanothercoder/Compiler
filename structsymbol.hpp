@@ -8,7 +8,7 @@
 
 using std::map;
 
-class StructSymbol : public Symbol, Scope
+class StructSymbol : public Symbol, public Scope
 {
 public:
     
