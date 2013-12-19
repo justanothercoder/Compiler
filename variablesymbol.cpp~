@@ -4,8 +4,3 @@ VariableSymbol::VariableSymbol(string name, Type *type) : Symbol(name), type(typ
 {
     
 }
-
-Type* VariableSymbol::getType()
-{
-    return type;
-}

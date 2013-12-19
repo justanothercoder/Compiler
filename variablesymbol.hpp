@@ -10,6 +10,8 @@ public:
 
     VariableSymbol(string name, Type *type);
 
+    Type* getType();
+    
 private:
 
     Type *type;

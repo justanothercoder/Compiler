@@ -2,6 +2,8 @@
 #define _VARIABLEDECLARATIONNODE_HPP_
 
 #include "declarationnode.hpp"
+#include "variablesymbol.hpp"
+#include "codegen.hpp"
 
 class VariableDeclarationNode : public DeclarationNode
 {

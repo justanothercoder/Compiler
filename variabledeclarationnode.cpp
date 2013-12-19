@@ -16,5 +16,5 @@ void VariableDeclarationNode::define()
 
 void VariableDeclarationNode::gen()
 {
-    CodeGen::emit("rsp, " + std::to_string(definedSymbol->getType()->getSize()));
+    CodeGen::emit("rsp, " + std::to_string(((VariableSymbol*)definedSymbol)->getType()->getSize()));
 }
