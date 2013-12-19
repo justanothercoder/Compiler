@@ -24,7 +24,7 @@ void AbstractParser::match(TokenType token_type)
     if ( getTokenType(1) == token_type )
 	consume();
     else
-	throw RecognitionError(to_string(token_type) + " was expected, but token " + to_string(getTokenType(1)) + " " + getToken(1).text + " was found");
+	throw RecognitionError(to_string(token_type) + " was expected, but token '" + getToken(1).text + "' was found.");
 }
 
 Token AbstractParser::getToken(int i)
