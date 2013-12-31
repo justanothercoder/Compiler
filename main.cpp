@@ -5,6 +5,7 @@
 #include "lexer.hpp"
 #include "parser.hpp"
 #include "globalscope.hpp"
+#include "builtintypesymbol.hpp"
 
 int main()
 {
@@ -33,7 +34,7 @@ int main()
 	AST *root = parser->parse();
 	root->scope = new GlobalScope();
 
-	root->scope->define(new StructSymbol("int", root->scope));
+	root->scope->define(new BuiltInTypeSymbol("int", sizeof(int*)));
 	
 	root->process();
 
