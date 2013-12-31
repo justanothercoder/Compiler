@@ -13,6 +13,8 @@ string to_string(TokenType tt)
     case TokenType::LBRACE: return "{";
     case TokenType::RBRACE: return "}";
     case TokenType::COMMA: return ",";
+    case TokenType::COLON: return ":";
+    case TokenType::VAR: return "var";
     }
 }
 

@@ -14,3 +14,8 @@ string Symbol::getName()
 {
     return name;
 }
+
+void Symbol::setName(string s)
+{
+    name = s;
+}

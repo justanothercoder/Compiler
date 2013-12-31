@@ -8,13 +8,17 @@ VariableDeclarationNode::VariableDeclarationNode(string name, string type_name) 
 void VariableDeclarationNode::define()
 {
     Symbol *type = scope->resolve(type_name);
+
+    if ( type == nullptr || dynamic_cast<Type*>(type) == nullptr )
+	throw;
     
-    *definedSymbol = VariableSymbol(name, (Type*)type);
+    definedSymbol->setName(name);
+    static_cast<VariableSymbol*>(definedSymbol)->setType(dynamic_cast<Type*>(type));
 
     scope->define(definedSymbol);
 }
 
 void VariableDeclarationNode::gen()
 {
-    CodeGen::emit("rsp, " + std::to_string(((VariableSymbol*)definedSymbol)->getType()->getSize()));
+    CodeGen::emit("sub rsp, " + std::to_string(static_cast<VariableSymbol*>(definedSymbol)->getType()->getSize()));
 }

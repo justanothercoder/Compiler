@@ -16,6 +16,7 @@ Token Lexer::getToken()
 	else if ( cur == ',' ) { consume(); return Token(TokenType::COMMA, ",", l, s); }
 	else if ( cur == '{' ) { consume(); return Token(TokenType::LBRACE, "{", l, s); }
 	else if ( cur == '}' ) { consume(); return Token(TokenType::RBRACE, "}", l, s); }
+	else if ( cur == ':' ) { consume(); return Token(TokenType::COLON, ":", l, s); }
 	else if ( std::isspace(cur) )
 	{
 	    while ( std::isspace(cur) )
@@ -32,8 +33,9 @@ Token Lexer::getToken()
 
 	    TokenType token_type;
 
-	    if ( buf == "struct" ) token_type = TokenType::STRUCT;
-	    else                   token_type = TokenType::ID;
+	    if      ( buf == "struct" ) token_type = TokenType::STRUCT;
+	    else if ( buf == "var"    ) token_type = TokenType::VAR;
+	    else                        token_type = TokenType::ID;
 	    
 	    return Token(token_type, buf, l, s);
 	}

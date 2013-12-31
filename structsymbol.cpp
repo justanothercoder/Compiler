@@ -2,7 +2,7 @@
 
 StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : Symbol(name), enclosing_scope(enclosing_scope)
 {
-    
+    type_size = 0;
 }
 
 Scope* StructSymbol::getEnclosingScope()
@@ -24,6 +24,26 @@ Symbol* StructSymbol::resolve(string name)
 
 void StructSymbol::define(Symbol *sym)
 {
-    if ( members.find(name) != std::end(members) )
+    if ( members.find(name) == std::end(members) )
+    {
 	members[sym->getName()] = sym;
+
+	if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
+	    type_size += ((VariableSymbol*)sym)->getType()->getSize();
+    }
+}
+
+int StructSymbol::getSize()
+{
+    return type_size;
+}
+
+string StructSymbol::getName()
+{
+    return name;
+}
+
+void StructSymbol::setEnclosingScope(Scope *sc)
+{
+    enclosing_scope = sc;
 }

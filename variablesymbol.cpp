@@ -9,3 +9,8 @@ Type* VariableSymbol::getType()
 {
     return type;
 }
+
+void VariableSymbol::setType(Type *t)
+{
+    type = t;
+}

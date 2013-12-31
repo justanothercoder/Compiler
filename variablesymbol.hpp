@@ -11,6 +11,8 @@ public:
     VariableSymbol(string name, Type *type);
 
     Type* getType();
+
+    void setType(Type *t);
     
 private:
 

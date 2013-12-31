@@ -33,6 +33,8 @@ int main()
 	AST *root = parser->parse();
 	root->scope = new GlobalScope();
 
+	root->scope->define(new StructSymbol("int", root->scope));
+	
 	root->process();
 
     }

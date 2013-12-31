@@ -5,10 +5,12 @@
 
 #include "symbol.hpp"
 #include "scope.hpp"
+#include "type.hpp"
+#include "variablesymbol.hpp"
 
 using std::map;
 
-class StructSymbol : public Symbol, public Scope
+class StructSymbol : public Symbol, public Scope, public Type
 {
 public:
     
@@ -18,11 +20,18 @@ public:
     virtual Symbol* resolve(string name);
     virtual void define(Symbol *sym);
 
+    virtual string getName();
+    virtual int getSize();
+
+    void setEnclosingScope(Scope *sc);
+    
 private:
 
     map<string, Symbol*> members;
     
     Scope *enclosing_scope;
+
+    int type_size;
 };
 		     
 #endif

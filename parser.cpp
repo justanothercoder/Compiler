@@ -19,7 +19,23 @@ AST* Parser::statement()
 
 DeclarationNode* Parser::declaration()
 {
-    return structDecl();
+    if ( getTokenType(1) == TokenType::STRUCT )
+	return structDecl();
+    else
+	return variableDecl();
+}
+
+DeclarationNode* Parser::variableDecl()
+{
+    match(TokenType::VAR);
+
+    string variable_name = id();
+
+    match(TokenType::COLON);
+
+    string type_name = id();
+
+    return new VariableDeclarationNode(variable_name, type_name);
 }
 
 DeclarationNode* Parser::structDecl()
