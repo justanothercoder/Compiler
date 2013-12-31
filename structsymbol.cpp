@@ -29,10 +29,9 @@ void StructSymbol::define(Symbol *sym)
 	members[sym->getName()] = sym;
 
 	if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
-	    type_size += ((VariableSymbol*)sym)->getType()->getSize();
+	    type_size += static_cast<VariableSymbol*>(sym)->getType()->getSize();
     }
 }
-
 int StructSymbol::getSize()
 {
     return type_size;
@@ -41,9 +40,4 @@ int StructSymbol::getSize()
 string StructSymbol::getName()
 {
     return name;
-}
-
-void StructSymbol::setEnclosingScope(Scope *sc)
-{
-    enclosing_scope = sc;
 }

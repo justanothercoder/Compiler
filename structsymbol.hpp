@@ -23,8 +23,6 @@ public:
     virtual string getName();
     virtual int getSize();
 
-    void setEnclosingScope(Scope *sc);
-    
 private:
 
     map<string, Symbol*> members;

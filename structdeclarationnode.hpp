@@ -12,8 +12,6 @@ class StructDeclarationNode : public DeclarationNode
 {
 public:
 
-    virtual ~StructDeclarationNode();
-    
     StructDeclarationNode(string name, const vector<DeclarationNode*>& inner);
 
     virtual void define();
