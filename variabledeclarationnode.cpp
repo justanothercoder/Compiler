@@ -22,6 +22,11 @@ void VariableDeclarationNode::define()
     scope->define(definedSymbol);
 }
 
+void VariableDeclarationNode::check()
+{
+    
+}
+
 void VariableDeclarationNode::gen()
 {
     CodeGen::emit("sub rsp, " + std::to_string(static_cast<VariableSymbol*>(definedSymbol)->getType()->getSize()));

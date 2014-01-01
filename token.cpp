@@ -15,6 +15,8 @@ string to_string(TokenType tt)
     case TokenType::COMMA:     return ",";
     case TokenType::COLON:     return ":";
     case TokenType::SEMICOLON: return ";";
+    case TokenType::ASSIGN:    return "=";
+    case TokenType::PLUS:      return "+";
     case TokenType::VAR:       return "var";
     case TokenType::DEF:       return "def";
     }

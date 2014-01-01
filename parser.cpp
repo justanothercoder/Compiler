@@ -18,9 +18,14 @@ AST* Parser::parse()
 AST* Parser::statement()
 {
     if ( getTokenType(1) == TokenType::SEMICOLON )
+    {
+	match(TokenType::SEMICOLON);
 	return new EmptyStatementNode();
-    
-    return declaration();
+    }
+    else if ( getTokenType(1) == TokenType::STRUCT || getTokenType(1) == TokenType::DEF || getTokenType(1) == TokenType::VAR )    
+	return declaration();
+    else
+	return assignment();
 }
 
 DeclarationNode* Parser::declaration()
@@ -121,4 +126,38 @@ string Parser::id()
     match(TokenType::ID);
     return name;
 }
-    
+
+ExprNode* Parser::literal()
+{
+    return number();
+}
+
+ExprNode* Parser::variable()
+{
+    string name = id();
+    return new VariableNode(name);
+}
+
+ExprNode* Parser::number()
+{
+    string num = getToken(1).text;
+    match(TokenType::NUMBER);
+    return new NumberNode(num);
+}
+
+ExprNode* Parser::expression()
+{
+    if ( getTokenType(1) == TokenType::NUMBER )
+	return literal();
+    else
+	return variable();
+}
+
+AST* Parser::assignment()
+{
+    ExprNode *lhs = expression();
+    match(TokenType::ASSIGN);
+    ExprNode *rhs = expression();
+
+    return new AssignmentNode(lhs, rhs);
+}

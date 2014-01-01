@@ -8,7 +8,10 @@
 #include "functiondeclarationnode.hpp"
 
 #include "emptystatementnode.hpp"
-#include "globalscope.hpp"
+#include "assignmentnode.hpp"
+
+#include "variablenode.hpp"
+#include "numbernode.hpp"
 
 class Parser : public AbstractParser
 {
@@ -28,7 +31,12 @@ private:
     DeclarationNode* functionDecl();
     
     AST* statement();
-    
+    AST* assignment();
+
+    ExprNode* literal();
+    ExprNode* expression();
+    ExprNode* variable();
+    ExprNode* number();
 };
 
 #endif

@@ -11,6 +11,7 @@ public:
 
     virtual void build_scope() = 0;    
     virtual void define() = 0;
+    virtual void check() = 0;
     virtual void gen() = 0;
 
     Scope *scope;    

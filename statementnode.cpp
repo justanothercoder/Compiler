@@ -31,3 +31,9 @@ void StatementNode::gen()
     for ( auto i : statements )
 	i->gen();
 }
+
+void StatementNode::check()
+{
+    for ( auto i : statements )
+	i->check();
+}

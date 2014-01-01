@@ -14,9 +14,9 @@ public:
 
     StructDeclarationNode(string name, const vector<DeclarationNode*>& inner);
 
-    virtual void build_scope();
-    
+    virtual void build_scope();    
     virtual void define();
+    virtual void check();
     virtual void gen();
 
 private:

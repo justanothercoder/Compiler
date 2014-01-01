@@ -5,7 +5,7 @@
 
 using string = std::string;
 
-enum class TokenType { EOF_TYPE, ID, NUMBER, LPAREN, RPAREN, LBRACE, RBRACE, COMMA, STRUCT, VAR, COLON, DEF, SEMICOLON };
+enum class TokenType { EOF_TYPE, ID, NUMBER, LPAREN, RPAREN, LBRACE, RBRACE, COMMA, STRUCT, VAR, COLON, DEF, SEMICOLON, ASSIGN, PLUS };
 
 string to_string(TokenType tt);
 

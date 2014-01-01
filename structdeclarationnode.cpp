@@ -23,6 +23,12 @@ void StructDeclarationNode::define()
 	i->define();    
 }
 
+void StructDeclarationNode::check()
+{
+    for ( auto i : inner )
+	i->check();
+}
+
 void StructDeclarationNode::gen()
 {    
     for ( auto i : inner )

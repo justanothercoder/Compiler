@@ -11,9 +11,9 @@ public:
 
     VariableDeclarationNode(string name, string type_name);
 
-    virtual void build_scope();
-    
+    virtual void build_scope();    
     virtual void define();
+    virtual void check();
     virtual void gen();
 
 private:

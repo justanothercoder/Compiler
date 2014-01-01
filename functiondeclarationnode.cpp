@@ -46,8 +46,24 @@ void FunctionDeclarationNode::define()
 	i->define();	
 }
 
-void FunctionDeclarationNode::gen()
+void FunctionDeclarationNode::check()
 {
     for ( auto i : statements )
+	i->check();
+}
+
+void FunctionDeclarationNode::gen()
+{
+    CodeGen::emit("jmp $" + name);
+    CodeGen::emit(name + ":");
+    CodeGen::emit("push rbp");
+    CodeGen::emit("mov rbp, rsp");
+
+    for ( auto i : statements )
 	i->gen();
+    
+    CodeGen::emit("mov rsp, rbp");
+    CodeGen::emit("pop rbp");
+    CodeGen::emit("ret");
+    CodeGen::emit("$" + name + ":");
 }
