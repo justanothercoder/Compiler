@@ -13,7 +13,7 @@ public:
     virtual Type* getType();
 
     void setType(Type *t);
-    
+
 private:
 
     Type *type;

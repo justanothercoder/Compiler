@@ -25,6 +25,8 @@ public:
 
     virtual Type* getTypeHint(ExprNode *expr);
     virtual void setTypeHint(ExprNode *expr, Type *type); 
+
+    virtual int getAddress(VariableSymbol *sym);
     
 private:
 
@@ -32,7 +34,7 @@ private:
     map<string, Symbol*> members;
     
     Scope *enclosing_scope;
-
+    
     int type_size;
 };
 		     

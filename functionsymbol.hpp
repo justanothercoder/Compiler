@@ -28,6 +28,8 @@ public:
     virtual void setTypeHint(ExprNode *expr, Type *type); 
 
     string getTypedName();
+
+    virtual int getAddress(VariableSymbol *sym);
     
 private:
 

@@ -5,6 +5,7 @@
 #include "functiontype.hpp"
 
 class ExprNode;
+class VariableSymbol;
 
 class Scope
 {
@@ -17,6 +18,8 @@ public:
     virtual void define(Symbol *sym) = 0;
     virtual Type* getTypeHint(ExprNode *expr) = 0;
     virtual void setTypeHint(ExprNode *expr, Type *type) = 0;
+
+    virtual int getAddress(VariableSymbol* sym) = 0;
 };
 
 #endif

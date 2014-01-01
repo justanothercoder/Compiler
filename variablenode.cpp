@@ -37,6 +37,10 @@ void VariableNode::gen()
 	}
 	CodeGen::emit("lea eax, [" + static_cast<FunctionSymbol*>(variable)->getTypedName() + "]");
     }
+    else
+    {
+	CodeGen::emit("lea eax, [rbp - " + std::to_string(scope->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
+    }
 }
 
 bool VariableNode::isLeftValue()

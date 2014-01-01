@@ -51,3 +51,8 @@ void StructSymbol::setTypeHint(ExprNode *expr, Type *type)
 {
     type_hints[expr] = type;
 }
+
+int StructSymbol::getAddress(VariableSymbol *sym)
+{
+    
+}

@@ -57,3 +57,8 @@ string FunctionSymbol::getTypedName()
 
     return res;
 }
+
+int FunctionSymbol::getAddress(VariableSymbol *sym)
+{
+    
+}
