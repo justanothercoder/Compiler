@@ -30,11 +30,8 @@ int main()
     
 	AbstractLexer *lexer = new Lexer(buf);
 	AbstractParser *parser = new Parser(lexer);
-
-	AST *root;
 	
-	root->scope = new GlobalScope();
-	root = parser->parse();
+	AST* root = parser->parse();
 	
 	root->scope->define(new BuiltInTypeSymbol("int", sizeof(int*)));
 	

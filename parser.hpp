@@ -7,6 +7,9 @@
 #include "variabledeclarationnode.hpp"
 #include "functiondeclarationnode.hpp"
 
+#include "statementnode.hpp"
+#include "globalscope.hpp"
+
 class Parser : public AbstractParser
 {
 public:
