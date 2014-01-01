@@ -54,8 +54,10 @@ void FunctionDeclarationNode::check()
 
 void FunctionDeclarationNode::gen()
 {
-    CodeGen::emit("jmp $" + name);
-    CodeGen::emit(name + ":");
+    string typed_name = static_cast<FunctionSymbol*>(definedSymbol)->getTypedName();
+    
+    CodeGen::emit("jmp @" + typed_name);
+    CodeGen::emit(typed_name + ":");
     CodeGen::emit("push rbp");
     CodeGen::emit("mov rbp, rsp");
 
@@ -65,5 +67,5 @@ void FunctionDeclarationNode::gen()
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");
     CodeGen::emit("ret");
-    CodeGen::emit("$" + name + ":");
+    CodeGen::emit("@" + typed_name + ":");
 }

@@ -37,3 +37,23 @@ void FunctionSymbol::setType(FunctionType *function_type)
 {
     this->function_type = function_type;
 }
+
+Type* FunctionSymbol::getTypeHint(ExprNode *expr)
+{
+    return type_hints[expr];
+}
+
+void FunctionSymbol::setTypeHint(ExprNode *expr, Type *type)
+{
+    type_hints[expr] = type;
+}
+
+string FunctionSymbol::getTypedName()
+{
+    string res = name;
+
+    for ( int i = 0; i < function_type->getNumberOfParams(); ++i )
+	res += "_" + function_type->getParamType(i)->getName();
+
+    return res;
+}

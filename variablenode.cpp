@@ -24,6 +24,18 @@ void VariableNode::gen()
 {
     if ( dynamic_cast<FunctionType*>(variable->getType()) != nullptr )
 	CodeGen::emit("lea eax, [" + name + "]");
+    else if ( dynamic_cast<OverloadedFunctionType*>(variable->getType()) != nullptr )
+    {
+	if ( static_cast<OverloadedFunctionType*>(variable->getType())->overloads.size() > 1 )
+	{
+	    if ( scope->getTypeHint(this) == nullptr )
+		throw;
+	   
+	    variable = static_cast<OverloadedFunctionType*>(variable->getType())->symbols[static_cast<FunctionType*>(scope->getTypeHint(this))];
+
+	    CodeGen::emit("lea eax, [" + static_cast<FunctionSymbol*>(variable)->getTypedName() + "]");
+	}
+    }
 }
 
 bool VariableNode::isLeftValue()

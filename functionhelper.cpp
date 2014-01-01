@@ -2,7 +2,10 @@
 
 bool FunctionHelper::isCompatible(FunctionType *ft, const vector<Type*>& params_type)
 {
-    for ( int i = 0; i < ft->getNumberOfParams(); ++i )
+    if ( ft->getNumberOfParams() != static_cast<int>(params_type.size()) )
+	return false;
+    
+    for ( int i = 0; i < static_cast<int>(params_type.size()); ++i )
     {
 	if ( ft->getParamType(i) != params_type[i] )
 	    return false;

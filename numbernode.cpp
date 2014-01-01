@@ -25,7 +25,7 @@ Type* NumberNode::getType()
 
 void NumberNode::gen()
 {
-    CodeGen::emit("mov [rsp - " + std::to_string(getType()->getSize()) + "], " + num);
+    CodeGen::emit("mov qword [rsp - " + std::to_string(getType()->getSize()) + "], " + num);
     CodeGen::emit("lea rax, [rsp - " + std::to_string(getType()->getSize()) + "]");
 }
 

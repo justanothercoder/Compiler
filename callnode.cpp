@@ -19,7 +19,7 @@ void CallNode::check()
 {
     caller->check();   
 
-    if ( dynamic_cast<FunctionType*>(caller->getType()) == nullptr )
+    if ( dynamic_cast<FunctionType*>(caller->getType()) == nullptr && dynamic_cast<OverloadedFunctionType*>(caller->getType()) == nullptr )
 	throw;
 
     vector<Type*> params_types;
@@ -28,13 +28,16 @@ void CallNode::check()
 	i->check();
 
     std::transform(std::begin(params), std::end(params), std::back_inserter(params_types), [](ExprNode* expr) { return expr->getType(); });
-    
-    auto overloads = FunctionHelper::getBestOverload({dynamic_cast<FunctionType*>(caller->getType())}, params_types);
+
+    auto overloads = FunctionHelper::getBestOverload(dynamic_cast<OverloadedFunctionType*>(caller->getType())->overloads, params_types);
+//    auto overloads = FunctionHelper::getBestOverload({dynamic_cast<FunctionType*>(caller->getType())}, params_types);
 
     if ( overloads.empty() )
 	throw;
 
     resolved_function_type = *std::begin(overloads);
+
+    scope->setTypeHint(caller, resolved_function_type);
     
 //    resolved_function_type = dynamic_cast<FunctionType*>(caller->getType());
     

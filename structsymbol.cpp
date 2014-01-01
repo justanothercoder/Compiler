@@ -41,3 +41,13 @@ string StructSymbol::getName()
 {
     return name;
 }
+
+Type* StructSymbol::getTypeHint(ExprNode *expr)
+{
+    return type_hints[expr];
+}
+
+void StructSymbol::setTypeHint(ExprNode *expr, Type *type)
+{
+    type_hints[expr] = type;
+}

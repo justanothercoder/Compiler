@@ -23,12 +23,19 @@ public:
     virtual Type* getType();
 
     void setType(FunctionType *function_type);
+
+    virtual Type* getTypeHint(ExprNode *expr);
+    virtual void setTypeHint(ExprNode *expr, Type *type); 
+
+    string getTypedName();
     
 private:
 
     FunctionType *function_type;
 
     Scope *enclosing_scope;
+
+    map<ExprNode*, Type*> type_hints;
     map<string, Symbol*> members;
 };
 

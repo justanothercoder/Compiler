@@ -4,6 +4,7 @@
 #include "exprnode.hpp"
 #include "typedsymbol.hpp"
 #include "functiontype.hpp"
+#include "overloadedfunctiontype.hpp"
 
 class VariableNode : public ExprNode
 {

@@ -23,8 +23,12 @@ public:
     virtual string getName();
     virtual int getSize();
 
+    virtual Type* getTypeHint(ExprNode *expr);
+    virtual void setTypeHint(ExprNode *expr, Type *type); 
+    
 private:
 
+    map<ExprNode*, Type*> type_hints;
     map<string, Symbol*> members;
     
     Scope *enclosing_scope;

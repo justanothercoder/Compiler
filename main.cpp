@@ -26,8 +26,7 @@ int main()
 	buf += c;    
 
     try
-    {
-    
+    {    
 	AbstractLexer *lexer = new Lexer(buf);
 	AbstractParser *parser = new Parser(lexer);
 	
@@ -36,10 +35,24 @@ int main()
 	root->scope = new GlobalScope();
 	root->scope->define(new BuiltInTypeSymbol("int", sizeof(int*)));
 
+	CodeGen::emit("section .text");
+	CodeGen::emit("global _start");
+	CodeGen::emit("_start:");	
+
+	CodeGen::emit("push rbp");
+	CodeGen::emit("mov rbp, rsp");	
+	
 	root->build_scope();
 	root->define();
 	root->check();
 	root->gen();
+
+	CodeGen::emit("mov rsp, rbp");
+	CodeGen::emit("pop rbp");
+
+	CodeGen::emit("mov rax, 60");
+	CodeGen::emit("mov rdx, 0");
+	CodeGen::emit("syscall");
 
     }
     catch ( RecognitionError& e )
