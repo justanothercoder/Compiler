@@ -20,8 +20,14 @@ void StatementNode::build_scope()
     }
 }
 
-void StatementNode::process()
+void StatementNode::define()
 {
     for ( auto i : statements )
-	i->process();
+	i->define();
+}
+
+void StatementNode::gen()
+{
+    for ( auto i : statements )
+	i->gen();
 }

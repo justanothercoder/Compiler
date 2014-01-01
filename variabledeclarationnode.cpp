@@ -2,7 +2,7 @@
 
 VariableDeclarationNode::VariableDeclarationNode(string name, string type_name) : name(name), type_name(type_name)
 {
-    definedSymbol = new VariableSymbol("", nullptr);
+    definedSymbol = new VariableSymbol(name, nullptr);
 }
 
 void VariableDeclarationNode::build_scope()
@@ -17,7 +17,6 @@ void VariableDeclarationNode::define()
     if ( type == nullptr || dynamic_cast<Type*>(type) == nullptr )
 	throw;
     
-    definedSymbol->setName(name);
     static_cast<VariableSymbol*>(definedSymbol)->setType(dynamic_cast<Type*>(type));
 
     scope->define(definedSymbol);

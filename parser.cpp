@@ -17,6 +17,9 @@ AST* Parser::parse()
 
 AST* Parser::statement()
 {
+    if ( getTokenType(1) == TokenType::SEMICOLON )
+	return new EmptyStatementNode();
+    
     return declaration();
 }
 
@@ -96,6 +99,10 @@ DeclarationNode* Parser::functionDecl()
 
     match(TokenType::RPAREN);
 
+    match(TokenType::COLON);
+
+    string return_type_name = id();    
+
     vector < AST* > statements;
     
     match(TokenType::LBRACE);
@@ -105,7 +112,7 @@ DeclarationNode* Parser::functionDecl()
 
     match(TokenType::RBRACE);
 
-    return new FunctionDeclarationNode(function_name, params, statements);
+    return new FunctionDeclarationNode(function_name, params, return_type_name, statements);
 }
 
 string Parser::id()

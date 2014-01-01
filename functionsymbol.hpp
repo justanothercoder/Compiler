@@ -23,6 +23,8 @@ public:
     virtual string getName();
 
     virtual Type* getType();
+
+    void setType(FunctionType *function_type);
     
 private:
 

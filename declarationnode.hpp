@@ -11,11 +11,6 @@ public:
 
     virtual ~DeclarationNode();
 
-    virtual void define() = 0;
-    virtual void gen() = 0;
-
-    virtual void process();
-    
 protected:
 
     Symbol *definedSymbol;

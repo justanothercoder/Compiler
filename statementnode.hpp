@@ -16,7 +16,8 @@ public:
     virtual ~StatementNode();
 
     virtual void build_scope();
-    virtual void process();    
+    virtual void define();
+    virtual void gen();
 
 private:
 

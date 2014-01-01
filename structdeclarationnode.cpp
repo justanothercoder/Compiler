@@ -18,6 +18,7 @@ void StructDeclarationNode::build_scope()
 void StructDeclarationNode::define()
 {
     scope->define(definedSymbol);
+
     for ( auto i : inner )
 	i->define();    
 }

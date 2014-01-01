@@ -14,7 +14,6 @@ public:
     Symbol(string name);
 
     virtual string getName();
-    virtual void setName(string s);
     
 protected:
 

@@ -37,3 +37,8 @@ Type* FunctionSymbol::getType()
 {
     return function_type;
 }
+
+void FunctionSymbol::setType(FunctionType *function_type)
+{
+    this->function_type = function_type;
+}

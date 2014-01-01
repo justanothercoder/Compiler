@@ -17,6 +17,7 @@ Token Lexer::getToken()
 	else if ( cur == '{' ) { consume(); return Token(TokenType::LBRACE, "{", l, s); }
 	else if ( cur == '}' ) { consume(); return Token(TokenType::RBRACE, "}", l, s); }
 	else if ( cur == ':' ) { consume(); return Token(TokenType::COLON, ":", l, s); }
+	else if ( cur == ';' ) { consume(); return Token(TokenType::SEMICOLON, ";", l, s); }
 	else if ( std::isspace(cur) )
 	{
 	    while ( std::isspace(cur) )
