@@ -29,5 +29,5 @@ void AssignmentNode::check()
 
 void AssignmentNode::gen()
 {
-
+    
 }

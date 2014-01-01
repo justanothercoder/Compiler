@@ -32,9 +32,12 @@ void VariableNode::gen()
 		throw;
 	   
 	    variable = static_cast<OverloadedFunctionType*>(variable->getType())->symbols[static_cast<FunctionType*>(scope->getTypeHint(this))];
-
-	    CodeGen::emit("lea eax, [" + static_cast<FunctionSymbol*>(variable)->getTypedName() + "]");
 	}
+	else
+	{
+	    variable = static_cast<OverloadedFunctionType*>(variable->getType())->symbols.begin()->second;
+	}
+	CodeGen::emit("lea eax, [" + static_cast<FunctionSymbol*>(variable)->getTypedName() + "]");
     }
 }
 
