@@ -32,9 +32,11 @@ int main()
 	AbstractParser *parser = new Parser(lexer);
 	
 	AST* root = parser->parse();
-	
+
+	root->scope = new GlobalScope();
 	root->scope->define(new BuiltInTypeSymbol("int", sizeof(int*)));
-	
+
+	root->build_scope();
 	root->process();
 
     }

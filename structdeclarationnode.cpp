@@ -2,21 +2,24 @@
 
 StructDeclarationNode::StructDeclarationNode(string name, const vector<DeclarationNode*>& inner) : name(name), inner(inner)
 {
-    definedSymbol = new StructSymbol("", scope);
 
+}
+
+void StructDeclarationNode::build_scope()
+{
+    definedSymbol = new StructSymbol(name, scope);
     for ( auto i : inner )
+    {
 	i->scope = static_cast<StructSymbol*>(definedSymbol);
-    
+	i->build_scope();
+    }
 }
 
 void StructDeclarationNode::define()
 {
-    definedSymbol->setName(name);
-
-    for ( auto i : inner )
-	i->define();
-    
     scope->define(definedSymbol);
+    for ( auto i : inner )
+	i->define();    
 }
 
 void StructDeclarationNode::gen()

@@ -15,6 +15,8 @@ public:
 
     FunctionDeclarationNode(string name, const vector< pair<string, string> >& params, const vector<AST*>& statements);
 
+    virtual void build_scope();
+    
     virtual void define();
     virtual void gen();
     

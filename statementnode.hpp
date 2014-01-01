@@ -14,11 +14,10 @@ public:
     StatementNode(const vector<AST*>& statements);
 
     virtual ~StatementNode();
-    
+
+    virtual void build_scope();
     virtual void process();    
 
-    void setStatements(const vector<AST*>& statements);
-    
 private:
 
     vector<AST*> statements;

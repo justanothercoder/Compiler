@@ -7,18 +7,12 @@ Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer)
 
 AST* Parser::parse()
 {
-    StatementNode* root = new StatementNode( { } );
-
-    root->scope = new GlobalScope();
-
     vector<AST*> statements;
 
     while ( getTokenType(1) != TokenType::EOF_TYPE )
 	statements.push_back(statement());
 
-    root->setStatements(statements);
-    
-    return root;
+    return new StatementNode(statements);
 }
 
 AST* Parser::statement()

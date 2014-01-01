@@ -5,6 +5,11 @@ VariableDeclarationNode::VariableDeclarationNode(string name, string type_name) 
     definedSymbol = new VariableSymbol("", nullptr);
 }
 
+void VariableDeclarationNode::build_scope()
+{
+    
+}
+
 void VariableDeclarationNode::define()
 {
     Symbol *type = scope->resolve(type_name);

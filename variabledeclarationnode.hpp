@@ -11,6 +11,8 @@ public:
 
     VariableDeclarationNode(string name, string type_name);
 
+    virtual void build_scope();
+    
     virtual void define();
     virtual void gen();
 
