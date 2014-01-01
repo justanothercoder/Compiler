@@ -2,9 +2,11 @@
 #define _CALLNODE_HPP_
 
 #include <vector>
+#include <algorithm>
 
 #include "exprnode.hpp"
 #include "functiontype.hpp"
+#include "functionhelper.hpp"
 
 using std::vector;
 

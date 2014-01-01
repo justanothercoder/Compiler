@@ -26,14 +26,14 @@ void StatementNode::define()
 	i->define();
 }
 
-void StatementNode::gen()
-{
-    for ( auto i : statements )
-	i->gen();
-}
-
 void StatementNode::check()
 {
     for ( auto i : statements )
 	i->check();
+}
+
+void StatementNode::gen()
+{
+    for ( auto i : statements )
+	i->gen();
 }

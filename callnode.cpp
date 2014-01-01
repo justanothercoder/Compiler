@@ -22,10 +22,22 @@ void CallNode::check()
     if ( dynamic_cast<FunctionType*>(caller->getType()) == nullptr )
 	throw;
 
-    resolved_function_type = dynamic_cast<FunctionType*>(caller->getType());
-    
+    vector<Type*> params_types;
+
     for ( auto i : params )
 	i->check();
+
+    std::transform(std::begin(params), std::end(params), std::back_inserter(params_types), [](ExprNode* expr) { return expr->getType(); });
+    
+    auto overloads = FunctionHelper::getBestOverload({dynamic_cast<FunctionType*>(caller->getType())}, params_types);
+
+    if ( overloads.empty() )
+	throw;
+
+    resolved_function_type = *std::begin(overloads);
+    
+//    resolved_function_type = dynamic_cast<FunctionType*>(caller->getType());
+    
 }
 
 void CallNode::gen()
