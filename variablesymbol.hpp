@@ -1,7 +1,7 @@
 #ifndef _VARIABLESYMBOL_HPP_
 #define _VARIABLESYMBOL_HPP_
 
-#include "symbol.hpp"
+#include "typedsymbol.hpp"
 #include "type.hpp"
 
 class VariableSymbol : public TypedSymbol

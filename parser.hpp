@@ -5,6 +5,7 @@
 
 #include "structdeclarationnode.hpp"
 #include "variabledeclarationnode.hpp"
+#include "functiondeclarationnode.hpp"
 
 class Parser : public AbstractParser
 {
@@ -21,6 +22,7 @@ private:
     DeclarationNode* declaration();
     DeclarationNode* structDecl();
     DeclarationNode* variableDecl();
+    DeclarationNode* functionDecl();
     
     AST* statement();
     

@@ -15,8 +15,8 @@ Symbol* FunctionSymbol::resolve(string name)
     auto it = members.find(name);
     if ( it == std::end(members) )
     {
-	if ( enclosing_scope )
-	    return enclosing_scope->resolve(name);
+	if ( getEnclosingScope() )
+	    return getEnclosingScope()->resolve(name);
 	return nullptr;
     }
     return it->second;    
