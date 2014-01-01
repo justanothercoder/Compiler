@@ -22,9 +22,7 @@ void VariableNode::check()
 
 void VariableNode::gen()
 {
-    if ( dynamic_cast<FunctionType*>(variable->getType()) != nullptr )
-	CodeGen::emit("lea eax, [" + name + "]");
-    else if ( dynamic_cast<OverloadedFunctionType*>(variable->getType()) != nullptr )
+    if ( dynamic_cast<OverloadedFunctionType*>(variable->getType()) != nullptr )
     {
 	if ( static_cast<OverloadedFunctionType*>(variable->getType())->overloads.size() > 1 )
 	{
