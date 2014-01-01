@@ -28,11 +28,6 @@ void FunctionSymbol::define(Symbol *sym)
 	members[sym->getName()] = sym;
 }
 
-string FunctionSymbol::getName()
-{
-    return name;
-}
-
 Type* FunctionSymbol::getType()
 {
     return function_type;

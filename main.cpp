@@ -37,7 +37,8 @@ int main()
 	root->scope->define(new BuiltInTypeSymbol("int", sizeof(int*)));
 
 	root->build_scope();
-	root->define();	
+	root->define();
+	root->check();
 	root->gen();
 
     }

@@ -33,3 +33,8 @@ bool NumberNode::isLeftValue()
 {
     return false;
 }
+
+void NumberNode::build_scope()
+{
+    
+}

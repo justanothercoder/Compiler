@@ -16,6 +16,11 @@ public:
     virtual string getName();
     virtual int getSize();    
 
+    Type* getReturnType();
+    Type* getParamType(int i);
+
+    int getNumberOfParams();
+    
 private:
 
     Type *return_type;

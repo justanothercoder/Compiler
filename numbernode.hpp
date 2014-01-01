@@ -9,6 +9,7 @@ public:
 
     NumberNode(string num);
 
+    virtual void build_scope();
     virtual void gen();
     
     virtual void check();

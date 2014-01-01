@@ -27,3 +27,19 @@ int FunctionType::getSize()
 {
     return type_size;
 }
+
+Type* FunctionType::getReturnType()
+{
+    return return_type;    
+}
+
+Type* FunctionType::getParamType(int i)
+{
+    return params_types[i];
+}
+
+int FunctionType::getNumberOfParams()
+{
+    return params_types.size();
+}
+

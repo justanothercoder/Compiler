@@ -3,6 +3,7 @@
 
 #include "exprnode.hpp"
 #include "typedsymbol.hpp"
+#include "functiontype.hpp"
 
 class VariableNode : public ExprNode
 {
@@ -11,7 +12,8 @@ public:
     VariableNode(string name);
 
     virtual Type *getType();
-    
+
+    virtual void build_scope();
     virtual void check();
     virtual void gen();
 

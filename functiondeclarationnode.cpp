@@ -40,7 +40,7 @@ void FunctionDeclarationNode::define()
 
     static_cast<FunctionSymbol*>(definedSymbol)->setType(function_type);
 
-    scope->define(definedSymbol);    
+    scope->define(definedSymbol);
     
     for ( auto i : statements )
 	i->define();	

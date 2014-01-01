@@ -9,7 +9,6 @@ class ExprNode : public AST
 {
 public:
 
-    virtual void build_scope();
     virtual void define();
     
     virtual Type* getType() = 0;

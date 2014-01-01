@@ -24,8 +24,10 @@ AST* Parser::statement()
     }
     else if ( getTokenType(1) == TokenType::STRUCT || getTokenType(1) == TokenType::DEF || getTokenType(1) == TokenType::VAR )    
 	return declaration();
-    else
+    else if ( tryAssignment() )
 	return assignment();
+    else
+	return expression();
 }
 
 DeclarationNode* Parser::declaration()
@@ -145,12 +147,50 @@ ExprNode* Parser::number()
     return new NumberNode(num);
 }
 
-ExprNode* Parser::expression()
+ExprNode* Parser::primary()
 {
     if ( getTokenType(1) == TokenType::NUMBER )
 	return literal();
     else
-	return variable();
+	return variable();        
+}
+
+ExprNode* Parser::unary_right()
+{
+    ExprNode *res = primary();
+
+    while ( getTokenType(1) == TokenType::LPAREN )
+    {
+	vector<ExprNode*> params;
+	
+	match(TokenType::LPAREN);
+
+	if ( getTokenType(1) != TokenType::RPAREN )
+	{
+	    params.push_back(expression());
+	    while ( getTokenType(1) == TokenType::COMMA )
+	    {
+		match(TokenType::COMMA);
+		params.push_back(expression());
+	    }
+	}
+
+	match(TokenType::RPAREN);
+
+	res = new CallNode(res, params);
+    }
+
+    return res;
+}
+
+ExprNode* Parser::factor()
+{
+    return unary_right();
+}
+
+ExprNode* Parser::expression()
+{
+    return factor();
 }
 
 AST* Parser::assignment()
@@ -160,4 +200,24 @@ AST* Parser::assignment()
     ExprNode *rhs = expression();
 
     return new AssignmentNode(lhs, rhs);
+}
+
+bool Parser::tryAssignment()
+{
+    bool success = true;
+
+    mark();
+    
+    try
+    {
+	assignment();
+    }
+    catch ( RecognitionError& re )
+    {
+	success = false;
+    }
+
+    release();
+
+    return success;
 }

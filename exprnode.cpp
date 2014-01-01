@@ -3,10 +3,4 @@
 void ExprNode::define()
 {
     
-}
-
-void ExprNode::build_scope()
-{
-    
-}
-    
+}    

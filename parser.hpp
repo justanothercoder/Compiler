@@ -10,6 +10,7 @@
 #include "emptystatementnode.hpp"
 #include "assignmentnode.hpp"
 
+#include "callnode.hpp"
 #include "variablenode.hpp"
 #include "numbernode.hpp"
 
@@ -35,8 +36,13 @@ private:
 
     ExprNode* literal();
     ExprNode* expression();
+    ExprNode* factor();
+    ExprNode* unary_right();
+    ExprNode* primary();
     ExprNode* variable();
     ExprNode* number();
+
+    bool tryAssignment();
 };
 
 #endif

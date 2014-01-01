@@ -19,8 +19,6 @@ public:
     virtual Scope* getEnclosingScope();
     virtual Symbol* resolve(string name);
     virtual void define(Symbol *sym);
-    
-    virtual string getName();
 
     virtual Type* getType();
 
@@ -28,7 +26,6 @@ public:
     
 private:
 
-    string name;
     FunctionType *function_type;
 
     Scope *enclosing_scope;
