@@ -56,3 +56,13 @@ int StructSymbol::getAddress(VariableSymbol *sym)
 {
     
 }
+
+int StructSymbol::getScopeAddress()
+{
+    
+}
+
+int StructSymbol::getScopeSize()
+{
+    
+}

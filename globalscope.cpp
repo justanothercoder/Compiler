@@ -2,7 +2,7 @@
 
 GlobalScope::GlobalScope()
 {
-    scopeSize = 0;
+    scope_size = 0;
 }
 
 Scope* GlobalScope::getEnclosingScope()
@@ -37,7 +37,7 @@ void GlobalScope::define(Symbol *sym)
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {
 	table[sym->getName()] = sym;
-	addresses[static_cast<VariableSymbol*>(sym)] = (scopeSize += static_cast<VariableSymbol*>(sym)->getType()->getSize());
+	addresses[static_cast<VariableSymbol*>(sym)] = (scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
     }
     else
 	table[sym->getName()] = sym;
@@ -55,5 +55,20 @@ void GlobalScope::setTypeHint(ExprNode *expr, Type *type)
     
 int GlobalScope::getAddress(VariableSymbol *sym)
 {
-    return addresses[sym];   
+    auto it = addresses.find(sym);
+
+    if ( it == std::end(addresses) )
+	throw;
+
+    return it->second;   
+}
+
+int GlobalScope::getScopeAddress()
+{
+    return 0;
+}
+
+int GlobalScope::getScopeSize()
+{
+    return scope_size;
 }

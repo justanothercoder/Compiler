@@ -2,7 +2,7 @@
 
 FunctionSymbol::FunctionSymbol(string name, FunctionType *function_type, Scope *enclosing_scope) : TypedSymbol(name), function_type(function_type), enclosing_scope(enclosing_scope)
 {
-    
+    scope_address = enclosing_scope->getScopeAddress() + enclosing_scope->getScopeSize() + sizeof(int*);
 }
 
 Scope* FunctionSymbol::getEnclosingScope()
@@ -24,7 +24,26 @@ Symbol* FunctionSymbol::resolve(string name)
 
 void FunctionSymbol::define(Symbol *sym)
 {
-    if ( members.find(name) == std::end(members) )
+    if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
+    {
+	if ( members[sym->getName()] == nullptr )
+	    members[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionType({ }));
+
+	if ( dynamic_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(members[sym->getName()])->getType()) == nullptr )
+	    throw;
+	
+	OverloadedFunctionType *ot = static_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(members[sym->getName()])->getType());
+	
+	FunctionType *ft = static_cast<FunctionType*>(static_cast<FunctionSymbol*>(sym)->getType());
+	ot->overloads.insert(ft);
+	ot->symbols[ft] = static_cast<FunctionSymbol*>(sym);
+    }
+    else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
+    {
+	members[sym->getName()] = sym;
+	addresses[static_cast<VariableSymbol*>(sym)] = (scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
+    }
+    else
 	members[sym->getName()] = sym;
 }
 
@@ -60,5 +79,25 @@ string FunctionSymbol::getTypedName()
 
 int FunctionSymbol::getAddress(VariableSymbol *sym)
 {
-    
+    auto it = addresses.find(sym);
+
+    if ( it == std::end(addresses) )
+    {
+	if ( getEnclosingScope() == nullptr )
+	    throw;
+
+	return getEnclosingScope()->getAddress(sym) - (scope_address - getEnclosingScope()->getScopeAddress());
+    }
+
+    return it->second;
+}
+
+int FunctionSymbol::getScopeAddress()
+{
+    return scope_address;
+}
+
+int FunctionSymbol::getScopeSize()
+{
+    return scope_size;
 }

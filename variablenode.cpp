@@ -29,7 +29,7 @@ void VariableNode::gen()
 	    if ( scope->getTypeHint(this) == nullptr )
 		throw;
 	   
-	    variable = static_cast<OverloadedFunctionType*>(variable->getType())->symbols[static_cast<FunctionType*>(scope->getTypeHint(this))];
+	    variable = dynamic_cast<TypedSymbol*>(static_cast<OverloadedFunctionType*>(variable->getType())->symbols[static_cast<FunctionType*>(scope->getTypeHint(this))]);
 	}
 	else
 	{

@@ -27,6 +27,9 @@ public:
     virtual void setTypeHint(ExprNode *expr, Type *type); 
 
     virtual int getAddress(VariableSymbol *sym);
+
+    virtual int getScopeAddress();
+    virtual int getScopeSize();
     
 private:
 

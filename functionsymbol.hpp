@@ -4,7 +4,8 @@
 #include <map>
 
 #include "typedsymbol.hpp"
-#include "functiontype.hpp"
+#include "overloadedfunctiontype.hpp"
+#include "variablesymbol.hpp"
 #include "scope.hpp"
 
 using std::map;
@@ -30,15 +31,21 @@ public:
     string getTypedName();
 
     virtual int getAddress(VariableSymbol *sym);
-    
+ 
+    virtual int getScopeAddress();
+    virtual int getScopeSize();
+
 private:
 
+    int scope_address, scope_size;
+    
     FunctionType *function_type;
 
     Scope *enclosing_scope;
 
     map<ExprNode*, Type*> type_hints;
     map<string, Symbol*> members;
+    map<VariableSymbol*, int> addresses;
 };
 
 #endif
