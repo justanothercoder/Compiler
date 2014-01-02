@@ -30,6 +30,8 @@ public:
 
     virtual int getScopeAddress();
     virtual int getScopeSize();
+
+    virtual string getScopeName();
     
 private:
 
@@ -39,6 +41,8 @@ private:
     Scope *enclosing_scope;
     
     int type_size;
+
+    string scope_name;
 };
 		     
 #endif

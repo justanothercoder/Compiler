@@ -28,6 +28,8 @@ public:
     virtual int getScopeAddress();
     virtual int getScopeSize();
 
+    virtual string getScopeName();
+    
 private:
 
     map<ExprNode*, Type*> type_hints;

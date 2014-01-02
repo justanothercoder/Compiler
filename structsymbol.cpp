@@ -66,3 +66,8 @@ int StructSymbol::getScopeSize()
 {
     
 }
+
+string StructSymbol::getScopeName()
+{
+    return scope_name;
+}

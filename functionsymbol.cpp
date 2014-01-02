@@ -3,6 +3,8 @@
 FunctionSymbol::FunctionSymbol(string name, FunctionType *function_type, Scope *enclosing_scope) : TypedSymbol(name), function_type(function_type), enclosing_scope(enclosing_scope)
 {
     scope_address = enclosing_scope->getScopeAddress() + enclosing_scope->getScopeSize() + sizeof(int*);
+
+    scope_name = enclosing_scope->getScopeName() + "_" + name;
 }
 
 Scope* FunctionSymbol::getEnclosingScope()
@@ -100,4 +102,9 @@ int FunctionSymbol::getScopeAddress()
 int FunctionSymbol::getScopeSize()
 {
     return scope_size;
+}
+
+string FunctionSymbol::getScopeName()
+{
+    return scope_name;
 }

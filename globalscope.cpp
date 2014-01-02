@@ -72,3 +72,8 @@ int GlobalScope::getScopeSize()
 {
     return scope_size;
 }
+
+string GlobalScope::getScopeName()
+{
+    return "";
+}

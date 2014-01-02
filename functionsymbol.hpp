@@ -35,6 +35,8 @@ public:
     virtual int getScopeAddress();
     virtual int getScopeSize();
 
+    virtual string getScopeName();
+    
 private:
 
     int scope_address, scope_size;
@@ -46,6 +48,8 @@ private:
     map<ExprNode*, Type*> type_hints;
     map<string, Symbol*> members;
     map<VariableSymbol*, int> addresses;
+
+    string scope_name;
 };
 
 #endif
