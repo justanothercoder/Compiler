@@ -49,7 +49,7 @@ void CallNode::gen()
 	params[i]->gen();
 	for ( int j = 0; j < resolved_function_type->getParamType(i)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
 	{
-	    CodeGen::emit("mov rbx, [rax - " + std::to_string(paramsSize) + "]");
+	    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
 	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rbx");
 	}
     }

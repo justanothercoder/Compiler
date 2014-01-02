@@ -15,7 +15,7 @@ class FunctionSymbol : public TypedSymbol, public Scope
 {
 public:
 
-    FunctionSymbol(string name, FunctionType *function_type, Scope *enclosing_scope);
+    FunctionSymbol(string name, FunctionType *function_type, Scope *enclosing_scope, bool is_operator = false);
 
     virtual Scope* getEnclosingScope();
     virtual Symbol* resolve(string name);
@@ -38,7 +38,9 @@ public:
     virtual string getScopeName();
 
     void recalc_scope_address();
-	
+
+    bool isOperator();
+    
 private:
 
     int scope_address, scope_size;
@@ -52,6 +54,8 @@ private:
     map<VariableSymbol*, int> addresses;
 
     string scope_name;
+
+    bool is_operator;
 };
 
 #endif

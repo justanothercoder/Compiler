@@ -2,6 +2,10 @@
 #define _ASSIGNMENTNODE_HPP_
 
 #include "exprnode.hpp"
+#include "overloadedfunctiontype.hpp"
+#include "typedsymbol.hpp"
+#include "functionhelper.hpp"
+#include "functionsymbol.hpp"
 
 class AssignmentNode : public AST
 {
@@ -17,6 +21,8 @@ public:
 private:
 
     ExprNode *lhs, *rhs;
+
+    FunctionSymbol *resolved_function_symbol;
     
 };
 

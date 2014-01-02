@@ -1,6 +1,6 @@
 #include "functionsymbol.hpp"
 
-FunctionSymbol::FunctionSymbol(string name, FunctionType *function_type, Scope *enclosing_scope) : TypedSymbol(name), function_type(function_type), enclosing_scope(enclosing_scope)
+FunctionSymbol::FunctionSymbol(string name, FunctionType *function_type, Scope *enclosing_scope, bool is_operator) : TypedSymbol(name), function_type(function_type), enclosing_scope(enclosing_scope), is_operator(is_operator)
 {
     scope_size = 0;
     
@@ -112,4 +112,9 @@ string FunctionSymbol::getScopeName()
 void FunctionSymbol::recalc_scope_address()
 {
     scope_address = enclosing_scope->getScopeAddress() + enclosing_scope->getScopeSize() + sizeof(int*);    
+}
+
+bool FunctionSymbol::isOperator()
+{
+    return is_operator;
 }
