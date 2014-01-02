@@ -2,7 +2,7 @@
 
 GlobalScope::GlobalScope()
 {
-    
+    scope_size = 0;
 }
 
 Scope* GlobalScope::getEnclosingScope()
@@ -25,11 +25,19 @@ void GlobalScope::define(Symbol *sym)
 	if ( table[sym->getName()] == nullptr )
 	    table[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionType({ }));
 
+	if ( dynamic_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType()) == nullptr )
+	    throw SemanticError(sym->getName() + " is already defined as not function");
+	
 	OverloadedFunctionType *ot = static_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType());
 	
 	FunctionType *ft = static_cast<FunctionType*>(static_cast<FunctionSymbol*>(sym)->getType());
 	ot->overloads.insert(ft);
 	ot->symbols[ft] = static_cast<FunctionSymbol*>(sym);
+    }
+    else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
+    {
+	table[sym->getName()] = sym;
+	addresses[static_cast<VariableSymbol*>(sym)] = (scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
     }
     else
 	table[sym->getName()] = sym;
@@ -45,3 +53,27 @@ void GlobalScope::setTypeHint(ExprNode *expr, Type *type)
     type_hints[expr] = type;
 }
     
+int GlobalScope::getAddress(VariableSymbol *sym)
+{
+    auto it = addresses.find(sym);
+
+    if ( it == std::end(addresses) )
+	throw SemanticError("No such symbol " + sym->getName());
+
+    return it->second;   
+}
+
+int GlobalScope::getScopeAddress()
+{
+    return 0;
+}
+
+int GlobalScope::getScopeSize()
+{
+    return scope_size;
+}
+
+string GlobalScope::getScopeName()
+{
+    return "";
+}

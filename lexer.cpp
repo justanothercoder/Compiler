@@ -20,6 +20,34 @@ Token Lexer::getToken()
 	else if ( cur == ';' ) { consume(); return Token(TokenType::SEMICOLON, ";", l, s); }
 	else if ( cur == '=' ) { consume(); return Token(TokenType::ASSIGN, "=", l, s); }
 	else if ( cur == '+' ) { consume(); return Token(TokenType::PLUS, "+", l, s); }
+	else if ( cur == '/' )
+	{
+	    consume();
+	    if ( cur == '/' )
+	    {
+		consume();
+		while ( cur != '\n' && cur != (char)(-1) )
+		    consume();
+	    }
+	    else if ( cur == '*' )
+	    {
+		while ( true )
+		{
+		    consume();
+		    if ( cur == '*' )
+		    {
+			consume();
+			if ( cur == '/' )
+			{
+			    consume();
+			    break;
+			}
+		    }
+		}
+	    }
+	    else
+		return Token(TokenType::DIV, "/", l, s);
+	}
 	else if ( std::isspace(cur) )
 	{
 	    while ( std::isspace(cur) )

@@ -33,11 +33,15 @@ int main()
 	AST* root = parser->parse();
 
 	root->scope = new GlobalScope();
-	root->scope->define(new BuiltInTypeSymbol("int", sizeof(int*)));
+
+	BuiltInTypeSymbol *int_type = new BuiltInTypeSymbol("int", sizeof(int*));
+	
+	root->scope->define(int_type);
+	root->scope->define(new FunctionSymbol("operator=", new FunctionType(int_type, {int_type, int_type}), root->scope, true));
 
 	CodeGen::emit("section .text");
 	CodeGen::emit("global _start");
-	CodeGen::emit("_start:");	
+	CodeGen::emit("_start:");
 
 	CodeGen::emit("push rbp");
 	CodeGen::emit("mov rbp, rsp");	
@@ -51,7 +55,7 @@ int main()
 	CodeGen::emit("pop rbp");
 
 	CodeGen::emit("mov rax, 60");
-	CodeGen::emit("mov rdx, 0");
+	CodeGen::emit("mov rdi, 0");
 	CodeGen::emit("syscall");
 
     }

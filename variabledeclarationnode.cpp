@@ -15,7 +15,7 @@ void VariableDeclarationNode::define()
     Symbol *type = scope->resolve(type_name);
 
     if ( type == nullptr || dynamic_cast<Type*>(type) == nullptr )
-	throw;
+	throw SemanticError("No such type " + type->getName());
     
     static_cast<VariableSymbol*>(definedSymbol)->setType(dynamic_cast<Type*>(type));
 

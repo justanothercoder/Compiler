@@ -22,11 +22,21 @@ public:
 
     virtual Type* getTypeHint(ExprNode *expr);
     virtual void setTypeHint(ExprNode *expr, Type *type);
+
+    virtual int getAddress(VariableSymbol *sym);
+
+    virtual int getScopeAddress();
+    virtual int getScopeSize();
+
+    virtual string getScopeName();
     
 private:
 
     map<ExprNode*, Type*> type_hints;
     map<string, Symbol*> table;
+    map<VariableSymbol*, int> addresses;
+
+    int scope_size;
 };
 
 #endif

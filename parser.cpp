@@ -71,7 +71,6 @@ DeclarationNode* Parser::structDecl()
     return new StructDeclarationNode(struct_name, struct_in);
 }
 
-//def a(x : int, y : int) : int { }
 DeclarationNode* Parser::functionDecl()
 {
     match(TokenType::DEF);

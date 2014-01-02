@@ -10,12 +10,7 @@ NumberNode::NumberNode(string num) : num(num)
 void NumberNode::check()
 {    
     if ( expr_type == nullptr )
-    {
 	expr_type = dynamic_cast<Type*>(scope->resolve("int"));
-
-	if ( expr_type == nullptr )
-	    throw;
-    }
 }
 
 Type* NumberNode::getType()

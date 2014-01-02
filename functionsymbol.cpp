@@ -1,8 +1,10 @@
 #include "functionsymbol.hpp"
 
-FunctionSymbol::FunctionSymbol(string name, FunctionType *function_type, Scope *enclosing_scope) : TypedSymbol(name), function_type(function_type), enclosing_scope(enclosing_scope)
+FunctionSymbol::FunctionSymbol(string name, FunctionType *function_type, Scope *enclosing_scope, bool is_operator) : TypedSymbol(name), function_type(function_type), enclosing_scope(enclosing_scope), is_operator(is_operator)
 {
+    scope_size = 0;
     
+    scope_name = enclosing_scope->getScopeName() + "_" + name;
 }
 
 Scope* FunctionSymbol::getEnclosingScope()
@@ -24,7 +26,26 @@ Symbol* FunctionSymbol::resolve(string name)
 
 void FunctionSymbol::define(Symbol *sym)
 {
-    if ( members.find(name) == std::end(members) )
+    if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
+    {
+	if ( members[sym->getName()] == nullptr )
+	    members[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionType({ }));
+
+	if ( dynamic_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(members[sym->getName()])->getType()) == nullptr )
+	    throw SemanticError(sym->getName() + " is not a function");
+	
+	OverloadedFunctionType *ot = static_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(members[sym->getName()])->getType());
+	
+	FunctionType *ft = static_cast<FunctionType*>(static_cast<FunctionSymbol*>(sym)->getType());
+	ot->overloads.insert(ft);
+	ot->symbols[ft] = static_cast<FunctionSymbol*>(sym);
+    }
+    else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
+    {
+	members[sym->getName()] = sym;
+	addresses[static_cast<VariableSymbol*>(sym)] = (scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
+    }
+    else
 	members[sym->getName()] = sym;
 }
 
@@ -56,4 +77,44 @@ string FunctionSymbol::getTypedName()
 	res += "_" + function_type->getParamType(i)->getName();
 
     return res;
+}
+
+int FunctionSymbol::getAddress(VariableSymbol *sym)
+{
+    auto it = addresses.find(sym);
+
+    if ( it == std::end(addresses) )
+    {
+	if ( getEnclosingScope() == nullptr )
+	    throw SemanticError("No such symbol " + sym->getName());
+
+	return getEnclosingScope()->getAddress(sym) - (scope_address - getEnclosingScope()->getScopeAddress());
+    }
+
+    return it->second;
+}
+
+int FunctionSymbol::getScopeAddress()
+{
+    return scope_address;
+}
+
+int FunctionSymbol::getScopeSize()
+{
+    return scope_size;
+}
+
+string FunctionSymbol::getScopeName()
+{
+    return scope_name;
+}
+
+void FunctionSymbol::recalc_scope_address()
+{
+    scope_address = enclosing_scope->getScopeAddress() + enclosing_scope->getScopeSize() + sizeof(int*);    
+}
+
+bool FunctionSymbol::isOperator()
+{
+    return is_operator;
 }

@@ -20,7 +20,7 @@ void FunctionDeclarationNode::define()
     Symbol *return_type = scope->resolve(return_type_name);
 
     if ( return_type == nullptr || dynamic_cast<Type*>(return_type) == nullptr )
-	throw;
+	throw SemanticError(return_type_name + " is not a type");
 
     vector<Type*> params_types;
     
@@ -29,7 +29,7 @@ void FunctionDeclarationNode::define()
 	Symbol *param_type = scope->resolve(i.second);
 
 	if ( return_type == nullptr || dynamic_cast<Type*>(return_type) == nullptr )
-	    throw;
+	    throw SemanticError(i.second + " is not a type");
 
 	params_types.push_back(dynamic_cast<Type*>(param_type));
 
@@ -48,6 +48,8 @@ void FunctionDeclarationNode::define()
 
 void FunctionDeclarationNode::check()
 {
+    static_cast<FunctionSymbol*>(definedSymbol)->recalc_scope_address();
+    
     for ( auto i : statements )
 	i->check();
 }
@@ -55,9 +57,11 @@ void FunctionDeclarationNode::check()
 void FunctionDeclarationNode::gen()
 {
     string typed_name = static_cast<FunctionSymbol*>(definedSymbol)->getTypedName();
+
+    string scope_name = static_cast<FunctionSymbol*>(definedSymbol)->getEnclosingScope()->getScopeName() + "_";
     
-    CodeGen::emit("jmp @" + typed_name);
-    CodeGen::emit(typed_name + ":");
+    CodeGen::emit("jmp @" + scope_name + typed_name);
+    CodeGen::emit(scope_name + typed_name + ":");
     CodeGen::emit("push rbp");
     CodeGen::emit("mov rbp, rsp");
 
@@ -67,5 +71,5 @@ void FunctionDeclarationNode::gen()
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");
     CodeGen::emit("ret");
-    CodeGen::emit("@" + typed_name + ":");
+    CodeGen::emit("@" + scope_name + typed_name + ":");
 }

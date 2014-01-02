@@ -19,6 +19,8 @@ public:
     virtual void check();
     virtual void gen();
 
+
+    
 private:
 
     string name;

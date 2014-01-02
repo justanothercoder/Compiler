@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "semanticerror.hpp"
+
 using std::string;
 
 class Symbol

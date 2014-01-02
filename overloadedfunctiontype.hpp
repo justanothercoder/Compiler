@@ -5,10 +5,11 @@
 #include <map>
 
 #include "functiontype.hpp"
-#include "functionsymbol.hpp"
 
 using std::set;
 using std::map;
+
+class FunctionSymbol;
 
 class OverloadedFunctionType : public Type 
 {
