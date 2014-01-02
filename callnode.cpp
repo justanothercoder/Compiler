@@ -20,7 +20,7 @@ void CallNode::check()
     caller->check();   
 
     if ( dynamic_cast<OverloadedFunctionType*>(caller->getType()) == nullptr )
-	throw;
+	throw SemanticError("caller is not a function");
 
     vector<Type*> params_types;
 
@@ -33,7 +33,7 @@ void CallNode::check()
     auto overloads = FunctionHelper::getBestOverload(static_cast<OverloadedFunctionType*>(caller->getType())->overloads, params_types);
 
     if ( overloads.empty() )
-	throw;
+	throw SemanticError("No viable overload");
 
     resolved_function_type = *std::begin(overloads);
 

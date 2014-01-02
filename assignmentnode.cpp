@@ -22,20 +22,17 @@ void AssignmentNode::check()
     rhs->check();
 
     if ( !lhs->isLeftValue() )
-	throw;
-
-    if ( lhs->getType() != rhs->getType() )
-	throw;
+	throw SemanticError("left side of assignment is not a left value");
 
     Symbol *assignment = scope->resolve("operator=");
 
     if ( assignment == nullptr || dynamic_cast<OverloadedFunctionType*>(static_cast<TypedSymbol*>(assignment)->getType()) == nullptr )
-	throw;
+	throw SemanticError("No such operator =");
     
     auto overloads = FunctionHelper::getBestOverload(static_cast<OverloadedFunctionType*>(static_cast<TypedSymbol*>(assignment)->getType())->overloads, {lhs->getType(), rhs->getType()});
 
     if ( overloads.empty() )
-	throw;
+	throw SemanticError("No viable overload for operator=");
 
     resolved_function_symbol = static_cast<OverloadedFunctionType*>(static_cast<TypedSymbol*>(assignment)->getType())->symbols[*std::begin(overloads)];
 }
@@ -64,15 +61,7 @@ void AssignmentNode::gen()
 
     string call_name = resolved_function_symbol->getEnclosingScope()->getScopeName() + "_";
 
-    string operator_name = resolved_function_symbol->getName().substr(sizeof("operator") - 1);
-
-    if ( operator_name != "=" )
-	throw;
-
-    operator_name = "@operator_assign";
-    
-    call_name += operator_name;
-    
+    call_name += "@operator_assign";
     call_name += resolved_function_symbol->getTypedName().substr(resolved_function_symbol->getName().length());
 
     CodeGen::emit("call " + call_name);

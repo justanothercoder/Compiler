@@ -26,7 +26,7 @@ void GlobalScope::define(Symbol *sym)
 	    table[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionType({ }));
 
 	if ( dynamic_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType()) == nullptr )
-	    throw;
+	    throw SemanticError(sym->getName() + " is already defined as not function");
 	
 	OverloadedFunctionType *ot = static_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType());
 	
@@ -58,7 +58,7 @@ int GlobalScope::getAddress(VariableSymbol *sym)
     auto it = addresses.find(sym);
 
     if ( it == std::end(addresses) )
-	throw;
+	throw SemanticError("No such symbol " + sym->getName());
 
     return it->second;   
 }

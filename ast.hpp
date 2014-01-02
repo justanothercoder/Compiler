@@ -2,6 +2,7 @@
 #define _AST_HPP_
 
 #include "scope.hpp"
+#include "semanticerror.hpp"
 
 class AST
 {

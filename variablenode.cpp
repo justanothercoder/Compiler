@@ -15,7 +15,7 @@ void VariableNode::check()
     Symbol *sym = scope->resolve(name);
 
     if ( sym == nullptr || dynamic_cast<TypedSymbol*>(sym) == nullptr )
-	throw;
+	throw SemanticError(name + " is not a variable");
 
     variable = static_cast<TypedSymbol*>(sym);   
 }
@@ -27,7 +27,7 @@ void VariableNode::gen()
 	if ( static_cast<OverloadedFunctionType*>(variable->getType())->overloads.size() > 1 )
 	{
 	    if ( scope->getTypeHint(this) == nullptr )
-		throw;
+		throw SemanticError("multiple overloads of " + name);
 	   
 	    variable = dynamic_cast<TypedSymbol*>(static_cast<OverloadedFunctionType*>(variable->getType())->symbols[static_cast<FunctionType*>(scope->getTypeHint(this))]);
 	}

@@ -20,7 +20,7 @@ void FunctionDeclarationNode::define()
     Symbol *return_type = scope->resolve(return_type_name);
 
     if ( return_type == nullptr || dynamic_cast<Type*>(return_type) == nullptr )
-	throw;
+	throw SemanticError(return_type_name + " is not a type");
 
     vector<Type*> params_types;
     
@@ -29,7 +29,7 @@ void FunctionDeclarationNode::define()
 	Symbol *param_type = scope->resolve(i.second);
 
 	if ( return_type == nullptr || dynamic_cast<Type*>(return_type) == nullptr )
-	    throw;
+	    throw SemanticError(i.second + " is not a type");
 
 	params_types.push_back(dynamic_cast<Type*>(param_type));
 

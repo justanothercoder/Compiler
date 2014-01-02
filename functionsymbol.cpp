@@ -32,7 +32,7 @@ void FunctionSymbol::define(Symbol *sym)
 	    members[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionType({ }));
 
 	if ( dynamic_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(members[sym->getName()])->getType()) == nullptr )
-	    throw;
+	    throw SemanticError(sym->getName() + " is not a function");
 	
 	OverloadedFunctionType *ot = static_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(members[sym->getName()])->getType());
 	
@@ -86,7 +86,7 @@ int FunctionSymbol::getAddress(VariableSymbol *sym)
     if ( it == std::end(addresses) )
     {
 	if ( getEnclosingScope() == nullptr )
-	    throw;
+	    throw SemanticError("No such symbol " + sym->getName());
 
 	return getEnclosingScope()->getAddress(sym) - (scope_address - getEnclosingScope()->getScopeAddress());
     }
