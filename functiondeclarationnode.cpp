@@ -48,6 +48,8 @@ void FunctionDeclarationNode::define()
 
 void FunctionDeclarationNode::check()
 {
+    static_cast<FunctionSymbol*>(definedSymbol)->recalc_scope_address();
+    
     for ( auto i : statements )
 	i->check();
 }

@@ -36,7 +36,9 @@ public:
     virtual int getScopeSize();
 
     virtual string getScopeName();
-    
+
+    void recalc_scope_address();
+	
 private:
 
     int scope_address, scope_size;
