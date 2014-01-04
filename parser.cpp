@@ -133,6 +133,13 @@ ExprNode* Parser::primary()
 {
     if ( getTokenType(1) == TokenType::NUMBER )
 	return literal();
+    else if ( getTokenType(1) == TokenType::LPAREN )
+    {
+	match(TokenType::LPAREN);
+	ExprNode *expr = expression();	
+	match(TokenType::RPAREN);
+	return expr;
+    }
     else
 	return variable();        
 }

@@ -6,7 +6,7 @@
 #include "declarationnode.hpp"
 #include "functionsymbol.hpp"
 #include "variablesymbol.hpp"
-#include "typeinfo.hpp"
+#include "typehelper.hpp"
 
 using std::vector;
 using std::pair;

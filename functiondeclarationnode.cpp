@@ -17,37 +17,16 @@ void FunctionDeclarationNode::build_scope()
 
 void FunctionDeclarationNode::define()
 {
-    string return_type_name = return_type_info.type_name;
+    Type *return_type = TypeHelper::fromTypeInfo(return_type_info, scope);
     
-    Symbol *_return_type = scope->resolve(return_type_name);
-
-    if ( _return_type == nullptr )
-	throw SemanticError("No such symbol " + return_type_name);
-
-    Type *return_type = dynamic_cast<Type*>(_return_type);
-    
-    if ( return_type == nullptr )
-	throw SemanticError(return_type_name + " is not a type");
-
     vector<Type*> params_types;
     
     for ( auto i : params )
     {
-	string param_type_name = i.second.type_name;
-	
-	Symbol *_param_type = scope->resolve(param_type_name);
-
-	if ( _param_type == nullptr )
-	    throw SemanticError("No such symbol " + param_type_name);
-
-	Type *param_type = dynamic_cast<Type*>(_param_type);
-	
-	if ( param_type == nullptr )
-	    throw SemanticError(param_type_name + " is not a type");
-
+	Type *param_type = TypeHelper::fromTypeInfo(i.second, scope);	
 	params_types.push_back(param_type);
 
-	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol(i.first, param_type));
+	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol(i.first, param_type, true));
     }
 
     FunctionTypeInfo function_type_info = FunctionTypeInfo(return_type, params_types);

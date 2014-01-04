@@ -39,10 +39,16 @@ void CallNode::check()
     auto overloads = FunctionHelper::getBestOverload(ov_func->getTypeInfo().overloads, params_types);
 
     if ( overloads.empty() )
-	throw SemanticError("No viable overload");
+	throw SemanticError("No viable overload of '" + ov_func->getName() + "'");
 
     resolved_function_type_info = *std::begin(overloads);
 
+    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= 0; --i )
+    {
+	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) && !params[i]->isLeftValue() )
+	    throw SemanticError("parameter is not an lvalue.");
+    }    
+    
     scope->setTypeHint(caller, ov_func);
 }
 
@@ -53,10 +59,18 @@ void CallNode::gen()
     for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= 0; --i )
     {
 	params[i]->gen();
-	for ( int j = 0; j < resolved_function_type_info.getParamType(i)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) )
+	{	    
+	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rax");
+	    paramsSize += sizeof(int*);
+	}
+	else
 	{
-	    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rbx");
+	    for ( int j = 0; j < resolved_function_type_info.getParamType(i)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+	    {	    
+		CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
+		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rbx");
+	    }
 	}
     }
 

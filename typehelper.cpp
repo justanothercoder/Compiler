@@ -25,3 +25,21 @@ bool TypeHelper::isConvertable(Type *lhs, Type *rhs)
 
     return (lhs == rhs);
 }
+
+Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope)
+{
+    Symbol *sym = scope->resolve(type_info.type_name);
+
+    if ( sym == nullptr )
+	throw SemanticError("No such symbol " + type_info.type_name);
+
+    Type *type = dynamic_cast<Type*>(sym);
+
+    if ( type == nullptr )
+	throw SemanticError(type_info.type_name + " is not a type");
+
+    if ( type_info.is_ref )
+	type = TypeHelper::getReferenceType(type);
+    
+    return type;
+}

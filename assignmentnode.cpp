@@ -52,17 +52,33 @@ void AssignmentNode::gen()
     FunctionTypeInfo resolved_function_type_info = resolved_function_symbol->getTypeInfo();
     
     rhs->gen();
-    for ( int j = 0; j < resolved_function_type_info.getParamType(1)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+    if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(1)) )
     {
-	CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rbx");
+	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rax");
+	paramsSize += sizeof(int*);
+    }
+    else
+    {
+	for ( int j = 0; j < resolved_function_type_info.getParamType(1)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+	{
+	    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
+	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rbx");
+	}
     }
     
     lhs->gen();
-    for ( int j = 0; j < resolved_function_type_info.getParamType(0)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+    if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(0)) )
     {
-	CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rbx");
+	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rax");
+	paramsSize += sizeof(int*);
+    }
+    else
+    {
+	for ( int j = 0; j < resolved_function_type_info.getParamType(0)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+	{
+	    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
+	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rbx");
+	}
     }
     
     CodeGen::emit("sub rsp, " + std::to_string(paramsSize - sizeof(int*)));

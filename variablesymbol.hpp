@@ -8,7 +8,7 @@ class VariableSymbol : public Symbol
 {
 public:
 
-    VariableSymbol(string name, Type *type);
+    VariableSymbol(string name, Type *type, bool is_param = false);
 
     virtual Type* getType();
 

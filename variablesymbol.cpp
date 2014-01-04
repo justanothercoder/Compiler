@@ -1,6 +1,6 @@
 #include "variablesymbol.hpp"
 
-VariableSymbol::VariableSymbol(string name, Type *type) : name(name), type(type)
+VariableSymbol::VariableSymbol(string name, Type *type, bool is_param) : name(name), type(type), is_param(is_param)
 {
     
 }
