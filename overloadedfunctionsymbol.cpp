@@ -29,3 +29,9 @@ OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo()
 {
     return type_info;
 }
+
+void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, FunctionSymbol *sym)
+{
+    type_info.overloads.insert(func_type_info);
+    type_info.symbols[func_type_info] = sym;
+}

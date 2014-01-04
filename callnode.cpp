@@ -19,7 +19,11 @@ void CallNode::check()
 {
     caller->check();   
 
-    OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(caller->getType());
+    Type *caller_type = caller->getType();
+    while ( dynamic_cast<ReferenceType*>(caller_type) )
+	caller_type = static_cast<ReferenceType*>(caller_type)->getReferredType();
+    
+    OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(caller_type);
     
     if ( ov_func == nullptr )
 	throw SemanticError("caller is not a function");

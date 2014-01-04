@@ -17,10 +17,10 @@ void VariableNode::check()
     if ( sym == nullptr )
 	throw SemanticError("No such symbol " + name);
 
-    if ( dynamic_cast<TypedSymbol*>(sym) == nullptr )
+    if ( dynamic_cast<VariableSymbol*>(sym) == nullptr )
 	throw SemanticError("'" + name + "' is not a variable.");
 
-    variable = static_cast<TypedSymbol*>(sym);   
+    variable = static_cast<VariableSymbol*>(sym);
 }
 
 void VariableNode::gen()
@@ -31,9 +31,9 @@ void VariableNode::gen()
     {
 	CodeGen::emit("mov eax, [rbp - " + std::to_string(scope->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
     }    
-    else if ( dynamic_cast<OverloadedFunctionSymbol*>(variable) )
+    else if ( dynamic_cast<OverloadedFunctionSymbol*>(variable->getType()) )
     {
-	OverloadedFunctionSymbol* ov_func = dynamic_cast<OverloadedFunctionSymbol*>(variable);
+	OverloadedFunctionSymbol* ov_func = dynamic_cast<OverloadedFunctionSymbol*>(variable->getType());
 	
 	OverloadedFunctionTypeInfo ov_func_type_info = ov_func->getTypeInfo();
 	
@@ -43,7 +43,7 @@ void VariableNode::gen()
 	    if ( hint_type == nullptr )
 		throw SemanticError("multiple overloads of " + name);
 	   
-	    variable = dynamic_cast<TypedSymbol*>(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
+	    variable = dynamic_cast<VariableSymbol*>(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
 	}
 	else
 	{

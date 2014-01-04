@@ -22,19 +22,24 @@ void GlobalScope::define(Symbol *sym)
 {
     if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
     {
-	if ( table[sym->getName()] == nullptr )
-	    table[sym->getName()] = new OverloadedFunctionSymbol(sym->getName(), OverloadedFunctionTypeInfo({ }));
+	auto it = table.find(sym->getName());
+	
+	if ( it == std::end(table) )
+	    table[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionSymbol(sym->getName(), OverloadedFunctionTypeInfo({ })));
 
-	OverloadedFunctionSymbol* ov_func = dynamic_cast<OverloadedFunctionSymbol*>(table[sym->getName()]);
+	Symbol *res_sym = table[sym->getName()];	
+
+	if ( dynamic_cast<VariableSymbol*>(res_sym) == nullptr )
+	    throw SemanticError(sym->getName() + " is already defined.");
+	
+	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
 	
 	if ( ov_func == nullptr )
 	    throw SemanticError(sym->getName() + " is already defined as not function");
-	
-	OverloadedFunctionTypeInfo type_info = ov_func->getTypeInfo();
-	
+       	
 	FunctionTypeInfo func_type_info = static_cast<FunctionSymbol*>(sym)->getTypeInfo();
-	type_info.overloads.insert(func_type_info);
-	type_info.symbols[func_type_info] = static_cast<FunctionSymbol*>(sym);
+
+	ov_func->addOverload(func_type_info, static_cast<FunctionSymbol*>(sym));
     }
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {
@@ -60,7 +65,7 @@ int GlobalScope::getAddress(VariableSymbol *sym)
     auto it = addresses.find(sym);
 
     if ( it == std::end(addresses) )
-	throw SemanticError("No such symbol " + sym->getName());
+	throw SemanticError("No such symbol '" + sym->getName() + "'");
 
     return it->second;   
 }

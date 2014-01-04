@@ -17,6 +17,8 @@ public:
     virtual void setScope(Scope *scope);
 
     OverloadedFunctionTypeInfo getTypeInfo();
+
+    void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym);
     
 private:
 

@@ -1,10 +1,10 @@
 #ifndef _VARIABLESYMBOL_HPP_
 #define _VARIABLESYMBOL_HPP_
 
-#include "typedsymbol.hpp"
+#include "symbol.hpp"
 #include "type.hpp"
 
-class VariableSymbol : public TypedSymbol
+class VariableSymbol : public Symbol
 {
 public:
 

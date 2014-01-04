@@ -3,7 +3,6 @@
 
 #include <map>
 
-#include "typedsymbol.hpp"
 #include "overloadedfunctiontypeinfo.hpp"
 #include "variablesymbol.hpp"
 #include "scope.hpp"

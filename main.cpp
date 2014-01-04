@@ -62,9 +62,9 @@ int main()
 	CodeGen::emit("syscall");
 
     }
-    catch ( exception& e )
+    catch ( int t )
     {
-	std::cerr << e.what() << '\n';
+//	std::cerr << e.what() << '\n';
     }
     
     in.close();
