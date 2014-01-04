@@ -25,7 +25,9 @@ public:
 private:
 
     string id();
-
+    TypeInfo type_info();
+    pair<string, TypeInfo > var_and_type();
+    
     DeclarationNode* declaration();
     DeclarationNode* structDecl();
     DeclarationNode* variableDecl();

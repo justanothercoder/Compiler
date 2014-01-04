@@ -1,6 +1,6 @@
 #include "structsymbol.hpp"
 
-StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : Symbol(name), enclosing_scope(enclosing_scope)
+StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope)
 {
     type_size = 0;
 }
@@ -54,20 +54,40 @@ void StructSymbol::setTypeHint(ExprNode *expr, Type *type)
 
 int StructSymbol::getAddress(VariableSymbol *sym)
 {
-    
+    auto it = addresses.find(sym);
+
+    if ( it == std::end(addresses) )
+    {
+	if ( getEnclosingScope() == nullptr )
+	    throw SemanticError("No such symbol " + sym->getName());
+
+	return getEnclosingScope()->getAddress(sym) - (scope_address - getEnclosingScope()->getScopeAddress());
+    }
+
+    return it->second;    
 }
 
 int StructSymbol::getScopeAddress()
 {
-    
+    return scope_address;
 }
 
 int StructSymbol::getScopeSize()
 {
-    
+    return 0;
 }
 
 string StructSymbol::getScopeName()
 {
     return scope_name;
+}
+
+Scope* StructSymbol::getScope()
+{
+    return symbol_scope;
+}
+
+void StructSymbol::setScope(Scope *scope)
+{
+    symbol_scope = scope;
 }

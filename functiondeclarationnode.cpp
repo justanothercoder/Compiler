@@ -1,13 +1,13 @@
 #include "functiondeclarationnode.hpp"
 
-FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, string> >& params, string return_type_name, const vector<AST*>& statements) : name(name), params(params), return_type_name(return_type_name), statements(statements)
+FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements) : name(name), params(params), return_type_info(return_type_info), statements(statements)
 {
 
 }
 
 void FunctionDeclarationNode::build_scope()
 {
-    definedSymbol = new FunctionSymbol(name, nullptr, scope);    
+    definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }), scope);    
     for ( auto i : statements )
     {
 	i->scope = static_cast<FunctionSymbol*>(definedSymbol);
@@ -17,28 +17,21 @@ void FunctionDeclarationNode::build_scope()
 
 void FunctionDeclarationNode::define()
 {
-    Symbol *return_type = scope->resolve(return_type_name);
-
-    if ( return_type == nullptr || dynamic_cast<Type*>(return_type) == nullptr )
-	throw SemanticError(return_type_name + " is not a type");
-
+    Type *return_type = TypeHelper::fromTypeInfo(return_type_info, scope);
+    
     vector<Type*> params_types;
     
     for ( auto i : params )
     {
-	Symbol *param_type = scope->resolve(i.second);
+	Type *param_type = TypeHelper::fromTypeInfo(i.second, scope);	
+	params_types.push_back(param_type);
 
-	if ( return_type == nullptr || dynamic_cast<Type*>(return_type) == nullptr )
-	    throw SemanticError(i.second + " is not a type");
-
-	params_types.push_back(dynamic_cast<Type*>(param_type));
-
-	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol(i.first, dynamic_cast<Type*>(param_type)));
+	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol(i.first, param_type, true));
     }
 
-    FunctionType *function_type = new FunctionType(dynamic_cast<Type*>(return_type), params_types);
+    FunctionTypeInfo function_type_info = FunctionTypeInfo(return_type, params_types);
 
-    static_cast<FunctionSymbol*>(definedSymbol)->setType(function_type);
+    static_cast<FunctionSymbol*>(definedSymbol)->setTypeInfo(function_type_info);
 
     scope->define(definedSymbol);
     
