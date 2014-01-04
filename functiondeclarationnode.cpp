@@ -1,6 +1,6 @@
 #include "functiondeclarationnode.hpp"
 
-FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, string> >& params, string return_type_name, const vector<AST*>& statements) : name(name), params(params), return_type_name(return_type_name), statements(statements)
+FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements) : name(name), params(params), return_type_info(return_type_info), statements(statements)
 {
 
 }
@@ -17,19 +17,19 @@ void FunctionDeclarationNode::build_scope()
 
 void FunctionDeclarationNode::define()
 {
-    Symbol *return_type = scope->resolve(return_type_name);
+    Symbol *return_type = scope->resolve(return_type_info.type_name);
 
     if ( return_type == nullptr || dynamic_cast<Type*>(return_type) == nullptr )
-	throw SemanticError(return_type_name + " is not a type");
+	throw SemanticError(return_type_info.type_name + " is not a type");
 
     vector<Type*> params_types;
     
     for ( auto i : params )
     {
-	Symbol *param_type = scope->resolve(i.second);
+	Symbol *param_type = scope->resolve(i.second.type_name);
 
 	if ( return_type == nullptr || dynamic_cast<Type*>(return_type) == nullptr )
-	    throw SemanticError(i.second + " is not a type");
+	    throw SemanticError(i.second.type_name + " is not a type");
 
 	params_types.push_back(dynamic_cast<Type*>(param_type));
 

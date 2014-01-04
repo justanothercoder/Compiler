@@ -4,12 +4,13 @@
 #include "declarationnode.hpp"
 #include "variablesymbol.hpp"
 #include "codegen.hpp"
+#include "typeinfo.hpp"
 
 class VariableDeclarationNode : public DeclarationNode
 {
 public:
 
-    VariableDeclarationNode(string name, string type_name);
+    VariableDeclarationNode(string name, TypeInfo type_info);
 
     virtual void build_scope();    
     virtual void define();
@@ -18,7 +19,8 @@ public:
 
 private:
 
-    string name, type_name;
+    string name;
+    TypeInfo type_info;
 };
 
 #endif

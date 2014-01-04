@@ -1,6 +1,6 @@
 #include "variabledeclarationnode.hpp"
 
-VariableDeclarationNode::VariableDeclarationNode(string name, string type_name) : name(name), type_name(type_name)
+VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info) : name(name), type_info(type_info)
 {
     definedSymbol = new VariableSymbol(name, nullptr);
 }
@@ -12,7 +12,7 @@ void VariableDeclarationNode::build_scope()
 
 void VariableDeclarationNode::define()
 {
-    Symbol *type = scope->resolve(type_name);
+    Symbol *type = scope->resolve(type_info.type_name);
 
     if ( type == nullptr || dynamic_cast<Type*>(type) == nullptr )
 	throw SemanticError("No such type " + type->getName());
