@@ -3,6 +3,7 @@
 FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, bool is_operator) : name(name), function_type_info(function_type_info), enclosing_scope(enclosing_scope), is_operator(is_operator)
 {
     scope_size = 0;
+    params_size = sizeof(int*);
     
     scope_name = enclosing_scope->getScopeName() + "_" + name;
 }
@@ -45,7 +46,10 @@ void FunctionSymbol::define(Symbol *sym)
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {
 	members[sym->getName()] = sym;
-	addresses[static_cast<VariableSymbol*>(sym)] = (scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
+	if ( static_cast<VariableSymbol*>(sym)->isParam() )
+	    addresses[static_cast<VariableSymbol*>(sym)] = -(params_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
+	else
+	    addresses[static_cast<VariableSymbol*>(sym)] = (scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
     }
     else
 	members[sym->getName()] = sym;
@@ -98,7 +102,7 @@ int FunctionSymbol::getScopeAddress()
 
 int FunctionSymbol::getScopeSize()
 {
-    return scope_size;
+    return scope_size + params_size;
 }
 
 string FunctionSymbol::getScopeName()

@@ -49,7 +49,7 @@ public:
     
 private:
 
-    int scope_address, scope_size;
+    int scope_address, scope_size, params_size;
     
     string name;
     

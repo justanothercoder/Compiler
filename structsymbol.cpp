@@ -54,17 +54,27 @@ void StructSymbol::setTypeHint(ExprNode *expr, Type *type)
 
 int StructSymbol::getAddress(VariableSymbol *sym)
 {
-    
+    auto it = addresses.find(sym);
+
+    if ( it == std::end(addresses) )
+    {
+	if ( getEnclosingScope() == nullptr )
+	    throw SemanticError("No such symbol " + sym->getName());
+
+	return getEnclosingScope()->getAddress(sym) - (scope_address - getEnclosingScope()->getScopeAddress());
+    }
+
+    return it->second;    
 }
 
 int StructSymbol::getScopeAddress()
 {
-    
+    return scope_address;
 }
 
 int StructSymbol::getScopeSize()
 {
-    
+    return 0;
 }
 
 string StructSymbol::getScopeName()

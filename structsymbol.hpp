@@ -40,6 +40,7 @@ private:
 
     map<ExprNode*, Type*> type_hints;
     map<string, Symbol*> members;
+    map<VariableSymbol*, int> addresses;
 
     string name;
     
@@ -50,6 +51,8 @@ private:
     string scope_name;
 
     Scope *symbol_scope;
+
+    int scope_address;
 };
 		     
 #endif
