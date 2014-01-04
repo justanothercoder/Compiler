@@ -17,26 +17,40 @@ void FunctionDeclarationNode::build_scope()
 
 void FunctionDeclarationNode::define()
 {
-    Symbol *return_type = scope->resolve(return_type_info.type_name);
+    string return_type_name = return_type_info.type_name;
+    
+    Symbol *_return_type = scope->resolve(return_type_name);
 
-    if ( return_type == nullptr || dynamic_cast<Type*>(return_type) == nullptr )
-	throw SemanticError(return_type_info.type_name + " is not a type");
+    if ( _return_type == nullptr )
+	throw SemanticError("No such symbol " + return_type_name);
+
+    Type *return_type = dynamic_cast<Type*>(_return_type);
+    
+    if ( return_type == nullptr )
+	throw SemanticError(return_type_name + " is not a type");
 
     vector<Type*> params_types;
     
     for ( auto i : params )
     {
-	Symbol *param_type = scope->resolve(i.second.type_name);
+	string param_type_name = i.second.type_name;
+	
+	Symbol *_param_type = scope->resolve(param_type_name);
 
-	if ( return_type == nullptr || dynamic_cast<Type*>(return_type) == nullptr )
-	    throw SemanticError(i.second.type_name + " is not a type");
+	if ( _param_type == nullptr )
+	    throw SemanticError("No such symbol " + param_type_name);
 
-	params_types.push_back(dynamic_cast<Type*>(param_type));
+	Type *param_type = dynamic_cast<Type*>(_param_type);
+	
+	if ( param_type == nullptr )
+	    throw SemanticError(param_type_name + " is not a type");
 
-	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol(i.first, dynamic_cast<Type*>(param_type)));
+	params_types.push_back(param_type);
+
+	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol(i.first, param_type));
     }
 
-    FunctionType *function_type = new FunctionType(dynamic_cast<Type*>(return_type), params_types);
+    FunctionType *function_type = new FunctionType(return_type, params_types);
 
     static_cast<FunctionSymbol*>(definedSymbol)->setType(function_type);
 

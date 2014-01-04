@@ -217,13 +217,13 @@ TypeInfo Parser::type_info()
 {
     string type_name = id();
 
-    bool isRef = false;
+    bool is_ref = false;
     
     if ( getTokenType(1) == TokenType::REF )
     {
-	isRef = true;
+	is_ref = true;
 	match(TokenType::REF);
     }
 
-    return TypeInfo(type_name, isRef);
+    return TypeInfo(type_name, is_ref);
 }

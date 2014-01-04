@@ -12,12 +12,22 @@ void VariableDeclarationNode::build_scope()
 
 void VariableDeclarationNode::define()
 {
-    Symbol *type = scope->resolve(type_info.type_name);
-
-    if ( type == nullptr || dynamic_cast<Type*>(type) == nullptr )
-	throw SemanticError("No such type " + type->getName());
+    string type_name = type_info.type_name;
     
-    static_cast<VariableSymbol*>(definedSymbol)->setType(dynamic_cast<Type*>(type));
+    Symbol *type = scope->resolve(type_name);
+
+    if ( type == nullptr )
+	throw SemanticError("No such symbol " + type_name);
+
+    Type *var_type = dynamic_cast<Type*>(type);
+
+    if ( var_type == nullptr )
+	throw SemanticError(type_name + " is not a type");
+
+    if ( type_info.is_ref )
+	var_type = new ReferenceType(var_type);
+    
+    static_cast<VariableSymbol*>(definedSymbol)->setType(var_type);
 
     scope->define(definedSymbol);
 }

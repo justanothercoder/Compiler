@@ -10,6 +10,9 @@ public:
     ReferenceType(Type *referred_type);
 
     Type* getReferredType();
+
+    virtual string getName();
+    virtual int getSize();
     
 private:
     

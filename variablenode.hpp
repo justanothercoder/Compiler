@@ -7,6 +7,7 @@
 #include "overloadedfunctiontype.hpp"
 #include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
+#include "referencetype.hpp"
 
 class VariableNode : public ExprNode
 {

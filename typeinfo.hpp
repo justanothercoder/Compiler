@@ -7,10 +7,10 @@ using std::string;
 
 struct TypeInfo
 {
-    TypeInfo(string type_name, bool isRef);
+    TypeInfo(string type_name, bool is_ref);
     
     const string type_name;
-    const bool isRef;
+    const bool is_ref;
 };
 
 #endif

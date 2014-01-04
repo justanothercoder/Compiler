@@ -5,6 +5,7 @@
 #include "variablesymbol.hpp"
 #include "codegen.hpp"
 #include "typeinfo.hpp"
+#include "referencetype.hpp"
 
 class VariableDeclarationNode : public DeclarationNode
 {
