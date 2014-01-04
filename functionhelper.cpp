@@ -7,7 +7,7 @@ bool FunctionHelper::isCompatible(FunctionType *ft, const vector<Type*>& params_
     
     for ( int i = 0; i < static_cast<int>(params_type.size()); ++i )
     {
-	if ( ft->getParamType(i) != params_type[i] )
+	if ( !TypeHelper::isConvertable(params_type[i], ft->getParamType(i)) )
 	    return false;
     }
 

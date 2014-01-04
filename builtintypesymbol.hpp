@@ -11,11 +11,17 @@ public:
     BuiltInTypeSymbol(string name, int size);
     
     virtual string getName();
-    virtual int getSize();    
+    virtual int getSize();
+
+    virtual Scope* getScope();
+    virtual void setScope(Scope *scope);    
 
 private:
-
+    
+    string name;
     int size;
+    Scope *symbol_scope;
+    
 };
 
 #endif

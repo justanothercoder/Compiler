@@ -7,9 +7,6 @@
 class TypedSymbol : public Symbol
 {
 public:
-
-    TypedSymbol(string name);
-    
     virtual Type* getType() = 0;
 };
 

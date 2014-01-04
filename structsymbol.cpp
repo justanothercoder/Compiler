@@ -1,6 +1,6 @@
 #include "structsymbol.hpp"
 
-StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : Symbol(name), enclosing_scope(enclosing_scope)
+StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope)
 {
     type_size = 0;
 }
@@ -70,4 +70,14 @@ int StructSymbol::getScopeSize()
 string StructSymbol::getScopeName()
 {
     return scope_name;
+}
+
+Scope* StructSymbol::getScope()
+{
+    return symbol_scope;
+}
+
+void StructSymbol::setScope(Scope *scope)
+{
+    symbol_scope = scope;
 }

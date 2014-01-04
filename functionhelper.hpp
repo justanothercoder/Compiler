@@ -3,6 +3,7 @@
 
 #include <set>
 
+#include "typehelper.hpp"
 #include "functiontype.hpp"
 
 using std::set;

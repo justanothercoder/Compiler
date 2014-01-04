@@ -14,7 +14,16 @@ public:
 
     void setType(Type *t);
 
+    virtual Scope* getScope();
+    virtual void setScope(Scope *scope);
+
+    virtual string getName();
+
 private:
+
+    string name;
+
+    Scope *symbol_scope;    
 
     Type *type;
 };

@@ -7,7 +7,7 @@ VariableNode::VariableNode(string name) : name(name)
 
 Type* VariableNode::getType()
 {
-    return variable->getType();
+    return TypeHelper::getReferenceType(variable->getType());
 }
 
 void VariableNode::check()

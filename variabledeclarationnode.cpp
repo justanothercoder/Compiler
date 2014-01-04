@@ -25,7 +25,7 @@ void VariableDeclarationNode::define()
 	throw SemanticError(type_name + " is not a type");
 
     if ( type_info.is_ref )
-	var_type = new ReferenceType(var_type);
+	var_type = TypeHelper::getReferenceType(var_type);
     
     static_cast<VariableSymbol*>(definedSymbol)->setType(var_type);
 

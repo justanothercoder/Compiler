@@ -32,7 +32,7 @@ void AssignmentNode::check()
     auto overloads = FunctionHelper::getBestOverload(static_cast<OverloadedFunctionType*>(static_cast<TypedSymbol*>(assignment)->getType())->overloads, {lhs->getType(), rhs->getType()});
 
     if ( overloads.empty() )
-	throw SemanticError("No viable overload for operator=");
+	throw SemanticError("No viable overload for operator= with " + lhs->getType()->getName() + " and " + rhs->getType()->getName() + " arguments.");
 
     resolved_function_symbol = static_cast<OverloadedFunctionType*>(static_cast<TypedSymbol*>(assignment)->getType())->symbols[*std::begin(overloads)];
 }

@@ -7,20 +7,17 @@
 
 using std::string;
 
+class Scope;
+
 class Symbol
 {
 public:
 
     virtual ~Symbol();
     
-    Symbol(string name);
-
-    virtual string getName();
-    
-protected:
-
-    string name;
-    
+    virtual string getName() = 0;
+    virtual Scope* getScope() = 0;
+    virtual void setScope(Scope *scope) = 0;    
 };
 
 #endif

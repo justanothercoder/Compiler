@@ -40,10 +40,17 @@ public:
     void recalc_scope_address();
 
     bool isOperator();
+
+    virtual Scope* getScope();
+    virtual void setScope(Scope *scope);    
+
+    virtual string getName();
     
 private:
 
     int scope_address, scope_size;
+    
+    string name;
     
     FunctionType *function_type;
 
@@ -56,6 +63,8 @@ private:
     string scope_name;
 
     bool is_operator;
+
+    Scope *symbol_scope;
 };
 
 #endif
