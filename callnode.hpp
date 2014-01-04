@@ -6,7 +6,8 @@
 
 #include "exprnode.hpp"
 #include "functionhelper.hpp"
-#include "overloadedfunctiontype.hpp"
+#include "overloadedfunctiontypeinfo.hpp"
+#include "overloadedfunctionsymbol.hpp"
 
 using std::vector;
 
@@ -25,10 +26,10 @@ public:
     
 private:
 
-    FunctionType *resolved_function_type;
-    
     ExprNode *caller;
     vector<ExprNode*> params;
+
+    FunctionTypeInfo resolved_function_type_info;    
 };
 
 #endif

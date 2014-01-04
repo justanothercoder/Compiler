@@ -43,14 +43,8 @@ DeclarationNode* Parser::declaration()
 DeclarationNode* Parser::variableDecl()
 {
     match(TokenType::VAR);
-
-    string variable_name = id();
-
-    match(TokenType::COLON);
-
-    string type_name = id();
-
-    return new VariableDeclarationNode(variable_name, type_name);
+    auto var = var_and_type();
+    return new VariableDeclarationNode(var.first, var.second);
 }
 
 DeclarationNode* Parser::structDecl()
@@ -77,29 +71,18 @@ DeclarationNode* Parser::functionDecl()
 
     string function_name = id();
 
-    vector< std::pair<string, string> > params;
+    vector< std::pair<string, TypeInfo> > params;
     
     match(TokenType::LPAREN);
 
     if ( getTokenType(1) != TokenType::RPAREN )
     {
-	string param_name, type_name;
-
-	param_name = id();
-	match(TokenType::COLON);
-	type_name = id();
-
-	params.push_back({param_name, type_name});
+	params.push_back(var_and_type());
 	
 	while ( getTokenType(1) != TokenType::RPAREN )
 	{
-	    match(TokenType::COMMA);
-	    
-	    param_name = id();
-	    match(TokenType::COLON);
-	    type_name = id();		    
-
-	    params.push_back({param_name, type_name});
+	    match(TokenType::COMMA);	   
+	    params.push_back(var_and_type());
 	}
     }
 
@@ -107,7 +90,7 @@ DeclarationNode* Parser::functionDecl()
 
     match(TokenType::COLON);
 
-    string return_type_name = id();    
+    TypeInfo return_type = type_info();
 
     vector < AST* > statements;
     
@@ -118,7 +101,7 @@ DeclarationNode* Parser::functionDecl()
 
     match(TokenType::RBRACE);
 
-    return new FunctionDeclarationNode(function_name, params, return_type_name, statements);
+    return new FunctionDeclarationNode(function_name, params, return_type, statements);
 }
 
 string Parser::id()
@@ -150,6 +133,13 @@ ExprNode* Parser::primary()
 {
     if ( getTokenType(1) == TokenType::NUMBER )
 	return literal();
+    else if ( getTokenType(1) == TokenType::LPAREN )
+    {
+	match(TokenType::LPAREN);
+	ExprNode *expr = expression();	
+	match(TokenType::RPAREN);
+	return expr;
+    }
     else
 	return variable();        
 }
@@ -219,4 +209,28 @@ bool Parser::tryAssignment()
     release();
 
     return success;
+}
+
+pair<string, TypeInfo> Parser::var_and_type()
+{
+    string name = id();
+
+    match(TokenType::COLON);
+
+    return {name, type_info()};
+}
+
+TypeInfo Parser::type_info()
+{
+    string type_name = id();
+
+    bool is_ref = false;
+    
+    if ( getTokenType(1) == TokenType::REF )
+    {
+	is_ref = true;
+	match(TokenType::REF);
+    }
+
+    return TypeInfo(type_name, is_ref);
 }

@@ -32,17 +32,27 @@ public:
     virtual int getScopeSize();
 
     virtual string getScopeName();
+
+    virtual Scope* getScope();
+    virtual void setScope(Scope *scope);    
     
 private:
 
     map<ExprNode*, Type*> type_hints;
     map<string, Symbol*> members;
+    map<VariableSymbol*, int> addresses;
+
+    string name;
     
     Scope *enclosing_scope;
     
     int type_size;
 
     string scope_name;
+
+    Scope *symbol_scope;
+
+    int scope_address;
 };
 		     
 #endif

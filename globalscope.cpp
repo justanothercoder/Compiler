@@ -22,17 +22,25 @@ void GlobalScope::define(Symbol *sym)
 {
     if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
     {
-	if ( table[sym->getName()] == nullptr )
-	    table[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionType({ }));
+	auto it = table.find(sym->getName());
+	
+	if ( it == std::end(table) )
+	    table[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionSymbol(sym->getName(), OverloadedFunctionTypeInfo({ })));
 
-	if ( dynamic_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType()) == nullptr )
+	Symbol *res_sym = table[sym->getName()];	
+
+	if ( dynamic_cast<VariableSymbol*>(res_sym) == nullptr || dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(res_sym)->getType()) == nullptr )
+	    throw SemanticError(sym->getName() + " is already defined.");
+
+	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
+	
+	if ( ov_func == nullptr )
 	    throw SemanticError(sym->getName() + " is already defined as not function");
-	
-	OverloadedFunctionType *ot = static_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType());
-	
-	FunctionType *ft = static_cast<FunctionType*>(static_cast<FunctionSymbol*>(sym)->getType());
-	ot->overloads.insert(ft);
-	ot->symbols[ft] = static_cast<FunctionSymbol*>(sym);
+       	
+	FunctionTypeInfo func_type_info = static_cast<FunctionSymbol*>(sym)->getTypeInfo();
+
+	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType());
+	ofs->addOverload(func_type_info, static_cast<FunctionSymbol*>(sym));
     }
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {
@@ -58,7 +66,7 @@ int GlobalScope::getAddress(VariableSymbol *sym)
     auto it = addresses.find(sym);
 
     if ( it == std::end(addresses) )
-	throw SemanticError("No such symbol " + sym->getName());
+	throw SemanticError("No such symbol '" + sym->getName() + "'");
 
     return it->second;   
 }

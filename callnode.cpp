@@ -1,13 +1,13 @@
 #include "callnode.hpp"
 
-CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params)
+CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), resolved_function_type_info(nullptr, { })
 {
     
 }
     
 Type* CallNode::getType()
 {
-    return resolved_function_type->getReturnType();
+    return resolved_function_type_info.getReturnType();
 }
 
 bool CallNode::isLeftValue()
@@ -19,7 +19,13 @@ void CallNode::check()
 {
     caller->check();   
 
-    if ( dynamic_cast<OverloadedFunctionType*>(caller->getType()) == nullptr )
+    Type *caller_type = caller->getType();
+    while ( dynamic_cast<ReferenceType*>(caller_type) )
+	caller_type = static_cast<ReferenceType*>(caller_type)->getReferredType();
+    
+    OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(caller_type);
+    
+    if ( ov_func == nullptr )
 	throw SemanticError("caller is not a function");
 
     vector<Type*> params_types;
@@ -30,31 +36,45 @@ void CallNode::check()
 	params_types.push_back(i->getType());
     }
 
-    auto overloads = FunctionHelper::getBestOverload(static_cast<OverloadedFunctionType*>(caller->getType())->overloads, params_types);
+    auto overloads = FunctionHelper::getBestOverload(ov_func->getTypeInfo().overloads, params_types);
 
     if ( overloads.empty() )
-	throw SemanticError("No viable overload");
+	throw SemanticError("No viable overload of '" + ov_func->getName() + "'");
 
-    resolved_function_type = *std::begin(overloads);
+    resolved_function_type_info = *std::begin(overloads);
 
-    scope->setTypeHint(caller, resolved_function_type);    
+    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= 0; --i )
+    {
+	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) && !params[i]->isLeftValue() )
+	    throw SemanticError("parameter is not an lvalue.");
+    }    
+    
+    scope->setTypeHint(caller, ov_func);
 }
 
 void CallNode::gen()
 {
     int paramsSize = 0;
     
-    for ( int i = resolved_function_type->getNumberOfParams() - 1; i >= 0; --i )
+    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= 0; --i )
     {
 	params[i]->gen();
-	for ( int j = 0; j < resolved_function_type->getParamType(i)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) )
+	{	    
+	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rax");
+	    paramsSize += sizeof(int*);
+	}
+	else
 	{
-	    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rbx");
+	    for ( int j = 0; j < resolved_function_type_info.getParamType(i)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+	    {	    
+		CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
+		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rbx");
+	    }
 	}
     }
 
-    CodeGen::emit("sub rsp, " + std::to_string(paramsSize));
+    CodeGen::emit("sub rsp, " + std::to_string(paramsSize - sizeof(int*)));
     
     caller->gen();
     CodeGen::emit("call rax");
