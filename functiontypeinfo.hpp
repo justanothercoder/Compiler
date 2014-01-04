@@ -1,5 +1,5 @@
-#ifndef _FUNCTIONTYPE_HPP_
-#define _FUNCTIONTYPE_HPP_
+#ifndef _FUNCTIONTYPEINFO_HPP_
+#define _FUNCTIONTYPEINFO_HPP_
 
 #include <vector>
 
@@ -7,14 +7,11 @@
 
 using std::vector;
 
-class FunctionType : public Type
+class FunctionTypeInfo
 {
 public:
 
-    FunctionType(Type *return_type, const vector<Type*>& params_types);
-
-    virtual string getName();
-    virtual int getSize();    
+    FunctionTypeInfo(Type *return_type, const vector<Type*>& params_types);
 
     Type* getReturnType();
     Type* getParamType(int i);
@@ -25,8 +22,8 @@ private:
 
     Type *return_type;
     vector<Type*> params_types;
-
-    int type_size;
 };
+
+bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs);
 
 #endif

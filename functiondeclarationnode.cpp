@@ -7,7 +7,7 @@ FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair
 
 void FunctionDeclarationNode::build_scope()
 {
-    definedSymbol = new FunctionSymbol(name, nullptr, scope);    
+    definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }), scope);    
     for ( auto i : statements )
     {
 	i->scope = static_cast<FunctionSymbol*>(definedSymbol);
@@ -50,9 +50,9 @@ void FunctionDeclarationNode::define()
 	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol(i.first, param_type));
     }
 
-    FunctionType *function_type = new FunctionType(return_type, params_types);
+    FunctionTypeInfo function_type_info = FunctionTypeInfo(return_type, params_types);
 
-    static_cast<FunctionSymbol*>(definedSymbol)->setType(function_type);
+    static_cast<FunctionSymbol*>(definedSymbol)->setTypeInfo(function_type_info);
 
     scope->define(definedSymbol);
     

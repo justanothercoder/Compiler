@@ -4,7 +4,6 @@
 #include <map>
 
 #include "referencetype.hpp"
-#include "functiontype.hpp"
 
 using std::map;
 

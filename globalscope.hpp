@@ -5,8 +5,9 @@
 
 #include "scope.hpp"
 #include "functionsymbol.hpp"
-#include "overloadedfunctiontype.hpp"
+#include "overloadedfunctiontypeinfo.hpp"
 #include "variablesymbol.hpp"
+#include "overloadedfunctionsymbol.hpp"
 
 using std::map;
 

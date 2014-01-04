@@ -40,7 +40,7 @@ int main()
 	auto int_ref = TypeHelper::getReferenceType(int_type);
 	
 	root->scope->define(int_type);
-	root->scope->define(new FunctionSymbol("operator=", new FunctionType(int_ref, {int_ref, int_type}), root->scope, true));
+	root->scope->define(new FunctionSymbol("operator=", FunctionTypeInfo(int_ref, {int_ref, int_type}), root->scope, true));
 
 	CodeGen::emit("section .text");
 	CodeGen::emit("global _start");

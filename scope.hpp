@@ -2,7 +2,7 @@
 #define _SCOPE_HPP_
 
 #include "symbol.hpp"
-#include "functiontype.hpp"
+#include "type.hpp"
 
 class ExprNode;
 class VariableSymbol;

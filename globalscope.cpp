@@ -23,16 +23,18 @@ void GlobalScope::define(Symbol *sym)
     if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
     {
 	if ( table[sym->getName()] == nullptr )
-	    table[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionType({ }));
+	    table[sym->getName()] = new OverloadedFunctionSymbol(sym->getName(), OverloadedFunctionTypeInfo({ }));
 
-	if ( dynamic_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType()) == nullptr )
+	OverloadedFunctionSymbol* ov_func = dynamic_cast<OverloadedFunctionSymbol*>(table[sym->getName()]);
+	
+	if ( ov_func == nullptr )
 	    throw SemanticError(sym->getName() + " is already defined as not function");
 	
-	OverloadedFunctionType *ot = static_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType());
+	OverloadedFunctionTypeInfo type_info = ov_func->getTypeInfo();
 	
-	FunctionType *ft = static_cast<FunctionType*>(static_cast<FunctionSymbol*>(sym)->getType());
-	ot->overloads.insert(ft);
-	ot->symbols[ft] = static_cast<FunctionSymbol*>(sym);
+	FunctionTypeInfo func_type_info = static_cast<FunctionSymbol*>(sym)->getTypeInfo();
+	type_info.overloads.insert(func_type_info);
+	type_info.symbols[func_type_info] = static_cast<FunctionSymbol*>(sym);
     }
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {

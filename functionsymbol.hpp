@@ -4,26 +4,25 @@
 #include <map>
 
 #include "typedsymbol.hpp"
-#include "overloadedfunctiontype.hpp"
+#include "overloadedfunctiontypeinfo.hpp"
 #include "variablesymbol.hpp"
 #include "scope.hpp"
+#include "overloadedfunctionsymbol.hpp"
 
 using std::map;
 using std::pair;
 
-class FunctionSymbol : public TypedSymbol, public Scope
+class FunctionSymbol : public Symbol, public Scope, public Type
 {
 public:
 
-    FunctionSymbol(string name, FunctionType *function_type, Scope *enclosing_scope, bool is_operator = false);
+    FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, bool is_operator = false);
 
     virtual Scope* getEnclosingScope();
     virtual Symbol* resolve(string name);
     virtual void define(Symbol *sym);
 
-    virtual Type* getType();
-
-    void setType(FunctionType *function_type);
+    void setTypeInfo(FunctionTypeInfo function_type_info);
 
     virtual Type* getTypeHint(ExprNode *expr);
     virtual void setTypeHint(ExprNode *expr, Type *type); 
@@ -45,6 +44,9 @@ public:
     virtual void setScope(Scope *scope);    
 
     virtual string getName();
+    virtual int getSize();
+    
+    FunctionTypeInfo getTypeInfo();
     
 private:
 
@@ -52,7 +54,7 @@ private:
     
     string name;
     
-    FunctionType *function_type;
+    FunctionTypeInfo function_type_info;
 
     Scope *enclosing_scope;
 

@@ -3,8 +3,7 @@
 
 #include "exprnode.hpp"
 #include "typedsymbol.hpp"
-#include "functiontype.hpp"
-#include "overloadedfunctiontype.hpp"
+#include "overloadedfunctiontypeinfo.hpp"
 #include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
 #include "typehelper.hpp"

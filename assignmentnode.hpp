@@ -2,7 +2,7 @@
 #define _ASSIGNMENTNODE_HPP_
 
 #include "exprnode.hpp"
-#include "overloadedfunctiontype.hpp"
+#include "overloadedfunctiontypeinfo.hpp"
 #include "typedsymbol.hpp"
 #include "functionhelper.hpp"
 #include "functionsymbol.hpp"
