@@ -9,3 +9,13 @@ Type* ReferenceType::getReferredType()
 {
     return referred_type;
 }
+
+string ReferenceType::getName()
+{
+    return referred_type->getName() + "@ref";
+}
+
+int ReferenceType::getSize()
+{
+    return sizeof(int*);
+}

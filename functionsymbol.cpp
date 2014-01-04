@@ -1,6 +1,6 @@
 #include "functionsymbol.hpp"
 
-FunctionSymbol::FunctionSymbol(string name, FunctionType *function_type, Scope *enclosing_scope, bool is_operator) : TypedSymbol(name), function_type(function_type), enclosing_scope(enclosing_scope), is_operator(is_operator)
+FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, bool is_operator) : name(name), function_type_info(function_type_info), enclosing_scope(enclosing_scope), is_operator(is_operator)
 {
     scope_size = 0;
     
@@ -29,16 +29,18 @@ void FunctionSymbol::define(Symbol *sym)
     if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
     {
 	if ( members[sym->getName()] == nullptr )
-	    members[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionType({ }));
+	    members[sym->getName()] = new OverloadedFunctionSymbol(sym->getName(), OverloadedFunctionTypeInfo({ }));
 
-	if ( dynamic_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(members[sym->getName()])->getType()) == nullptr )
+	OverloadedFunctionSymbol* ov_func = dynamic_cast<OverloadedFunctionSymbol*>(members[sym->getName()]);
+	
+	if ( ov_func == nullptr )
 	    throw SemanticError(sym->getName() + " is not a function");
 	
-	OverloadedFunctionType *ot = static_cast<OverloadedFunctionType*>(static_cast<VariableSymbol*>(members[sym->getName()])->getType());
+	OverloadedFunctionTypeInfo type_info = ov_func->getTypeInfo();
 	
-	FunctionType *ft = static_cast<FunctionType*>(static_cast<FunctionSymbol*>(sym)->getType());
-	ot->overloads.insert(ft);
-	ot->symbols[ft] = static_cast<FunctionSymbol*>(sym);
+	FunctionTypeInfo func_type_info = static_cast<FunctionSymbol*>(sym)->getTypeInfo();
+	type_info.overloads.insert(func_type_info);
+	type_info.symbols[func_type_info] = static_cast<FunctionSymbol*>(sym);
     }
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {
@@ -49,14 +51,9 @@ void FunctionSymbol::define(Symbol *sym)
 	members[sym->getName()] = sym;
 }
 
-Type* FunctionSymbol::getType()
+void FunctionSymbol::setTypeInfo(FunctionTypeInfo function_type_info)
 {
-    return function_type;
-}
-
-void FunctionSymbol::setType(FunctionType *function_type)
-{
-    this->function_type = function_type;
+    this->function_type_info = function_type_info;
 }
 
 Type* FunctionSymbol::getTypeHint(ExprNode *expr)
@@ -73,8 +70,8 @@ string FunctionSymbol::getTypedName()
 {
     string res = name;
 
-    for ( int i = 0; i < function_type->getNumberOfParams(); ++i )
-	res += "_" + function_type->getParamType(i)->getName();
+    for ( int i = 0; i < function_type_info.getNumberOfParams(); ++i )
+	res += "_" + function_type_info.getParamType(i)->getName();
 
     return res;
 }
@@ -117,4 +114,29 @@ void FunctionSymbol::recalc_scope_address()
 bool FunctionSymbol::isOperator()
 {
     return is_operator;
+}
+
+Scope* FunctionSymbol::getScope()
+{
+    return symbol_scope;
+}
+
+void FunctionSymbol::setScope(Scope *scope)
+{
+    symbol_scope = scope;
+}
+
+string FunctionSymbol::getName()
+{
+    return name;
+}
+
+int FunctionSymbol::getSize()
+{
+    return sizeof(int*);
+}
+
+FunctionTypeInfo FunctionSymbol::getTypeInfo()
+{
+    return function_type_info;
 }

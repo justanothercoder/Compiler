@@ -1,22 +1,22 @@
 #include "functionhelper.hpp"
 
-bool FunctionHelper::isCompatible(FunctionType *ft, const vector<Type*>& params_type)
+bool FunctionHelper::isCompatible(FunctionTypeInfo ft, const vector<Type*>& params_type)
 {
-    if ( ft->getNumberOfParams() != static_cast<int>(params_type.size()) )
+    if ( ft.getNumberOfParams() != static_cast<int>(params_type.size()) )
 	return false;
     
     for ( int i = 0; i < static_cast<int>(params_type.size()); ++i )
     {
-	if ( ft->getParamType(i) != params_type[i] )
+	if ( !TypeHelper::isConvertable(params_type[i], ft.getParamType(i)) )
 	    return false;
     }
 
     return true;
 }
 
-set<FunctionType*> FunctionHelper::getBestOverload(const set<FunctionType*>& selection, const vector<Type*>& params_type)
+set<FunctionTypeInfo> FunctionHelper::getBestOverload(const set<FunctionTypeInfo>& selection, const vector<Type*>& params_type)
 {
-    set<FunctionType*> possible = selection;
+    set<FunctionTypeInfo> possible = selection;
 
     for ( auto i = std::begin(possible); i != std::end(possible); )
     {

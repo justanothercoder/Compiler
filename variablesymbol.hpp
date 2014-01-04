@@ -1,10 +1,10 @@
 #ifndef _VARIABLESYMBOL_HPP_
 #define _VARIABLESYMBOL_HPP_
 
-#include "typedsymbol.hpp"
+#include "symbol.hpp"
 #include "type.hpp"
 
-class VariableSymbol : public TypedSymbol
+class VariableSymbol : public Symbol
 {
 public:
 
@@ -14,9 +14,22 @@ public:
 
     void setType(Type *t);
 
+    virtual Scope* getScope();
+    virtual void setScope(Scope *scope);
+
+    virtual string getName();
+
+    bool isParam();
+    
 private:
 
+    string name;
+
+    Scope *symbol_scope;    
+
     Type *type;
+
+    bool is_param;
 };
 
 #endif

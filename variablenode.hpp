@@ -2,11 +2,10 @@
 #define _VARIABLENODE_HPP_
 
 #include "exprnode.hpp"
-#include "typedsymbol.hpp"
-#include "functiontype.hpp"
-#include "overloadedfunctiontype.hpp"
+#include "overloadedfunctiontypeinfo.hpp"
 #include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
+#include "typehelper.hpp"
 
 class VariableNode : public ExprNode
 {
@@ -26,7 +25,7 @@ private:
 
     string name;
     
-    TypedSymbol *variable;
+    VariableSymbol *variable;
 };
 
 #endif
