@@ -60,7 +60,7 @@ void CallNode::gen()
 	}
     }
 
-    CodeGen::emit("sub rsp, " + std::to_string(paramsSize));
+    CodeGen::emit("sub rsp, " + std::to_string(paramsSize - sizeof(int*)));
     
     caller->gen();
     CodeGen::emit("call rax");

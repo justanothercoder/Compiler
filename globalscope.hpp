@@ -9,6 +9,8 @@
 #include "variablesymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 
+#include "codegen.hpp"
+
 using std::map;
 
 class GlobalScope : public Scope

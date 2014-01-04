@@ -19,6 +19,8 @@ public:
 
     virtual string getName();
 
+    bool isParam();
+    
 private:
 
     string name;
@@ -26,6 +28,8 @@ private:
     Scope *symbol_scope;    
 
     Type *type;
+
+    bool is_param;
 };
 
 #endif

@@ -29,7 +29,7 @@ void VariableNode::gen()
     
     if ( dynamic_cast<ReferenceType*>(var_type) )
     {
-	CodeGen::emit("mov eax, [rbp - " + std::to_string(scope->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
+	CodeGen::emit("mov rax, [rbp - " + std::to_string(scope->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
     }    
     else if ( dynamic_cast<OverloadedFunctionSymbol*>(variable->getType()) )
     {
@@ -50,11 +50,11 @@ void VariableNode::gen()
 	    variable = new VariableSymbol(ov_func->getName(), ov_func_type_info.symbols.begin()->second);
 	}
 
-	CodeGen::emit("lea eax, [" + static_cast<FunctionSymbol*>(variable->getType())->getTypedName() + "]");
+	CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(variable->getType())->getTypedName() + "]");
     }
     else
     {
-	CodeGen::emit("lea eax, [rbp - " + std::to_string(scope->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
+	CodeGen::emit("lea rax, [rbp - " + std::to_string(scope->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
     }
 }
 

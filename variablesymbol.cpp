@@ -29,3 +29,8 @@ string VariableSymbol::getName()
 {
     return name;
 }
+
+bool VariableSymbol::isParam()
+{
+    return is_param;
+}

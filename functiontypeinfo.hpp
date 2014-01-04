@@ -13,10 +13,10 @@ public:
 
     FunctionTypeInfo(Type *return_type, const vector<Type*>& params_types);
 
-    Type* getReturnType();
-    Type* getParamType(int i);
+    Type* getReturnType() const;
+    Type* getParamType(int i) const;
 
-    int getNumberOfParams();
+    int getNumberOfParams() const;
     
 private:
 

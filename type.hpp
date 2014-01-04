@@ -11,7 +11,6 @@ public:
 
     virtual string getName() = 0;
     virtual int getSize() = 0;
-   
 };
 
 #endif

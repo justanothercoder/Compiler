@@ -28,8 +28,11 @@ void AssignmentNode::check()
 
     if ( assignment == nullptr )
 	throw SemanticError("No such operator =");
+
+    if ( dynamic_cast<VariableSymbol*>(assignment) == nullptr )
+	throw SemanticError("operator= is not a function or variable");
     
-    OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(assignment);
+    OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(assignment)->getType());
 
     if ( ov_func == nullptr )
 	throw SemanticError("error");
@@ -62,7 +65,7 @@ void AssignmentNode::gen()
 	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rbx");
     }
     
-    CodeGen::emit("sub rsp, " + std::to_string(paramsSize));
+    CodeGen::emit("sub rsp, " + std::to_string(paramsSize - sizeof(int*)));
 
     string call_name = resolved_function_symbol->getEnclosingScope()->getScopeName() + "_";
 
