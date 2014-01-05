@@ -24,6 +24,8 @@ AST* Parser::statement()
     }
     else if ( getTokenType(1) == TokenType::STRUCT || getTokenType(1) == TokenType::DEF || getTokenType(1) == TokenType::VAR )    
 	return declaration();
+    else if ( getTokenType(1) == TokenType::RETURN )
+	return return_stat();
     else if ( tryAssignment() )
 	return assignment();
     else
@@ -189,6 +191,14 @@ AST* Parser::assignment()
     ExprNode *rhs = expression();
 
     return new AssignmentNode(lhs, rhs);
+}
+
+AST* Parser::return_stat()
+{
+    match(TokenType::RETURN);
+
+    ExprNode *expr = expression();
+    return new ReturnNode(expr);
 }
 
 bool Parser::tryAssignment()

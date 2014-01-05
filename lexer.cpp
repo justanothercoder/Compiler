@@ -68,6 +68,7 @@ Token Lexer::getToken()
 	    if      ( buf == "struct" ) token_type = TokenType::STRUCT;
 	    else if ( buf == "var"    ) token_type = TokenType::VAR;
 	    else if ( buf == "def"    ) token_type = TokenType::DEF;
+	    else if ( buf == "return" ) token_type = TokenType::RETURN;
 	    else                        token_type = TokenType::ID;
 	    
 	    return Token(token_type, buf, l, s);

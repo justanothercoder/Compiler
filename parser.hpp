@@ -9,6 +9,7 @@
 
 #include "emptystatementnode.hpp"
 #include "assignmentnode.hpp"
+#include "returnnode.hpp"
 
 #include "callnode.hpp"
 #include "variablenode.hpp"
@@ -32,7 +33,8 @@ private:
     DeclarationNode* structDecl();
     DeclarationNode* variableDecl();
     DeclarationNode* functionDecl();
-    
+
+    AST* return_stat();
     AST* statement();
     AST* assignment();
 

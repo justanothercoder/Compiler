@@ -8,6 +8,7 @@ string to_string(TokenType tt)
     case TokenType::ID:        return "id";
     case TokenType::STRUCT:    return "struct";
     case TokenType::NUMBER:    return "number";
+    case TokenType::RETURN:    return "return";
     case TokenType::LPAREN:    return "(";
     case TokenType::RPAREN:    return ")";
     case TokenType::LBRACE:    return "{";
