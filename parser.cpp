@@ -26,6 +26,8 @@ AST* Parser::statement()
 	return declaration();
     else if ( getTokenType(1) == TokenType::RETURN )
 	return return_stat();
+    else if ( getTokenType(1) == TokenType::IF )
+	return if_stat();
     else if ( tryAssignment() )
 	return assignment();
     else
@@ -199,6 +201,61 @@ AST* Parser::return_stat()
 
     ExprNode *expr = expression();
     return new ReturnNode(expr);
+}
+
+AST* Parser::if_stat()
+{
+    match(TokenType::IF);
+
+    match(TokenType::LPAREN);
+    ExprNode *cond = expression();
+    match(TokenType::RPAREN);
+
+    AST *stats_true, *stats_false; 
+    
+    if ( getTokenType(1) == TokenType::LBRACE )
+    {
+	match(TokenType::LBRACE);
+
+	vector<AST*> statements;
+
+	while ( getTokenType(1) != TokenType::RBRACE )
+	    statements.push_back(statement());
+	
+	stats_true = new StatementNode(statements);
+	match(TokenType::RBRACE);
+    }
+    else
+    {
+	stats_true = new StatementNode({statement()});
+    }
+
+    if ( getTokenType(1) == TokenType::ELSE )
+    {
+	match(TokenType::ELSE);
+	if ( getTokenType(1) == TokenType::LBRACE )
+	{
+	    match(TokenType::LBRACE);
+
+	    vector<AST*> statements;
+
+	    while ( getTokenType(1) != TokenType::RBRACE )
+		statements.push_back(statement());
+	
+	    stats_false = new StatementNode(statements);
+	    match(TokenType::RBRACE);
+	}
+	else
+	{
+	    stats_false = new StatementNode({statement()});
+	}
+    }
+    else
+    {
+	stats_false = new StatementNode({});
+    }
+
+    return new IfNode(cond, stats_true, stats_false);
 }
 
 bool Parser::tryAssignment()

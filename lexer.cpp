@@ -69,6 +69,8 @@ Token Lexer::getToken()
 	    else if ( buf == "var"    ) token_type = TokenType::VAR;
 	    else if ( buf == "def"    ) token_type = TokenType::DEF;
 	    else if ( buf == "return" ) token_type = TokenType::RETURN;
+	    else if ( buf == "if"     ) token_type = TokenType::IF;
+	    else if ( buf == "else"   ) token_type = TokenType::ELSE;
 	    else                        token_type = TokenType::ID;
 	    
 	    return Token(token_type, buf, l, s);
