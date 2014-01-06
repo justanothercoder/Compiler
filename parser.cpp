@@ -50,7 +50,7 @@ DeclarationNode* Parser::variableDecl()
 {
     match(TokenType::VAR);
     auto var = var_and_type();
-    return new VariableDeclarationNode(var.first, var.second);
+    return new VariableDeclarationNode(var.first, var.second, false);
 }
 
 DeclarationNode* Parser::structDecl()
@@ -64,7 +64,24 @@ DeclarationNode* Parser::structDecl()
     vector<DeclarationNode*> struct_in;
     
     while ( getTokenType(1) != TokenType::RBRACE )
-	struct_in.push_back(declaration());
+    {
+	while ( getTokenType(1) == TokenType::SEMICOLON )
+	    match(TokenType::SEMICOLON);
+
+	if ( getTokenType(1) != TokenType::RBRACE )
+	{
+	    if ( getTokenType(1) == TokenType::VAR )
+	    {
+		match(TokenType::VAR);
+		auto var = var_and_type();
+		struct_in.push_back(new VariableDeclarationNode(var.first, var.second, true));
+	    }
+	    else
+	    {
+		struct_in.push_back(declaration());
+	    }
+	}
+    }
     
     match(TokenType::RBRACE);
 

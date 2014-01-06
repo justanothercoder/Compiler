@@ -11,7 +11,7 @@ class VariableDeclarationNode : public DeclarationNode
 {
 public:
 
-    VariableDeclarationNode(string name, TypeInfo type_info);
+    VariableDeclarationNode(string name, TypeInfo type_info, bool is_field = false);
 
     virtual void build_scope();    
     virtual void define();
@@ -22,6 +22,9 @@ private:
 
     string name;
     TypeInfo type_info;
+
+    bool is_field;
+    
 };
 
 #endif

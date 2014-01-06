@@ -1,6 +1,6 @@
 #include "variabledeclarationnode.hpp"
 
-VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info) : name(name), type_info(type_info)
+VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info, bool is_field) : name(name), type_info(type_info), is_field(is_field)
 {
     definedSymbol = new VariableSymbol(name, nullptr);
 }
@@ -24,5 +24,6 @@ void VariableDeclarationNode::check()
 
 void VariableDeclarationNode::gen()
 {
-    CodeGen::emit("sub rsp, " + std::to_string(static_cast<VariableSymbol*>(definedSymbol)->getType()->getSize()));
+    if ( !is_field )
+	CodeGen::emit("sub rsp, " + std::to_string(static_cast<VariableSymbol*>(definedSymbol)->getType()->getSize()));
 }
