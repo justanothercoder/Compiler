@@ -4,11 +4,13 @@
 #include "symbol.hpp"
 #include "type.hpp"
 
+enum class VariableSymbolType { SIMPLE, PARAM, FIELD };
+
 class VariableSymbol : public Symbol
 {
 public:
 
-    VariableSymbol(string name, Type *type, bool is_param = false);
+    VariableSymbol(string name, Type *type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
 
     virtual Type* getType();
 
@@ -20,7 +22,8 @@ public:
     virtual string getName();
 
     bool isParam();
-    
+    bool isField();
+       
 private:
 
     string name;
@@ -29,7 +32,7 @@ private:
 
     Type *type;
 
-    bool is_param;
+    VariableSymbolType sym_type;
 };
 
 #endif

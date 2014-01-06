@@ -7,10 +7,11 @@
 #include "scope.hpp"
 #include "type.hpp"
 #include "variablesymbol.hpp"
+#include "functionsymbol.hpp"
 
 using std::map;
 
-class StructSymbol : public Symbol, public Scope, public Type
+class StructSymbol : public Symbol, public BaseScope, public Type
 {
 public:
     
@@ -23,24 +24,16 @@ public:
     virtual string getName();
     virtual int getSize();
 
-    virtual Type* getTypeHint(ExprNode *expr);
-    virtual void setTypeHint(ExprNode *expr, Type *type); 
-
-    virtual int getAddress(VariableSymbol *sym);
-
-    virtual int getScopeAddress();
     virtual int getScopeSize();
-
+	
     virtual string getScopeName();
 
     virtual Scope* getScope();
     virtual void setScope(Scope *scope);    
-    
-private:
 
-    map<ExprNode*, Type*> type_hints;
-    map<string, Symbol*> members;
-    map<VariableSymbol*, int> addresses;
+    Symbol* resolveMember(string name);
+
+private:
 
     string name;
     
@@ -51,8 +44,6 @@ private:
     string scope_name;
 
     Scope *symbol_scope;
-
-    int scope_address;
 };
 		     
 #endif

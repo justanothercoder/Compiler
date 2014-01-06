@@ -1,6 +1,6 @@
 #include "variablesymbol.hpp"
 
-VariableSymbol::VariableSymbol(string name, Type *type, bool is_param) : name(name), type(type), is_param(is_param)
+VariableSymbol::VariableSymbol(string name, Type *type, VariableSymbolType sym_type) : name(name), type(type), sym_type(sym_type)
 {
     
 }
@@ -32,5 +32,10 @@ string VariableSymbol::getName()
 
 bool VariableSymbol::isParam()
 {
-    return is_param;
+    return sym_type == VariableSymbolType::PARAM;
+}
+
+bool VariableSymbol::isField()
+{
+    return sym_type == VariableSymbolType::FIELD;
 }

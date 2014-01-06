@@ -1,6 +1,6 @@
 #include "functionsymbol.hpp"
 
-FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, bool is_operator) : name(name), function_type_info(function_type_info), enclosing_scope(enclosing_scope), is_operator(is_operator)
+FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, bool is_operator, bool is_method) : name(name), function_type_info(function_type_info), enclosing_scope(enclosing_scope), is_operator(is_operator), is_method(is_method)
 {
     scope_size = 0;
     params_size = sizeof(int*);

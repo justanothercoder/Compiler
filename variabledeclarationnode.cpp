@@ -2,7 +2,7 @@
 
 VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info, bool is_field) : name(name), type_info(type_info), is_field(is_field)
 {
-    definedSymbol = new VariableSymbol(name, nullptr);
+    definedSymbol = new VariableSymbol(name, nullptr, (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE));
 }
 
 void VariableDeclarationNode::build_scope()

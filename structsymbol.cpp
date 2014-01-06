@@ -3,6 +3,9 @@
 StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope)
 {
     type_size = 0;
+    scope_size = 0;
+
+    scope_name = getEnclosingScope()->getScopeName() + "_" + name;
 }
 
 Scope* StructSymbol::getEnclosingScope()
@@ -12,8 +15,8 @@ Scope* StructSymbol::getEnclosingScope()
 
 Symbol* StructSymbol::resolve(string name)
 {
-    auto it = members.find(name);
-    if ( it == std::end(members) )
+    auto it = table.find(name);
+    if ( it == std::end(table) )
     {
 	if ( getEnclosingScope() )
 	    return getEnclosingScope()->resolve(name);
@@ -22,15 +25,52 @@ Symbol* StructSymbol::resolve(string name)
     return it->second;
 }
 
+Symbol* StructSymbol::resolveMember(string name)
+{
+    auto it = table.find(name);
+    if ( it == std::end(table) )
+	return nullptr;
+    return it->second;    
+}
+
 void StructSymbol::define(Symbol *sym)
 {
-    if ( members.find(name) == std::end(members) )
+    if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
     {
-	members[sym->getName()] = sym;
+	auto it = table.find(sym->getName());
+	
+	if ( it == std::end(table) )
+	    table[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionSymbol(sym->getName(), OverloadedFunctionTypeInfo({ })));
 
-	if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
-	    type_size += static_cast<VariableSymbol*>(sym)->getType()->getSize();
+	Symbol *res_sym = table[sym->getName()];	
+
+	if ( dynamic_cast<VariableSymbol*>(res_sym) == nullptr || dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(res_sym)->getType()) == nullptr )
+	    throw SemanticError(sym->getName() + " is already defined.");
+
+	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
+	
+	if ( ov_func == nullptr )
+	    throw SemanticError(sym->getName() + " is already defined as not function");
+       	
+	FunctionTypeInfo func_type_info = static_cast<FunctionSymbol*>(sym)->getTypeInfo();
+
+	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType());
+	ofs->addOverload(func_type_info, static_cast<FunctionSymbol*>(sym));
     }
+    else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
+    {
+	table[sym->getName()] = sym;
+
+	if ( !static_cast<VariableSymbol*>(sym)->isField() )
+	    throw SemanticError("internal error.");
+
+	addresses[static_cast<VariableSymbol*>(sym)] = scope_size;
+	scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize();
+
+	type_size += static_cast<VariableSymbol*>(sym)->getType()->getSize();
+    }
+    else
+	table[sym->getName()] = sym;
 }
 int StructSymbol::getSize()
 {
@@ -40,36 +80,6 @@ int StructSymbol::getSize()
 string StructSymbol::getName()
 {
     return name;
-}
-
-Type* StructSymbol::getTypeHint(ExprNode *expr)
-{
-    return type_hints[expr];
-}
-
-void StructSymbol::setTypeHint(ExprNode *expr, Type *type)
-{
-    type_hints[expr] = type;
-}
-
-int StructSymbol::getAddress(VariableSymbol *sym)
-{
-    auto it = addresses.find(sym);
-
-    if ( it == std::end(addresses) )
-    {
-	if ( getEnclosingScope() == nullptr )
-	    throw SemanticError("No such symbol " + sym->getName());
-
-	return getEnclosingScope()->getAddress(sym) - (scope_address - getEnclosingScope()->getScopeAddress());
-    }
-
-    return it->second;    
-}
-
-int StructSymbol::getScopeAddress()
-{
-    return scope_address;
 }
 
 int StructSymbol::getScopeSize()

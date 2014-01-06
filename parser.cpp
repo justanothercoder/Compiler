@@ -36,24 +36,24 @@ AST* Parser::statement()
 	return expression();
 }
 
-DeclarationNode* Parser::declaration()
+DeclarationNode* Parser::declaration(bool in_struct)
 {
     if ( getTokenType(1) == TokenType::STRUCT )
-	return structDecl();
+	return structDecl(in_struct);
     else if ( getTokenType(1) == TokenType::DEF )
-	return functionDecl();
+	return functionDecl(in_struct);
     else
-	return variableDecl();
+	return variableDecl(in_struct);
 }
 
-DeclarationNode* Parser::variableDecl()
+DeclarationNode* Parser::variableDecl(bool in_struct)
 {
     match(TokenType::VAR);
     auto var = var_and_type();
-    return new VariableDeclarationNode(var.first, var.second, false);
+    return new VariableDeclarationNode(var.first, var.second, in_struct);
 }
 
-DeclarationNode* Parser::structDecl()
+DeclarationNode* Parser::structDecl(bool in_struct)
 {
     match(TokenType::STRUCT);
 
@@ -69,18 +69,7 @@ DeclarationNode* Parser::structDecl()
 	    match(TokenType::SEMICOLON);
 
 	if ( getTokenType(1) != TokenType::RBRACE )
-	{
-	    if ( getTokenType(1) == TokenType::VAR )
-	    {
-		match(TokenType::VAR);
-		auto var = var_and_type();
-		struct_in.push_back(new VariableDeclarationNode(var.first, var.second, true));
-	    }
-	    else
-	    {
-		struct_in.push_back(declaration());
-	    }
-	}
+	    struct_in.push_back(declaration(true));
     }
     
     match(TokenType::RBRACE);
@@ -88,7 +77,7 @@ DeclarationNode* Parser::structDecl()
     return new StructDeclarationNode(struct_name, struct_in);
 }
 
-DeclarationNode* Parser::functionDecl()
+DeclarationNode* Parser::functionDecl(bool in_struct)
 {
     match(TokenType::DEF);
 
@@ -124,7 +113,7 @@ DeclarationNode* Parser::functionDecl()
 
     match(TokenType::RBRACE);
 
-    return new FunctionDeclarationNode(function_name, params, return_type, statements);
+    return new FunctionDeclarationNode(function_name, params, return_type, statements, in_struct);
 }
 
 string Parser::id()
@@ -171,25 +160,35 @@ ExprNode* Parser::unary_right()
 {
     ExprNode *res = primary();
 
-    while ( getTokenType(1) == TokenType::LPAREN )
+    while ( getTokenType(1) == TokenType::LPAREN || getTokenType(1) == TokenType::DOT )
     {
-	vector<ExprNode*> params;
-	
-	match(TokenType::LPAREN);
-
-	if ( getTokenType(1) != TokenType::RPAREN )
+	if ( getTokenType(1) == TokenType::LPAREN )
 	{
-	    params.push_back(expression());
-	    while ( getTokenType(1) == TokenType::COMMA )
+	    vector<ExprNode*> params;
+	
+	    match(TokenType::LPAREN);
+
+	    if ( getTokenType(1) != TokenType::RPAREN )
 	    {
-		match(TokenType::COMMA);
 		params.push_back(expression());
+		while ( getTokenType(1) == TokenType::COMMA )
+		{
+		    match(TokenType::COMMA);
+		    params.push_back(expression());
+		}
 	    }
+
+	    match(TokenType::RPAREN);
+
+	    res = new CallNode(res, params);
 	}
+	else
+	{
+	    match(TokenType::DOT);
+	    string member_name = id();
 
-	match(TokenType::RPAREN);
-
-	res = new CallNode(res, params);
+	    res = new DotNode(res, member_name);
+	}
     }
 
     return res;

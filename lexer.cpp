@@ -21,6 +21,7 @@ Token Lexer::getToken()
 	else if ( cur == '=' ) { consume(); return Token(TokenType::ASSIGN, "=", l, s); }
 	else if ( cur == '+' ) { consume(); return Token(TokenType::PLUS, "+", l, s); }
 	else if ( cur == '&' ) { consume(); return Token(TokenType::REF, "&", l, s); }
+	else if ( cur == '.' ) { consume(); return Token(TokenType::DOT, ".", l, s); }
 	else if ( cur == '/' )
 	{
 	    consume();

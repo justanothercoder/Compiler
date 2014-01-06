@@ -23,6 +23,7 @@ string to_string(TokenType tt)
     case TokenType::PLUS:      return "+";
     case TokenType::DIV:       return "/";
     case TokenType::REF:       return "&";
+    case TokenType::DOT:       return ".";
     case TokenType::VAR:       return "var";
     case TokenType::DEF:       return "def";
     }

@@ -6,6 +6,7 @@
 #include "declarationnode.hpp"
 #include "functionsymbol.hpp"
 #include "variablesymbol.hpp"
+#include "structsymbol.hpp"
 #include "typehelper.hpp"
 
 using std::vector;
@@ -15,7 +16,7 @@ class FunctionDeclarationNode : public DeclarationNode
 {
 public:
 
-    FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements);
+    FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements, bool is_method = false);
 
     virtual void build_scope();    
     virtual void define();
@@ -28,6 +29,7 @@ private:
     vector< pair<string, TypeInfo> > params;
     TypeInfo return_type_info;
     vector< AST* > statements;
+    bool is_method;
 };
 
 #endif

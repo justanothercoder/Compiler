@@ -13,6 +13,7 @@
 #include "ifnode.hpp"
 #include "whilenode.hpp"
 
+#include "dotnode.hpp"
 #include "callnode.hpp"
 #include "variablenode.hpp"
 #include "numbernode.hpp"
@@ -31,10 +32,10 @@ private:
     TypeInfo type_info();
     pair<string, TypeInfo > var_and_type();
     
-    DeclarationNode* declaration();
-    DeclarationNode* structDecl();
-    DeclarationNode* variableDecl();
-    DeclarationNode* functionDecl();
+    DeclarationNode* declaration(bool in_struct = false);
+    DeclarationNode* structDecl(bool in_struct = false);
+    DeclarationNode* variableDecl(bool in_struct = false);
+    DeclarationNode* functionDecl(bool in_struct = false);
 
     AST* while_stat();
     AST* if_stat();

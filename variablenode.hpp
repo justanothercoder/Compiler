@@ -6,6 +6,7 @@
 #include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
 #include "typehelper.hpp"
+#include "structsymbol.hpp"
 
 class VariableNode : public ExprNode
 {
