@@ -11,6 +11,7 @@
 #include "assignmentnode.hpp"
 #include "returnnode.hpp"
 #include "ifnode.hpp"
+#include "whilenode.hpp"
 
 #include "callnode.hpp"
 #include "variablenode.hpp"
@@ -35,6 +36,7 @@ private:
     DeclarationNode* variableDecl();
     DeclarationNode* functionDecl();
 
+    AST* while_stat();
     AST* if_stat();
     AST* return_stat();
     AST* statement();
