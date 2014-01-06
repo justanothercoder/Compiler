@@ -19,7 +19,6 @@ private:
 
     FunctionSymbol *func;
     
-    int scope_depth;
     ExprNode *expr;
 };
 
