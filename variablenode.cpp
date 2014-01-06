@@ -75,7 +75,7 @@ void VariableNode::gen()
 	    
 	    VariableSymbol *sym = static_cast<VariableSymbol*>(_this);
 
-	    Scope *struc_scope = static_cast<StructSymbol*>(sym->getType());
+	    Scope *struc_scope = static_cast<StructSymbol*>(static_cast<ReferenceType*>(sym->getType())->getReferredType());
 	    
 	    CodeGen::emit("mov rax, [rbp - " + std::to_string(scope->getAddress(sym)) + "]");
 	    CodeGen::emit("lea rax, [rax - " + std::to_string(struc_scope->getAddress(variable)) + "]");
