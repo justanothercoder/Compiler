@@ -50,7 +50,7 @@ void VariableNode::gen()
 	    variable = new VariableSymbol(ov_func->getName(), ov_func_type_info.symbols.begin()->second);
 	}
 
-	CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(variable->getType())->getTypedName() + "]");
+	CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(variable->getType())->getScopedTypedName() + "]");
     }
     else
     {

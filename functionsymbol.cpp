@@ -13,26 +13,14 @@ Scope* FunctionSymbol::getEnclosingScope()
     return enclosing_scope;
 }
 
-Symbol* FunctionSymbol::resolve(string name)
-{
-    auto it = members.find(name);
-    if ( it == std::end(members) )
-    {
-	if ( getEnclosingScope() )
-	    return getEnclosingScope()->resolve(name);
-	return nullptr;
-    }
-    return it->second;    
-}
-
 void FunctionSymbol::define(Symbol *sym)
 {
     if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
     {
-	if ( members[sym->getName()] == nullptr )
-	    members[sym->getName()] = new OverloadedFunctionSymbol(sym->getName(), OverloadedFunctionTypeInfo({ }));
+	if ( table[sym->getName()] == nullptr )
+	    table[sym->getName()] = new OverloadedFunctionSymbol(sym->getName(), OverloadedFunctionTypeInfo({ }));
 
-	OverloadedFunctionSymbol* ov_func = dynamic_cast<OverloadedFunctionSymbol*>(members[sym->getName()]);
+	OverloadedFunctionSymbol* ov_func = dynamic_cast<OverloadedFunctionSymbol*>(table[sym->getName()]);
 	
 	if ( ov_func == nullptr )
 	    throw SemanticError(sym->getName() + " is not a function");
@@ -41,34 +29,24 @@ void FunctionSymbol::define(Symbol *sym)
 	
 	FunctionTypeInfo func_type_info = static_cast<FunctionSymbol*>(sym)->getTypeInfo();
 
-	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(members[sym->getName()])->getType());
+	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType());
 	ofs->addOverload(func_type_info, static_cast<FunctionSymbol*>(sym));
     }
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {
-	members[sym->getName()] = sym;
+	table[sym->getName()] = sym;
 	if ( static_cast<VariableSymbol*>(sym)->isParam() )
 	    addresses[static_cast<VariableSymbol*>(sym)] = -(params_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
 	else
 	    addresses[static_cast<VariableSymbol*>(sym)] = (scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
     }
     else
-	members[sym->getName()] = sym;
+	table[sym->getName()] = sym;
 }
 
 void FunctionSymbol::setTypeInfo(FunctionTypeInfo function_type_info)
 {
     this->function_type_info = function_type_info;
-}
-
-Type* FunctionSymbol::getTypeHint(ExprNode *expr)
-{
-    return type_hints[expr];
-}
-
-void FunctionSymbol::setTypeHint(ExprNode *expr, Type *type)
-{
-    type_hints[expr] = type;
 }
 
 string FunctionSymbol::getTypedName()
@@ -81,24 +59,14 @@ string FunctionSymbol::getTypedName()
     return res;
 }
 
-int FunctionSymbol::getAddress(VariableSymbol *sym)
+string FunctionSymbol::getScopedTypedName()
 {
-    auto it = addresses.find(sym);
+    string res = scope_name;
 
-    if ( it == std::end(addresses) )
-    {
-	if ( getEnclosingScope() == nullptr )
-	    throw SemanticError("No such symbol " + sym->getName());
+    for ( int i = 0; i < function_type_info.getNumberOfParams(); ++i )
+	res += "_" + function_type_info.getParamType(i)->getName();
 
-	return getEnclosingScope()->getAddress(sym) - (scope_address - getEnclosingScope()->getScopeAddress());
-    }
-
-    return it->second;
-}
-
-int FunctionSymbol::getScopeAddress()
-{
-    return scope_address;
+    return res;
 }
 
 int FunctionSymbol::getScopeSize()

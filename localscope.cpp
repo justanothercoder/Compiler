@@ -1,12 +1,16 @@
-#include "globalscope.hpp"
+#include "localscope.hpp"
 
-GlobalScope::GlobalScope()
+LocalScope::LocalScope(Scope *enclosing_scope) : enclosing_scope(enclosing_scope)
 {
-    scope_size = 0;
-    scope_address = 0;
+    
 }
 
-void GlobalScope::define(Symbol *sym)
+Scope* LocalScope::getEnclosingScope()
+{
+    return enclosing_scope;
+}
+
+void LocalScope::define(Symbol *sym)
 {
     if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
     {
@@ -39,13 +43,13 @@ void GlobalScope::define(Symbol *sym)
 	table[sym->getName()] = sym;
 }
 
-
-Scope* GlobalScope::getEnclosingScope()
-{
-    return nullptr;
-}
-
-string GlobalScope::getScopeName()
+string LocalScope::getScopeName()
 {
     return "";
+}
+
+void LocalScope::recalc_scope_address()
+{
+//    scope_address = enclosing_scope->getScopeAddress() + enclosing_scope->getScopeSize() + sizeof(int*);
+    scope_address = enclosing_scope->getScopeAddress();
 }

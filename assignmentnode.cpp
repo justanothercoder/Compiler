@@ -89,6 +89,5 @@ void AssignmentNode::gen()
     call_name += resolved_function_symbol->getTypedName().substr(resolved_function_symbol->getName().length());
 
     CodeGen::emit("call " + call_name);
-//    CodeGen::emit("call " + resolved_function_symbol->getEnclosingScope()->getScopeName() + "_" + resolved_function_symbol->getTypedName());
     CodeGen::emit("add rsp, " + std::to_string(paramsSize));
 }
