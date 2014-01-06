@@ -3,19 +3,7 @@
 GlobalScope::GlobalScope()
 {
     scope_size = 0;
-}
-
-Scope* GlobalScope::getEnclosingScope()
-{
-    return nullptr;
-}
-
-Symbol* GlobalScope::resolve(string name)
-{
-    auto it = table.find(name);
-    if ( it == std::end(table) )
-	return nullptr;
-    return it->second;
+    scope_address = 0;
 }
 
 void GlobalScope::define(Symbol *sym)
@@ -50,35 +38,11 @@ void GlobalScope::define(Symbol *sym)
     else
 	table[sym->getName()] = sym;
 }
-    
-Type* GlobalScope::getTypeHint(ExprNode *expr)
-{
-    return type_hints[expr];
-}
 
-void GlobalScope::setTypeHint(ExprNode *expr, Type *type)
-{
-    type_hints[expr] = type;
-}
-    
-int GlobalScope::getAddress(VariableSymbol *sym)
-{
-    auto it = addresses.find(sym);
 
-    if ( it == std::end(addresses) )
-	throw SemanticError("No such symbol '" + sym->getName() + "'");
-
-    return it->second;   
-}
-
-int GlobalScope::getScopeAddress()
+Scope* GlobalScope::getEnclosingScope()
 {
-    return 0;
-}
-
-int GlobalScope::getScopeSize()
-{
-    return scope_size;
+    return nullptr;
 }
 
 string GlobalScope::getScopeName()

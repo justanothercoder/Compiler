@@ -38,7 +38,8 @@ void IfNode::gen()
     cond->gen();
 
     string false_label = IfNode::getNewLabel(), exit_label = IfNode::getNewLabel();
-    
+
+    CodeGen::emit("cmp qword [eax], 0");
     CodeGen::emit("jz " + false_label);
     stats_true->gen();
     CodeGen::emit("jmp " + exit_label);
