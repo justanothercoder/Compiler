@@ -11,6 +11,7 @@ string to_string(TokenType tt)
     case TokenType::RETURN:    return "return";
     case TokenType::IF:        return "if";
     case TokenType::ELSE:      return "else";
+    case TokenType::WHILE:     return "while";
     case TokenType::LPAREN:    return "(";
     case TokenType::RPAREN:    return ")";
     case TokenType::LBRACE:    return "{";

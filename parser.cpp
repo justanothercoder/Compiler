@@ -28,6 +28,8 @@ AST* Parser::statement()
 	return return_stat();
     else if ( getTokenType(1) == TokenType::IF )
 	return if_stat();
+    else if ( getTokenType(1) == TokenType::WHILE )
+	return while_stat();
     else if ( tryAssignment() )
 	return assignment();
     else
@@ -256,6 +258,36 @@ AST* Parser::if_stat()
     }
 
     return new IfNode(cond, stats_true, stats_false);
+}
+
+AST* Parser::while_stat()
+{
+    match(TokenType::WHILE);
+
+    match(TokenType::LPAREN);
+    ExprNode *cond = expression();
+    match(TokenType::RPAREN);
+
+    AST *stats;
+    
+    if ( getTokenType(1) == TokenType::LBRACE )
+    {
+	match(TokenType::LBRACE);
+
+	vector<AST*> statements;
+
+	while ( getTokenType(1) != TokenType::RBRACE )
+	    statements.push_back(statement());
+	
+	stats = new StatementNode(statements);
+	match(TokenType::RBRACE);
+    }
+    else
+    {
+	stats = new StatementNode({statement()});
+    }
+
+    return new WhileNode(cond, stats);
 }
 
 bool Parser::tryAssignment()
