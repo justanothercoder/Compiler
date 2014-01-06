@@ -33,11 +33,10 @@ void WhileNode::check()
 
 void WhileNode::gen()
 {
-    cond->gen();
-
     string exit_label = WhileNode::getNewLabel(), cycle_label = WhileNode::getNewLabel();
     
     CodeGen::emit(cycle_label + ":");
+    cond->gen();
     CodeGen::emit("cmp qword [rax], 0");
     CodeGen::emit("jz " + exit_label);
     stats->gen();
