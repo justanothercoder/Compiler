@@ -59,6 +59,16 @@ string FunctionSymbol::getTypedName()
     return res;
 }
 
+string FunctionSymbol::getScopedTypedName()
+{
+    string res = scope_name;
+
+    for ( int i = 0; i < function_type_info.getNumberOfParams(); ++i )
+	res += "_" + function_type_info.getParamType(i)->getName();
+
+    return res;
+}
+
 int FunctionSymbol::getScopeSize()
 {
     return scope_size + params_size;

@@ -23,7 +23,8 @@ public:
     void setTypeInfo(FunctionTypeInfo function_type_info);
 
     string getTypedName();
-
+    string getScopedTypedName();
+    
     virtual int getScopeSize();
     virtual string getScopeName();
 

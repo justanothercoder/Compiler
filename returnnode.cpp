@@ -2,7 +2,7 @@
 
 ReturnNode::ReturnNode(ExprNode *expr) : expr(expr)
 {
-    scope_depth = 0;
+
 }
 
 void ReturnNode::build_scope()
@@ -20,10 +20,7 @@ void ReturnNode::check()
 {
     Scope *sc = scope;
     while ( sc != nullptr && dynamic_cast<FunctionSymbol*>(sc) == nullptr )
-    {
 	sc = sc->getEnclosingScope();
-	++scope_depth;
-    }
 
     if ( sc == nullptr )
 	throw SemanticError("return is not a in a function");
@@ -43,18 +40,7 @@ void ReturnNode::gen()
     }
     CodeGen::emit("lea rax, [rsp - " + std::to_string(sizeof(int*)) + "]");
 
-    CodeGen::emit("mov rsp, [rbp + " + std::to_string(scope->getScopeAddress() - func->getScopeAddress()) + "]");
-    CodeGen::emit("pop rbp");
-    CodeGen::emit("ret");
-
-/*   
-    for ( int i = 0; i < scope_depth; ++i )
-    {
-	CodeGen::emit("mov rsp, rbp");
-	CodeGen::emit("pop rbp");
-    }
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");
     CodeGen::emit("ret");
-*/
 }

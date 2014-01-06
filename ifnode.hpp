@@ -2,6 +2,7 @@
 #define _IFNODE_HPP_
 
 #include "exprnode.hpp"
+#include "localscope.hpp"
 
 class IfNode : public AST
 {
@@ -19,6 +20,8 @@ private:
     ExprNode *cond;
     AST *stats_true, *stats_false;
 
+    LocalScope *if_scope, *else_scope;
+    
     static int label_num;
     static string getNewLabel();
 };
