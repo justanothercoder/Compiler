@@ -39,7 +39,7 @@ AST* Parser::statement()
 DeclarationNode* Parser::declaration(bool in_struct)
 {
     if ( getTokenType(1) == TokenType::STRUCT )
-	return structDecl(in_struct);
+	return structDecl();
     else if ( getTokenType(1) == TokenType::DEF )
 	return functionDecl(in_struct);
     else
@@ -53,7 +53,7 @@ DeclarationNode* Parser::variableDecl(bool in_struct)
     return new VariableDeclarationNode(var.first, var.second, in_struct);
 }
 
-DeclarationNode* Parser::structDecl(bool in_struct)
+DeclarationNode* Parser::structDecl()
 {
     match(TokenType::STRUCT);
 

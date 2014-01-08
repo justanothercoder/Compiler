@@ -7,7 +7,7 @@ FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair
 
 void FunctionDeclarationNode::build_scope()
 {
-    definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }), scope, false, is_method);    
+    definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }, is_method), scope, false, is_method);    
     for ( auto i : statements )
     {
 	i->scope = static_cast<FunctionSymbol*>(definedSymbol);
@@ -22,7 +22,12 @@ void FunctionDeclarationNode::define()
     vector<Type*> params_types;
     
     if ( is_method )
-	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol("this", TypeHelper::getReferenceType(static_cast<StructSymbol*>(scope)), VariableSymbolType::PARAM));
+    {
+	Type *_this_type = TypeHelper::getReferenceType(static_cast<StructSymbol*>(scope));
+	params_types.push_back(_this_type);
+
+	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM));
+    }
     
     for ( auto i : params )
     {
@@ -32,7 +37,7 @@ void FunctionDeclarationNode::define()
 	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM));
     }
 
-    FunctionTypeInfo function_type_info = FunctionTypeInfo(return_type, params_types);
+    FunctionTypeInfo function_type_info = FunctionTypeInfo(return_type, params_types, is_method);
 
     static_cast<FunctionSymbol*>(definedSymbol)->setTypeInfo(function_type_info);
 

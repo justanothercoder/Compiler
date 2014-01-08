@@ -33,7 +33,7 @@ private:
     pair<string, TypeInfo > var_and_type();
     
     DeclarationNode* declaration(bool in_struct = false);
-    DeclarationNode* structDecl(bool in_struct = false);
+    DeclarationNode* structDecl();
     DeclarationNode* variableDecl(bool in_struct = false);
     DeclarationNode* functionDecl(bool in_struct = false);
 

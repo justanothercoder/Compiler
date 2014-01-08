@@ -8,7 +8,7 @@ class OverloadedFunctionSymbol : public Symbol, public Type
 {
 public:
 
-    OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info);
+    OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, bool is_method = false);
 
     virtual string getName();
     virtual int getSize();
@@ -19,6 +19,10 @@ public:
     OverloadedFunctionTypeInfo getTypeInfo();
 
     void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym);
+
+    bool isMethod();
+
+    Type *getBaseType();
     
 private:
 
@@ -26,6 +30,8 @@ private:
     OverloadedFunctionTypeInfo type_info;
 
     Scope *symbol_scope;
+
+    bool is_method;
 };
 
 #endif

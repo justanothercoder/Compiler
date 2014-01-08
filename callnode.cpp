@@ -20,32 +20,37 @@ void CallNode::check()
     caller->check();   
 
     Type *caller_type = caller->getType();
-    while ( dynamic_cast<ReferenceType*>(caller_type) )
+    if ( dynamic_cast<ReferenceType*>(caller_type) )
 	caller_type = static_cast<ReferenceType*>(caller_type)->getReferredType();
     
     OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(caller_type);
     
     if ( ov_func == nullptr )
-	throw SemanticError("caller is not a function");
+	throw SemanticError("caller is not a function.");
 
-    vector<Type*> params_types;
+    vector<Type*> params_types;  
 
-    for ( auto i : params )
+    bool is_method = ov_func->isMethod();
+
+    if ( is_method )
+	params_types.push_back(ov_func->getBaseType());
+    
+    for ( auto it = std::begin(params); it != std::end(params); ++it )
     {
-	i->check();
-	params_types.push_back(i->getType());
+	(*it)->check();
+	params_types.push_back((*it)->getType());
     }
 
     auto overloads = FunctionHelper::getBestOverload(ov_func->getTypeInfo().overloads, params_types);
 
     if ( overloads.empty() )
-	throw SemanticError("No viable overload of '" + ov_func->getName() + "'");
+	throw SemanticError("No viable overload of '" + ov_func->getName() + "'.");
 
     resolved_function_type_info = *std::begin(overloads);
-
-    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= 0; --i )
+    
+    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= (is_method ? 1 : 0); --i )
     {
-	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) && !params[i]->isLeftValue() )
+	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) && !params[i - (is_method ? 1 : 0)]->isLeftValue() )
 	    throw SemanticError("parameter is not an lvalue.");
     }    
     
@@ -55,10 +60,15 @@ void CallNode::check()
 void CallNode::gen()
 {
     int paramsSize = 0;
+
+    bool is_method = resolved_function_type_info.isMethod();
+
+    caller->gen();    
+    CodeGen::emit("mov rsi, rax");
     
-    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= 0; --i )
+    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= (is_method ? 1 : 0); --i )
     {
-	params[i]->gen();
+	params[i - static_cast<int>(is_method ? 1 : 0)]->gen();
 	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) )
 	{	    
 	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rax");
@@ -74,16 +84,25 @@ void CallNode::gen()
 	}
     }
 
+    if ( is_method )
+    {
+	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rdi");
+	paramsSize += sizeof(int*);
+    }
+
     CodeGen::emit("sub rsp, " + std::to_string(paramsSize - sizeof(int*)));
     
-    caller->gen();
-    CodeGen::emit("call rax");
+    CodeGen::emit("call rsi");
     CodeGen::emit("add rsp, " + std::to_string(paramsSize));
 }
 
 void CallNode::build_scope()
 {
     caller->scope = scope;
+    caller->build_scope();
     for ( auto i : params )
+    {
 	i->scope = scope;
+	i->build_scope();
+    }
 }

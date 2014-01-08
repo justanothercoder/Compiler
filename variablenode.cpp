@@ -43,9 +43,9 @@ void VariableNode::gen()
 	    CodeGen::emit("mov rax, [rbp - " + std::to_string(scope->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
 	}
     }    
-    else if ( dynamic_cast<OverloadedFunctionSymbol*>(variable->getType()) )
+    else if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type) )
     {
-	OverloadedFunctionSymbol* ov_func = dynamic_cast<OverloadedFunctionSymbol*>(variable->getType());
+	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(var_type);
 	
 	OverloadedFunctionTypeInfo ov_func_type_info = ov_func->getTypeInfo();
 	

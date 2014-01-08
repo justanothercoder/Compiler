@@ -1,6 +1,6 @@
 #include "functiontypeinfo.hpp"
 
-FunctionTypeInfo::FunctionTypeInfo(Type *return_type, const vector<Type*>& params_types) : return_type(return_type), params_types(params_types)
+FunctionTypeInfo::FunctionTypeInfo(Type *return_type, const vector<Type*>& params_types, bool is_method) : return_type(return_type), params_types(params_types), is_method(is_method)
 {
 
 }
@@ -18,6 +18,11 @@ Type* FunctionTypeInfo::getParamType(int i) const
 int FunctionTypeInfo::getNumberOfParams() const
 {
     return params_types.size();
+}
+
+bool FunctionTypeInfo::isMethod() const
+{
+    return is_method;
 }
 
 bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)

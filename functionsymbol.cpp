@@ -89,6 +89,11 @@ bool FunctionSymbol::isOperator()
     return is_operator;
 }
 
+bool FunctionSymbol::isMethod()
+{
+    return is_method;
+}
+
 Scope* FunctionSymbol::getScope()
 {
     return symbol_scope;

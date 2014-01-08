@@ -3,6 +3,7 @@
 
 #include "exprnode.hpp"
 #include "structsymbol.hpp"
+#include "referencetype.hpp"
 
 class DotNode : public ExprNode
 {
@@ -20,8 +21,10 @@ public:
 private:
 
     ExprNode *base;
+
     string member_name;
 
+    StructSymbol *base_type;
     Symbol *member;
 };
 

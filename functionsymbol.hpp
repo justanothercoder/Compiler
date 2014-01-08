@@ -31,6 +31,7 @@ public:
     void recalc_scope_address();
 
     bool isOperator();
+    bool isMethod();
 
     virtual Scope* getScope();
     virtual void setScope(Scope *scope);    

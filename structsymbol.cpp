@@ -37,10 +37,12 @@ void StructSymbol::define(Symbol *sym)
 {
     if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
     {
+	FunctionSymbol *func_sym = static_cast<FunctionSymbol*>(sym);
+	
 	auto it = table.find(sym->getName());
 	
 	if ( it == std::end(table) )
-	    table[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionSymbol(sym->getName(), OverloadedFunctionTypeInfo({ })));
+	    table[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionSymbol(sym->getName(), OverloadedFunctionTypeInfo({ }), func_sym->isMethod()));
 
 	Symbol *res_sym = table[sym->getName()];	
 
@@ -52,10 +54,10 @@ void StructSymbol::define(Symbol *sym)
 	if ( ov_func == nullptr )
 	    throw SemanticError(sym->getName() + " is already defined as not function");
        	
-	FunctionTypeInfo func_type_info = static_cast<FunctionSymbol*>(sym)->getTypeInfo();
+	FunctionTypeInfo func_type_info = func_sym->getTypeInfo();
 
 	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType());
-	ofs->addOverload(func_type_info, static_cast<FunctionSymbol*>(sym));
+	ofs->addOverload(func_type_info, func_sym);
     }
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {
