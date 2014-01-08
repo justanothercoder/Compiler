@@ -8,7 +8,10 @@ AssignmentNode::AssignmentNode(ExprNode *lhs, ExprNode *rhs) : lhs(lhs), rhs(rhs
 void AssignmentNode::build_scope()
 {
     lhs->scope = scope;
+    lhs->build_scope();
+    
     rhs->scope = scope;
+    rhs->build_scope();
 }
 
 void AssignmentNode::define()

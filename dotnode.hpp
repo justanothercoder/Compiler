@@ -4,6 +4,7 @@
 #include "exprnode.hpp"
 #include "structsymbol.hpp"
 #include "referencetype.hpp"
+#include "typehelper.hpp"
 
 class DotNode : public ExprNode
 {
