@@ -12,7 +12,7 @@ Type* ReferenceType::getReferredType()
 
 string ReferenceType::getName()
 {
-    return referred_type->getName() + "@ref";
+    return referred_type->getName() + "~ref";
 }
 
 int ReferenceType::getSize()

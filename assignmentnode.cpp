@@ -88,7 +88,7 @@ void AssignmentNode::gen()
 
     string call_name = resolved_function_symbol->getEnclosingScope()->getScopeName() + "_";
 
-    call_name += "@operator_assign";
+    call_name += "~operator_assign";
     call_name += resolved_function_symbol->getTypedName().substr(resolved_function_symbol->getName().length());
 
     CodeGen::emit("call " + call_name);

@@ -61,7 +61,7 @@ void FunctionDeclarationNode::gen()
 
     string scope_name = static_cast<FunctionSymbol*>(definedSymbol)->getEnclosingScope()->getScopeName() + "_";
     
-    CodeGen::emit("jmp @" + scope_name + typed_name);
+    CodeGen::emit("jmp _~" + scope_name + typed_name);
     CodeGen::emit(scope_name + typed_name + ":");
     CodeGen::emit("push rbp");
     CodeGen::emit("mov rbp, rsp");
@@ -72,5 +72,5 @@ void FunctionDeclarationNode::gen()
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");
     CodeGen::emit("ret");
-    CodeGen::emit("@" + scope_name + typed_name + ":");
+    CodeGen::emit("_~" + scope_name + typed_name + ":");
 }

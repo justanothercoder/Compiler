@@ -33,7 +33,8 @@ void GlobalScope::define(Symbol *sym)
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {
 	table[sym->getName()] = sym;
-	addresses[static_cast<VariableSymbol*>(sym)] = (scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
+	addresses[static_cast<VariableSymbol*>(sym)] = scope_size + sizeof(int*);
+	scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize();
     }
     else
 	table[sym->getName()] = sym;

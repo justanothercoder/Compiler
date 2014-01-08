@@ -38,7 +38,10 @@ void FunctionSymbol::define(Symbol *sym)
 	if ( static_cast<VariableSymbol*>(sym)->isParam() )
 	    addresses[static_cast<VariableSymbol*>(sym)] = -(params_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
 	else
-	    addresses[static_cast<VariableSymbol*>(sym)] = (scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
+	{
+	    addresses[static_cast<VariableSymbol*>(sym)] = scope_size + sizeof(int*);
+	    scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize();
+	}
     }
     else
 	table[sym->getName()] = sym;
