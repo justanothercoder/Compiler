@@ -201,17 +201,36 @@ ExprNode* Parser::factor()
 
 ExprNode* Parser::term()
 {
-    return factor();
+    ExprNode *res = factor();
+
+    while ( getTokenType(1) == TokenType::MUL )
+    {
+	if ( getTokenType(1) == TokenType::MUL )
+	{
+	    match(TokenType::MUL);
+	    res = new BinaryOperatorNode(res, factor(), BinaryOp::MUL);
+	}
+    }
+
+    return res;
 }
 
 ExprNode* Parser::sum_expr()
 {
     ExprNode *res = term();
 
-    while ( getTokenType(1) == TokenType::PLUS )
+    while ( getTokenType(1) == TokenType::PLUS || getTokenType(1) == TokenType::MINUS )
     {
-	match(TokenType::PLUS);
-	res = new BinaryOperatorNode(res, term(), BinaryOp::PLUS);
+	if ( getTokenType(1) == TokenType::PLUS )
+	{
+	    match(TokenType::PLUS);
+	    res = new BinaryOperatorNode(res, term(), BinaryOp::PLUS);
+	}
+	else if ( getTokenType(1) == TokenType::MINUS )
+	{
+	    match(TokenType::MINUS);
+	    res = new BinaryOperatorNode(res, term(), BinaryOp::MINUS);
+	}
     }
 
     return res;

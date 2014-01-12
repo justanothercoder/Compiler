@@ -53,8 +53,10 @@ void BinaryOperatorNode::special_check()
 	    throw SemanticError("left side of an assignment should be left value.");
     }
     case BinaryOp::PLUS:
+    case BinaryOp::MINUS:
+    case BinaryOp::MUL:
     {
-	
+	break;
     }
     }
 }
@@ -65,6 +67,8 @@ string BinaryOperatorNode::getOperatorName()
     {
     case BinaryOp::ASSIGN: return "operator=";
     case BinaryOp::PLUS  : return "operator+";
+    case BinaryOp::MINUS : return "operator-";
+    case BinaryOp::MUL   : return "operator*";
     }    
 }
 
@@ -74,6 +78,8 @@ string BinaryOperatorNode::getCodeOperatorName()
     {
     case BinaryOp::ASSIGN: return "operatorassign";
     case BinaryOp::PLUS  : return "operatorplus";
+    case BinaryOp::MINUS : return "operatorminus";
+    case BinaryOp::MUL   : return "operatormul";
     }    
 }
 

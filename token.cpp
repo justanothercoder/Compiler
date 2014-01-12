@@ -21,6 +21,8 @@ string to_string(TokenType tt)
     case TokenType::SEMICOLON: return ";";
     case TokenType::ASSIGN:    return "=";
     case TokenType::PLUS:      return "+";
+    case TokenType::MINUS:     return "-";
+    case TokenType::MUL:       return "*";
     case TokenType::DIV:       return "/";
     case TokenType::REF:       return "&";
     case TokenType::DOT:       return ".";

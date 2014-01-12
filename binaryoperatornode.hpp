@@ -6,7 +6,7 @@
 #include "referencetype.hpp"
 #include "functionhelper.hpp"
 
-enum class BinaryOp { ASSIGN, PLUS };
+enum class BinaryOp { ASSIGN, PLUS, MINUS, MUL };
 
 class BinaryOperatorNode : public ExprNode
 {
