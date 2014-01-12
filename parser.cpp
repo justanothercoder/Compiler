@@ -210,7 +210,7 @@ AST* Parser::assignment()
     match(TokenType::ASSIGN);
     ExprNode *rhs = expression();
 
-    return new AssignmentNode(lhs, rhs);
+    return new BinaryOperatorNode(lhs, rhs, BinaryOp::ASSIGN);
 }
 
 AST* Parser::return_stat()

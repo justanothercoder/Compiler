@@ -8,7 +8,7 @@
 #include "functiondeclarationnode.hpp"
 
 #include "emptystatementnode.hpp"
-#include "assignmentnode.hpp"
+#include "binaryoperatornode.hpp"
 #include "returnnode.hpp"
 #include "ifnode.hpp"
 #include "whilenode.hpp"

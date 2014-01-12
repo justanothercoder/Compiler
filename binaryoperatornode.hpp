@@ -6,25 +6,31 @@
 #include "referencetype.hpp"
 #include "functionhelper.hpp"
 
+enum class BinaryOp { ASSIGN, PLUS };
+
 class BinaryOperatorNode : public ExprNode
 {
 public:
 
-    BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs);
+    BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type);
 
     virtual void build_scope();
     virtual void check();
+    virtual void gen();
     
     virtual bool isLeftValue();
     virtual Type *getType();
 
-    virtual string getOperatorName() = 0;
-    virtual void special_check();
+    string getOperatorName();
+    string getCodeOperatorName();
+
+    void special_check();
     
 protected:
 
     ExprNode *lhs, *rhs;
     FunctionSymbol *resolved_operator_symbol;
+    BinaryOp op_type;
 };
 
 #endif
