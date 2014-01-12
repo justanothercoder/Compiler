@@ -71,7 +71,7 @@ void CallNode::gen()
 	params[i - static_cast<int>(is_method ? 1 : 0)]->gen();
 	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) )
 	{	    
-	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rax");
+	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rax");
 	    paramsSize += sizeof(int*);
 	}
 	else
@@ -79,18 +79,18 @@ void CallNode::gen()
 	    for ( int j = 0; j < resolved_function_type_info.getParamType(i)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
 	    {	    
 		CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rbx");
+		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rbx");
 	    }
 	}
     }
 
     if ( is_method )
     {
-	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize) + "], rdi");
+	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rdi");
 	paramsSize += sizeof(int*);
     }
 
-    CodeGen::emit("sub rsp, " + std::to_string(paramsSize - sizeof(int*)));
+    CodeGen::emit("sub rsp, " + std::to_string(paramsSize));
     
     CodeGen::emit("call rsi");
     CodeGen::emit("add rsp, " + std::to_string(paramsSize));
