@@ -29,6 +29,8 @@ void BinaryOperatorNode::check()
     lhs->check();
     rhs->check();
 
+    special_check();
+    
     Symbol *op_sym = scope->resolve(getOperatorName());
 
     OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(op_sym)->getType());
@@ -39,4 +41,9 @@ void BinaryOperatorNode::check()
 	throw SemanticError("No viable overload for " + getOperatorName() + " with " + lhs->getType()->getName() + " and " + rhs->getType()->getName() + " arguments.");
 
     resolved_operator_symbol = ov_func->getTypeInfo().symbols[*std::begin(overloads)];
+}
+
+void BinaryOperatorNode::special_check()
+{
+    
 }

@@ -12,6 +12,7 @@ public:
 
     virtual string getOperatorName();
     virtual void gen();
+    virtual void special_check();
 };
 
 #endif

@@ -10,6 +10,12 @@ string AssignmentNode::getOperatorName()
     return "operator=";
 }
 
+void AssignmentNode::special_check()
+{
+    if ( !lhs->isLeftValue() )
+	throw SemanticError("left side of an assignment should be left value");
+}
+
 void AssignmentNode::gen()
 {
     int paramsSize = 0;

@@ -19,7 +19,8 @@ public:
     virtual Type *getType();
 
     virtual string getOperatorName() = 0;
-
+    virtual void special_check();
+    
 protected:
 
     ExprNode *lhs, *rhs;
