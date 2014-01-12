@@ -199,9 +199,27 @@ ExprNode* Parser::factor()
     return unary_right();
 }
 
-ExprNode* Parser::expression()
+ExprNode* Parser::term()
 {
     return factor();
+}
+
+ExprNode* Parser::sum_expr()
+{
+    ExprNode *res = term();
+
+    while ( getTokenType(1) == TokenType::PLUS )
+    {
+	match(TokenType::PLUS);
+	res = new BinaryOperatorNode(res, term(), BinaryOp::PLUS);
+    }
+
+    return res;
+}
+
+ExprNode* Parser::expression()
+{
+    return sum_expr();
 }
 
 AST* Parser::assignment()

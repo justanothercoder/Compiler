@@ -45,8 +45,10 @@ private:
 
     ExprNode* literal();
     ExprNode* expression();
+    ExprNode* sum_expr();
+    ExprNode* term();
     ExprNode* factor();
-    ExprNode* unary_right();
+    ExprNode* unary_right();    
     ExprNode* primary();
     ExprNode* variable();
     ExprNode* number();
