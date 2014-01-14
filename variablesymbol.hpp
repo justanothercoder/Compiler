@@ -12,17 +12,17 @@ public:
 
     VariableSymbol(string name, Type *type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
 
-    virtual Type* getType();
+    virtual Type* getType() const;
 
     void setType(Type *t);
 
-    virtual Scope* getScope();
+    virtual Scope* getScope() const;
     virtual void setScope(Scope *scope);
 
-    virtual string getName();
+    virtual string getName() const;
 
-    bool isParam();
-    bool isField();
+    bool isParam() const;
+    bool isField() const;
        
 private:
 

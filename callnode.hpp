@@ -17,8 +17,8 @@ public:
 
     CallNode(ExprNode *caller, const vector<ExprNode*>& params);
     
-    virtual Type* getType();
-    virtual bool isLeftValue();
+    virtual Type* getType() const;
+    virtual bool isLeftValue() const;
     
     virtual void build_scope();
     virtual void check();

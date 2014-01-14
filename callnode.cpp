@@ -5,12 +5,12 @@ CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(c
     
 }
     
-Type* CallNode::getType()
+Type* CallNode::getType() const
 {
     return resolved_function_type_info.getReturnType();
 }
 
-bool CallNode::isLeftValue()
+bool CallNode::isLeftValue() const
 {
     return false;
 }
@@ -34,11 +34,11 @@ void CallNode::check()
 
     if ( is_method )
 	params_types.push_back(ov_func->getBaseType());
-    
-    for ( auto it = std::begin(params); it != std::end(params); ++it )
+
+    for ( auto it : params )
     {
-	(*it)->check();
-	params_types.push_back((*it)->getType());
+	it->check();
+	params_types.push_back(it->getType());
     }
 
     auto overloads = FunctionHelper::getBestOverload(ov_func->getTypeInfo().overloads, params_types);
@@ -47,10 +47,12 @@ void CallNode::check()
 	throw SemanticError("No viable overload of '" + ov_func->getName() + "'.");
 
     resolved_function_type_info = *std::begin(overloads);
+
+    int is_meth = (is_method ? 1 : 0);
     
-    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= (is_method ? 1 : 0); --i )
+    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
     {
-	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) && !params[i - (is_method ? 1 : 0)]->isLeftValue() )
+	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) && !params[i - is_meth]->isLeftValue() )
 	    throw SemanticError("parameter is not an lvalue.");
     }    
     
@@ -63,12 +65,14 @@ void CallNode::gen()
 
     bool is_method = resolved_function_type_info.isMethod();
 
+    int is_meth = (is_method ? 1 : 0);
+
     caller->gen();    
     CodeGen::emit("mov rsi, rax");
     
-    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= (is_method ? 1 : 0); --i )
+    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
     {
-	params[i - static_cast<int>(is_method ? 1 : 0)]->gen();
+	params[i - is_meth]->gen();
 	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) )
 	{	    
 	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rax");

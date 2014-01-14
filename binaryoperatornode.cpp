@@ -5,12 +5,12 @@ BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op
     
 }
 
-bool BinaryOperatorNode::isLeftValue()
+bool BinaryOperatorNode::isLeftValue() const
 {
     return (dynamic_cast<ReferenceType*>(getType()) != 0);
 }
 
-Type* BinaryOperatorNode::getType()
+Type* BinaryOperatorNode::getType() const
 {
     return resolved_operator_symbol->getTypeInfo().getReturnType();
 }

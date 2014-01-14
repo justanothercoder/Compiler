@@ -5,17 +5,17 @@ OverloadedFunctionSymbol::OverloadedFunctionSymbol(string name, OverloadedFuncti
     
 }
 
-string OverloadedFunctionSymbol::getName()
+string OverloadedFunctionSymbol::getName() const
 {
     return name;   
 }
 
-int OverloadedFunctionSymbol::getSize()
+int OverloadedFunctionSymbol::getSize() const
 {
     return sizeof(int*);
 }
 
-Scope* OverloadedFunctionSymbol::getScope()
+Scope* OverloadedFunctionSymbol::getScope() const
 {
     return symbol_scope;
 }
@@ -25,7 +25,7 @@ void OverloadedFunctionSymbol::setScope(Scope *scope)
     symbol_scope = scope;
 }
 
-OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo()
+OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo() const
 {
     return type_info;
 }
@@ -36,12 +36,12 @@ void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, Func
     type_info.symbols[func_type_info] = sym;
 }
 
-bool OverloadedFunctionSymbol::isMethod()
+bool OverloadedFunctionSymbol::isMethod() const
 {
     return is_method;
 }
 
-Type* OverloadedFunctionSymbol::getBaseType()
+Type* OverloadedFunctionSymbol::getBaseType() const
 {
     if ( !isMethod() )
 	throw;    

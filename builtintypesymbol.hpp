@@ -10,10 +10,10 @@ public:
 
     BuiltInTypeSymbol(string name, int size);
     
-    virtual string getName();
-    virtual int getSize();
+    virtual string getName() const;
+    virtual int getSize() const;
 
-    virtual Scope* getScope();
+    virtual Scope* getScope() const;
     virtual void setScope(Scope *scope);    
 
 private:

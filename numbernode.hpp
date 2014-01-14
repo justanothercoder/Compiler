@@ -10,11 +10,11 @@ public:
     NumberNode(string num);
 
     virtual void build_scope();
+    virtual void check();    
     virtual void gen();
     
-    virtual void check();
-    virtual Type* getType();
-    virtual bool isLeftValue();
+    virtual Type* getType() const;
+    virtual bool isLeftValue() const;
     
 private:
 

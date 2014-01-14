@@ -19,9 +19,9 @@ public:
 
     GlobalScope();
 
-    virtual Scope* getEnclosingScope();
+    virtual Scope* getEnclosingScope() const;
     virtual void define(Symbol *sym);
-    virtual string getScopeName();
+    virtual string getScopeName() const;
 };
 
 #endif

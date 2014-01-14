@@ -70,12 +70,12 @@ void DotNode::gen()
     }
 }
 
-Type* DotNode::getType()
+Type* DotNode::getType() const
 {
     return TypeHelper::getReferenceType(static_cast<VariableSymbol*>(member)->getType());
 }
 
-bool DotNode::isLeftValue()
+bool DotNode::isLeftValue() const
 {
     return true;
 }

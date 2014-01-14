@@ -5,7 +5,7 @@ BaseScope::BaseScope()
     scope_size = 0;
 }
 
-Symbol* BaseScope::resolve(string name)
+Symbol* BaseScope::resolve(string name) const
 {
     auto it = table.find(name);
     if ( it == std::end(table) )
@@ -17,9 +17,14 @@ Symbol* BaseScope::resolve(string name)
     return it->second;    
 }
     
-Type* BaseScope::getTypeHint(ExprNode *expr)
+Type* BaseScope::getTypeHint(ExprNode *expr) const
 {
-    return type_hints[expr];
+    auto it = type_hints.find(expr);
+
+    if ( it == std::end(type_hints) )
+	return nullptr;    
+
+    return it->second;
 }
 
 void BaseScope::setTypeHint(ExprNode *expr, Type *type)
@@ -27,7 +32,7 @@ void BaseScope::setTypeHint(ExprNode *expr, Type *type)
     type_hints[expr] = type;
 }
     
-int BaseScope::getAddress(VariableSymbol *sym)
+int BaseScope::getAddress(VariableSymbol *sym) const
 {
     auto it = addresses.find(sym);
 
@@ -42,12 +47,12 @@ int BaseScope::getAddress(VariableSymbol *sym)
     return it->second;
 }
 
-int BaseScope::getScopeSize()
+int BaseScope::getScopeSize() const
 {
     return scope_size;
 }
 
-int BaseScope::getScopeAddress()
+int BaseScope::getScopeAddress() const
 {
     return scope_address;
 }

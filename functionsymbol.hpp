@@ -18,28 +18,28 @@ public:
     FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, bool is_operator = false, bool is_method = false);
 
     virtual void define(Symbol *sym);
-    virtual Scope* getEnclosingScope();
+    virtual Scope* getEnclosingScope() const;
 
     void setTypeInfo(FunctionTypeInfo function_type_info);
 
-    string getTypedName();
-    string getScopedTypedName();
+    string getTypedName() const;
+    string getScopedTypedName() const;
     
-    virtual int getScopeSize();
-    virtual string getScopeName();
+    virtual int getScopeSize() const;
+    virtual string getScopeName() const;
 
     void recalc_scope_address();
 
-    bool isOperator();
-    bool isMethod();
+    bool isOperator() const;
+    bool isMethod() const;
 
-    virtual Scope* getScope();
+    virtual Scope* getScope() const;
     virtual void setScope(Scope *scope);    
 
-    virtual string getName();
-    virtual int getSize();
+    virtual string getName() const;
+    virtual int getSize() const;
     
-    FunctionTypeInfo getTypeInfo();
+    FunctionTypeInfo getTypeInfo() const;
     
 private:
 

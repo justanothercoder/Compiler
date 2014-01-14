@@ -16,8 +16,8 @@ public:
     virtual void check();
     virtual void gen();
 
-    virtual Type* getType();
-    virtual bool isLeftValue();
+    virtual Type* getType() const;
+    virtual bool isLeftValue() const;
     
 private:
 

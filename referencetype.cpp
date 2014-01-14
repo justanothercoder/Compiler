@@ -5,17 +5,17 @@ ReferenceType::ReferenceType(Type *referred_type) : referred_type(referred_type)
     
 }
 
-Type* ReferenceType::getReferredType()
+Type* ReferenceType::getReferredType() const
 {
     return referred_type;
 }
 
-string ReferenceType::getName()
+string ReferenceType::getName() const
 {
     return referred_type->getName() + "~ref";
 }
 
-int ReferenceType::getSize()
+int ReferenceType::getSize() const
 {
     return sizeof(int*);
 }

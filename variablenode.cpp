@@ -5,9 +5,9 @@ VariableNode::VariableNode(string name) : name(name)
     
 }
 
-Type* VariableNode::getType()
+void VariableNode::build_scope()
 {
-    return TypeHelper::getReferenceType(variable->getType());
+    
 }
 
 void VariableNode::check()
@@ -51,11 +51,11 @@ void VariableNode::gen()
 	
 	if ( ov_func_type_info.overloads.size() > 1 )
 	{
-	    Type *hint_type = scope->getTypeHint(this);
+	    FunctionSymbol *hint_type = static_cast<FunctionSymbol*>(scope->getTypeHint(this));
 	    if ( hint_type == nullptr )
 		throw SemanticError("multiple overloads of " + name);
 	   
-	    variable = dynamic_cast<VariableSymbol*>(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
+	    variable = dynamic_cast<VariableSymbol*>(ov_func_type_info.symbols[hint_type->getTypeInfo()]);
 	}
 	else
 	{
@@ -87,12 +87,13 @@ void VariableNode::gen()
     }
 }
 
-bool VariableNode::isLeftValue()
+
+Type* VariableNode::getType() const
 {
-    return true;
+    return TypeHelper::getReferenceType(variable->getType());
 }
 
-void VariableNode::build_scope()
+bool VariableNode::isLeftValue() const
 {
-    
+    return true;
 }

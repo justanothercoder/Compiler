@@ -10,19 +10,19 @@ public:
 
     OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, bool is_method = false);
 
-    virtual string getName();
-    virtual int getSize();
+    virtual string getName() const;
+    virtual int getSize() const;
 
-    virtual Scope* getScope();
+    virtual Scope* getScope() const;
     virtual void setScope(Scope *scope);
 
-    OverloadedFunctionTypeInfo getTypeInfo();
+    OverloadedFunctionTypeInfo getTypeInfo() const;
 
     void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym);
 
-    bool isMethod();
+    bool isMethod() const;
 
-    Type *getBaseType();
+    Type *getBaseType() const;
     
 private:
 

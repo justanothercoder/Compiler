@@ -18,8 +18,8 @@ public:
     virtual void check();
     virtual void gen();
     
-    virtual bool isLeftValue();
-    virtual Type *getType();
+    virtual bool isLeftValue() const;
+    virtual Type *getType() const;
 
     string getOperatorName();
     string getCodeOperatorName();

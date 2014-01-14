@@ -15,8 +15,8 @@ public:
 
     virtual ~Symbol();
     
-    virtual string getName() = 0;
-    virtual Scope* getScope() = 0;
+    virtual string getName() const = 0;
+    virtual Scope* getScope() const = 0;
     virtual void setScope(Scope *scope) = 0;    
 };
 

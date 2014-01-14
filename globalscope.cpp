@@ -41,12 +41,12 @@ void GlobalScope::define(Symbol *sym)
 }
 
 
-Scope* GlobalScope::getEnclosingScope()
+Scope* GlobalScope::getEnclosingScope() const
 {
     return nullptr;
 }
 
-string GlobalScope::getScopeName()
+string GlobalScope::getScopeName() const
 {
     return "";
 }

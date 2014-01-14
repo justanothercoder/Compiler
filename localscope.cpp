@@ -5,7 +5,7 @@ LocalScope::LocalScope(Scope *enclosing_scope) : enclosing_scope(enclosing_scope
     
 }
 
-Scope* LocalScope::getEnclosingScope()
+Scope* LocalScope::getEnclosingScope() const
 {
     return enclosing_scope;
 }
@@ -44,13 +44,12 @@ void LocalScope::define(Symbol *sym)
 	table[sym->getName()] = sym;
 }
 
-string LocalScope::getScopeName()
+string LocalScope::getScopeName() const
 {
     return "";
 }
 
 void LocalScope::recalc_scope_address()
 {
-//    scope_address = enclosing_scope->getScopeAddress() + enclosing_scope->getScopeSize() + sizeof(int*);
     scope_address = enclosing_scope->getScopeAddress();
 }

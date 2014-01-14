@@ -14,14 +14,13 @@ public:
 
     VariableNode(string name);
 
-    virtual Type *getType();
+    virtual Type *getType() const;
+    virtual bool isLeftValue() const;    
 
     virtual void build_scope();
     virtual void check();
     virtual void gen();
 
-    virtual bool isLeftValue();       
-    
 private:
 
     string name;

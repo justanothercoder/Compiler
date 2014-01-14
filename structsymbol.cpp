@@ -8,12 +8,12 @@ StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), en
     scope_name = getEnclosingScope()->getScopeName() + "_" + name;
 }
 
-Scope* StructSymbol::getEnclosingScope()
+Scope* StructSymbol::getEnclosingScope() const
 {
     return enclosing_scope;    
 }
 
-Symbol* StructSymbol::resolve(string name)
+Symbol* StructSymbol::resolve(string name) const
 {
     auto it = table.find(name);
     if ( it == std::end(table) )
@@ -25,7 +25,7 @@ Symbol* StructSymbol::resolve(string name)
     return it->second;
 }
 
-Symbol* StructSymbol::resolveMember(string name)
+Symbol* StructSymbol::resolveMember(string name) const
 {
     auto it = table.find(name);
     if ( it == std::end(table) )
@@ -74,27 +74,27 @@ void StructSymbol::define(Symbol *sym)
     else
 	table[sym->getName()] = sym;
 }
-int StructSymbol::getSize()
+int StructSymbol::getSize() const
 {
     return type_size;
 }
 
-string StructSymbol::getName()
+string StructSymbol::getName() const
 {
     return name;
 }
 
-int StructSymbol::getScopeSize()
+int StructSymbol::getScopeSize() const
 {
     return 0;
 }
 
-string StructSymbol::getScopeName()
+string StructSymbol::getScopeName() const
 {
     return scope_name;
 }
 
-Scope* StructSymbol::getScope()
+Scope* StructSymbol::getScope() const
 {
     return symbol_scope;
 }

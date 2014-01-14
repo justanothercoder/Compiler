@@ -5,17 +5,17 @@ BuiltInTypeSymbol::BuiltInTypeSymbol(string name, int size) : name(name), size(s
     
 }
     
-string BuiltInTypeSymbol::getName()
+string BuiltInTypeSymbol::getName() const
 {
     return name;
 }
 
-int BuiltInTypeSymbol::getSize()
+int BuiltInTypeSymbol::getSize() const
 {
     return size;
 }
 
-Scope* BuiltInTypeSymbol::getScope()
+Scope* BuiltInTypeSymbol::getScope() const
 {
     return symbol_scope;
 }

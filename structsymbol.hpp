@@ -17,21 +17,21 @@ public:
     
     StructSymbol(string name, Scope *enclosing_scope);
 
-    virtual Scope* getEnclosingScope();
-    virtual Symbol* resolve(string name);
+    virtual Scope* getEnclosingScope() const;
+    virtual Symbol* resolve(string name) const;
     virtual void define(Symbol *sym);
 
-    virtual string getName();
-    virtual int getSize();
+    virtual string getName() const;
+    virtual int getSize() const;
 
-    virtual int getScopeSize();
+    virtual int getScopeSize() const;
 	
-    virtual string getScopeName();
+    virtual string getScopeName() const;
 
-    virtual Scope* getScope();
+    virtual Scope* getScope() const;
     virtual void setScope(Scope *scope);    
 
-    Symbol* resolveMember(string name);
+    Symbol* resolveMember(string name) const;
 
 private:
 

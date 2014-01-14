@@ -9,10 +9,10 @@ public:
 
     ReferenceType(Type *referred_type);
 
-    Type* getReferredType();
+    Type* getReferredType() const;
 
-    virtual string getName();
-    virtual int getSize();
+    virtual string getName() const;
+    virtual int getSize() const;
     
 private:
     

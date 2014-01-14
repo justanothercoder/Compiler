@@ -7,15 +7,15 @@ NumberNode::NumberNode(string num) : num(num)
     
 }
 
+void NumberNode::build_scope()
+{
+    
+}
+
 void NumberNode::check()
 {    
     if ( expr_type == nullptr )
 	expr_type = dynamic_cast<Type*>(scope->resolve("int"));
-}
-
-Type* NumberNode::getType()
-{
-    return expr_type;
 }
 
 void NumberNode::gen()
@@ -24,12 +24,12 @@ void NumberNode::gen()
     CodeGen::emit("lea rax, [rsp - " + std::to_string(getType()->getSize()) + "]");
 }
 
-bool NumberNode::isLeftValue()
+Type* NumberNode::getType() const
 {
-    return false;
+    return expr_type;
 }
 
-void NumberNode::build_scope()
+bool NumberNode::isLeftValue() const
 {
-    
+    return false;
 }

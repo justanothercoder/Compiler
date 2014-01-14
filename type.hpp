@@ -9,8 +9,8 @@ class Type
 {
 public:
 
-    virtual string getName() = 0;
-    virtual int getSize() = 0;
+    virtual string getName() const = 0;
+    virtual int getSize() const = 0;
 };
 
 #endif

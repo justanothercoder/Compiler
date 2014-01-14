@@ -15,15 +15,15 @@ public:
 
     BaseScope();
 
-    virtual Symbol* resolve(string name);
+    virtual Symbol* resolve(string name) const;
 
-    virtual Type* getTypeHint(ExprNode *expr);
+    virtual Type* getTypeHint(ExprNode *expr) const;
     virtual void setTypeHint(ExprNode *expr, Type *type);
 
-    virtual int getAddress(VariableSymbol *sym);
+    virtual int getAddress(VariableSymbol *sym) const;
 
-    virtual int getScopeSize();
-    virtual int getScopeAddress();
+    virtual int getScopeSize() const;
+    virtual int getScopeAddress() const;
 
 protected:
 
