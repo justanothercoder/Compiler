@@ -17,21 +17,6 @@ Symbol* BaseScope::resolve(string name) const
     return it->second;    
 }
     
-Type* BaseScope::getTypeHint(ExprNode *expr) const
-{
-    auto it = type_hints.find(expr);
-
-    if ( it == std::end(type_hints) )
-	return nullptr;    
-
-    return it->second;
-}
-
-void BaseScope::setTypeHint(ExprNode *expr, Type *type)
-{
-    type_hints[expr] = type;
-}
-    
 int BaseScope::getAddress(VariableSymbol *sym) const
 {
     auto it = addresses.find(sym);

@@ -51,7 +51,7 @@ void VariableNode::gen()
 	
 	if ( ov_func_type_info.overloads.size() > 1 )
 	{
-	    FunctionSymbol *hint_type = static_cast<FunctionSymbol*>(scope->getTypeHint(this));
+	    FunctionSymbol *hint_type = static_cast<FunctionSymbol*>(GlobalHelper::getTypeHint(this));
 	    if ( hint_type == nullptr )
 		throw SemanticError("multiple overloads of " + name);
 	   

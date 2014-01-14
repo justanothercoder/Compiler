@@ -7,6 +7,7 @@
 #include "functionsymbol.hpp"
 #include "typehelper.hpp"
 #include "structsymbol.hpp"
+#include "globalhelper.hpp"
 
 class VariableNode : public ExprNode
 {

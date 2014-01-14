@@ -56,7 +56,7 @@ void CallNode::check()
 	    throw SemanticError("parameter is not an lvalue.");
     }    
     
-    scope->setTypeHint(caller, ov_func);
+    GlobalHelper::setTypeHint(caller, ov_func);
 }
 
 void CallNode::gen()

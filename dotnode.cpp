@@ -51,7 +51,7 @@ void DotNode::gen()
 
 	if ( ov_func_type_info.overloads.size() > 1 )
 	{
-	    Type *hint_type = scope->getTypeHint(this);
+	    Type *hint_type = GlobalHelper::getTypeHint(this);
 	    if ( hint_type == nullptr )
 		throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
 

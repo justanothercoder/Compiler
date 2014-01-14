@@ -17,9 +17,6 @@ public:
 
     virtual Symbol* resolve(string name) const;
 
-    virtual Type* getTypeHint(ExprNode *expr) const;
-    virtual void setTypeHint(ExprNode *expr, Type *type);
-
     virtual int getAddress(VariableSymbol *sym) const;
 
     virtual int getScopeSize() const;
@@ -27,7 +24,6 @@ public:
 
 protected:
 
-    map<ExprNode*, Type*> type_hints;
     map<string, Symbol*> table;
     map<VariableSymbol*, int> addresses;
 
