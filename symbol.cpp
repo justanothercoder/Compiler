@@ -1,6 +1,3 @@
 #include "symbol.hpp"
 
-Symbol::~Symbol()
-{
-    
-}
+Symbol::~Symbol() { }

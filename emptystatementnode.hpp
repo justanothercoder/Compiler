@@ -6,13 +6,7 @@
 class EmptyStatementNode : public StatementNode
 {
 public:
-
     EmptyStatementNode();
-    
-private:
-
-
-    
 };
 
 #endif

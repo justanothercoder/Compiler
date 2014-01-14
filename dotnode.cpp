@@ -1,9 +1,6 @@
 #include "dotnode.hpp"
 
-DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(member_name)
-{
-    
-}
+DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(member_name) { }
 
 void DotNode::build_scope()
 {
@@ -70,12 +67,5 @@ void DotNode::gen()
     }
 }
 
-Type* DotNode::getType() const
-{
-    return TypeHelper::getReferenceType(static_cast<VariableSymbol*>(member)->getType());
-}
-
-bool DotNode::isLeftValue() const
-{
-    return true;
-}
+Type* DotNode::getType() const { return TypeHelper::getReferenceType(static_cast<VariableSymbol*>(member)->getType()); }
+bool DotNode::isLeftValue() const { return true; }

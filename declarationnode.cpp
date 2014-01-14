@@ -1,6 +1,3 @@
 #include "declarationnode.hpp"
 
-DeclarationNode::~DeclarationNode()
-{
-    delete definedSymbol;
-}
+DeclarationNode::~DeclarationNode() { }

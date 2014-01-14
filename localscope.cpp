@@ -1,9 +1,6 @@
 #include "localscope.hpp"
 
-LocalScope::LocalScope(Scope *enclosing_scope) : enclosing_scope(enclosing_scope)
-{
-    
-}
+LocalScope::LocalScope(Scope *enclosing_scope) : enclosing_scope(enclosing_scope) { }
 
 void LocalScope::define(Symbol *sym)
 {
@@ -23,7 +20,7 @@ void LocalScope::define(Symbol *sym)
 
 	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
 	
-	if ( ov_func == nullptr )
+	if ( ov_func == nullptr ) 
 	    throw SemanticError(sym_name + " is already defined as not function");
        	
 	FunctionTypeInfo func_type_info = static_cast<FunctionSymbol*>(sym)->getTypeInfo();

@@ -18,10 +18,14 @@ public:
 
     FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements, bool is_method = false);
 
+    virtual ~FunctionDeclarationNode();
+    
     virtual void build_scope();    
     virtual void define();
     virtual void check();
     virtual void gen();
+
+    virtual Symbol* getDefinedSymbol() const;
     
 private:
 
@@ -30,6 +34,8 @@ private:
     TypeInfo return_type_info;
     vector< AST* > statements;
     bool is_method;
+
+    FunctionSymbol *definedSymbol;
 };
 
 #endif

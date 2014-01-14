@@ -1,19 +1,9 @@
 #include "callnode.hpp"
 
-CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), resolved_function_type_info(nullptr, { })
-{
+CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), resolved_function_type_info(nullptr, { }) { }
     
-}
-    
-Type* CallNode::getType() const
-{
-    return resolved_function_type_info.getReturnType();
-}
-
-bool CallNode::isLeftValue() const
-{
-    return false;
-}
+Type* CallNode::getType() const { return resolved_function_type_info.getReturnType(); }
+bool CallNode::isLeftValue() const { return false; }
     
 void CallNode::check()
 {

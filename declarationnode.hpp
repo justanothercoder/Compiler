@@ -10,12 +10,8 @@ class DeclarationNode : public AST
 {
 public:
 
-    virtual ~DeclarationNode();
-
-protected:
-
-    Symbol *definedSymbol;
-    int definitionTime;
+    virtual ~DeclarationNode();    
+    virtual Symbol* getDefinedSymbol() const = 0;    
 };
 
 #endif

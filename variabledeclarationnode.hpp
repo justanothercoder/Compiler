@@ -13,18 +13,23 @@ public:
 
     VariableDeclarationNode(string name, TypeInfo type_info, bool is_field = false);
 
+    virtual ~VariableDeclarationNode();
+    
     virtual void build_scope();    
     virtual void define();
     virtual void check();
     virtual void gen();
 
+    virtual Symbol* getDefinedSymbol() const;
+    
 private:
 
     string name;
     TypeInfo type_info;
 
     bool is_field;
-    
+
+    VariableSymbol *definedSymbol;
 };
 
 #endif

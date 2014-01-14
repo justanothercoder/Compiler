@@ -5,15 +5,19 @@ FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair
 
 }
 
+FunctionDeclarationNode::~FunctionDeclarationNode() { delete definedSymbol; }   
+
 void FunctionDeclarationNode::build_scope()
 {
     definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }, is_method), scope, false, is_method);    
     for ( auto i : statements )
     {
-	i->scope = static_cast<FunctionSymbol*>(definedSymbol);
+	i->scope = definedSymbol;
 	i->build_scope();
     }
 }
+
+Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 
 void FunctionDeclarationNode::define()
 {
@@ -26,7 +30,7 @@ void FunctionDeclarationNode::define()
 	Type *_this_type = TypeHelper::getReferenceType(static_cast<StructSymbol*>(scope));
 	params_types.push_back(_this_type);
 
-	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM));
+	definedSymbol->define(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM));
     }
     
     for ( auto i : params )
@@ -34,12 +38,12 @@ void FunctionDeclarationNode::define()
 	Type *param_type = TypeHelper::fromTypeInfo(i.second, scope);	
 	params_types.push_back(param_type);
 
-	static_cast<FunctionSymbol*>(definedSymbol)->define(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM));
+	definedSymbol->define(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM));
     }
 
     FunctionTypeInfo function_type_info = FunctionTypeInfo(return_type, params_types, is_method);
 
-    static_cast<FunctionSymbol*>(definedSymbol)->setTypeInfo(function_type_info);
+    definedSymbol->setTypeInfo(function_type_info);
 
     scope->define(definedSymbol);
     
@@ -49,7 +53,7 @@ void FunctionDeclarationNode::define()
 
 void FunctionDeclarationNode::check()
 {
-    static_cast<FunctionSymbol*>(definedSymbol)->recalc_scope_address();
+    definedSymbol->recalc_scope_address();
     
     for ( auto i : statements )
 	i->check();
@@ -57,12 +61,10 @@ void FunctionDeclarationNode::check()
 
 void FunctionDeclarationNode::gen()
 {
-    string typed_name = static_cast<FunctionSymbol*>(definedSymbol)->getTypedName();
-
-    string scope_name = static_cast<FunctionSymbol*>(definedSymbol)->getEnclosingScope()->getScopeName() + "_";
+    string scoped_typed_name = definedSymbol->getScopedTypedName();
     
-    CodeGen::emit("jmp _~" + scope_name + typed_name);
-    CodeGen::emit(scope_name + typed_name + ":");
+    CodeGen::emit("jmp _~" + scoped_typed_name);
+    CodeGen::emit(scoped_typed_name + ":");
     CodeGen::emit("push rbp");
     CodeGen::emit("mov rbp, rsp");
 
@@ -72,5 +74,5 @@ void FunctionDeclarationNode::gen()
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");
     CodeGen::emit("ret");
-    CodeGen::emit("_~" + scope_name + typed_name + ":");
+    CodeGen::emit("_~" + scoped_typed_name + ":");
 }

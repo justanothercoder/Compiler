@@ -14,17 +14,21 @@ public:
 
     StructDeclarationNode(string name, const vector<DeclarationNode*>& inner);
 
+    virtual ~StructDeclarationNode();
+    
     virtual void build_scope();    
     virtual void define();
     virtual void check();
     virtual void gen();
 
-
+    virtual Symbol* getDefinedSymbol() const;
     
 private:
 
     string name;
     vector<DeclarationNode*> inner;
+
+    StructSymbol *definedSymbol;
 };
 
 #endif

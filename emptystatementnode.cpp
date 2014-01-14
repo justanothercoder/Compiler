@@ -1,6 +1,3 @@
 #include "emptystatementnode.hpp"
 
-EmptyStatementNode::EmptyStatementNode() : StatementNode({ })
-{
-
-}
+EmptyStatementNode::EmptyStatementNode() : StatementNode({ }) { }

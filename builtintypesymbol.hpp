@@ -13,15 +13,11 @@ public:
     virtual string getName() const;
     virtual int getSize() const;
 
-    virtual Scope* getScope() const;
-    virtual void setScope(Scope *scope);    
-
 private:
-    
+
     string name;
     int size;
-    Scope *symbol_scope;
-    
+
 };
 
 #endif

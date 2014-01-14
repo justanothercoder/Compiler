@@ -1,9 +1,6 @@
 #include "returnnode.hpp"
 
-ReturnNode::ReturnNode(ExprNode *expr) : expr(expr)
-{
-
-}
+ReturnNode::ReturnNode(ExprNode *expr) : expr(expr) { }
 
 void ReturnNode::build_scope()
 {
@@ -11,10 +8,7 @@ void ReturnNode::build_scope()
     expr->build_scope();
 }
 
-void ReturnNode::define()
-{
-    
-}
+void ReturnNode::define() { }
 
 void ReturnNode::check()
 {

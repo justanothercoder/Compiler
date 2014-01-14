@@ -2,10 +2,7 @@
 
 int WhileNode::label_num = 0;
 
-WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats)
-{
-    
-}
+WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats) { }
 
 void WhileNode::build_scope()
 {
@@ -18,10 +15,7 @@ void WhileNode::build_scope()
     stats->build_scope();
 }
 
-void WhileNode::define()
-{
-    stats->define();
-}
+void WhileNode::define() { stats->define(); }
 
 void WhileNode::check()
 {
@@ -44,7 +38,4 @@ void WhileNode::gen()
     CodeGen::emit(exit_label + ":");
 }
 
-string WhileNode::getNewLabel()
-{
-    return "@while_label" + std::to_string(++WhileNode::label_num);
-}
+string WhileNode::getNewLabel() { return "@while_label" + std::to_string(++WhileNode::label_num); }

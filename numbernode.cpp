@@ -2,15 +2,9 @@
 
 Type* NumberNode::expr_type = nullptr;
 
-NumberNode::NumberNode(string num) : num(num)
-{
-    
-}
+NumberNode::NumberNode(string num) : num(num) { }
 
-void NumberNode::build_scope()
-{
-    
-}
+void NumberNode::build_scope() { }
 
 void NumberNode::check()
 {    
@@ -24,12 +18,6 @@ void NumberNode::gen()
     CodeGen::emit("lea rax, [rsp - " + std::to_string(getType()->getSize()) + "]");
 }
 
-Type* NumberNode::getType() const
-{
-    return expr_type;
-}
+Type* NumberNode::getType() const { return expr_type; }
 
-bool NumberNode::isLeftValue() const
-{
-    return false;
-}
+bool NumberNode::isLeftValue() const { return false; }

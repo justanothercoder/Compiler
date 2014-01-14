@@ -3,6 +3,8 @@
 map<ExprNode*, Type*> GlobalHelper::type_hints = map<ExprNode*, Type*>();
 map<Symbol*, Scope*> GlobalHelper::symbol_scopes = map<Symbol*, Scope*>();
 
+map<Symbol*, int> GlobalHelper::definition_time = map<Symbol*, int>();
+
 Type* GlobalHelper::getTypeHint(ExprNode *expr)
 {
     auto it = type_hints.find(expr);
@@ -31,4 +33,14 @@ Scope* GlobalHelper::getSymbolScope(Symbol *sym)
 void GlobalHelper::setSymbolScope(Symbol *sym, Scope *scope)
 {
     symbol_scopes[sym] = scope;
+}
+
+int GlobalHelper::getDefinitionTime(Symbol *sym)
+{
+    auto it = definition_time.find(sym);
+
+    if ( it == std::end(definition_time) )
+	throw 1;
+
+    return it->second;
 }

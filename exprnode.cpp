@@ -1,6 +1,3 @@
 #include "exprnode.hpp"
 
-void ExprNode::define()
-{
-    
-}    
+void ExprNode::define() { }    

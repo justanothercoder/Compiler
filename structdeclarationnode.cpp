@@ -5,12 +5,16 @@ StructDeclarationNode::StructDeclarationNode(string name, const vector<Declarati
 
 }
 
+StructDeclarationNode::~StructDeclarationNode() { delete definedSymbol; }
+
+Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
+
 void StructDeclarationNode::build_scope()
 {
     definedSymbol = new StructSymbol(name, scope);
     for ( auto i : inner )
     {
-	i->scope = static_cast<StructSymbol*>(definedSymbol);
+	i->scope = definedSymbol;
 	i->build_scope();
     }
 }

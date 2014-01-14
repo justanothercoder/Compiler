@@ -5,6 +5,10 @@ VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info
     definedSymbol = new VariableSymbol(name, nullptr, (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE));
 }
 
+VariableDeclarationNode::~VariableDeclarationNode() { delete definedSymbol; }
+
+Symbol* VariableDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
+
 void VariableDeclarationNode::build_scope()
 {
     
@@ -13,7 +17,7 @@ void VariableDeclarationNode::build_scope()
 void VariableDeclarationNode::define()
 {
     Type *var_type = TypeHelper::fromTypeInfo(type_info, scope);    
-    static_cast<VariableSymbol*>(definedSymbol)->setType(var_type);
+    definedSymbol->setType(var_type);
     scope->define(definedSymbol);
 }
 

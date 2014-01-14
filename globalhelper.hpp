@@ -16,6 +16,8 @@ public:
 
     static Scope* getSymbolScope(Symbol *sym);
     static void setSymbolScope(Symbol *sym, Scope *scope);
+
+    static int getDefinitionTime(Symbol *sym);
     
 private:
 
@@ -23,6 +25,8 @@ private:
 
     static map<ExprNode*, Type*> type_hints;
     static map<Symbol*, Scope*> symbol_scopes;
+
+    static map<Symbol*, int> definition_time;
 };
 
 #endif
