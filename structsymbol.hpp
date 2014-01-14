@@ -28,9 +28,6 @@ public:
 	
     virtual string getScopeName() const;
 
-    virtual Scope* getScope() const;
-    virtual void setScope(Scope *scope);    
-
     Symbol* resolveMember(string name) const;
 
 private:
@@ -42,8 +39,6 @@ private:
     int type_size;
 
     string scope_name;
-
-    Scope *symbol_scope;
 };
 		     
 #endif

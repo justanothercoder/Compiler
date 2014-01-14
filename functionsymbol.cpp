@@ -8,17 +8,12 @@ FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info,
     scope_name = enclosing_scope->getScopeName() + "_" + name;
 }
 
-Scope* FunctionSymbol::getEnclosingScope() const
-{
-    return enclosing_scope;
-}
-
 void FunctionSymbol::define(Symbol *sym)
 {
+    string sym_name = sym->getName();
+	
     if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
     {
-	string sym_name = sym->getName();
-	
 	if ( table[sym_name] == nullptr )
 	    table[sym_name] = new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }));
 
@@ -36,7 +31,7 @@ void FunctionSymbol::define(Symbol *sym)
     }
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {
-	table[sym->getName()] = sym;
+	table[sym_name] = sym;
 	if ( static_cast<VariableSymbol*>(sym)->isParam() )
 	    addresses[static_cast<VariableSymbol*>(sym)] = -(params_size += static_cast<VariableSymbol*>(sym)->getType()->getSize());
 	else
@@ -46,12 +41,7 @@ void FunctionSymbol::define(Symbol *sym)
 	}
     }
     else
-	table[sym->getName()] = sym;
-}
-
-void FunctionSymbol::setTypeInfo(FunctionTypeInfo function_type_info)
-{
-    this->function_type_info = function_type_info;
+	table[sym_name] = sym;
 }
 
 string FunctionSymbol::getTypedName() const
@@ -74,52 +64,18 @@ string FunctionSymbol::getScopedTypedName() const
     return res;
 }
 
-int FunctionSymbol::getScopeSize() const
-{
-    return scope_size + params_size;
-}
+Scope* FunctionSymbol::getEnclosingScope() const { return enclosing_scope; }
+int FunctionSymbol::getScopeSize() const { return scope_size + params_size; }
+string FunctionSymbol::getScopeName() const { return scope_name; }
 
-string FunctionSymbol::getScopeName() const
-{
-    return scope_name;
-}
+void FunctionSymbol::recalc_scope_address() { scope_address = enclosing_scope->getScopeAddress() + enclosing_scope->getScopeSize() + sizeof(int*); }
 
-void FunctionSymbol::recalc_scope_address() 
-{
-    scope_address = enclosing_scope->getScopeAddress() + enclosing_scope->getScopeSize() + sizeof(int*);    
-}
+bool FunctionSymbol::isOperator() const { return is_operator; }
+bool FunctionSymbol::isMethod() const { return is_method; }
 
-bool FunctionSymbol::isOperator() const
-{
-    return is_operator;
-}
+string FunctionSymbol::getName() const { return name; }
+int FunctionSymbol::getSize() const { return sizeof(int*); }
 
-bool FunctionSymbol::isMethod() const
-{
-    return is_method;
-}
+FunctionTypeInfo FunctionSymbol::getTypeInfo() const { return function_type_info; }
+void FunctionSymbol::setTypeInfo(FunctionTypeInfo function_type_info) { this->function_type_info = function_type_info; }
 
-Scope* FunctionSymbol::getScope() const
-{
-    return symbol_scope;
-}
-
-void FunctionSymbol::setScope(Scope *scope)
-{
-    symbol_scope = scope;
-}
-
-string FunctionSymbol::getName() const
-{
-    return name;
-}
-
-int FunctionSymbol::getSize() const
-{
-    return sizeof(int*);
-}
-
-FunctionTypeInfo FunctionSymbol::getTypeInfo() const
-{
-    return function_type_info;
-}

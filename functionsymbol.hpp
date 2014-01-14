@@ -33,9 +33,6 @@ public:
     bool isOperator() const;
     bool isMethod() const;
 
-    virtual Scope* getScope() const;
-    virtual void setScope(Scope *scope);    
-
     virtual string getName() const;
     virtual int getSize() const;
     
@@ -54,8 +51,6 @@ private:
     string scope_name;
 
     bool is_operator, is_method;    
-
-    Scope *symbol_scope;
 };
 
 #endif

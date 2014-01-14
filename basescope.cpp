@@ -1,9 +1,6 @@
 #include "basescope.hpp"
 
-BaseScope::BaseScope()
-{
-    scope_size = 0;
-}
+BaseScope::BaseScope() { scope_size = 0; }
 
 Symbol* BaseScope::resolve(string name) const
 {
@@ -32,12 +29,5 @@ int BaseScope::getAddress(VariableSymbol *sym) const
     return it->second;
 }
 
-int BaseScope::getScopeSize() const
-{
-    return scope_size;
-}
-
-int BaseScope::getScopeAddress() const
-{
-    return scope_address;
-}
+int BaseScope::getScopeSize() const { return scope_size; }
+int BaseScope::getScopeAddress() const { return scope_address; }

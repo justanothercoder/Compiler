@@ -15,16 +15,6 @@ void VariableSymbol::setType(Type *t)
     type = t;
 }
 
-Scope* VariableSymbol::getScope() const
-{
-    return symbol_scope;
-}
-
-void VariableSymbol::setScope(Scope *scope)
-{
-    symbol_scope = scope;
-}
-
 string VariableSymbol::getName() const
 {
     return name;

@@ -16,9 +16,6 @@ public:
 
     void setType(Type *t);
 
-    virtual Scope* getScope() const;
-    virtual void setScope(Scope *scope);
-
     virtual string getName() const;
 
     bool isParam() const;
@@ -27,9 +24,6 @@ public:
 private:
 
     string name;
-
-    Scope *symbol_scope;    
-
     Type *type;
 
     VariableSymbolType sym_type;

@@ -35,33 +35,35 @@ Symbol* StructSymbol::resolveMember(string name) const
 
 void StructSymbol::define(Symbol *sym)
 {
+    string sym_name = sym->getName();
+    
     if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
     {
 	FunctionSymbol *func_sym = static_cast<FunctionSymbol*>(sym);
 	
-	auto it = table.find(sym->getName());
+	auto it = table.find(sym_name);
 	
 	if ( it == std::end(table) )
-	    table[sym->getName()] = new VariableSymbol(sym->getName(), new OverloadedFunctionSymbol(sym->getName(), OverloadedFunctionTypeInfo({ }), func_sym->isMethod()));
+	    table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), func_sym->isMethod()));
 
-	Symbol *res_sym = table[sym->getName()];	
+	Symbol *res_sym = table[sym_name];	
 
 	if ( dynamic_cast<VariableSymbol*>(res_sym) == nullptr || dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(res_sym)->getType()) == nullptr )
-	    throw SemanticError(sym->getName() + " is already defined.");
+	    throw SemanticError(sym_name + " is already defined.");
 
 	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
 	
 	if ( ov_func == nullptr )
-	    throw SemanticError(sym->getName() + " is already defined as not function");
+	    throw SemanticError(sym_name + " is already defined as not function");
        	
 	FunctionTypeInfo func_type_info = func_sym->getTypeInfo();
 
-	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(table[sym->getName()])->getType());
+	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(table[sym_name])->getType());
 	ofs->addOverload(func_type_info, func_sym);
     }
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {
-	table[sym->getName()] = sym;
+	table[sym_name] = sym;
 
 	if ( !static_cast<VariableSymbol*>(sym)->isField() )
 	    throw SemanticError("internal error.");
@@ -72,34 +74,10 @@ void StructSymbol::define(Symbol *sym)
 	type_size += static_cast<VariableSymbol*>(sym)->getType()->getSize();
     }
     else
-	table[sym->getName()] = sym;
-}
-int StructSymbol::getSize() const
-{
-    return type_size;
+	table[sym_name] = sym;
 }
 
-string StructSymbol::getName() const
-{
-    return name;
-}
-
-int StructSymbol::getScopeSize() const
-{
-    return 0;
-}
-
-string StructSymbol::getScopeName() const
-{
-    return scope_name;
-}
-
-Scope* StructSymbol::getScope() const
-{
-    return symbol_scope;
-}
-
-void StructSymbol::setScope(Scope *scope)
-{
-    symbol_scope = scope;
-}
+int StructSymbol::getSize() const { return type_size; }
+string StructSymbol::getName() const { return name; }
+int StructSymbol::getScopeSize() const { return 0; }
+string StructSymbol::getScopeName() const { return scope_name; }
