@@ -46,6 +46,12 @@ int main()
 	root->scope->define(new FunctionSymbol("operator*", FunctionTypeInfo(int_type, {int_type, int_type}), root->scope, true));
 
 	CodeGen::emit("section .text");
+
+	CodeGen::emit("extern _~operator_assign_int~ref_int");
+	CodeGen::emit("extern _~operator_plus_int_int");
+	CodeGen::emit("extern _~operator_minus_int_int");
+	CodeGen::emit("extern _~operator_mul_int_int");	
+
 	CodeGen::emit("global _start");
 	CodeGen::emit("_start:");
 
