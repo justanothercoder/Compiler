@@ -4,9 +4,7 @@
 
 #include "lexer.hpp"
 #include "parser.hpp"
-#include "globalscope.hpp"
-#include "builtintypesymbol.hpp"
-#include "typehelper.hpp"
+#include "builtins.hpp"
 
 int main()
 {
@@ -33,17 +31,13 @@ int main()
 	
 	AST* root = parser->parse();
 
-	GlobalHelper::setASTScope(root, new GlobalScope());
+	root->setScope(BuiltIns::global_scope);
 
-	BuiltInTypeSymbol *int_type = new BuiltInTypeSymbol("int", sizeof(int*));	
-
-	auto int_ref = TypeHelper::getReferenceType(int_type);
-	
-	root->getScope()->define(int_type);
-	root->getScope()->define(new FunctionSymbol("operator=", FunctionTypeInfo(int_ref, {int_ref, int_type}), root->getScope(), true));
-	root->getScope()->define(new FunctionSymbol("operator+", FunctionTypeInfo(int_type, {int_type, int_type}), root->getScope(), true));
-	root->getScope()->define(new FunctionSymbol("operator-", FunctionTypeInfo(int_type, {int_type, int_type}), root->getScope(), true));
-	root->getScope()->define(new FunctionSymbol("operator*", FunctionTypeInfo(int_type, {int_type, int_type}), root->getScope(), true));
+	root->getScope()->define(BuiltIns::int_type);
+	root->getScope()->define(BuiltIns::int_assign);
+	root->getScope()->define(BuiltIns::int_plus);
+	root->getScope()->define(BuiltIns::int_minus);
+	root->getScope()->define(BuiltIns::int_mul);
 
 	CodeGen::emit("section .text");
 
