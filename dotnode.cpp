@@ -4,7 +4,7 @@ DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(m
 
 void DotNode::build_scope()
 {
-    base->scope = scope;
+    base->setScope(getScope());
     base->build_scope();    
 }
 

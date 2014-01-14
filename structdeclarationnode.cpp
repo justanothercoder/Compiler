@@ -11,17 +11,17 @@ Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; 
 
 void StructDeclarationNode::build_scope()
 {
-    definedSymbol = new StructSymbol(name, scope);
+    definedSymbol = new StructSymbol(name, getScope());
     for ( auto i : inner )
     {
-	i->scope = definedSymbol;
+	i->setScope(definedSymbol);
 	i->build_scope();
     }
 }
 
 void StructDeclarationNode::define()
 {
-    scope->define(definedSymbol);
+    getScope()->define(definedSymbol);
 
     for ( auto i : inner )
 	i->define();    

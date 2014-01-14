@@ -8,10 +8,7 @@ StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), en
     scope_name = getEnclosingScope()->getScopeName() + "_" + name;
 }
 
-Scope* StructSymbol::getEnclosingScope() const
-{
-    return enclosing_scope;    
-}
+Scope* StructSymbol::getEnclosingScope() const { return enclosing_scope; }
 
 Symbol* StructSymbol::resolve(string name) const
 {

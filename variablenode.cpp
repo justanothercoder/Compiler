@@ -12,7 +12,7 @@ void VariableNode::build_scope()
 
 void VariableNode::check()
 {
-    Symbol *sym = scope->resolve(name);
+    Symbol *sym = getScope()->resolve(name);
 
     if ( sym == nullptr )
 	throw SemanticError("No such symbol " + name);
@@ -31,16 +31,16 @@ void VariableNode::gen()
     {
 	if ( variable->isField() )
 	{
-	    VariableSymbol *sym = static_cast<VariableSymbol*>(scope->resolve("this"));
+	    VariableSymbol *sym = static_cast<VariableSymbol*>(getScope()->resolve("this"));
 
 	    Scope *struc_scope = static_cast<StructSymbol*>(sym->getType());
 	    
-	    CodeGen::emit("mov rax, [rbp - " + std::to_string(scope->getAddress(sym)) + "]");
+	    CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(sym)) + "]");
 	    CodeGen::emit("mov rax, [rax - " + std::to_string(struc_scope->getAddress(variable)) + "]");
 	}
 	else
 	{
-	    CodeGen::emit("mov rax, [rbp - " + std::to_string(scope->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
+	    CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
 	}
     }    
     else if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type) )
@@ -68,7 +68,7 @@ void VariableNode::gen()
     {
 	if ( variable->isField() )
 	{
-	    Symbol *_this = scope->resolve("this");
+	    Symbol *_this = getScope()->resolve("this");
 
 	    if ( dynamic_cast<VariableSymbol*>(_this) == nullptr )
 		throw SemanticError("internal error");
@@ -77,12 +77,12 @@ void VariableNode::gen()
 
 	    Scope *struc_scope = static_cast<StructSymbol*>(static_cast<ReferenceType*>(sym->getType())->getReferredType());
 	    
-	    CodeGen::emit("mov rax, [rbp - " + std::to_string(scope->getAddress(sym)) + "]");
+	    CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(sym)) + "]");
 	    CodeGen::emit("lea rax, [rax - " + std::to_string(struc_scope->getAddress(variable)) + "]");
 	}
 	else
 	{
-	    CodeGen::emit("lea rax, [rbp - " + std::to_string(scope->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
+	    CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
 	}
     }
 }

@@ -15,7 +15,7 @@ void StatementNode::build_scope()
 {
     for ( auto i : this->statements )
     {
-	i->scope = scope;
+	i->setScope(getScope());
 	i->build_scope();
     }
 }

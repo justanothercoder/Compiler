@@ -16,9 +16,9 @@ void VariableDeclarationNode::build_scope()
 
 void VariableDeclarationNode::define()
 {
-    Type *var_type = TypeHelper::fromTypeInfo(type_info, scope);    
+    Type *var_type = TypeHelper::fromTypeInfo(type_info, getScope());    
     definedSymbol->setType(var_type);
-    scope->define(definedSymbol);
+    getScope()->define(definedSymbol);
 }
 
 void VariableDeclarationNode::check()

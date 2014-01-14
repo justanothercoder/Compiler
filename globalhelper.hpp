@@ -3,7 +3,11 @@
 
 #include <map>
 
-#include "exprnode.hpp"
+class AST;
+class ExprNode;
+class Type;
+class Scope;
+class Symbol;
 
 using std::map;
 
@@ -18,6 +22,9 @@ public:
     static void setSymbolScope(Symbol *sym, Scope *scope);
 
     static int getDefinitionTime(Symbol *sym);
+
+    static Scope* getASTScope(const AST *t);
+    static void setASTScope(AST *t, Scope *sc);
     
 private:
 
@@ -27,6 +34,8 @@ private:
     static map<Symbol*, Scope*> symbol_scopes;
 
     static map<Symbol*, int> definition_time;
+
+    static map<AST*, Scope*> ast_scopes;
 };
 
 #endif

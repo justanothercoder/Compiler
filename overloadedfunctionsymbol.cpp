@@ -1,34 +1,11 @@
 #include "overloadedfunctionsymbol.hpp"
 
-OverloadedFunctionSymbol::OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, bool is_method) : name(name), type_info(type_info), is_method(is_method)
-{
-    
-}
+OverloadedFunctionSymbol::OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, bool is_method) : name(name), type_info(type_info), is_method(is_method) { }
 
-string OverloadedFunctionSymbol::getName() const
-{
-    return name;   
-}
+string OverloadedFunctionSymbol::getName() const { return name; }
+int OverloadedFunctionSymbol::getSize() const { return sizeof(int*); }
 
-int OverloadedFunctionSymbol::getSize() const
-{
-    return sizeof(int*);
-}
-
-Scope* OverloadedFunctionSymbol::getScope() const
-{
-    return symbol_scope;
-}
-
-void OverloadedFunctionSymbol::setScope(Scope *scope)
-{
-    symbol_scope = scope;
-}
-
-OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo() const
-{
-    return type_info;
-}
+OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo() const { return type_info; }
 
 void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, FunctionSymbol *sym)
 {
@@ -36,10 +13,7 @@ void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, Func
     type_info.symbols[func_type_info] = sym;
 }
 
-bool OverloadedFunctionSymbol::isMethod() const
-{
-    return is_method;
-}
+bool OverloadedFunctionSymbol::isMethod() const { return is_method; }
 
 Type* OverloadedFunctionSymbol::getBaseType() const
 {

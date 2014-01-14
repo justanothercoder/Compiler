@@ -4,7 +4,7 @@ ReturnNode::ReturnNode(ExprNode *expr) : expr(expr) { }
 
 void ReturnNode::build_scope()
 {
-    expr->scope = scope;
+    expr->setScope(getScope());
     expr->build_scope();
 }
 
@@ -12,7 +12,7 @@ void ReturnNode::define() { }
 
 void ReturnNode::check()
 {
-    Scope *sc = scope;
+    Scope *sc = getScope();
     while ( sc != nullptr && dynamic_cast<FunctionSymbol*>(sc) == nullptr )
 	sc = sc->getEnclosingScope();
 

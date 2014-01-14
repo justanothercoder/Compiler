@@ -6,12 +6,12 @@ WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats) { }
 
 void WhileNode::build_scope()
 {
-    while_scope = new LocalScope(scope);
+    while_scope = new LocalScope(getScope());
 
-    cond->scope = scope;
+    cond->setScope(getScope());
     cond->build_scope();
 
-    stats->scope = while_scope;
+    stats->setScope(while_scope);
     stats->build_scope();
 }
 

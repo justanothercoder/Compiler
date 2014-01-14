@@ -33,17 +33,17 @@ int main()
 	
 	AST* root = parser->parse();
 
-	root->scope = new GlobalScope();
+	GlobalHelper::setASTScope(root, new GlobalScope());
 
 	BuiltInTypeSymbol *int_type = new BuiltInTypeSymbol("int", sizeof(int*));	
 
 	auto int_ref = TypeHelper::getReferenceType(int_type);
 	
-	root->scope->define(int_type);
-	root->scope->define(new FunctionSymbol("operator=", FunctionTypeInfo(int_ref, {int_ref, int_type}), root->scope, true));
-	root->scope->define(new FunctionSymbol("operator+", FunctionTypeInfo(int_type, {int_type, int_type}), root->scope, true));
-	root->scope->define(new FunctionSymbol("operator-", FunctionTypeInfo(int_type, {int_type, int_type}), root->scope, true));
-	root->scope->define(new FunctionSymbol("operator*", FunctionTypeInfo(int_type, {int_type, int_type}), root->scope, true));
+	root->getScope()->define(int_type);
+	root->getScope()->define(new FunctionSymbol("operator=", FunctionTypeInfo(int_ref, {int_ref, int_type}), root->getScope(), true));
+	root->getScope()->define(new FunctionSymbol("operator+", FunctionTypeInfo(int_type, {int_type, int_type}), root->getScope(), true));
+	root->getScope()->define(new FunctionSymbol("operator-", FunctionTypeInfo(int_type, {int_type, int_type}), root->getScope(), true));
+	root->getScope()->define(new FunctionSymbol("operator*", FunctionTypeInfo(int_type, {int_type, int_type}), root->getScope(), true));
 
 	CodeGen::emit("section .text");
 

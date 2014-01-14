@@ -9,7 +9,7 @@ void NumberNode::build_scope() { }
 void NumberNode::check()
 {    
     if ( expr_type == nullptr )
-	expr_type = dynamic_cast<Type*>(scope->resolve("int"));
+	expr_type = dynamic_cast<Type*>(getScope()->resolve("int"));
 }
 
 void NumberNode::gen()

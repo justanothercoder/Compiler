@@ -92,11 +92,11 @@ void CallNode::gen()
 
 void CallNode::build_scope()
 {
-    caller->scope = scope;
+    caller->setScope(getScope());
     caller->build_scope();
     for ( auto i : params )
     {
-	i->scope = scope;
+	i->setScope(getScope());
 	i->build_scope();
     }
 }

@@ -13,9 +13,6 @@ public:
     virtual string getName() const;
     virtual int getSize() const;
 
-    virtual Scope* getScope() const;
-    virtual void setScope(Scope *scope);
-
     OverloadedFunctionTypeInfo getTypeInfo() const;
 
     void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym);
@@ -28,8 +25,6 @@ private:
 
     string name;
     OverloadedFunctionTypeInfo type_info;
-
-    Scope *symbol_scope;
 
     bool is_method;
 };

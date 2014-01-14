@@ -17,10 +17,10 @@ Type* BinaryOperatorNode::getType() const
 
 void BinaryOperatorNode::build_scope()
 {
-    lhs->scope = scope;
+    lhs->setScope(getScope());
     lhs->build_scope();
     
-    rhs->scope = scope;
+    rhs->setScope(getScope());
     rhs->build_scope();
 }
 
@@ -31,7 +31,7 @@ void BinaryOperatorNode::check()
 
     special_check();
     
-    Symbol *op_sym = scope->resolve(getOperatorName());
+    Symbol *op_sym = getScope()->resolve(getOperatorName());
 
     OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(op_sym)->getType());
 

@@ -13,8 +13,7 @@ class Symbol
 {
 public:
 
-    virtual ~Symbol();
-    
+    virtual ~Symbol();    
     virtual string getName() const = 0;
 };
 
