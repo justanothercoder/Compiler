@@ -88,34 +88,23 @@ void BinaryOperatorNode::gen()
     int paramsSize = 0;
 
     FunctionTypeInfo resolved_operator_type_info = resolved_operator_symbol->getTypeInfo();
-    
-    rhs->gen();
-    if ( dynamic_cast<ReferenceType*>(resolved_operator_type_info.getParamType(1)) )
-    {
-	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rax");
-	paramsSize += sizeof(int*);
-    }
-    else
-    {
-	for ( int j = 0; j < resolved_operator_type_info.getParamType(1)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+
+    auto params = {rhs, lhs};
+    for ( int i = 1; i >= 0; --i )
+    {    
+	(*(std::begin(params) + i))->gen();
+	if ( dynamic_cast<ReferenceType*>(resolved_operator_type_info.getParamType(i)) )
 	{
-	    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rbx");
+	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rax");
+	    paramsSize += sizeof(int*);
 	}
-    }
-    
-    lhs->gen();
-    if ( dynamic_cast<ReferenceType*>(resolved_operator_type_info.getParamType(0)) )
-    {
-	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rax");
-	paramsSize += sizeof(int*);
-    }
-    else
-    {
-	for ( int j = 0; j < resolved_operator_type_info.getParamType(0)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+	else
 	{
-	    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rbx");
+	    for ( int j = 0; j < resolved_operator_type_info.getParamType(1)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+	    {
+		CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
+		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rbx");
+	    }
 	}
     }
     
