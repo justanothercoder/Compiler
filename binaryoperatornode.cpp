@@ -89,11 +89,11 @@ void BinaryOperatorNode::gen()
 
     FunctionTypeInfo resolved_operator_type_info = resolved_operator_symbol->getTypeInfo();
 
-    auto params = {rhs, lhs};
-    for ( int i = 1; i >= 0; --i )
+    auto params = {std::make_pair(1, rhs), std::make_pair(0, lhs)};
+    for ( auto i : params )
     {    
-	(*(std::begin(params) + i))->gen();
-	if ( dynamic_cast<ReferenceType*>(resolved_operator_type_info.getParamType(i)) )
+	i.second->gen();
+	if ( dynamic_cast<ReferenceType*>(resolved_operator_type_info.getParamType(i.first)) )
 	{
 	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rax");
 	    paramsSize += sizeof(int*);

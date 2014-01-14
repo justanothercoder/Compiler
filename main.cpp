@@ -41,10 +41,10 @@ int main()
 
 	CodeGen::emit("section .text");
 
-	CodeGen::emit("extern _~operator_assign_int~ref_int");
-	CodeGen::emit("extern _~operator_plus_int_int");
-	CodeGen::emit("extern _~operator_minus_int_int");
-	CodeGen::emit("extern _~operator_mul_int_int");	
+	CodeGen::emit("extern _~operatorassign_int~ref_int");
+	CodeGen::emit("extern _~operatorplus_int_int");
+	CodeGen::emit("extern _~operatorminus_int_int");
+	CodeGen::emit("extern _~operatormul_int_int");	
 
 	CodeGen::emit("global _start");
 	CodeGen::emit("_start:");
