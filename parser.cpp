@@ -50,7 +50,13 @@ DeclarationNode* Parser::variableDecl(std::shared_ptr<string> struct_name)
 {
     match(TokenType::VAR);
     auto var = var_and_type();
-    return new VariableDeclarationNode(var.first, var.second, struct_name != nullptr);
+
+    vector<ExprNode*> constructor_call_params;
+    
+    if ( getTokenType(1) == TokenType::LPAREN )
+	constructor_call_params = call_params_list();
+    
+    return new VariableDeclarationNode(var.first, var.second, struct_name != nullptr, constructor_call_params);
 }
 
 DeclarationNode* Parser::structDecl()
@@ -121,7 +127,7 @@ DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
 
     match(TokenType::RBRACE);
 
-    return new FunctionDeclarationNode(function_name, params, return_type, statements, FunctionTraits(struct_name != nullptr, is_constructor, false));
+    return new FunctionDeclarationNode(function_name, params, return_type, statements, {struct_name != nullptr, is_constructor, false});
 }
 
 string Parser::id()
@@ -171,25 +177,7 @@ ExprNode* Parser::unary_right()
     while ( getTokenType(1) == TokenType::LPAREN || getTokenType(1) == TokenType::DOT )
     {
 	if ( getTokenType(1) == TokenType::LPAREN )
-	{
-	    vector<ExprNode*> params;
-	
-	    match(TokenType::LPAREN);
-
-	    if ( getTokenType(1) != TokenType::RPAREN )
-	    {
-		params.push_back(expression());
-		while ( getTokenType(1) == TokenType::COMMA )
-		{
-		    match(TokenType::COMMA);
-		    params.push_back(expression());
-		}
-	    }
-
-	    match(TokenType::RPAREN);
-
-	    res = new CallNode(res, params);
-	}
+	    res = new CallNode(res, call_params_list());
 	else
 	{
 	    match(TokenType::DOT);
@@ -393,4 +381,25 @@ TypeInfo Parser::type_info()
     }
 
     return TypeInfo(type_name, is_ref);
+}
+
+vector<ExprNode*> Parser::call_params_list()
+{
+    vector<ExprNode*> params;
+	
+    match(TokenType::LPAREN);
+
+    if ( getTokenType(1) != TokenType::RPAREN )
+    {
+	params.push_back(expression());
+	while ( getTokenType(1) == TokenType::COMMA )
+	{
+	    match(TokenType::COMMA);
+	    params.push_back(expression());
+	}
+    }
+
+    match(TokenType::RPAREN);
+
+    return params;
 }

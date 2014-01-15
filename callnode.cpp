@@ -47,7 +47,8 @@ void CallNode::check()
 	    throw SemanticError("parameter is not an lvalue.");
     }    
     
-    GlobalHelper::setTypeHint(caller, ov_func);
+//    GlobalHelper::setTypeHint(caller, ov_func);
+    GlobalHelper::setTypeHint(caller, resolved_function_symbol);
 }
 
 void CallNode::gen()

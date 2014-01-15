@@ -1,10 +1,10 @@
 #ifndef _AST_HPP_
 #define _AST_HPP_
 
-#include "scope.hpp"
 #include "semanticerror.hpp"
 #include "globalhelper.hpp"
-#include "builtins.hpp"
+
+class Scope;
 
 class AST
 {

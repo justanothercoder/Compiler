@@ -3,8 +3,8 @@
 
 #include "symbol.hpp"
 #include "type.hpp"
+#include "exprnode.hpp"
 
-class ExprNode;
 class VariableSymbol;
 
 class Scope

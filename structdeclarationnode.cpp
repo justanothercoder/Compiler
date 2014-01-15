@@ -11,7 +11,7 @@ Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; 
 
 void StructDeclarationNode::build_scope()
 {
-    definedSymbol = new StructSymbol(name, getScope());
+    definedSymbol = new StructSymbol(name, this->getScope());
     for ( auto i : inner )
     {
 	i->setScope(definedSymbol);

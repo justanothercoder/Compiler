@@ -9,6 +9,7 @@
 #include "overloadedfunctiontypeinfo.hpp"
 #include "overloadedfunctionsymbol.hpp"
 #include "globalhelper.hpp"
+#include "functionsymbol.hpp"
 
 using std::vector;
 

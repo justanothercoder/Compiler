@@ -3,6 +3,7 @@
 
 #include "exprnode.hpp"
 #include "globalconfig.hpp"
+#include "builtins.hpp"
 
 class NumberNode : public ExprNode
 {

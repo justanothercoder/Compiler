@@ -3,12 +3,13 @@
 
 #include <map>
 
-#include "overloadedfunctiontypeinfo.hpp"
 #include "variablesymbol.hpp"
-#include "overloadedfunctionsymbol.hpp"
 #include "basescope.hpp"
 #include "globalconfig.hpp"
 #include "functiontraits.hpp"
+#include "functiontypeinfo.hpp"
+
+#include "overloadedfunctionsymbol.hpp"
 
 using std::map;
 using std::pair;

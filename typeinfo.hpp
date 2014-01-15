@@ -5,14 +5,16 @@
 
 using std::string;
 
-struct TypeInfo
+class TypeInfo
 {
+public:   
     TypeInfo();
     TypeInfo(string type_name, bool is_ref);
 
     string getTypeName() const;
     bool getIsRef() const;
-    
+
+private:
     string type_name;
     bool is_ref;
 };

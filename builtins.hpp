@@ -18,6 +18,7 @@ public:
     static FunctionSymbol *int_plus;
     static FunctionSymbol *int_minus;
     static FunctionSymbol *int_mul;
+    static FunctionSymbol *int_constructor;
 };
 
 #endif
