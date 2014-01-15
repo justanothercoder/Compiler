@@ -1,6 +1,8 @@
 #ifndef _PARSER_HPP_
 #define _PARSER_HPP_
 
+#include <memory>
+
 #include "abstractparser.hpp"
 
 #include "structdeclarationnode.hpp"
@@ -32,10 +34,10 @@ private:
     TypeInfo type_info();
     pair<string, TypeInfo > var_and_type();
     
-    DeclarationNode* declaration(bool in_struct = false);
+    DeclarationNode* declaration(std::shared_ptr<string> struct_name = nullptr);
     DeclarationNode* structDecl();
-    DeclarationNode* variableDecl(bool in_struct = false);
-    DeclarationNode* functionDecl(bool in_struct = false);
+    DeclarationNode* variableDecl(std::shared_ptr<string> struct_name = nullptr);
+    DeclarationNode* functionDecl(std::shared_ptr<string> struct_name = nullptr);
 
     AST* while_stat();
     AST* if_stat();

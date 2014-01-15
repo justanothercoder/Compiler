@@ -33,6 +33,7 @@ public:
 
     bool isOperator() const;
     bool isMethod() const;
+    bool isConstructor() const;
 
     virtual string getName() const;
     virtual int getSize() const;
@@ -51,7 +52,7 @@ private:
 
     string scope_name;
 
-    bool is_operator, is_method;    
+    bool is_operator, is_method, is_constructor;
 };
 
 #endif

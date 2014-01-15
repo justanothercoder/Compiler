@@ -1,15 +1,15 @@
 #include "functiondeclarationnode.hpp"
 
-FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements, bool is_method) : name(name), params(params), return_type_info(return_type_info), statements(statements), is_method(is_method)
+FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements, bool is_method, bool is_constructor) : name(name), params(params), return_type_info(return_type_info), statements(statements), is_method(is_method), is_constructor(is_constructor)
 {
-
+  
 }
 
 FunctionDeclarationNode::~FunctionDeclarationNode() { delete definedSymbol; }   
 
 void FunctionDeclarationNode::build_scope()
 {
-    definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }, is_method), getScope(), false, is_method);    
+    definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }, is_method), this->getScope(), false, is_method);
     for ( auto i : statements )
     {
 	i->setScope(definedSymbol);
@@ -21,13 +21,13 @@ Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol
 
 void FunctionDeclarationNode::define()
 {
-    Type *return_type = TypeHelper::fromTypeInfo(return_type_info, getScope());
+    Type *return_type = TypeHelper::fromTypeInfo(return_type_info, this->getScope());
     
     vector<Type*> params_types;
     
     if ( is_method )
     {
-	Type *_this_type = TypeHelper::getReferenceType(static_cast<StructSymbol*>(getScope()));
+	Type *_this_type = TypeHelper::getReferenceType(static_cast<StructSymbol*>(this->getScope()));
 	params_types.push_back(_this_type);
 
 	definedSymbol->define(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM));
@@ -35,17 +35,17 @@ void FunctionDeclarationNode::define()
     
     for ( auto i : params )
     {
-	Type *param_type = TypeHelper::fromTypeInfo(i.second, getScope());	
+	Type *param_type = TypeHelper::fromTypeInfo(i.second, this->getScope());	
 	params_types.push_back(param_type);
 
 	definedSymbol->define(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM));
     }
 
-    FunctionTypeInfo function_type_info = FunctionTypeInfo(return_type, params_types, is_method);
+    FunctionTypeInfo function_type_info(return_type, params_types, is_method);
 
     definedSymbol->setTypeInfo(function_type_info);
 
-    getScope()->define(definedSymbol);
+    this->getScope()->define(definedSymbol);
     
     for ( auto i : statements )
 	i->define();	
