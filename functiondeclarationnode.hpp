@@ -16,7 +16,7 @@ class FunctionDeclarationNode : public DeclarationNode
 {
 public:
 
-    FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements, bool is_method = false, bool is_constructor = false);
+    FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements, FunctionTraits traits);
 
     virtual ~FunctionDeclarationNode();
     
@@ -34,7 +34,7 @@ private:
     TypeInfo return_type_info;
     vector< AST* > statements;
 
-    bool is_method, is_constructor;
+    FunctionTraits traits;
 
     FunctionSymbol *definedSymbol;
 };

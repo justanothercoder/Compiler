@@ -1,8 +1,8 @@
 #include "callnode.hpp"
 
-CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), resolved_function_type_info(nullptr, { }) { }
+CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), resolved_function_symbol(nullptr) { }
     
-Type* CallNode::getType() const { return resolved_function_type_info.getReturnType(); }
+Type* CallNode::getType() const { return resolved_function_symbol->getTypeInfo().getReturnType(); }
 bool CallNode::isLeftValue() const { return false; }
     
 void CallNode::check()
@@ -36,7 +36,8 @@ void CallNode::check()
     if ( overloads.empty() )
 	throw SemanticError("No viable overload of '" + ov_func->getName() + "'.");
 
-    resolved_function_type_info = *std::begin(overloads);
+    auto resolved_function_type_info = *std::begin(overloads);
+    resolved_function_symbol = ov_func->getTypeInfo().symbols[resolved_function_type_info];
 
     int is_meth = (is_method ? 1 : 0);
     
@@ -53,7 +54,9 @@ void CallNode::gen()
 {
     int paramsSize = 0;
 
-    bool is_method = resolved_function_type_info.isMethod();
+    auto resolved_function_type_info = resolved_function_symbol->getTypeInfo();
+    
+    bool is_method = resolved_function_symbol->isMethod();
 
     int is_meth = (is_method ? 1 : 0);
 

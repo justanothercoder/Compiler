@@ -121,7 +121,7 @@ DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
 
     match(TokenType::RBRACE);
 
-    return new FunctionDeclarationNode(function_name, params, return_type, statements, struct_name != nullptr, is_constructor);
+    return new FunctionDeclarationNode(function_name, params, return_type, statements, FunctionTraits(struct_name != nullptr, is_constructor, false));
 }
 
 string Parser::id()

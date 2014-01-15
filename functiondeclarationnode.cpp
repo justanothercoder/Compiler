@@ -1,6 +1,6 @@
 #include "functiondeclarationnode.hpp"
 
-FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements, bool is_method, bool is_constructor) : name(name), params(params), return_type_info(return_type_info), statements(statements), is_method(is_method), is_constructor(is_constructor)
+FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements, FunctionTraits traits) : name(name), params(params), return_type_info(return_type_info), statements(statements), traits(traits)
 {
   
 }
@@ -9,7 +9,7 @@ FunctionDeclarationNode::~FunctionDeclarationNode() { delete definedSymbol; }
 
 void FunctionDeclarationNode::build_scope()
 {
-    definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }, is_method), this->getScope(), false, is_method);
+    definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }), this->getScope(), traits);
     for ( auto i : statements )
     {
 	i->setScope(definedSymbol);
@@ -25,7 +25,7 @@ void FunctionDeclarationNode::define()
     
     vector<Type*> params_types;
     
-    if ( is_method )
+    if ( traits.is_method )
     {
 	Type *_this_type = TypeHelper::getReferenceType(static_cast<StructSymbol*>(this->getScope()));
 	params_types.push_back(_this_type);
@@ -41,7 +41,7 @@ void FunctionDeclarationNode::define()
 	definedSymbol->define(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM));
     }
 
-    FunctionTypeInfo function_type_info(return_type, params_types, is_method);
+    FunctionTypeInfo function_type_info(return_type, params_types);
 
     definedSymbol->setTypeInfo(function_type_info);
 

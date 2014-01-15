@@ -30,7 +30,7 @@ private:
     ExprNode *caller;
     vector<ExprNode*> params;
 
-    FunctionTypeInfo resolved_function_type_info;    
+    FunctionSymbol *resolved_function_symbol;    
 };
 
 #endif

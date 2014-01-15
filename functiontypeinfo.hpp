@@ -11,20 +11,17 @@ class FunctionTypeInfo
 {
 public:
 
-    FunctionTypeInfo(Type *return_type, const vector<Type*>& params_types, bool is_method = false);
+    FunctionTypeInfo(Type *return_type, const vector<Type*>& params_types);
 
     Type* getReturnType() const;
     Type* getParamType(int i) const;
 
     int getNumberOfParams() const;
 
-    bool isMethod() const;
-    
 private:
 
     Type *return_type;
     vector<Type*> params_types;
-    bool is_method;
 };
 
 bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs);
