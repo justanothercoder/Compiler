@@ -10,6 +10,8 @@
 class BuiltIns
 {
 public:
+    static const int int_size = sizeof(int*);
+    
     static Scope *global_scope;
 
     static BuiltInTypeSymbol *int_type;

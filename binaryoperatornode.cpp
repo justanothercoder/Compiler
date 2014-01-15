@@ -1,19 +1,10 @@
 #include "binaryoperatornode.hpp"
 
-BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type)
-{
-    
-}
+BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type) { }
 
-bool BinaryOperatorNode::isLeftValue() const
-{
-    return (dynamic_cast<ReferenceType*>(getType()) != 0);
-}
+bool BinaryOperatorNode::isLeftValue() const { return (dynamic_cast<ReferenceType*>(getType()) != 0); }
 
-Type* BinaryOperatorNode::getType() const
-{
-    return resolved_operator_symbol->getTypeInfo().getReturnType();
-}
+Type* BinaryOperatorNode::getType() const { return resolved_operator_symbol->getTypeInfo().getReturnType(); }
 
 void BinaryOperatorNode::build_scope()
 {
@@ -95,15 +86,15 @@ void BinaryOperatorNode::gen()
 	i.second->gen();
 	if ( dynamic_cast<ReferenceType*>(resolved_operator_type_info.getParamType(i.first)) )
 	{
-	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rax");
-	    paramsSize += sizeof(int*);
+	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + BuiltIns::int_size) + "], rax");
+	    paramsSize += BuiltIns::int_size;
 	}
 	else
 	{
-	    for ( int j = 0; j < resolved_operator_type_info.getParamType(1)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+	    for ( int j = 0; j < resolved_operator_type_info.getParamType(1)->getSize(); j += BuiltIns::int_size, paramsSize += BuiltIns::int_size )
 	    {
 		CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rbx");
+		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + BuiltIns::int_size) + "], rbx");
 	    }
 	}
     }

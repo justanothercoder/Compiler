@@ -7,6 +7,7 @@
 #include "variablesymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 #include "basescope.hpp"
+#include "builtins.hpp"
 
 using std::map;
 using std::pair;

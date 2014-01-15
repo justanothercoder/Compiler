@@ -4,6 +4,7 @@
 #include "scope.hpp"
 #include "semanticerror.hpp"
 #include "globalhelper.hpp"
+#include "builtins.hpp"
 
 class AST
 {

@@ -2,6 +2,7 @@
 #define _REFERENCETYPE_HPP_
 
 #include "type.hpp"
+#include "builtins.hpp"
 
 class ReferenceType : public Type 
 {

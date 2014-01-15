@@ -65,23 +65,23 @@ void CallNode::gen()
 	params[i - is_meth]->gen();
 	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) )
 	{	    
-	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rax");
-	    paramsSize += sizeof(int*);
+	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + BuiltIns::int_size) + "], rax");
+	    paramsSize += BuiltIns::int_size;
 	}
 	else
 	{
-	    for ( int j = 0; j < resolved_function_type_info.getParamType(i)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
+	    for ( int j = 0; j < resolved_function_type_info.getParamType(i)->getSize(); j += BuiltIns::int_size, paramsSize += BuiltIns::int_size )
 	    {	    
 		CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rbx");
+		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + BuiltIns::int_size) + "], rbx");
 	    }
 	}
     }
 
     if ( is_method )
     {
-	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rdi");
-	paramsSize += sizeof(int*);
+	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + BuiltIns::int_size) + "], rdi");
+	paramsSize += BuiltIns::int_size;
     }
 
     CodeGen::emit("sub rsp, " + std::to_string(paramsSize));

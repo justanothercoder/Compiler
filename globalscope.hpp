@@ -10,6 +10,7 @@
 #include "overloadedfunctionsymbol.hpp"
 
 #include "codegen.hpp"
+#include "builtins.hpp"
 
 using std::map;
 
