@@ -3,6 +3,7 @@
 
 #include "basescope.hpp"
 #include "functionsymbol.hpp"
+#include "globalconfig.hpp"
 
 class LocalScope : public BaseScope
 {

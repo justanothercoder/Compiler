@@ -2,7 +2,7 @@
 #define _NUMBERNODE_HPP_
 
 #include "exprnode.hpp"
-#include "builtins.hpp"
+#include "globalconfig.hpp"
 
 class NumberNode : public ExprNode
 {

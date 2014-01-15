@@ -37,7 +37,7 @@ void GlobalScope::define(Symbol *sym)
 	VariableSymbol *_sym = static_cast<VariableSymbol*>(sym);
 	
 	table[sym_name] = sym;
-	addresses[_sym] = scope_size + BuiltIns::int_size;
+	addresses[_sym] = scope_size + GlobalConfig::int_size;
 	scope_size += _sym->getType()->getSize();
     }
     else

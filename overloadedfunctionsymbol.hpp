@@ -3,6 +3,7 @@
 
 #include "symbol.hpp"
 #include "overloadedfunctiontypeinfo.hpp"
+#include "globalconfig.hpp"
 
 class OverloadedFunctionSymbol : public Symbol, public Type
 {

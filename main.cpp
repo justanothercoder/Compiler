@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <memory>
 
 #include "lexer.hpp"
 #include "parser.hpp"
@@ -26,10 +27,10 @@ int main()
 
     try
     {    
-	AbstractLexer *lexer = new Lexer(buf);
-	AbstractParser *parser = new Parser(lexer);
+	std::shared_ptr<AbstractLexer> lexer(new Lexer(buf));
+	std::shared_ptr<AbstractParser> parser(new Parser(lexer.get()));
 	
-	AST* root = parser->parse();
+	std::shared_ptr<AST> root(parser->parse());
 
 	root->setScope(BuiltIns::global_scope);
 
@@ -63,7 +64,6 @@ int main()
 	CodeGen::emit("mov rax, 60");
 	CodeGen::emit("mov rdi, 0");
 	CodeGen::emit("syscall");
-
     }
     catch ( int t )
     {

@@ -27,12 +27,12 @@ void ReturnNode::check()
 void ReturnNode::gen()
 {
     expr->gen();
-    for ( int i = 0; i < expr->getType()->getSize(); i += BuiltIns::int_size )
+    for ( int i = 0; i < expr->getType()->getSize(); i += GlobalConfig::int_size )
     {
 	CodeGen::emit("mov rbx, [rax - " + std::to_string(i) +  "]");
-	CodeGen::emit("mov [rsp - " + std::to_string(i + BuiltIns::int_size) +  "], rbx");
+	CodeGen::emit("mov [rsp - " + std::to_string(i + GlobalConfig::int_size) +  "], rbx");
     }
-    CodeGen::emit("lea rax, [rsp - " + std::to_string(BuiltIns::int_size) + "]");
+    CodeGen::emit("lea rax, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");

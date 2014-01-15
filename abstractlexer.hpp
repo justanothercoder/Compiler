@@ -11,8 +11,10 @@ using string = std::string;
 class AbstractLexer
 {
 public:
-
+    
     AbstractLexer(string input);
+
+    virtual ~AbstractLexer();
     
     virtual Token getToken() = 0;
     

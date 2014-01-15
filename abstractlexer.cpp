@@ -3,10 +3,17 @@
 AbstractLexer::AbstractLexer(string input) : input(input)
 {
     pos = 0;
+    cur = '\0';
+
     consume();
 
     line = 1;
     symbol = 1;
+}
+
+AbstractLexer::~AbstractLexer()
+{
+    
 }
 
 void AbstractLexer::consume()

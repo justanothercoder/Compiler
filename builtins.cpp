@@ -2,7 +2,7 @@
 
 Scope *BuiltIns::global_scope = new GlobalScope();
 
-BuiltInTypeSymbol *BuiltIns::int_type = new BuiltInTypeSymbol("int", BuiltIns::int_size);
+BuiltInTypeSymbol *BuiltIns::int_type = new BuiltInTypeSymbol("int", GlobalConfig::int_size);
 ReferenceType *BuiltIns::int_ref = TypeHelper::getReferenceType(int_type);
 
 FunctionSymbol *BuiltIns::int_assign = new FunctionSymbol("operator=", FunctionTypeInfo(BuiltIns::int_ref, {BuiltIns::int_ref, BuiltIns::int_type}), BuiltIns::global_scope, true);

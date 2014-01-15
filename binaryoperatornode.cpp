@@ -86,15 +86,15 @@ void BinaryOperatorNode::gen()
 	i.second->gen();
 	if ( dynamic_cast<ReferenceType*>(resolved_operator_type_info.getParamType(i.first)) )
 	{
-	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + BuiltIns::int_size) + "], rax");
-	    paramsSize += BuiltIns::int_size;
+	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rax");
+	    paramsSize += GlobalConfig::int_size;
 	}
 	else
 	{
-	    for ( int j = 0; j < resolved_operator_type_info.getParamType(1)->getSize(); j += BuiltIns::int_size, paramsSize += BuiltIns::int_size )
+	    for ( int j = 0; j < resolved_operator_type_info.getParamType(1)->getSize(); j += GlobalConfig::int_size, paramsSize += GlobalConfig::int_size )
 	    {
 		CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + BuiltIns::int_size) + "], rbx");
+		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rbx");
 	    }
 	}
     }

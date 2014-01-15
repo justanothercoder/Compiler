@@ -10,7 +10,7 @@
 #include "overloadedfunctionsymbol.hpp"
 
 #include "codegen.hpp"
-#include "builtins.hpp"
+#include "globalconfig.hpp"
 
 using std::map;
 
