@@ -19,7 +19,7 @@ void GlobalScope::define(Symbol *sym)
 
 	Symbol *res_sym = table[sym_name];	
 
-	if ( dynamic_cast<VariableSymbol*>(res_sym) == nullptr || dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(res_sym)->getType()) == nullptr )
+	if ( dynamic_cast<VariableSymbol*>(res_sym) == nullptr )
 	    throw SemanticError(sym_name + " is already defined.");
 
 	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());

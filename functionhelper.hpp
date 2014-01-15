@@ -2,6 +2,7 @@
 #define _FUNCTIONHELPER_HPP_
 
 #include <set>
+#include <iostream>
 
 #include "typehelper.hpp"
 #include "functiontypeinfo.hpp"

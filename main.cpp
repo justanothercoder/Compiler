@@ -34,19 +34,27 @@ int main()
 
 	root->setScope(BuiltIns::global_scope);
 
-	root->getScope()->define(BuiltIns::int_type);
-	root->getScope()->define(BuiltIns::int_assign);
-	root->getScope()->define(BuiltIns::int_plus);
-	root->getScope()->define(BuiltIns::int_minus);
-	root->getScope()->define(BuiltIns::int_mul);
+	BuiltIns::global_scope->define(BuiltIns::int_struct);
+	
+	BuiltIns::int_struct->define(BuiltIns::int_type);
 
+	BuiltIns::int_struct->define(new VariableSymbol("__impl", BuiltIns::int_type, VariableSymbolType::FIELD));
+	    
+	BuiltIns::int_struct->define(BuiltIns::int_constructor);
+
+	BuiltIns::global_scope->define(BuiltIns::int_assign);
+	BuiltIns::global_scope->define(BuiltIns::int_plus);
+	BuiltIns::global_scope->define(BuiltIns::int_minus);
+	BuiltIns::global_scope->define(BuiltIns::int_mul);
+	
 	CodeGen::emit("section .text");
 
 	CodeGen::emit("extern _~operatorassign_int~ref_int");
 	CodeGen::emit("extern _~operatorplus_int_int");
 	CodeGen::emit("extern _~operatorminus_int_int");
 	CodeGen::emit("extern _~operatormul_int_int");	
-
+	CodeGen::emit("extern _~_int_int_int~ref_~~int");
+	
 	CodeGen::emit("global _start");
 	CodeGen::emit("_start:");
 
