@@ -24,44 +24,47 @@ void VariableDeclarationNode::define()
 
 void VariableDeclarationNode::check()
 {
-    Symbol *_type = this->getScope()->resolve(type_info.getTypeName());
+    if ( !is_field )
+    {
+	Symbol *_type = this->getScope()->resolve(type_info.getTypeName());
         
-    StructSymbol *type = dynamic_cast<StructSymbol*>(_type);
+	StructSymbol *type = dynamic_cast<StructSymbol*>(_type);
 
-    if ( type == nullptr )
-	throw SemanticError("No such struct " + type_info.getTypeName());
+	if ( type == nullptr )
+	    throw SemanticError("No such struct " + type_info.getTypeName());
 
-    VariableSymbol *_constructor = dynamic_cast<VariableSymbol*>(type->resolve(type_info.getTypeName()));
+	VariableSymbol *_constructor = dynamic_cast<VariableSymbol*>(type->resolve(type_info.getTypeName()));
 
-    if ( _constructor == nullptr )
-	throw SemanticError("No constructor");
+	if ( _constructor == nullptr )
+	    throw SemanticError("No constructor");
     
-    OverloadedFunctionSymbol *constructor = dynamic_cast<OverloadedFunctionSymbol*>(_constructor->getType());
+	OverloadedFunctionSymbol *constructor = dynamic_cast<OverloadedFunctionSymbol*>(_constructor->getType());
 
-    if ( constructor == nullptr )
-	throw SemanticError("No constructor");
+	if ( constructor == nullptr )
+	    throw SemanticError("No constructor");
 
-    vector<Type*> params_types;
-    params_types.push_back(TypeHelper::getReferenceType(definedSymbol->getType()));   
-    for ( auto it : constructor_call_params )
-    {
-	it->check();
-	params_types.push_back(it->getType());
-    }
+	vector<Type*> params_types;
+	params_types.push_back(TypeHelper::getReferenceType(definedSymbol->getType()));   
+	for ( auto it : constructor_call_params )
+	{
+	    it->check();
+	    params_types.push_back(it->getType());
+	}
 
-    auto overloads = FunctionHelper::getBestOverload(constructor->getTypeInfo().overloads, params_types);
+	auto overloads = FunctionHelper::getBestOverload(constructor->getTypeInfo().overloads, params_types);
 
-    if ( overloads.empty() )
-	throw SemanticError("No viable overload of '" + constructor->getTypeInfo().getName() + "'.");
+	if ( overloads.empty() )
+	    throw SemanticError("No viable overload of '" + type_info.getTypeName() + "'.");
 
-    auto resolved_constructor_type_info = *std::begin(overloads);
+	auto resolved_constructor_type_info = *std::begin(overloads);
 
-    resolved_constructor = constructor->getTypeInfo().symbols[resolved_constructor_type_info];
+	resolved_constructor = constructor->getTypeInfo().symbols[resolved_constructor_type_info];
 
-    for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
-    {
-	if ( dynamic_cast<ReferenceType*>(resolved_constructor_type_info.getParamType(i)) && !constructor_call_params[i - 1]->isLeftValue() )
-	    throw SemanticError("parameter is not an lvalue.");
+	for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
+	{
+	    if ( dynamic_cast<ReferenceType*>(resolved_constructor_type_info.getParamType(i)) && !constructor_call_params[i - 1]->isLeftValue() )
+		throw SemanticError("parameter is not an lvalue.");
+	}
     }
 }
 

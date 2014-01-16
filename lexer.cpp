@@ -57,7 +57,7 @@ Token Lexer::getToken()
 	    while ( std::isspace(cur) )
 		consume();
 	}
-	else if ( std::isalpha(cur) )
+	else if ( std::isalpha(cur) || cur == '_' )
 	{
 	    string buf = "";
 	    while ( std::isalpha(cur) || std::isdigit(cur) || cur == '_' )
@@ -90,7 +90,7 @@ Token Lexer::getToken()
 	    return Token(TokenType::NUMBER, buf, l, s);	    
 	}
 	else
-	    throw RecognitionError("unknown character");
+	    throw RecognitionError(string("unknown character '") + cur + "'.");
     }
 
     return Token(TokenType::EOF_TYPE, "", line, symbol);

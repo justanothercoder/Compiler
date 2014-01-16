@@ -8,10 +8,10 @@ Type* BinaryOperatorNode::getType() const { return resolved_operator_symbol->get
 
 void BinaryOperatorNode::build_scope()
 {
-    lhs->setScope(getScope());
+    lhs->setScope(this->getScope());
     lhs->build_scope();
     
-    rhs->setScope(getScope());
+    rhs->setScope(this->getScope());
     rhs->build_scope();
 }
 
@@ -22,14 +22,14 @@ void BinaryOperatorNode::check()
 
     special_check();
     
-    Symbol *op_sym = getScope()->resolve(getOperatorName());
+    Symbol *op_sym = this->getScope()->resolve(getOperatorName());
 
     OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(op_sym)->getType());
 
     auto overloads = FunctionHelper::getBestOverload(ov_func->getTypeInfo().overloads, {lhs->getType(), rhs->getType()});
 
     if ( overloads.empty() )
-	throw SemanticError("No viable overload for " + getOperatorName() + " with " + lhs->getType()->getName() + " and " + rhs->getType()->getName() + " arguments.");
+	throw SemanticError("No viable overload for '" + getOperatorName() + "' with '" + lhs->getType()->getName() + "' and '" + rhs->getType()->getName() + "' arguments.");
 
     resolved_operator_symbol = ov_func->getTypeInfo().symbols[*std::begin(overloads)];
 }

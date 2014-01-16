@@ -13,9 +13,9 @@ public:
     static Scope *global_scope;
 
     static BuiltInTypeSymbol *int_type;
-    static ReferenceType *int_ref;
 
     static StructSymbol *int_struct;
+    static ReferenceType *int_ref;
 
     static FunctionSymbol *int_assign;
     static FunctionSymbol *int_plus;
