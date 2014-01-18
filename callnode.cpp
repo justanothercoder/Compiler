@@ -31,14 +31,13 @@ void CallNode::check()
 	params_types.push_back(it->getType());
     }
 
-    auto overloads = FunctionHelper::getBestOverload(ov_func->getTypeInfo().overloads, params_types);
+    resolved_function_symbol = FunctionHelper::getViableOverload(ov_func, params_types);
 
-    if ( overloads.empty() )
-	throw SemanticError("No viable overload of '" + ov_func->getName() + "'.");
+    if ( resolved_function_symbol == nullptr )
+	throw SemanticError("No viable overload of '" + ov_func->getName() + "'.");	
 
-    auto resolved_function_type_info = *std::begin(overloads);
-    resolved_function_symbol = ov_func->getTypeInfo().symbols[resolved_function_type_info];
-
+    auto resolved_function_type_info = resolved_function_symbol->getTypeInfo();
+    
     int is_meth = (is_method ? 1 : 0);
     
     for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
@@ -47,12 +46,17 @@ void CallNode::check()
 	    throw SemanticError("parameter is not an lvalue.");
     }    
     
-//    GlobalHelper::setTypeHint(caller, ov_func);
     GlobalHelper::setTypeHint(caller, resolved_function_symbol);
 }
 
 void CallNode::gen()
 {
+    caller->gen();    
+    CodeGen::emit("mov rsi, rax");
+
+    FunctionHelper::genCallCode(resolved_function_symbol, params);
+
+/*
     int paramsSize = 0;
 
     auto resolved_function_type_info = resolved_function_symbol->getTypeInfo();
@@ -61,9 +65,6 @@ void CallNode::gen()
 
     int is_meth = (is_method ? 1 : 0);
 
-    caller->gen();    
-    CodeGen::emit("mov rsi, rax");
-    
     for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
     {
 	params[i - is_meth]->gen();
@@ -92,6 +93,7 @@ void CallNode::gen()
     
     CodeGen::emit("call rsi");
     CodeGen::emit("add rsp, " + std::to_string(paramsSize));
+*/   
 }
 
 void CallNode::build_scope()

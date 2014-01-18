@@ -51,14 +51,12 @@ void VariableDeclarationNode::check()
 	    params_types.push_back(it->getType());
 	}
 
-	auto overloads = FunctionHelper::getBestOverload(constructor->getTypeInfo().overloads, params_types);
+	resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
 
-	if ( overloads.empty() )
+	if ( resolved_constructor == nullptr )
 	    throw SemanticError("No viable overload of '" + type_info.getTypeName() + "'.");
-
-	auto resolved_constructor_type_info = *std::begin(overloads);
-
-	resolved_constructor = constructor->getTypeInfo().symbols[resolved_constructor_type_info];
+	
+	auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
 
 	for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
 	{
