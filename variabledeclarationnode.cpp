@@ -70,9 +70,14 @@ void VariableDeclarationNode::gen()
 {
     if ( !is_field )
     {
+      
 	CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 	CodeGen::emit("sub rsp, " + std::to_string(definedSymbol->getType()->getSize()));
-	
+
+	CodeGen::emit("lea rsi, [_~" + resolved_constructor->getScopedTypedName() + "]");
+
+	FunctionHelper::genCallCode(resolved_constructor, constructor_call_params);
+/*	
 	int paramsSize = 0;
 
 	auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
@@ -101,5 +106,6 @@ void VariableDeclarationNode::gen()
 	CodeGen::emit("sub rsp, " + std::to_string(paramsSize));
 	CodeGen::emit("call _~" + resolved_constructor->getScopedTypedName());
 	CodeGen::emit("add rsp, " + std::to_string(paramsSize));
+*/	
     }
 }

@@ -68,6 +68,7 @@ void FunctionHelper::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& 
 	}
 	else
 	{
+	    if ( params[i - is_meth]->getType() != resolved_function_type_info.getParamType(i) )
 	    {
 		auto conv = TypeHelper::getConversion(params[i - is_meth]->getType(), resolved_function_type_info.getParamType(i));
 
