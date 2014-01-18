@@ -82,38 +82,4 @@ void BinaryOperatorNode::gen()
     CodeGen::emit("lea rsi, [" + call_name + "]");
 
     FunctionHelper::genCallCode(resolved_operator_symbol, {lhs, rhs});
-/*
-    int paramsSize = 0;
-
-    FunctionTypeInfo resolved_operator_type_info = resolved_operator_symbol->getTypeInfo();
-
-    auto params = {std::make_pair(1, rhs), std::make_pair(0, lhs)};
-    for ( auto i : params )
-    {    
-	i.second->gen();
-	if ( dynamic_cast<ReferenceType*>(resolved_operator_type_info.getParamType(i.first)) )
-	{
-	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rax");
-	    paramsSize += GlobalConfig::int_size;
-	}
-	else
-	{
-	    for ( int j = 0; j < resolved_operator_type_info.getParamType(1)->getSize(); j += GlobalConfig::int_size, paramsSize += GlobalConfig::int_size )
-	    {
-		CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rbx");
-	    }
-	}
-    }
-    
-    CodeGen::emit("sub rsp, " + std::to_string(paramsSize));
-
-    string call_name = resolved_operator_symbol->getEnclosingScope()->getScopeName() + "_";
-
-    call_name += "~" + getCodeOperatorName();
-    call_name += resolved_operator_symbol->getTypedName().substr(resolved_operator_symbol->getName().length());
-
-    CodeGen::emit("call " + call_name);
-    CodeGen::emit("add rsp, " + std::to_string(paramsSize));
-*/
 }

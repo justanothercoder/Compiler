@@ -69,43 +69,12 @@ void VariableDeclarationNode::check()
 void VariableDeclarationNode::gen()
 {
     if ( !is_field )
-    {
-      
+    {      
 	CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 	CodeGen::emit("sub rsp, " + std::to_string(definedSymbol->getType()->getSize()));
 
 	CodeGen::emit("lea rsi, [_~" + resolved_constructor->getScopedTypedName() + "]");
 
 	FunctionHelper::genCallCode(resolved_constructor, constructor_call_params);
-/*	
-	int paramsSize = 0;
-
-	auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
-    
-	for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
-	{
-	    constructor_call_params[i - 1]->gen();
-	    if ( dynamic_cast<ReferenceType*>(resolved_constructor_type_info.getParamType(i)) )
-	    {	    
-		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rax");
-		paramsSize += GlobalConfig::int_size;
-	    }
-	    else
-	    {
-		for ( int j = 0; j < resolved_constructor_type_info.getParamType(i)->getSize(); j += GlobalConfig::int_size, paramsSize += GlobalConfig::int_size )
-		{	    
-		    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-		    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rbx");
-		}
-	    }
-	}
-
-	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rdi");
-	paramsSize += GlobalConfig::int_size;
-	
-	CodeGen::emit("sub rsp, " + std::to_string(paramsSize));
-	CodeGen::emit("call _~" + resolved_constructor->getScopedTypedName());
-	CodeGen::emit("add rsp, " + std::to_string(paramsSize));
-*/	
     }
 }

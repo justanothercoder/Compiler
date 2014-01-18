@@ -55,45 +55,6 @@ void CallNode::gen()
     CodeGen::emit("mov rsi, rax");
 
     FunctionHelper::genCallCode(resolved_function_symbol, params);
-
-/*
-    int paramsSize = 0;
-
-    auto resolved_function_type_info = resolved_function_symbol->getTypeInfo();
-    
-    bool is_method = resolved_function_symbol->isMethod();
-
-    int is_meth = (is_method ? 1 : 0);
-
-    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
-    {
-	params[i - is_meth]->gen();
-	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) )
-	{	    
-	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rax");
-	    paramsSize += GlobalConfig::int_size;
-	}
-	else
-	{
-	    for ( int j = 0; j < resolved_function_type_info.getParamType(i)->getSize(); j += GlobalConfig::int_size, paramsSize += GlobalConfig::int_size )
-	    {	    
-		CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rbx");
-	    }
-	}
-    }
-
-    if ( is_method )
-    {
-	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rdi");
-	paramsSize += GlobalConfig::int_size;
-    }
-
-    CodeGen::emit("sub rsp, " + std::to_string(paramsSize));
-    
-    CodeGen::emit("call rsi");
-    CodeGen::emit("add rsp, " + std::to_string(paramsSize));
-*/   
 }
 
 void CallNode::build_scope()
