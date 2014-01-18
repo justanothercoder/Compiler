@@ -74,6 +74,15 @@ string BinaryOperatorNode::getCodeOperatorName()
 
 void BinaryOperatorNode::gen()
 {
+    string call_name = resolved_operator_symbol->getEnclosingScope()->getScopeName() + "_";
+
+    call_name += "~" + getCodeOperatorName();
+    call_name += resolved_operator_symbol->getTypedName().substr(resolved_operator_symbol->getName().length());
+
+    CodeGen::emit("lea rsi, [" + call_name + "]");
+
+    FunctionHelper::genCallCode(resolved_operator_symbol, {lhs, rhs});
+/*
     int paramsSize = 0;
 
     FunctionTypeInfo resolved_operator_type_info = resolved_operator_symbol->getTypeInfo();
@@ -106,4 +115,5 @@ void BinaryOperatorNode::gen()
 
     CodeGen::emit("call " + call_name);
     CodeGen::emit("add rsp, " + std::to_string(paramsSize));
+*/
 }

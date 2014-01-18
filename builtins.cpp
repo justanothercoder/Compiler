@@ -10,25 +10,25 @@ ReferenceType *BuiltIns::int_ref = TypeHelper::getReferenceType(int_struct);
 FunctionSymbol *BuiltIns::int_assign = new FunctionSymbol("operator=",
 							  FunctionTypeInfo(BuiltIns::int_ref, {BuiltIns::int_ref, BuiltIns::int_struct}),
 							  BuiltIns::int_struct,
-							  {false, false, true}
+							  {true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_plus = new FunctionSymbol("operator+",
 							FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_struct, BuiltIns::int_struct}),
 							BuiltIns::int_struct,
-							{false, false, true}
+							{true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_minus = new FunctionSymbol("operator-",
 							 FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_struct, BuiltIns::int_struct}),
 							 BuiltIns::int_struct,
-							 {false, false, true}
+							 {true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_mul = new FunctionSymbol("operator*",
 						       FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_struct, BuiltIns::int_struct}),
 						       BuiltIns::int_struct,
-						       {false, false, true}
+						       {true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_constructor = new FunctionSymbol("int",
