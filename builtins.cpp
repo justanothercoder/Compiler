@@ -32,7 +32,13 @@ FunctionSymbol *BuiltIns::int_mul = new FunctionSymbol("operator*",
     );
 
 FunctionSymbol *BuiltIns::int_constructor = new FunctionSymbol("int",
-							       FunctionTypeInfo(TypeHelper::getReferenceType(BuiltIns::int_struct), {TypeHelper::getReferenceType(BuiltIns::int_struct), BuiltIns::int_type}),
+							       FunctionTypeInfo(int_ref, {int_ref, BuiltIns::int_type}),
 							       BuiltIns::int_struct,
 							       {true, true, false}
+    );
+
+FunctionSymbol *BuiltIns::int_default_constructor = new FunctionSymbol("int",
+								       FunctionTypeInfo(int_ref, {int_ref}),
+								       BuiltIns::int_struct,
+								       {true, true, false}
     );
