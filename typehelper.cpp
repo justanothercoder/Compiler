@@ -22,8 +22,37 @@ bool TypeHelper::isConvertable(Type *lhs, Type *rhs)
     
     if ( dynamic_cast<ReferenceType*>(lhs) )
 	lhs = dynamic_cast<ReferenceType*>(lhs)->getReferredType();
+    
+    return existsConversion(lhs, rhs);
+}
 
-    return (lhs == rhs);
+bool TypeHelper::existsConversion(Type *lhs, Type *rhs)
+{
+    if ( lhs == rhs )
+	return true;
+
+    if ( dynamic_cast<StructSymbol*>(rhs) )
+	return getConversion(lhs, rhs) == nullptr ? lhs == rhs : true;
+
+    return lhs == rhs;
+}
+
+FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
+{
+    StructSymbol *struc = dynamic_cast<StructSymbol*>(rhs);
+
+    if ( struc == nullptr )
+	return nullptr;
+    
+    string lhs_name = lhs->getName();    
+    string rhs_name = rhs->getName();
+
+    VariableSymbol *_conversion = dynamic_cast<VariableSymbol*>(struc->resolve(rhs_name));
+    OverloadedFunctionSymbol *conversion = dynamic_cast<OverloadedFunctionSymbol*>(_conversion->getType());
+
+    auto overloads = FunctionHelper::getBestOverload(conversion->getTypeInfo().overloads, {getReferenceType(rhs), lhs});
+
+    return overloads.empty() ? nullptr : conversion->getTypeInfo().symbols[*std::begin(overloads)];
 }
 
 Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope)
