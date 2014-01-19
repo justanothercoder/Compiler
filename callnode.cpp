@@ -52,9 +52,12 @@ void CallNode::check()
 void CallNode::gen()
 {
     caller->gen();    
+
+    CodeGen::emit("push rsi");
     CodeGen::emit("mov rsi, rax");
 
     FunctionHelper::genCallCode(resolved_function_symbol, params);
+    CodeGen::emit("pop rsi");
 }
 
 void CallNode::build_scope()
