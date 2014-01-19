@@ -7,6 +7,8 @@
 #include "parser.hpp"
 #include "builtins.hpp"
 
+using std::shared_ptr;
+
 int main()
 {
     std::string filename = "input.txt";
@@ -27,10 +29,10 @@ int main()
 
     try
     {    
-	std::shared_ptr<AbstractLexer> lexer(new Lexer(buf));
-	std::shared_ptr<AbstractParser> parser(new Parser(lexer.get()));
+	shared_ptr<AbstractLexer> lexer(new Lexer(buf));
+	shared_ptr<AbstractParser> parser(new Parser(lexer.get()));
 	
-	std::shared_ptr<AST> root(parser->parse());
+	shared_ptr<AST> root(parser->parse());
 
 	root->setScope(BuiltIns::global_scope);
 
@@ -47,6 +49,10 @@ int main()
 	BuiltIns::global_scope->define(BuiltIns::int_plus);
 	BuiltIns::global_scope->define(BuiltIns::int_minus);
 	BuiltIns::global_scope->define(BuiltIns::int_mul);
+
+	BuiltIns::global_scope->define(BuiltIns::void_type);
+	BuiltIns::global_scope->define(BuiltIns::putchar_func);
+	BuiltIns::global_scope->define(BuiltIns::getchar_func);
 	
 	CodeGen::emit("section .text");
 
@@ -56,6 +62,8 @@ int main()
 	CodeGen::emit("extern _int_~operatormul_int_int");	
 	CodeGen::emit("extern _~_int_int_int~ref_~~int");
 	CodeGen::emit("extern _~_int_int_int~ref");
+	CodeGen::emit("extern _putchar_int");
+	CodeGen::emit("extern _getchar");
 	
 	CodeGen::emit("global _start");
 	CodeGen::emit("_start:");

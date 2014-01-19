@@ -25,6 +25,9 @@ public:
     static FunctionSymbol *int_default_constructor;
 
     static BuiltInTypeSymbol *void_type;
+
+    static FunctionSymbol *putchar_func;
+    static FunctionSymbol *getchar_func;
 };
 
 #endif

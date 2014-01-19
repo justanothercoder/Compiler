@@ -44,3 +44,15 @@ FunctionSymbol *BuiltIns::int_default_constructor = new FunctionSymbol("int",
     );
 
 BuiltInTypeSymbol *BuiltIns::void_type = new BuiltInTypeSymbol("void", 0);
+
+FunctionSymbol *BuiltIns::putchar_func = new FunctionSymbol("putchar",
+							    FunctionTypeInfo(void_type, {int_struct}),
+							    BuiltIns::global_scope,
+							    {false, false, false}
+    );
+
+FunctionSymbol *BuiltIns::getchar_func = new FunctionSymbol("getchar",
+							    FunctionTypeInfo(int_struct, { }),
+							    BuiltIns::global_scope,
+							    {false, false, false}
+    );
