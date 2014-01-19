@@ -18,6 +18,10 @@ void VariableDeclarationNode::build_scope()
 void VariableDeclarationNode::define()
 {
     Type *var_type = TypeHelper::fromTypeInfo(type_info, this->getScope());
+
+    if ( var_type == BuiltIns::void_type )
+	throw SemanticError("can't declare a variable of 'void' type");
+    
     definedSymbol->setType(var_type);
     this->getScope()->define(definedSymbol);
 }

@@ -42,3 +42,5 @@ FunctionSymbol *BuiltIns::int_default_constructor = new FunctionSymbol("int",
 								       BuiltIns::int_struct,
 								       {true, true, false}
     );
+
+BuiltInTypeSymbol *BuiltIns::void_type = new BuiltInTypeSymbol("void", 0);

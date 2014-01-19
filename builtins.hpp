@@ -23,6 +23,8 @@ public:
     static FunctionSymbol *int_mul;
     static FunctionSymbol *int_constructor;
     static FunctionSymbol *int_default_constructor;
+
+    static BuiltInTypeSymbol *void_type;
 };
 
 #endif

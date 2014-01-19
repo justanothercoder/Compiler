@@ -112,11 +112,20 @@ DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
     
     if ( !is_constructor )
     {
-	match(TokenType::COLON);
-	return_type = type_info();       
+	if ( getTokenType(1) == TokenType::COLON )
+	{
+	    match(TokenType::COLON);
+	    return_type = type_info();
+	}
+	else
+	{
+	    return_type = TypeInfo("void", false);
+	}
     }
     else
+    {
 	return_type = TypeInfo(*struct_name, true);
+    }
 
     vector < AST* > statements;
     

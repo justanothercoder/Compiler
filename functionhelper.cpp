@@ -39,13 +39,7 @@ FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol* over
 {
     auto overloads = FunctionHelper::getBestOverload(overloaded_func->getTypeInfo().overloads, params_type);
 
-    if ( overloads.empty() )
-	return nullptr;
-
-    auto resolved_function_type_info = *std::begin(overloads);
-    auto resolved_function_symbol = overloaded_func->getTypeInfo().symbols[resolved_function_type_info];
-
-    return resolved_function_symbol;
+    return overloads.empty() ? nullptr : overloaded_func->getTypeInfo().symbols[*std::begin(overloads)];   
 }
 
 void FunctionHelper::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params)
@@ -70,26 +64,34 @@ void FunctionHelper::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& 
 	{
 	    if ( params[i - is_meth]->getType() != resolved_function_type_info.getParamType(i) )
 	    {
-		auto conv = TypeHelper::getConversion(params[i - is_meth]->getType(), resolved_function_type_info.getParamType(i));
-
-		CodeGen::emit("sub rsp, " + std::to_string(resolved_function_type_info.getParamType(i)->getSize()));
-		
-		int paramsSize = 0;
-		for ( int j = 0; j < params[i - is_meth]->getType()->getSize(); j += GlobalConfig::int_size, paramsSize += GlobalConfig::int_size )
+		if ( dynamic_cast<ReferenceType*>(params[i - is_meth]->getType()) != nullptr &&
+		     dynamic_cast<ReferenceType*>(params[i - is_meth]->getType())->getReferredType() == resolved_function_type_info.getParamType(i) )
 		{
-		    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-		    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rbx");
+		    CodeGen::emit("mov rax, [rax]"); 
 		}
+		else
+		{		
+		    auto conv = TypeHelper::getConversion(params[i - is_meth]->getType(), resolved_function_type_info.getParamType(i));
 
-		CodeGen::emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size * 10) + "]");
-		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rbx");
-		paramsSize += GlobalConfig::int_size;
-
-		CodeGen::emit("sub rsp, " + std::to_string(paramsSize));
-		CodeGen::emit("call _~" + conv->getScopedTypedName());
-		CodeGen::emit("add rsp, " + std::to_string(paramsSize));
+		    CodeGen::emit("sub rsp, " + std::to_string(resolved_function_type_info.getParamType(i)->getSize()));
 		
-		CodeGen::emit("add rsp, " + std::to_string(resolved_function_type_info.getParamType(i)->getSize()));		
+		    int paramsSize = 0;
+		    for ( int j = 0; j < params[i - is_meth]->getType()->getSize(); j += GlobalConfig::int_size, paramsSize += GlobalConfig::int_size )
+		    {
+			CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
+			CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rbx");
+		    }
+
+		    CodeGen::emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size * 10) + "]");
+		    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + GlobalConfig::int_size) + "], rbx");
+		    paramsSize += GlobalConfig::int_size;
+
+		    CodeGen::emit("sub rsp, " + std::to_string(paramsSize));
+		    CodeGen::emit("call _~" + conv->getScopedTypedName());
+		    CodeGen::emit("add rsp, " + std::to_string(paramsSize));
+		
+		    CodeGen::emit("add rsp, " + std::to_string(resolved_function_type_info.getParamType(i)->getSize()));
+		}
 	    }
 
 	    for ( int j = 0; j < resolved_function_type_info.getParamType(i)->getSize(); j += GlobalConfig::int_size, paramsSize += GlobalConfig::int_size )

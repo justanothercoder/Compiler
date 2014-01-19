@@ -12,6 +12,7 @@
 #include "functionhelper.hpp"
 #include "overloadedfunctionsymbol.hpp"
 #include "structsymbol.hpp"
+#include "builtins.hpp"
 
 using std::vector;
 
