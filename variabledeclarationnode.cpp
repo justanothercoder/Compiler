@@ -77,7 +77,7 @@ void VariableDeclarationNode::gen()
 	CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 	CodeGen::emit("sub rsp, " + std::to_string(definedSymbol->getType()->getSize()));
 
-	CodeGen::emit("lea rsi, [_~" + resolved_constructor->getScopedTypedName() + "]");
+	CodeGen::emit("lea rsi, [" + resolved_constructor->getScopedTypedName() + "]");
 
 	FunctionHelper::genCallCode(resolved_constructor, constructor_call_params);
     }
