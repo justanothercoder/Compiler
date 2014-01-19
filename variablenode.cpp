@@ -35,7 +35,7 @@ void VariableNode::gen()
 
 	    Scope *struc_scope = static_cast<StructSymbol*>(sym->getType());
 	    
-	    CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(sym)) + "]");
+	    CodeGen::emit("mov rax, [rbp - " + std::to_string(this->getScope()->getAddress(sym)) + "]");
 	    CodeGen::emit("mov rax, [rax - " + std::to_string(struc_scope->getAddress(variable)) + "]");
 	}
 	else

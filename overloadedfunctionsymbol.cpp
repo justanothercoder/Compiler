@@ -3,7 +3,7 @@
 OverloadedFunctionSymbol::OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, bool is_method) : name(name), type_info(type_info), is_method(is_method) { }
 
 string OverloadedFunctionSymbol::getName() const { return name; }
-int OverloadedFunctionSymbol::getSize() const { return sizeof(int*); }
+int OverloadedFunctionSymbol::getSize() const { return GlobalConfig::int_size; }
 
 OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo() const { return type_info; }
 

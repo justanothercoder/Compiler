@@ -9,10 +9,10 @@ IfNode::IfNode(ExprNode *cond, AST *stats_true, AST *stats_false) : cond(cond), 
 
 void IfNode::build_scope()
 {
-    if_scope = new LocalScope(getScope());
-    else_scope = new LocalScope(getScope());
+    if_scope = new LocalScope(this->getScope());
+    else_scope = new LocalScope(this->getScope());
     
-    cond->setScope(getScope());
+    cond->setScope(this->getScope());
     cond->build_scope();
 
     stats_true->setScope(if_scope);

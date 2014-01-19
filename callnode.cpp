@@ -1,8 +1,8 @@
 #include "callnode.hpp"
 
-CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), resolved_function_type_info(nullptr, { }) { }
+CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), resolved_function_symbol(nullptr) { }
     
-Type* CallNode::getType() const { return resolved_function_type_info.getReturnType(); }
+Type* CallNode::getType() const { return resolved_function_symbol->getTypeInfo().getReturnType(); }
 bool CallNode::isLeftValue() const { return false; }
     
 void CallNode::check()
@@ -31,13 +31,13 @@ void CallNode::check()
 	params_types.push_back(it->getType());
     }
 
-    auto overloads = FunctionHelper::getBestOverload(ov_func->getTypeInfo().overloads, params_types);
+    resolved_function_symbol = FunctionHelper::getViableOverload(ov_func, params_types);
 
-    if ( overloads.empty() )
-	throw SemanticError("No viable overload of '" + ov_func->getName() + "'.");
+    if ( resolved_function_symbol == nullptr )
+	throw SemanticError("No viable overload of '" + ov_func->getName() + "'.");	
 
-    resolved_function_type_info = *std::begin(overloads);
-
+    auto resolved_function_type_info = resolved_function_symbol->getTypeInfo();
+    
     int is_meth = (is_method ? 1 : 0);
     
     for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
@@ -46,48 +46,18 @@ void CallNode::check()
 	    throw SemanticError("parameter is not an lvalue.");
     }    
     
-    GlobalHelper::setTypeHint(caller, ov_func);
+    GlobalHelper::setTypeHint(caller, resolved_function_symbol);
 }
 
 void CallNode::gen()
 {
-    int paramsSize = 0;
-
-    bool is_method = resolved_function_type_info.isMethod();
-
-    int is_meth = (is_method ? 1 : 0);
-
     caller->gen();    
+
+    CodeGen::emit("push rsi");
     CodeGen::emit("mov rsi, rax");
-    
-    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
-    {
-	params[i - is_meth]->gen();
-	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) )
-	{	    
-	    CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rax");
-	    paramsSize += sizeof(int*);
-	}
-	else
-	{
-	    for ( int j = 0; j < resolved_function_type_info.getParamType(i)->getSize(); j += sizeof(int*), paramsSize += sizeof(int*) )
-	    {	    
-		CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-		CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rbx");
-	    }
-	}
-    }
 
-    if ( is_method )
-    {
-	CodeGen::emit("mov [rsp - " + std::to_string(paramsSize + sizeof(int*)) + "], rdi");
-	paramsSize += sizeof(int*);
-    }
-
-    CodeGen::emit("sub rsp, " + std::to_string(paramsSize));
-    
-    CodeGen::emit("call rsi");
-    CodeGen::emit("add rsp, " + std::to_string(paramsSize));
+    FunctionHelper::genCallCode(resolved_function_symbol, params);
+    CodeGen::emit("pop rsi");
 }
 
 void CallNode::build_scope()

@@ -8,6 +8,7 @@
 #include "type.hpp"
 #include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
+#include "overloadedfunctionsymbol.hpp"
 
 using std::map;
 

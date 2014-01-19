@@ -36,21 +36,27 @@ AST* Parser::statement()
 	return expression();
 }
 
-DeclarationNode* Parser::declaration(bool in_struct)
+DeclarationNode* Parser::declaration(std::shared_ptr<string> struct_name)
 {
     if ( getTokenType(1) == TokenType::STRUCT )
 	return structDecl();
     else if ( getTokenType(1) == TokenType::DEF )
-	return functionDecl(in_struct);
+	return functionDecl(struct_name);
     else
-	return variableDecl(in_struct);
+	return variableDecl(struct_name);
 }
 
-DeclarationNode* Parser::variableDecl(bool in_struct)
+DeclarationNode* Parser::variableDecl(std::shared_ptr<string> struct_name)
 {
     match(TokenType::VAR);
     auto var = var_and_type();
-    return new VariableDeclarationNode(var.first, var.second, in_struct);
+
+    vector<ExprNode*> constructor_call_params;
+    
+    if ( getTokenType(1) == TokenType::LPAREN )
+	constructor_call_params = call_params_list();
+    
+    return new VariableDeclarationNode(var.first, var.second, struct_name != nullptr, constructor_call_params);
 }
 
 DeclarationNode* Parser::structDecl()
@@ -69,7 +75,7 @@ DeclarationNode* Parser::structDecl()
 	    match(TokenType::SEMICOLON);
 
 	if ( getTokenType(1) != TokenType::RBRACE )
-	    struct_in.push_back(declaration(true));
+	    struct_in.push_back(declaration(std::make_shared<string>(string(struct_name))));
     }
     
     match(TokenType::RBRACE);
@@ -77,7 +83,7 @@ DeclarationNode* Parser::structDecl()
     return new StructDeclarationNode(struct_name, struct_in);
 }
 
-DeclarationNode* Parser::functionDecl(bool in_struct)
+DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
 {
     match(TokenType::DEF);
 
@@ -100,9 +106,26 @@ DeclarationNode* Parser::functionDecl(bool in_struct)
 
     match(TokenType::RPAREN);
 
-    match(TokenType::COLON);
+    TypeInfo return_type;
 
-    TypeInfo return_type = type_info();
+    bool is_constructor = (struct_name != nullptr && function_name == *struct_name);
+    
+    if ( !is_constructor )
+    {
+	if ( getTokenType(1) == TokenType::COLON )
+	{
+	    match(TokenType::COLON);
+	    return_type = type_info();
+	}
+	else
+	{
+	    return_type = TypeInfo("void", false);
+	}
+    }
+    else
+    {
+	return_type = TypeInfo(*struct_name, true);
+    }
 
     vector < AST* > statements;
     
@@ -113,7 +136,7 @@ DeclarationNode* Parser::functionDecl(bool in_struct)
 
     match(TokenType::RBRACE);
 
-    return new FunctionDeclarationNode(function_name, params, return_type, statements, in_struct);
+    return new FunctionDeclarationNode(function_name, params, return_type, statements, {struct_name != nullptr, is_constructor, false});
 }
 
 string Parser::id()
@@ -163,25 +186,7 @@ ExprNode* Parser::unary_right()
     while ( getTokenType(1) == TokenType::LPAREN || getTokenType(1) == TokenType::DOT )
     {
 	if ( getTokenType(1) == TokenType::LPAREN )
-	{
-	    vector<ExprNode*> params;
-	
-	    match(TokenType::LPAREN);
-
-	    if ( getTokenType(1) != TokenType::RPAREN )
-	    {
-		params.push_back(expression());
-		while ( getTokenType(1) == TokenType::COMMA )
-		{
-		    match(TokenType::COMMA);
-		    params.push_back(expression());
-		}
-	    }
-
-	    match(TokenType::RPAREN);
-
-	    res = new CallNode(res, params);
-	}
+	    res = new CallNode(res, call_params_list());
 	else
 	{
 	    match(TokenType::DOT);
@@ -385,4 +390,25 @@ TypeInfo Parser::type_info()
     }
 
     return TypeInfo(type_name, is_ref);
+}
+
+vector<ExprNode*> Parser::call_params_list()
+{
+    vector<ExprNode*> params;
+	
+    match(TokenType::LPAREN);
+
+    if ( getTokenType(1) != TokenType::RPAREN )
+    {
+	params.push_back(expression());
+	while ( getTokenType(1) == TokenType::COMMA )
+	{
+	    match(TokenType::COMMA);
+	    params.push_back(expression());
+	}
+    }
+
+    match(TokenType::RPAREN);
+
+    return params;
 }

@@ -3,6 +3,7 @@
 
 #include "exprnode.hpp"
 #include "functionsymbol.hpp"
+#include "globalconfig.hpp"
 
 class ReturnNode : public AST
 {

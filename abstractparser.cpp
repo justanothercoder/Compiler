@@ -6,6 +6,11 @@ AbstractParser::AbstractParser(AbstractLexer *input) : input(input)
     consume();
 }
 
+AbstractParser::~AbstractParser()
+{
+    
+}
+
 void AbstractParser::consume()
 {
     ++pos;

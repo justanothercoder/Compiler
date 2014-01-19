@@ -6,12 +6,18 @@
 #include "typeinfo.hpp"
 #include "referencetype.hpp"
 #include "scope.hpp"
+#include "structsymbol.hpp"
+#include "functionhelper.hpp"
 
 using std::map;
 
 class TypeHelper
 {
 public:
+
+    static FunctionSymbol* getConversion(Type *lhs, Type *rhs);
+
+    static bool existsConversion(Type *lhs, Type *rhs);
 
     static Type* fromTypeInfo(TypeInfo type_info, Scope *scope);
     

@@ -31,7 +31,7 @@ void LocalScope::define(Symbol *sym)
     else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
     {
 	table[sym_name] = sym;
-	addresses[static_cast<VariableSymbol*>(sym)] = scope_size + sizeof(int*);
+	addresses[static_cast<VariableSymbol*>(sym)] = scope_size + GlobalConfig::int_size;
 	scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize();
     }
     else

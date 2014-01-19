@@ -1,10 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <memory>
 
 #include "lexer.hpp"
 #include "parser.hpp"
 #include "builtins.hpp"
+
+using std::shared_ptr;
 
 int main()
 {
@@ -26,26 +29,42 @@ int main()
 
     try
     {    
-	AbstractLexer *lexer = new Lexer(buf);
-	AbstractParser *parser = new Parser(lexer);
+	shared_ptr<AbstractLexer> lexer(new Lexer(buf));
+	shared_ptr<AbstractParser> parser(new Parser(lexer.get()));
 	
-	AST* root = parser->parse();
+	shared_ptr<AST> root(parser->parse());
 
 	root->setScope(BuiltIns::global_scope);
 
-	root->getScope()->define(BuiltIns::int_type);
-	root->getScope()->define(BuiltIns::int_assign);
-	root->getScope()->define(BuiltIns::int_plus);
-	root->getScope()->define(BuiltIns::int_minus);
-	root->getScope()->define(BuiltIns::int_mul);
+	BuiltIns::global_scope->define(BuiltIns::int_struct);
+	
+	BuiltIns::int_struct->define(BuiltIns::int_type);
 
+	BuiltIns::int_struct->define(new VariableSymbol("__impl", BuiltIns::int_type, VariableSymbolType::FIELD));
+	    
+	BuiltIns::int_struct->define(BuiltIns::int_constructor);
+	BuiltIns::int_struct->define(BuiltIns::int_default_constructor);
+
+	BuiltIns::global_scope->define(BuiltIns::int_assign);
+	BuiltIns::global_scope->define(BuiltIns::int_plus);
+	BuiltIns::global_scope->define(BuiltIns::int_minus);
+	BuiltIns::global_scope->define(BuiltIns::int_mul);
+
+	BuiltIns::global_scope->define(BuiltIns::void_type);
+	BuiltIns::global_scope->define(BuiltIns::putchar_func);
+	BuiltIns::global_scope->define(BuiltIns::getchar_func);
+	
 	CodeGen::emit("section .text");
 
-	CodeGen::emit("extern _~operator_assign_int~ref_int");
-	CodeGen::emit("extern _~operator_plus_int_int");
-	CodeGen::emit("extern _~operator_minus_int_int");
-	CodeGen::emit("extern _~operator_mul_int_int");	
-
+	CodeGen::emit("extern _int_~operatorassign_int~ref_int");
+	CodeGen::emit("extern _int_~operatorplus_int_int");
+	CodeGen::emit("extern _int_~operatorminus_int_int");
+	CodeGen::emit("extern _int_~operatormul_int_int");	
+	CodeGen::emit("extern _~_int_int_int~ref_~~int");
+	CodeGen::emit("extern _~_int_int_int~ref");
+	CodeGen::emit("extern _putchar_int");
+	CodeGen::emit("extern _getchar");
+	
 	CodeGen::emit("global _start");
 	CodeGen::emit("_start:");
 
@@ -63,7 +82,6 @@ int main()
 	CodeGen::emit("mov rax, 60");
 	CodeGen::emit("mov rdi, 0");
 	CodeGen::emit("syscall");
-
     }
     catch ( int t )
     {

@@ -6,10 +6,10 @@
 
 #include "functiontypeinfo.hpp"
 
+class FunctionSymbol;
+
 using std::set;
 using std::map;
-
-class FunctionSymbol;
 
 class OverloadedFunctionTypeInfo
 {

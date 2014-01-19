@@ -2,6 +2,8 @@
 #define _NUMBERNODE_HPP_
 
 #include "exprnode.hpp"
+#include "globalconfig.hpp"
+#include "builtins.hpp"
 
 class NumberNode : public ExprNode
 {
@@ -18,8 +20,6 @@ public:
     
 private:
 
-    static Type* expr_type;
-    
     string num;
     
 };
