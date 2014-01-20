@@ -21,6 +21,9 @@ public:
     bool isMethod() const;
 
     Type *getBaseType() const;
+
+    virtual bool isReference() const;
+    virtual SymbolType getSymbolType() const;
     
 private:
 

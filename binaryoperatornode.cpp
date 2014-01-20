@@ -2,7 +2,7 @@
 
 BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type) { }
 
-bool BinaryOperatorNode::isLeftValue() const { return (dynamic_cast<ReferenceType*>(getType()) != 0); }
+bool BinaryOperatorNode::isLeftValue() const { return getType()->isReference(); }
 
 Type* BinaryOperatorNode::getType() const { return resolved_operator_symbol->getTypeInfo().getReturnType(); }
 

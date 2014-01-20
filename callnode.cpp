@@ -10,14 +10,13 @@ void CallNode::check()
     caller->check();   
 
     Type *caller_type = caller->getType();
-    if ( dynamic_cast<ReferenceType*>(caller_type) )
+    if ( caller_type->isReference() )
 	caller_type = static_cast<ReferenceType*>(caller_type)->getReferredType();
-    
+
     OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(caller_type);
-    
     if ( ov_func == nullptr )
 	throw SemanticError("caller is not a function.");
-
+    
     vector<Type*> params_types;  
 
     bool is_method = ov_func->isMethod();
@@ -42,7 +41,7 @@ void CallNode::check()
     
     for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
     {
-	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) && !params[i - is_meth]->isLeftValue() )
+	if ( resolved_function_type_info.getParamType(i)->isReference() && !params[i - is_meth]->isLeftValue() )
 	    throw SemanticError("parameter is not an lvalue.");
     }    
     

@@ -14,8 +14,8 @@ void DotNode::check()
 
     Type *_base_type = base->getType();
 
-    if ( dynamic_cast<ReferenceType*>(_base_type) != nullptr )
-	_base_type = dynamic_cast<ReferenceType*>(_base_type)->getReferredType();
+    if ( _base_type->isReference() )
+	_base_type = static_cast<ReferenceType*>(_base_type)->getReferredType();
     
     base_type = dynamic_cast<StructSymbol*>(_base_type);
 
@@ -36,7 +36,7 @@ void DotNode::gen()
 
     Type *member_type = static_cast<VariableSymbol*>(member)->getType();
     
-    if ( dynamic_cast<ReferenceType*>(member_type) )
+    if ( member_type->isReference() )
     {
 	CodeGen::emit("mov rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(static_cast<VariableSymbol*>(member))) + "]");
     }

@@ -31,17 +31,17 @@ void VariableDeclarationNode::check()
     if ( !is_field )
     {
 	Symbol *_type = this->getScope()->resolve(type_info.getTypeName());
-        
-	StructSymbol *type = dynamic_cast<StructSymbol*>(_type);
 
-	if ( type == nullptr )
+	if ( _type->getSymbolType() != SymbolType::STRUCT )
 	    throw SemanticError("No such struct " + type_info.getTypeName());
+	
+	StructSymbol *type = static_cast<StructSymbol*>(_type);
 
-	VariableSymbol *_constructor = dynamic_cast<VariableSymbol*>(type->resolve(type_info.getTypeName()));
-
-	if ( _constructor == nullptr )
+	Symbol *_constr = type->resolve(type_info.getTypeName());
+	if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
 	    throw SemanticError("No constructor");
-    
+
+	VariableSymbol *_constructor = static_cast<VariableSymbol*>(_constr);
 	OverloadedFunctionSymbol *constructor = dynamic_cast<OverloadedFunctionSymbol*>(_constructor->getType());
 
 	if ( constructor == nullptr )
@@ -64,7 +64,7 @@ void VariableDeclarationNode::check()
 
 	for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
 	{
-	    if ( dynamic_cast<ReferenceType*>(resolved_constructor_type_info.getParamType(i)) && !constructor_call_params[i - 1]->isLeftValue() )
+	    if ( resolved_constructor_type_info.getParamType(i)->isReference() && !constructor_call_params[i - 1]->isLeftValue() )
 		throw SemanticError("parameter is not an lvalue.");
 	}
     }

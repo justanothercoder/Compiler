@@ -62,7 +62,7 @@ void FunctionHelper::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& 
     {
 	params[i - is_meth]->gen();
 
-	if ( dynamic_cast<ReferenceType*>(resolved_function_type_info.getParamType(i)) )
+	if ( resolved_function_type_info.getParamType(i)->isReference() )
 	{
 	    CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rax");
 	    current_address += GlobalConfig::int_size;
@@ -71,15 +71,15 @@ void FunctionHelper::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& 
 	{
 	    if ( params[i - is_meth]->getType() != resolved_function_type_info.getParamType(i) )
 	    {
-		bool refconv = dynamic_cast<ReferenceType*>(params[i - is_meth]->getType()) != nullptr &&
-		    dynamic_cast<ReferenceType*>(params[i - is_meth]->getType())->getReferredType() == resolved_function_type_info.getParamType(i);
+		bool refconv = params[i - is_meth]->getType()->isReference() &&
+		    static_cast<ReferenceType*>(params[i - is_meth]->getType())->getReferredType() == resolved_function_type_info.getParamType(i);
 
 		Type *par_type = params[i - is_meth]->getType();
 		
 		if ( refconv )
 		{
 //		    CodeGen::emit("mov rax, [rax]");
-		    par_type = dynamic_cast<ReferenceType*>(par_type)->getReferredType();
+		    par_type = static_cast<ReferenceType*>(par_type)->getReferredType();
 		}
 
 		auto conv = TypeHelper::getConversion(par_type, resolved_function_type_info.getParamType(i));

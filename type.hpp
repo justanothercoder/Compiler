@@ -11,6 +11,8 @@ public:
 
     virtual string getName() const = 0;
     virtual int getSize() const = 0;
+
+    virtual bool isReference() const = 0;
 };
 
 #endif

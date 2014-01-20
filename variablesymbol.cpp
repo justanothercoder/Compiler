@@ -9,3 +9,5 @@ string VariableSymbol::getName() const { return name; }
 
 bool VariableSymbol::isParam() const { return sym_type == VariableSymbolType::PARAM; }
 bool VariableSymbol::isField() const { return sym_type == VariableSymbolType::FIELD; }
+
+SymbolType VariableSymbol::getSymbolType() const { return SymbolType::VARIABLE; }

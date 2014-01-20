@@ -13,6 +13,9 @@ public:
     virtual string getName() const;
     virtual int getSize() const;
 
+    virtual bool isReference() const;
+    virtual SymbolType getSymbolType() const;
+    
 private:
 
     string name;

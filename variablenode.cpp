@@ -1,23 +1,17 @@
 #include "variablenode.hpp"
 
-VariableNode::VariableNode(string name) : name(name)
-{
-    
-}
+VariableNode::VariableNode(string name) : name(name) { }
 
-void VariableNode::build_scope()
-{
-    
-}
+void VariableNode::build_scope() { }
 
 void VariableNode::check()
 {
-    Symbol *sym = getScope()->resolve(name);
+    Symbol *sym = this->getScope()->resolve(name);
 
     if ( sym == nullptr )
 	throw SemanticError("No such symbol " + name);
 
-    if ( dynamic_cast<VariableSymbol*>(sym) == nullptr )
+    if ( sym->getSymbolType() != SymbolType::VARIABLE )
 	throw SemanticError("'" + name + "' is not a variable.");
 
     variable = static_cast<VariableSymbol*>(sym);
@@ -27,7 +21,7 @@ void VariableNode::gen()
 {
     Type *var_type = variable->getType();
     
-    if ( dynamic_cast<ReferenceType*>(var_type) )
+    if ( var_type->isReference() )
     {
 	if ( variable->isField() )
 	{
@@ -40,7 +34,7 @@ void VariableNode::gen()
 	}
 	else
 	{
-	    CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
+	    CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(variable)) + "]");
 	}
     }    
     else if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type) )
@@ -70,7 +64,7 @@ void VariableNode::gen()
 	{
 	    Symbol *_this = getScope()->resolve("this");
 
-	    if ( dynamic_cast<VariableSymbol*>(_this) == nullptr )
+	    if ( _this == nullptr || _this->getSymbolType() != SymbolType::VARIABLE )
 		throw SemanticError("internal error");
 	    
 	    VariableSymbol *sym = static_cast<VariableSymbol*>(_this);
@@ -82,18 +76,10 @@ void VariableNode::gen()
 	}
 	else
 	{
-	    CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->getAddress(dynamic_cast<VariableSymbol*>(variable))) + "]");
+	    CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->getAddress(variable)) + "]");
 	}
     }
 }
 
-
-Type* VariableNode::getType() const
-{
-    return TypeHelper::getReferenceType(variable->getType());
-}
-
-bool VariableNode::isLeftValue() const
-{
-    return true;
-}
+Type* VariableNode::getType() const { return TypeHelper::getReferenceType(variable->getType()); }
+bool VariableNode::isLeftValue() const { return true; }

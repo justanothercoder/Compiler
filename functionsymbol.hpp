@@ -41,6 +41,9 @@ public:
     virtual int getSize() const;
     
     FunctionTypeInfo getTypeInfo() const;
+
+    virtual bool isReference() const;
+    virtual SymbolType getSymbolType() const;
     
 private:
 

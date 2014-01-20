@@ -9,12 +9,15 @@ using std::string;
 
 class Scope;
 
+enum class SymbolType { FUNCTION, OVERLOADED_FUNCTION, VARIABLE, STRUCT, BUILTINTYPE };
+
 class Symbol
 {
 public:
 
     virtual ~Symbol();    
     virtual string getName() const = 0;
+    virtual SymbolType getSymbolType() const = 0;
 };
 
 #endif

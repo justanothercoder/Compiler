@@ -34,7 +34,7 @@ void StructSymbol::define(Symbol *sym)
 {
     string sym_name = sym->getName();
     
-    if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
+    if ( sym->getSymbolType() == SymbolType::FUNCTION )
     {
 	FunctionSymbol *func_sym = static_cast<FunctionSymbol*>(sym);
 	
@@ -45,7 +45,7 @@ void StructSymbol::define(Symbol *sym)
 
 	Symbol *res_sym = table[sym_name];	
 
-	if ( dynamic_cast<VariableSymbol*>(res_sym) == nullptr || dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(res_sym)->getType()) == nullptr )
+	if ( res_sym->getSymbolType() != SymbolType::VARIABLE || dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(res_sym)->getType()) == nullptr )
 	    throw SemanticError(sym_name + " is already defined.");
 
 	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
@@ -55,20 +55,22 @@ void StructSymbol::define(Symbol *sym)
        	
 	FunctionTypeInfo func_type_info = func_sym->getTypeInfo();
 
-	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(table[sym_name])->getType());
+	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
 	ofs->addOverload(func_type_info, func_sym);
     }
-    else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
+    else if ( sym->getSymbolType() == SymbolType::VARIABLE )
     {
 	table[sym_name] = sym;
 
-	if ( !static_cast<VariableSymbol*>(sym)->isField() )
+	VariableSymbol *_sym = static_cast<VariableSymbol*>(sym);
+	
+	if ( !_sym->isField() )
 	    throw SemanticError("internal error.");
 
-	addresses[static_cast<VariableSymbol*>(sym)] = scope_size;
-	scope_size += static_cast<VariableSymbol*>(sym)->getType()->getSize();
+	addresses[_sym] = scope_size;
+	scope_size += _sym->getType()->getSize();
 
-	type_size += static_cast<VariableSymbol*>(sym)->getType()->getSize();
+	type_size += _sym->getType()->getSize();
     }
     else
 	table[sym_name] = sym;
@@ -78,3 +80,7 @@ int StructSymbol::getSize() const { return type_size; }
 string StructSymbol::getName() const { return name; }
 int StructSymbol::getScopeSize() const { return 0; }
 string StructSymbol::getScopeName() const { return scope_name; }
+
+bool StructSymbol::isReference() const { return false; }
+
+SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }

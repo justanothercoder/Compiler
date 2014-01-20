@@ -9,8 +9,8 @@ GlobalScope::GlobalScope()
 void GlobalScope::define(Symbol *sym)
 {
     string sym_name = sym->getName();
-    
-    if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
+
+    if ( sym->getSymbolType() == SymbolType::FUNCTION )    
     {
 	auto it = table.find(sym_name);
 	
@@ -18,21 +18,19 @@ void GlobalScope::define(Symbol *sym)
 	    table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ })));
 
 	Symbol *res_sym = table[sym_name];	
-
-	if ( dynamic_cast<VariableSymbol*>(res_sym) == nullptr )
+	if ( res_sym->getSymbolType() != SymbolType::VARIABLE )
 	    throw SemanticError(sym_name + " is already defined.");
 
-	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
-	
+	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());	
 	if ( ov_func == nullptr )
 	    throw SemanticError(sym_name + " is already defined as not function");
        	
 	FunctionTypeInfo func_type_info = static_cast<FunctionSymbol*>(sym)->getTypeInfo();
 
-	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(table[sym_name])->getType());
+	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
 	ofs->addOverload(func_type_info, static_cast<FunctionSymbol*>(sym));
     }
-    else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
+    else if ( sym->getSymbolType() == SymbolType::VARIABLE )
     {
 	VariableSymbol *_sym = static_cast<VariableSymbol*>(sym);
 	

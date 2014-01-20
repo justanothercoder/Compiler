@@ -7,3 +7,5 @@ Type* ReferenceType::getReferredType() const { return referred_type; }
 string ReferenceType::getName() const { return referred_type->getName() + "~ref"; }
 
 int ReferenceType::getSize() const { return GlobalConfig::int_size; }
+
+bool ReferenceType::isReference() const { return true; }

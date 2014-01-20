@@ -20,7 +20,9 @@ public:
 
     bool isParam() const;
     bool isField() const;
-       
+
+    virtual SymbolType getSymbolType() const;
+    
 private:
 
     string name;
