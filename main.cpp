@@ -60,8 +60,8 @@ int main()
 	CodeGen::emit("extern _int_~operatorplus_int_int");
 	CodeGen::emit("extern _int_~operatorminus_int_int");
 	CodeGen::emit("extern _int_~operatormul_int_int");	
-	CodeGen::emit("extern _~_int_int_int~ref_~~int");
-	CodeGen::emit("extern _~_int_int_int~ref");
+	CodeGen::emit("extern _int_int_int~ref_~~int");
+	CodeGen::emit("extern _int_int_int~ref");
 	CodeGen::emit("extern _putchar_int");
 	CodeGen::emit("extern _getchar");
 	

@@ -7,6 +7,8 @@ Type* FunctionTypeInfo::getParamType(int i) const { return params_types[i]; }
 
 int FunctionTypeInfo::getNumberOfParams() const { return params_types.size(); }
 
+const vector<Type*>& FunctionTypeInfo::getParamsTypes() const { return params_types; }
+
 bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
 {
     auto hash_func = [](const FunctionTypeInfo& fti)

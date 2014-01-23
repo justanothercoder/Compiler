@@ -18,7 +18,10 @@ void VariableNode::check()
 	    throw SemanticError("'" + name + "' is not a variable.");
 
 	if ( static_cast<VariableSymbol*>(constr)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
- 	    
+	    throw SemanticError("'" + name + "' is not a variable.");
+
+	if ( !static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(constr)->getType())->isConstructor() )
+	    throw SemanticError("'" + name + "' is not a variable.");
 
 	sym = constr;
     }
@@ -39,7 +42,7 @@ void VariableNode::gen()
     {
 	if ( variable->isField() )
 	{
-	    VariableSymbol *sym = static_cast<VariableSymbol*>(getScope()->resolve("this"));
+	    VariableSymbol *sym = static_cast<VariableSymbol*>(this->getScope()->resolve("this"));
 
 	    Scope *struc_scope = static_cast<StructSymbol*>(sym->getType());
 	    
@@ -62,12 +65,21 @@ void VariableNode::gen()
 	    FunctionSymbol *hint_type = static_cast<FunctionSymbol*>(GlobalHelper::getTypeHint(this));
 	    if ( hint_type == nullptr )
 		throw SemanticError("multiple overloads of " + name);
-	   
-	    variable = dynamic_cast<VariableSymbol*>(ov_func_type_info.symbols[hint_type->getTypeInfo()]);
+
+	    auto type_info = hint_type->getTypeInfo();
+
+	    if ( ov_func_type_info.symbols.find(type_info) == std::end(ov_func_type_info.symbols) )
+	    {
+		auto sym = FunctionHelper::getViableOverload(ov_func, type_info.getParamsTypes());
+		variable = new VariableSymbol(ov_func->getName(), sym);
+	    }
+	    else
+//		variable = dynamic_cast<VariableSymbol*>(ov_func_type_info.symbols[type_info]);
+		variable = new VariableSymbol(ov_func->getName(), ov_func_type_info.symbols[type_info]);
 	}
 	else
 	{
-	    variable = new VariableSymbol(ov_func->getName(), ov_func_type_info.symbols.begin()->second);
+	    variable = new VariableSymbol(ov_func->getName(), std::begin(ov_func_type_info.symbols)->second);
 	}
 
 	CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(variable->getType())->getScopedTypedName() + "]");
@@ -76,7 +88,7 @@ void VariableNode::gen()
     {
 	if ( variable->isField() )
 	{
-	    Symbol *_this = getScope()->resolve("this");
+	    Symbol *_this = this->getScope()->resolve("this");
 
 	    if ( _this == nullptr || _this->getSymbolType() != SymbolType::VARIABLE )
 		throw SemanticError("internal error");
