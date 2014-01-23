@@ -45,14 +45,11 @@ void StructSymbol::define(Symbol *sym)
 
 	Symbol *res_sym = table[sym_name];	
 
-	if ( res_sym->getSymbolType() != SymbolType::VARIABLE || dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(res_sym)->getType()) == nullptr )
+	if ( res_sym->getSymbolType() != SymbolType::VARIABLE || static_cast<VariableSymbol*>(res_sym)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	    throw SemanticError(sym_name + " is already defined.");
 
-	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
+//	OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
 	
-	if ( ov_func == nullptr )
-	    throw SemanticError(sym_name + " is already defined as not function");
-       	
 	FunctionTypeInfo func_type_info = func_sym->getTypeInfo();
 
 	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
@@ -81,6 +78,5 @@ string StructSymbol::getName() const { return name; }
 int StructSymbol::getScopeSize() const { return 0; }
 string StructSymbol::getScopeName() const { return scope_name; }
 
-bool StructSymbol::isReference() const { return false; }
-
 SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }
+TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }

@@ -39,10 +39,10 @@ bool TypeHelper::existsConversion(Type *lhs, Type *rhs)
 
 FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
 {
-    StructSymbol *struc = dynamic_cast<StructSymbol*>(rhs);
-
-    if ( struc == nullptr )
+    if ( rhs->getTypeKind() != TypeKind::STRUCT )
 	return nullptr;
+    
+    StructSymbol *struc = static_cast<StructSymbol*>(rhs);
     
     string lhs_name = lhs->getName();    
     string rhs_name = rhs->getName();

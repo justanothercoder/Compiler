@@ -37,11 +37,11 @@ void VariableNode::gen()
 	    CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(variable)) + "]");
 	}
     }    
-    else if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type) )
+    else if ( var_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
     {
-	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(var_type);
+	OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(var_type);
 	
-	OverloadedFunctionTypeInfo ov_func_type_info = ov_func->getTypeInfo();
+	auto ov_func_type_info = ov_func->getTypeInfo();
 	
 	if ( ov_func_type_info.overloads.size() > 1 )
 	{

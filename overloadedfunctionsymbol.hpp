@@ -22,8 +22,8 @@ public:
 
     Type *getBaseType() const;
 
-    virtual bool isReference() const;
     virtual SymbolType getSymbolType() const;
+    virtual TypeKind getTypeKind() const;
     
 private:
 

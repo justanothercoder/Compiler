@@ -22,5 +22,5 @@ Type* OverloadedFunctionSymbol::getBaseType() const
     return type_info.overloads.begin()->getParamType(0);
 }
 
-bool OverloadedFunctionSymbol::isReference() const { return false; }
 SymbolType OverloadedFunctionSymbol::getSymbolType() const { return SymbolType::OVERLOADED_FUNCTION; }
+TypeKind OverloadedFunctionSymbol::getTypeKind() const { return TypeKind::OVERLOADEDFUNCTION; }

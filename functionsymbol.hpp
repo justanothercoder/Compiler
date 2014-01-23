@@ -42,9 +42,8 @@ public:
     
     FunctionTypeInfo getTypeInfo() const;
 
-    virtual bool isReference() const;
     virtual SymbolType getSymbolType() const;
-    
+    virtual TypeKind getTypeKind() const;
 private:
 
     int params_size;

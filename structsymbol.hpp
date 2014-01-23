@@ -31,9 +31,10 @@ public:
 
     Symbol* resolveMember(string name) const;
 
-    virtual bool isReference() const;
     virtual SymbolType getSymbolType() const;
 
+    virtual TypeKind getTypeKind() const ;
+    
 private:
 
     string name;

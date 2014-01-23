@@ -40,11 +40,11 @@ void DotNode::gen()
     {
 	CodeGen::emit("mov rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(static_cast<VariableSymbol*>(member))) + "]");
     }
-    else if ( dynamic_cast<OverloadedFunctionSymbol*>(member_type) )
+    else if ( member_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
     {
-	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(member_type);
+	OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(member_type);
 
-	OverloadedFunctionTypeInfo ov_func_type_info = ov_func->getTypeInfo();
+	auto ov_func_type_info = ov_func->getTypeInfo();
 
 	if ( ov_func_type_info.overloads.size() > 1 )
 	{

@@ -15,12 +15,10 @@ void LocalScope::define(Symbol *sym)
 
 	Symbol *res_sym = table[sym_name];	
 
-	if ( res_sym->getSymbolType() != SymbolType::VARIABLE || dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(res_sym)->getType()) == nullptr )
+	if ( res_sym->getSymbolType() != SymbolType::VARIABLE || static_cast<VariableSymbol*>(res_sym)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	    throw SemanticError(sym_name + " is already defined.");
 
-	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());	
-	if ( ov_func == nullptr ) 
-	    throw SemanticError(sym_name + " is already defined as not function");
+//	OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());	
        	
 	FunctionTypeInfo func_type_info = static_cast<FunctionSymbol*>(sym)->getTypeInfo();
 

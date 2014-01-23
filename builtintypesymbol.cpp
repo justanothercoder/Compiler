@@ -6,5 +6,5 @@ string BuiltInTypeSymbol::getName() const { return name; }
 
 int BuiltInTypeSymbol::getSize() const { return size; }
 
-bool BuiltInTypeSymbol::isReference() const { return false; }
 SymbolType BuiltInTypeSymbol::getSymbolType() const { return SymbolType::BUILTINTYPE; }
+TypeKind BuiltInTypeSymbol::getTypeKind() const { return TypeKind::BUILTIN; }

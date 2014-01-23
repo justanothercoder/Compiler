@@ -12,10 +12,11 @@ void CallNode::check()
     Type *caller_type = caller->getType();
     if ( caller_type->isReference() )
 	caller_type = static_cast<ReferenceType*>(caller_type)->getReferredType();
-
-    OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(caller_type);
-    if ( ov_func == nullptr )
+    
+    if ( caller_type->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	throw SemanticError("caller is not a function.");
+
+    OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(caller_type);
     
     vector<Type*> params_types;  
 

@@ -12,15 +12,15 @@ void FunctionSymbol::define(Symbol *sym)
 {
     string sym_name = sym->getName();
 	
-    if ( dynamic_cast<FunctionSymbol*>(sym) != nullptr )
+    if ( sym->getSymbolType() == SymbolType::FUNCTION )
     {
 	if ( table[sym_name] == nullptr )
 	    table[sym_name] = new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }));
 
-	OverloadedFunctionSymbol* ov_func = dynamic_cast<OverloadedFunctionSymbol*>(table[sym_name]);
-	
-	if ( ov_func == nullptr )
+	if ( table[sym_name]->getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
 	    throw SemanticError(sym_name + " is not a function");
+
+	OverloadedFunctionSymbol* ov_func = static_cast<OverloadedFunctionSymbol*>(table[sym_name]);	
 	
 	OverloadedFunctionTypeInfo type_info = ov_func->getTypeInfo();
 	
@@ -29,7 +29,7 @@ void FunctionSymbol::define(Symbol *sym)
 	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(table[sym_name])->getType());
 	ofs->addOverload(func_type_info, static_cast<FunctionSymbol*>(sym));
     }
-    else if ( dynamic_cast<VariableSymbol*>(sym) != nullptr )
+    else if ( sym->getSymbolType() == SymbolType::VARIABLE )
     {
 	table[sym_name] = sym;
 	if ( static_cast<VariableSymbol*>(sym)->isParam() )
@@ -80,5 +80,5 @@ int FunctionSymbol::getSize() const { return GlobalConfig::int_size; }
 FunctionTypeInfo FunctionSymbol::getTypeInfo() const { return function_type_info; }
 void FunctionSymbol::setTypeInfo(FunctionTypeInfo function_type_info) { this->function_type_info = function_type_info; }
 
-bool FunctionSymbol::isReference() const { return false; }
 SymbolType FunctionSymbol::getSymbolType() const { return SymbolType::FUNCTION; }
+TypeKind FunctionSymbol::getTypeKind() const { return TypeKind::FUNCTION; }

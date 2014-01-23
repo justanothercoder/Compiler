@@ -15,7 +15,7 @@ public:
     virtual string getName() const;
     virtual int getSize() const;
 
-    virtual bool isReference() const;
+    virtual TypeKind getTypeKind() const;
     
 private:
     

@@ -42,10 +42,10 @@ void VariableDeclarationNode::check()
 	    throw SemanticError("No constructor");
 
 	VariableSymbol *_constructor = static_cast<VariableSymbol*>(_constr);
-	OverloadedFunctionSymbol *constructor = dynamic_cast<OverloadedFunctionSymbol*>(_constructor->getType());
-
-	if ( constructor == nullptr )
+	if ( _constructor->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	    throw SemanticError("No constructor");
+
+	OverloadedFunctionSymbol *constructor = static_cast<OverloadedFunctionSymbol*>(_constructor->getType());
 
 	vector<Type*> params_types;
 	params_types.push_back(TypeHelper::getReferenceType(definedSymbol->getType()));   
