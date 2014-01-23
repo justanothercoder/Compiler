@@ -11,8 +11,22 @@ void VariableNode::check()
     if ( sym == nullptr )
 	throw SemanticError("No such symbol " + name);
 
-    if ( sym->getSymbolType() != SymbolType::VARIABLE )
-	throw SemanticError("'" + name + "' is not a variable.");
+    if ( sym->getSymbolType() == SymbolType::STRUCT )
+    {
+	Symbol *constr = static_cast<StructSymbol*>(sym)->resolve(name);
+	if ( constr->getSymbolType() != SymbolType::VARIABLE )
+	    throw SemanticError("'" + name + "' is not a variable.");
+
+	if ( static_cast<VariableSymbol*>(constr)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
+ 	    
+
+	sym = constr;
+    }
+    else
+    {
+	if ( sym->getSymbolType() != SymbolType::VARIABLE )
+	    throw SemanticError("'" + name + "' is not a variable.");
+    }
 
     variable = static_cast<VariableSymbol*>(sym);
 }

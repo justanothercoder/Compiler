@@ -1,6 +1,6 @@
 #include "overloadedfunctionsymbol.hpp"
 
-OverloadedFunctionSymbol::OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, bool is_method) : name(name), type_info(type_info), is_method(is_method) { }
+OverloadedFunctionSymbol::OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits) : name(name), type_info(type_info), traits(traits) { }
 
 string OverloadedFunctionSymbol::getName() const { return name; }
 int OverloadedFunctionSymbol::getSize() const { return GlobalConfig::int_size; }
@@ -13,7 +13,9 @@ void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, Func
     type_info.symbols[func_type_info] = sym;
 }
 
-bool OverloadedFunctionSymbol::isMethod() const { return is_method; }
+bool OverloadedFunctionSymbol::isMethod() const { return traits.is_method; }
+bool OverloadedFunctionSymbol::isConstructor() const { return traits.is_constructor; }
+bool OverloadedFunctionSymbol::isOperator() const { return traits.is_operator; }
 
 Type* OverloadedFunctionSymbol::getBaseType() const
 {

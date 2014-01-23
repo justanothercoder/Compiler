@@ -41,7 +41,7 @@ void StructSymbol::define(Symbol *sym)
 	auto it = table.find(sym_name);
 	
 	if ( it == std::end(table) )
-	    table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), func_sym->isMethod()));
+	    table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), func_sym->getTraits()));
 
 	Symbol *res_sym = table[sym_name];	
 
@@ -50,7 +50,7 @@ void StructSymbol::define(Symbol *sym)
 
 //	OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
 	
-	FunctionTypeInfo func_type_info = func_sym->getTypeInfo();
+	auto func_type_info = func_sym->getTypeInfo();
 
 	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
 	ofs->addOverload(func_type_info, func_sym);

@@ -41,7 +41,8 @@ public:
     virtual int getSize() const;
     
     FunctionTypeInfo getTypeInfo() const;
-
+    FunctionTraits getTraits() const;
+    
     virtual SymbolType getSymbolType() const;
     virtual TypeKind getTypeKind() const;
 private:

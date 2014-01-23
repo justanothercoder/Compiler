@@ -4,12 +4,13 @@
 #include "symbol.hpp"
 #include "overloadedfunctiontypeinfo.hpp"
 #include "globalconfig.hpp"
+#include "functiontraits.hpp"
 
 class OverloadedFunctionSymbol : public Symbol, public Type
 {
 public:
 
-    OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, bool is_method = false);
+    OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits);
 
     virtual string getName() const;
     virtual int getSize() const;
@@ -19,6 +20,8 @@ public:
     void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym);
 
     bool isMethod() const;
+    bool isConstructor() const;
+    bool isOperator() const;
 
     Type *getBaseType() const;
 
@@ -30,7 +33,7 @@ private:
     string name;
     OverloadedFunctionTypeInfo type_info;
 
-    bool is_method;
+    FunctionTraits traits;
 };
 
 #endif

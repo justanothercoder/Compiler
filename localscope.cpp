@@ -8,10 +8,12 @@ void LocalScope::define(Symbol *sym)
     
     if ( sym->getSymbolType() == SymbolType::FUNCTION )
     {
+	FunctionSymbol *func = static_cast<FunctionSymbol*>(sym);
+	
 	auto it = table.find(sym_name);
 	
 	if ( it == std::end(table) )
-	    table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ })));
+	    table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), func->getTraits()));
 
 	Symbol *res_sym = table[sym_name];	
 
@@ -20,10 +22,10 @@ void LocalScope::define(Symbol *sym)
 
 //	OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());	
        	
-	FunctionTypeInfo func_type_info = static_cast<FunctionSymbol*>(sym)->getTypeInfo();
+	auto func_type_info = func->getTypeInfo();
 
 	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
-	ofs->addOverload(func_type_info, static_cast<FunctionSymbol*>(sym));
+	ofs->addOverload(func_type_info, func);
     }
     else if ( sym->getSymbolType() == SymbolType::VARIABLE )
     {
