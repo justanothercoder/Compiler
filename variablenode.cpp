@@ -74,7 +74,6 @@ void VariableNode::gen()
 		variable = new VariableSymbol(ov_func->getName(), sym);
 	    }
 	    else
-//		variable = dynamic_cast<VariableSymbol*>(ov_func_type_info.symbols[type_info]);
 		variable = new VariableSymbol(ov_func->getName(), ov_func_type_info.symbols[type_info]);
 	}
 	else

@@ -52,7 +52,8 @@ void DotNode::gen()
 	    if ( hint_type == nullptr )
 		throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
 
-	    member = dynamic_cast<VariableSymbol*>(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
+	    member = new VariableSymbol(member_name, ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
+//	    member = dynamic_cast<VariableSymbol*>(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
 	}
 	else
 	{

@@ -20,8 +20,6 @@ void LocalScope::define(Symbol *sym)
 	if ( res_sym->getSymbolType() != SymbolType::VARIABLE || static_cast<VariableSymbol*>(res_sym)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	    throw SemanticError(sym_name + " is already defined.");
 
-//	OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());	
-       	
 	auto func_type_info = func->getTypeInfo();
 
 	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());

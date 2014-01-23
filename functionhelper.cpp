@@ -77,10 +77,7 @@ void FunctionHelper::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& 
 		Type *par_type = params[i - is_meth]->getType();
 		
 		if ( refconv )
-		{
-//		    CodeGen::emit("mov rax, [rax]");
 		    par_type = static_cast<ReferenceType*>(par_type)->getReferredType();
-		}
 
 		auto conv = TypeHelper::getConversion(par_type, resolved_function_type_info.getParamType(i));
 		CodeGen::emit("sub rsp, " + std::to_string(params_size));

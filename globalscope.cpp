@@ -26,9 +26,7 @@ void GlobalScope::define(Symbol *sym)
 	if ( static_cast<VariableSymbol*>(res_sym)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	    throw SemanticError(sym_name + " is already defined as not function");
 
-//	OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());	
-       	
-	FunctionTypeInfo func_type_info = func->getTypeInfo();
+	auto func_type_info = func->getTypeInfo();
 
 	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(res_sym)->getType());
 	ofs->addOverload(func_type_info, func);
