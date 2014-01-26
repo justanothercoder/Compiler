@@ -56,7 +56,7 @@ void CallNode::gen()
     CodeGen::emit("push rsi");
     CodeGen::emit("mov rsi, rax");
 
-    FunctionHelper::genCallCode(resolved_function_symbol, params);
+    CodeGen::genCallCode(resolved_function_symbol, params);
     CodeGen::emit("pop rsi");
 }
 

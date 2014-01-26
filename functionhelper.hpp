@@ -16,7 +16,6 @@ public:
     static bool isCompatible(FunctionTypeInfo ft, const vector<Type*>& params_type);
     static set<FunctionTypeInfo> getBestOverload(const set<FunctionTypeInfo>& selection, const vector<Type*>& params_type);
     static FunctionSymbol* getViableOverload(OverloadedFunctionSymbol* overloaded_func, const vector<Type*>& params_type);
-    static void genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params);
 };   
 
 #endif

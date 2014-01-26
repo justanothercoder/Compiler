@@ -6,6 +6,7 @@
 #include "referencetype.hpp"
 #include "typehelper.hpp"
 #include "globalhelper.hpp"
+#include "codegen.hpp"
 
 class DotNode : public ExprNode
 {

@@ -82,6 +82,6 @@ void BinaryOperatorNode::gen()
     CodeGen::emit("push rsi");
     CodeGen::emit("lea rsi, [" + call_name + "]");
 
-    FunctionHelper::genCallCode(resolved_operator_symbol, {lhs, rhs});
+    CodeGen::genCallCode(resolved_operator_symbol, {lhs, rhs});
     CodeGen::emit("pop rsi");
 }

@@ -3,6 +3,7 @@
 
 #include "exprnode.hpp"
 #include "localscope.hpp"
+#include "codegen.hpp"
 
 class WhileNode : public AST
 {

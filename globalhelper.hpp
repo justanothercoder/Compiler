@@ -14,7 +14,7 @@ using std::map;
 class GlobalHelper
 {
 public:
-
+    
     static Type* getTypeHint(ExprNode *expr);
     static void setTypeHint(ExprNode *expr, Type *type);
 
@@ -22,6 +22,7 @@ public:
     static void setSymbolScope(Symbol *sym, Scope *scope);
 
     static int getDefinitionTime(Symbol *sym);
+    static int setDefinitionTime(Symbol *sym);
 
     static Scope* getASTScope(const AST *t);
     static void setASTScope(AST *t, Scope *sc);

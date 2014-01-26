@@ -80,7 +80,7 @@ void VariableDeclarationNode::gen()
 	CodeGen::emit("push rsi");
 	CodeGen::emit("lea rsi, [" + resolved_constructor->getScopedTypedName() + "]");
 
-	FunctionHelper::genCallCode(resolved_constructor, constructor_call_params);
+	CodeGen::genCallCode(resolved_constructor, constructor_call_params);
 	CodeGen::emit("pop rsi");
     }
 }

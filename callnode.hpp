@@ -10,6 +10,7 @@
 #include "overloadedfunctionsymbol.hpp"
 #include "globalhelper.hpp"
 #include "functionsymbol.hpp"
+#include "codegen.hpp"
 
 using std::vector;
 

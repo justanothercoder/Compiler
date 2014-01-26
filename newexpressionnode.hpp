@@ -9,6 +9,7 @@
 #include "scope.hpp"
 #include "structsymbol.hpp"
 #include "typehelper.hpp"
+#include "codegen.hpp"
 
 using std::vector;
 using std::string;

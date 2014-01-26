@@ -5,6 +5,7 @@
 #include "functionsymbol.hpp"
 #include "referencetype.hpp"
 #include "functionhelper.hpp"
+#include "codegen.hpp"
 
 enum class BinaryOp { ASSIGN, PLUS, MINUS, MUL };
 

@@ -53,7 +53,7 @@ void NewExpressionNode::check()
 
 void NewExpressionNode::gen()
 {
-    
+    CodeGen::construct_object(getType(), resolved_constructor, params);
 }
 
 Type* NewExpressionNode::getType() const

@@ -8,6 +8,7 @@
 #include "typehelper.hpp"
 #include "structsymbol.hpp"
 #include "globalhelper.hpp"
+#include "codegen.hpp"
 
 class VariableNode : public ExprNode
 {

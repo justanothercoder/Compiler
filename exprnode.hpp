@@ -3,7 +3,6 @@
 
 #include "ast.hpp"
 #include "type.hpp"
-#include "codegen.hpp"
 
 class ExprNode : public AST
 {

@@ -4,6 +4,7 @@
 #include "exprnode.hpp"
 #include "functionsymbol.hpp"
 #include "globalconfig.hpp"
+#include "codegen.hpp"
 
 class ReturnNode : public AST
 {
