@@ -49,12 +49,10 @@ void VariableDeclarationNode::check()
 
 	vector<Type*> params_types;
 	params_types.push_back(TypeHelper::getReferenceType(definedSymbol->getType()));   
-	for ( auto it : constructor_call_params )
-	{
-	    it->check();
-	    params_types.push_back(it->getType());
-	}
 
+        std::for_each(std::begin(constructor_call_params), std::end(constructor_call_params), [](ExprNode *t) { t->check(); });
+	std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::back_inserter(params_types), [](ExprNode *t) { return t->getType(); });
+	
 	resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
 
 	if ( resolved_constructor == nullptr )

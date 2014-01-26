@@ -25,12 +25,9 @@ void CallNode::check()
     if ( is_method )
 	params_types.push_back(ov_func->getBaseType());
 
-    for ( auto it : params )
-    {
-	it->check();
-	params_types.push_back(it->getType());
-    }
-
+    std::for_each(std::begin(params), std::end(params), [](ExprNode *t) { t->check(); });
+    std::transform(std::begin(params), std::end(params), std::back_inserter(params_types), [](ExprNode *t) { return t->getType(); });
+    
     resolved_function_symbol = FunctionHelper::getViableOverload(ov_func, params_types);
 
     if ( resolved_function_symbol == nullptr )
