@@ -18,7 +18,7 @@ public:
     string getName() const;
     int getSize() const;
     
-    OverloadedFunctionTypeInfo(const set<FunctionTypeInfo>& overloads);    
+    OverloadedFunctionTypeInfo(const set<FunctionTypeInfo>& overloads);
     
     set<FunctionTypeInfo> overloads;
     map<FunctionTypeInfo, FunctionSymbol*> symbols;

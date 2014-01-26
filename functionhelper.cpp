@@ -41,3 +41,4 @@ FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol* over
 
     return overloads.empty() ? nullptr : overloaded_func->getTypeInfo().symbols[*std::begin(overloads)];   
 }
+
