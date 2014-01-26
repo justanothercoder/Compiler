@@ -28,6 +28,7 @@ string to_string(TokenType tt)
     case TokenType::DOT:       return ".";
     case TokenType::VAR:       return "var";
     case TokenType::DEF:       return "def";
+    case TokenType::NEW:       return "new";
     }
 }
 

@@ -175,6 +175,8 @@ ExprNode* Parser::primary()
 	match(TokenType::RPAREN);
 	return expr;
     }
+    else if ( getTokenType(1) == TokenType::NEW )
+	return new_expr();
     else
 	return variable();        
 }
@@ -411,4 +413,18 @@ vector<ExprNode*> Parser::call_params_list()
     match(TokenType::RPAREN);
 
     return params;
+}
+
+ExprNode* Parser::new_expr()
+{
+    match(TokenType::NEW);
+
+    string name = id();
+    
+    vector<ExprNode*> params = { };
+
+    if ( getTokenType(1) == TokenType::LPAREN )
+	params = call_params_list();
+
+    return new NewExpressionNode(name, params);
 }

@@ -19,6 +19,7 @@
 #include "callnode.hpp"
 #include "variablenode.hpp"
 #include "numbernode.hpp"
+#include "newexpressionnode.hpp"
 
 class Parser : public AbstractParser
 {
@@ -53,9 +54,10 @@ private:
     ExprNode* factor();
     ExprNode* unary_right();    
     ExprNode* primary();
+    ExprNode* new_expr();
     ExprNode* variable();
     ExprNode* number();
-
+    
     bool tryAssignment();
 };
 
