@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 using std::cout;
 using std::string;
@@ -18,7 +19,7 @@ public:
 
     static void emit(string text);
 
-    static void construct_object(Type *type, FunctionSymbol *constructor, const vector<ExprNode*>& params);
+    static void construct_object(Type *type, FunctionSymbol *constructor, const vector<ExprNode*>& params, int offset = 0);
 
     static void genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params);
 };

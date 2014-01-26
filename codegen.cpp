@@ -5,9 +5,11 @@ void CodeGen::emit(string text)
     cout << text << '\n';
 }
 
-void CodeGen::construct_object(Type *type, FunctionSymbol *constructor, const vector<ExprNode*>& params)
+void CodeGen::construct_object(Type *type, FunctionSymbol *constructor, const vector<ExprNode*>& params, int offset)
 {
-    CodeGen::emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rdi");
+    offset += std::accumulate(std::begin(params), std::end(params), 0, [](int x, ExprNode *expr) { return x += expr->getType()->getSize(); });
+    
+    CodeGen::emit("mov [rsp - " + std::to_string(GlobalConfig::int_size + offset) + "], rdi");
     CodeGen::emit("sub rsp, " + std::to_string(type->getSize()));
     
     CodeGen::emit("push rsi");
@@ -20,7 +22,9 @@ void CodeGen::construct_object(Type *type, FunctionSymbol *constructor, const ve
 
 void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params)
 {
-    int params_size = 0, current_address = 0;
+    int params_size = 0;
+    int current_address = 0;
+    
     bool is_method = func->isMethod();
     bool is_operator = func->isOperator();
 
@@ -28,9 +32,10 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params)
 
     auto resolved_function_type_info = func->getTypeInfo();
 
-    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
-	params_size += resolved_function_type_info.getParamType(i)->getSize();
+    auto& pt = resolved_function_type_info.getParamsTypes();
 
+    params_size = std::accumulate(std::begin(pt) + is_meth, std::end(pt), 0, [](int x, Type *type) { return x += type->getSize(); });
+    
     if ( is_method && !is_operator )
 	params_size += GlobalConfig::int_size;
     
@@ -38,28 +43,32 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params)
     {
 	params[i - is_meth]->gen();
 
-	if ( resolved_function_type_info.getParamType(i)->isReference() )
+	Type *param_type = resolved_function_type_info.getParamType(i);
+
+	if ( param_type->isReference() )
 	{
 	    CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rax");
 	    current_address += GlobalConfig::int_size;
 	}
 	else
 	{
-	    if ( params[i - is_meth]->getType() != resolved_function_type_info.getParamType(i) )
+	    if ( params[i - is_meth]->getType() != param_type )
 	    {
 		bool refconv = params[i - is_meth]->getType()->isReference() &&
-		    static_cast<ReferenceType*>(params[i - is_meth]->getType())->getReferredType() == resolved_function_type_info.getParamType(i);
+		    static_cast<ReferenceType*>(params[i - is_meth]->getType())->getReferredType() == param_type;
 
 		Type *par_type = params[i - is_meth]->getType();
 		
 		if ( refconv )
 		    par_type = static_cast<ReferenceType*>(par_type)->getReferredType();
 
-		auto conv = TypeHelper::getConversion(par_type, resolved_function_type_info.getParamType(i));
+		auto conv = TypeHelper::getConversion(par_type, param_type);
 		CodeGen::emit("sub rsp, " + std::to_string(params_size));
 		
 		int current_address = 0;
-		for ( int j = 0; j < par_type->getSize(); j += GlobalConfig::int_size, current_address += GlobalConfig::int_size )
+
+		int _size = par_type->getSize();
+		for ( int j = 0; j < _size; j += GlobalConfig::int_size, current_address += GlobalConfig::int_size )
 		{
 		    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
 		    CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rbx");
@@ -79,7 +88,8 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params)
 	    }
 	}
 
-	for ( int j = 0; j < resolved_function_type_info.getParamType(i)->getSize(); j += GlobalConfig::int_size, current_address += GlobalConfig::int_size )
+	int _size = param_type->getSize();
+	for ( int j = 0; j < _size; j += GlobalConfig::int_size, current_address += GlobalConfig::int_size )
 	{
 	    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
 	    CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rbx");
