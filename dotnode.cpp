@@ -1,6 +1,8 @@
 #include "dotnode.hpp"
 
-DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(member_name) { }
+DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(member_name) { base_type = nullptr; member = nullptr; }
+
+DotNode::~DotNode() { delete member; }
 
 void DotNode::build_scope()
 {

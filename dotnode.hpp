@@ -13,7 +13,8 @@ class DotNode : public ExprNode
 public:
 
     DotNode(ExprNode *base, string member_name);   
-
+    ~DotNode();
+    
     virtual void build_scope();
     virtual void check();
     virtual void gen();

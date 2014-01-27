@@ -1,6 +1,13 @@
 #include "variabledeclarationnode.hpp"
 
-VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info, bool is_field, const vector<ExprNode*>& constructor_call_params) : name(name), type_info(type_info), is_field(is_field), constructor_call_params(constructor_call_params) { definedSymbol = new VariableSymbol(name, nullptr, (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE)); }
+VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info, bool is_field, const vector<ExprNode*>& constructor_call_params) : name(name),
+																		     type_info(type_info),
+																		     is_field(is_field),
+																		     constructor_call_params(constructor_call_params)
+{
+    definedSymbol = new VariableSymbol(name, nullptr, (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE));
+    resolved_constructor = nullptr;
+}
 
 VariableDeclarationNode::~VariableDeclarationNode() { delete definedSymbol; }
 

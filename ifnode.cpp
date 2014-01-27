@@ -4,7 +4,8 @@ int IfNode::label_num = 0;
 
 IfNode::IfNode(ExprNode *cond, AST *stats_true, AST *stats_false) : cond(cond), stats_true(stats_true), stats_false(stats_false)
 {
-    
+    if_scope = nullptr;
+    else_scope = nullptr;
 }
 
 void IfNode::build_scope()

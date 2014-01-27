@@ -2,7 +2,7 @@
 
 StructDeclarationNode::StructDeclarationNode(string name, const vector<DeclarationNode*>& inner) : name(name), inner(inner)
 {
-
+    definedSymbol = nullptr;
 }
 
 StructDeclarationNode::~StructDeclarationNode() { delete definedSymbol; }

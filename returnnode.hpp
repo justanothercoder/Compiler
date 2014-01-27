@@ -19,9 +19,9 @@ public:
     
 private:
 
+    ExprNode *expr;
     FunctionSymbol *func;
     
-    ExprNode *expr;
 };
 
 #endif

@@ -1,6 +1,6 @@
 #include "newexpressionnode.hpp"
 
-NewExpressionNode::NewExpressionNode(string name, vector<ExprNode*> params) : name(name), params(params) { }
+NewExpressionNode::NewExpressionNode(string name, vector<ExprNode*> params) : name(name), params(params) { resolved_constructor = nullptr; }
 
 void NewExpressionNode::build_scope()
 {

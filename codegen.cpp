@@ -99,7 +99,7 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params)
     if ( is_method && !is_operator )
     {
 	CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rdi");
-	current_address += GlobalConfig::int_size;
+//	current_address += GlobalConfig::int_size;
     }
 
     CodeGen::emit("sub rsp, " + std::to_string(params_size));

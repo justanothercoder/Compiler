@@ -2,7 +2,7 @@
 
 FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements, FunctionTraits traits) : name(name), params(params), return_type_info(return_type_info), statements(statements), traits(traits)
 {
-  
+    definedSymbol = nullptr;
 }
 
 FunctionDeclarationNode::~FunctionDeclarationNode() { delete definedSymbol; }   

@@ -2,7 +2,7 @@
 
 int WhileNode::label_num = 0;
 
-WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats) { }
+WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats), while_scope(nullptr) { }
 
 void WhileNode::build_scope()
 {

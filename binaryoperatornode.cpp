@@ -1,6 +1,6 @@
 #include "binaryoperatornode.hpp"
 
-BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type) { }
+BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type) { resolved_operator_symbol = nullptr; }
 
 bool BinaryOperatorNode::isLeftValue() const { return getType()->isReference(); }
 

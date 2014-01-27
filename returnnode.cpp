@@ -1,6 +1,6 @@
 #include "returnnode.hpp"
 
-ReturnNode::ReturnNode(ExprNode *expr) : expr(expr) { }
+ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), func(nullptr) { }
 
 void ReturnNode::build_scope()
 {

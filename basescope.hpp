@@ -4,6 +4,7 @@
 #include <map>
 
 #include "scope.hpp"
+#include "variablesymbol.hpp"
 
 using std::map;
 

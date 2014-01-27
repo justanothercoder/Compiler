@@ -1,6 +1,6 @@
 #include "basescope.hpp"
 
-BaseScope::BaseScope() { scope_size = 0; }
+BaseScope::BaseScope() { scope_size = 0; scope_address = 0; }
 
 Symbol* BaseScope::resolve(string name) const
 {
@@ -21,7 +21,7 @@ int BaseScope::getAddress(VariableSymbol *sym) const
     if ( it == std::end(addresses) )
     {
 	if ( getEnclosingScope() == nullptr )
-	    throw SemanticError("No such symbol " + ((Symbol*)sym)->getName());
+	    throw SemanticError("No such symbol " + static_cast<Symbol*>(sym)->getName());
 
 	return getEnclosingScope()->getAddress(sym) - (scope_address - getEnclosingScope()->getScopeAddress());
     }

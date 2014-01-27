@@ -1,6 +1,6 @@
 #include "variablenode.hpp"
 
-VariableNode::VariableNode(string name) : name(name) { }
+VariableNode::VariableNode(string name) : name(name), variable(nullptr) { }
 
 void VariableNode::build_scope() { }
 
@@ -10,26 +10,16 @@ void VariableNode::check()
 
     if ( sym == nullptr )
 	throw SemanticError("No such symbol " + name);
-/*
+
     if ( sym->getSymbolType() == SymbolType::STRUCT )
     {
-	Symbol *constr = static_cast<StructSymbol*>(sym)->resolve(name);
-	if ( constr->getSymbolType() != SymbolType::VARIABLE )
-	    throw SemanticError("'" + name + "' is not a variable.");
-
-	if ( static_cast<VariableSymbol*>(constr)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
-	    throw SemanticError("'" + name + "' is not a variable.");
-
-	if ( !static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(constr)->getType())->isConstructor() )
-	    throw SemanticError("'" + name + "' is not a variable.");
-
-	sym = constr;
+	variable = new VariableSymbol("", nullptr);
     }
     else
     {
-*/	if ( sym->getSymbolType() != SymbolType::VARIABLE )
+	if ( sym->getSymbolType() != SymbolType::VARIABLE )
 	    throw SemanticError("'" + name + "' is not a variable.");
-    //  }
+    }
 
     variable = static_cast<VariableSymbol*>(sym);
 }
