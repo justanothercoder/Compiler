@@ -22,7 +22,7 @@ AST* Parser::statement()
 	match(TokenType::SEMICOLON);
 	return new EmptyStatementNode();
     }
-    else if ( getTokenType(1) == TokenType::STRUCT || getTokenType(1) == TokenType::DEF || getTokenType(1) == TokenType::VAR )    
+    else if ( getTokenType(1) == TokenType::STRUCT || getTokenType(1) == TokenType::DEF || getTokenType(1) == TokenType::VAR || getTokenType(1) == TokenType::TEMPLATE )
 	return declaration();
     else if ( getTokenType(1) == TokenType::RETURN )
 	return return_stat();
@@ -40,6 +40,8 @@ DeclarationNode* Parser::declaration(std::shared_ptr<string> struct_name)
 {
     if ( getTokenType(1) == TokenType::STRUCT )
 	return structDecl();
+    else if ( getTokenType(1) == TokenType::TEMPLATE )
+	return templateStructDecl();
     else if ( getTokenType(1) == TokenType::DEF )
 	return functionDecl(struct_name);
     else
@@ -81,6 +83,46 @@ DeclarationNode* Parser::structDecl()
     match(TokenType::RBRACE);
 
     return new StructDeclarationNode(struct_name, struct_in);
+}
+
+DeclarationNode* Parser::templateStructDecl()
+{
+    match(TokenType::TEMPLATE);
+    match(TokenType::LESS);
+
+    vector< pair<string, TypeInfo> > template_params;
+
+    if ( getTokenType(1) != TokenType::GREATER )
+    {
+	template_params.push_back(var_and_type());
+	while ( getTokenType(1) == TokenType::COMMA )
+	{
+	    match(TokenType::COMMA);
+	    template_params.push_back(var_and_type());
+	}
+    }
+    
+    match(TokenType::GREATER);
+    
+    match(TokenType::STRUCT);
+    
+    string struct_name = id();
+    
+    match(TokenType::LBRACE);
+    
+    vector<DeclarationNode*> struct_in;    
+    while ( getTokenType(1) != TokenType::RBRACE )
+    {
+	while ( getTokenType(1) == TokenType::SEMICOLON )
+	    match(TokenType::SEMICOLON);
+
+	if ( getTokenType(1) != TokenType::RBRACE )
+	    struct_in.push_back(declaration(std::make_shared<string>(string(struct_name))));
+    }
+    
+    match(TokenType::RBRACE);
+    
+    return new TemplateStructDeclarationNode(struct_name, struct_in, template_params);
 }
 
 DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)

@@ -29,6 +29,9 @@ string to_string(TokenType tt)
     case TokenType::VAR:       return "var";
     case TokenType::DEF:       return "def";
     case TokenType::NEW:       return "new";
+    case TokenType::TEMPLATE:  return "template";
+    case TokenType::LESS:      return "<";
+    case TokenType::GREATER:   return ">";
     }
 }
 

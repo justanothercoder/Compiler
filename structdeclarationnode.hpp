@@ -23,7 +23,7 @@ public:
 
     virtual Symbol* getDefinedSymbol() const;
     
-private:
+protected:
 
     string name;
     vector<DeclarationNode*> inner;

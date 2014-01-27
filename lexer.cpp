@@ -24,6 +24,8 @@ Token Lexer::getToken()
 	else if ( cur == '.' ) { consume(); return Token(TokenType::DOT, ".", l, s); }
 	else if ( cur == '-' ) { consume(); return Token(TokenType::MINUS, "-", l, s); }
 	else if ( cur == '*' ) { consume(); return Token(TokenType::MUL, "*", l, s); }
+	else if ( cur == '<' ) { consume(); return Token(TokenType::LESS, "<", l, s); }
+	else if ( cur == '>' ) { consume(); return Token(TokenType::GREATER, ">", l, s); }
 	else if ( cur == '/' )
 	{
 	    consume();
@@ -68,15 +70,16 @@ Token Lexer::getToken()
 
 	    TokenType token_type;
 
-	    if      ( buf == "struct" ) token_type = TokenType::STRUCT;
-	    else if ( buf == "var"    ) token_type = TokenType::VAR;
-	    else if ( buf == "def"    ) token_type = TokenType::DEF;
-	    else if ( buf == "return" ) token_type = TokenType::RETURN;
-	    else if ( buf == "if"     ) token_type = TokenType::IF;
-	    else if ( buf == "else"   ) token_type = TokenType::ELSE;
-	    else if ( buf == "while"  ) token_type = TokenType::WHILE;
-	    else if ( buf == "new"    ) token_type = TokenType::NEW;
-	    else                        token_type = TokenType::ID;
+	    if      ( buf == "struct"   ) token_type = TokenType::STRUCT;
+	    else if ( buf == "var"      ) token_type = TokenType::VAR;
+	    else if ( buf == "def"      ) token_type = TokenType::DEF;
+	    else if ( buf == "return"   ) token_type = TokenType::RETURN;
+	    else if ( buf == "if"       ) token_type = TokenType::IF;
+	    else if ( buf == "else"     ) token_type = TokenType::ELSE;
+	    else if ( buf == "while"    ) token_type = TokenType::WHILE;
+	    else if ( buf == "new"      ) token_type = TokenType::NEW;
+	    else if ( buf == "template" ) token_type = TokenType::TEMPLATE;
+	    else                          token_type = TokenType::ID;
 	    
 	    return Token(token_type, buf, l, s);
 	}

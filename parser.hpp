@@ -8,6 +8,7 @@
 #include "structdeclarationnode.hpp"
 #include "variabledeclarationnode.hpp"
 #include "functiondeclarationnode.hpp"
+#include "templatestructdeclarationnode.hpp"
 
 #include "emptystatementnode.hpp"
 #include "binaryoperatornode.hpp"
@@ -37,6 +38,7 @@ private:
     vector<ExprNode*> call_params_list();
     
     DeclarationNode* declaration(std::shared_ptr<string> struct_name = nullptr);
+    DeclarationNode* templateStructDecl();
     DeclarationNode* structDecl();
     DeclarationNode* variableDecl(std::shared_ptr<string> struct_name = nullptr);
     DeclarationNode* functionDecl(std::shared_ptr<string> struct_name = nullptr);
