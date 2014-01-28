@@ -26,13 +26,11 @@ string to_string(TokenType tt)
     case TokenType::DIV:       return "/";
     case TokenType::REF:       return "&";
     case TokenType::DOT:       return ".";
-    case TokenType::VAR:       return "var";
     case TokenType::DEF:       return "def";
     case TokenType::NEW:       return "new";
     case TokenType::TEMPLATE:  return "template";
     case TokenType::LESS:      return "<";
     case TokenType::GREATER:   return ">";
-    case TokenType::TEMPL:     return "@";
     }
 }
 

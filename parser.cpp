@@ -456,9 +456,8 @@ TypeInfo Parser::typeInfo()
 
     vector<ExprNode*> template_params { };
 
-    if ( getTokenType(1) == TokenType::TEMPL )
+    if ( getTokenType(1) == TokenType::LESS )
     {
-	match(TokenType::TEMPL);
 	match(TokenType::LESS);
 
 	if ( getTokenType(1) != TokenType::GREATER )

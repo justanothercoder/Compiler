@@ -26,7 +26,6 @@ Token Lexer::getToken()
 	else if ( cur == '*' ) { consume(); return Token(TokenType::MUL, "*", l, s); }
 	else if ( cur == '<' ) { consume(); return Token(TokenType::LESS, "<", l, s); }
 	else if ( cur == '>' ) { consume(); return Token(TokenType::GREATER, ">", l, s); }
-	else if ( cur == '@' ) { consume(); return Token(TokenType::TEMPL, "@", l, s); }
 	else if ( cur == '/' )
 	{
 	    consume();
@@ -72,7 +71,6 @@ Token Lexer::getToken()
 	    TokenType token_type;
 
 	    if      ( buf == "struct"   ) token_type = TokenType::STRUCT;
-	    else if ( buf == "var"      ) token_type = TokenType::VAR;
 	    else if ( buf == "def"      ) token_type = TokenType::DEF;
 	    else if ( buf == "return"   ) token_type = TokenType::RETURN;
 	    else if ( buf == "if"       ) token_type = TokenType::IF;

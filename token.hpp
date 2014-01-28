@@ -14,7 +14,6 @@ enum class TokenType { EOF_TYPE,
 	RBRACE,
 	COMMA,
 	STRUCT,
-	VAR,
 	COLON,
 	DEF,
 	SEMICOLON,
@@ -32,8 +31,7 @@ enum class TokenType { EOF_TYPE,
 	NEW,
 	TEMPLATE,
 	LESS,
-	GREATER,
-	TEMPL
+	GREATER
 	};
 
 string to_string(TokenType tt);
