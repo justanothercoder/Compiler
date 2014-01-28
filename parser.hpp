@@ -33,7 +33,7 @@ public:
 private:
 
     string id();
-    TypeInfo type_info();
+    TypeInfo typeInfo();
     pair<string, TypeInfo> var_and_type();
     vector<ExprNode*> call_params_list();
     
@@ -61,6 +61,7 @@ private:
     ExprNode* number();
     
     bool tryAssignment();
+    bool tryVarDecl();
 };
 
 #endif

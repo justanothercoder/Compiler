@@ -11,5 +11,5 @@ StructSymbol* TemplateStructSymbol::getSpec(const vector<ExprNode*>& symbols) co
     if ( it != std::end(specs) )
 	return it->second;
 
-    
+    return nullptr;
 }

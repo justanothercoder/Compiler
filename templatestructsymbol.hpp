@@ -13,7 +13,7 @@ public:
 
 private:
     vector<Symbol*> template_symbols;
-    mutable map<Type*, StructSymbol*> specs;
+    mutable map< vector<ExprNode*>, StructSymbol*> specs;
 };
 
 #endif

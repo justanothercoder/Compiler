@@ -22,7 +22,7 @@ AST* Parser::statement()
 	match(TokenType::SEMICOLON);
 	return new EmptyStatementNode();
     }
-    else if ( getTokenType(1) == TokenType::STRUCT || getTokenType(1) == TokenType::DEF || getTokenType(1) == TokenType::VAR || getTokenType(1) == TokenType::TEMPLATE )
+    else if ( getTokenType(1) == TokenType::STRUCT || getTokenType(1) == TokenType::DEF || tryVarDecl() || getTokenType(1) == TokenType::TEMPLATE )
 	return declaration();
     else if ( getTokenType(1) == TokenType::RETURN )
 	return return_stat();
@@ -44,21 +44,44 @@ DeclarationNode* Parser::declaration(std::shared_ptr<string> struct_name)
 	return templateStructDecl();
     else if ( getTokenType(1) == TokenType::DEF )
 	return functionDecl(struct_name);
-    else
+    else if ( tryVarDecl() ) 
 	return variableDecl(struct_name);
+    else
+	throw RecognitionError("Declaration expected.");
+}
+
+bool Parser::tryVarDecl()
+{
+    bool success = true;
+
+    mark();
+    
+    try
+    {
+	typeInfo();
+	id();
+    }
+    catch ( RecognitionError& re )
+    {
+	success = false;
+    }
+
+    release();
+
+    return success;
 }
 
 DeclarationNode* Parser::variableDecl(std::shared_ptr<string> struct_name)
 {
-    match(TokenType::VAR);
-    auto var = var_and_type();
-
+    auto type_info = typeInfo();
+    string var_name  = id();
+    
     vector<ExprNode*> constructor_call_params;
     
     if ( getTokenType(1) == TokenType::LPAREN )
 	constructor_call_params = call_params_list();
     
-    return new VariableDeclarationNode(var.first, var.second, struct_name != nullptr, constructor_call_params);
+    return new VariableDeclarationNode(var_name, type_info, struct_name != nullptr, constructor_call_params);
 }
 
 DeclarationNode* Parser::structDecl()
@@ -157,7 +180,7 @@ DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
 	if ( getTokenType(1) == TokenType::COLON )
 	{
 	    match(TokenType::COLON);
-	    return_type = type_info();
+	    return_type = typeInfo();
 	}
 	else
 	{
@@ -418,10 +441,10 @@ pair<string, TypeInfo> Parser::var_and_type()
 
     match(TokenType::COLON);
 
-    return {name, type_info()};
+    return {name, typeInfo()};
 }
 
-TypeInfo Parser::type_info()
+TypeInfo Parser::typeInfo()
 {
     string type_name = id();
 
