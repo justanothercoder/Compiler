@@ -426,6 +426,26 @@ TypeInfo Parser::type_info()
     string type_name = id();
 
     bool is_ref = false;
+
+    vector<ExprNode*> template_params { };
+
+    if ( getTokenType(1) == TokenType::TEMPL )
+    {
+	match(TokenType::TEMPL);
+	match(TokenType::LESS);
+
+	if ( getTokenType(1) != TokenType::GREATER )
+	{
+	    template_params.push_back(expression());
+	    while ( getTokenType(1) == TokenType::COMMA )
+	    {
+		match(TokenType::COMMA);
+		template_params.push_back(expression());
+	    }
+	}
+	
+	match(TokenType::GREATER);
+    }
     
     if ( getTokenType(1) == TokenType::REF )
     {
@@ -433,7 +453,7 @@ TypeInfo Parser::type_info()
 	match(TokenType::REF);
     }
 
-    return TypeInfo(type_name, is_ref);
+    return TypeInfo(type_name, is_ref, template_params);
 }
 
 vector<ExprNode*> Parser::call_params_list()

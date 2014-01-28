@@ -9,7 +9,11 @@ public:
 
     TemplateStructSymbol(string name, Scope *enclosing_scope, const vector<Symbol*>& template_symbols);
 
+    StructSymbol* getSpec(const vector<ExprNode*>& symbols) const;
+
+private:
     vector<Symbol*> template_symbols;
+    mutable map<Type*, StructSymbol*> specs;
 };
 
 #endif

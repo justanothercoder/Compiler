@@ -32,6 +32,7 @@ string to_string(TokenType tt)
     case TokenType::TEMPLATE:  return "template";
     case TokenType::LESS:      return "<";
     case TokenType::GREATER:   return ">";
+    case TokenType::TEMPL:     return "@";
     }
 }
 

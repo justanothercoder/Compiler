@@ -26,6 +26,7 @@ Token Lexer::getToken()
 	else if ( cur == '*' ) { consume(); return Token(TokenType::MUL, "*", l, s); }
 	else if ( cur == '<' ) { consume(); return Token(TokenType::LESS, "<", l, s); }
 	else if ( cur == '>' ) { consume(); return Token(TokenType::GREATER, ">", l, s); }
+	else if ( cur == '@' ) { consume(); return Token(TokenType::TEMPL, "@", l, s); }
 	else if ( cur == '/' )
 	{
 	    consume();

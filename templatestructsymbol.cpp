@@ -4,3 +4,12 @@ TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, 
 {
     
 }
+
+StructSymbol* TemplateStructSymbol::getSpec(const vector<ExprNode*>& symbols) const
+{
+    auto it = specs.find(symbols);
+    if ( it != std::end(specs) )
+	return it->second;
+
+    
+}
