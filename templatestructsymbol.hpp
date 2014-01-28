@@ -11,7 +11,7 @@ public:
 
     StructSymbol* getSpec(const vector<ExprNode*>& symbols) const;
 
-private:
+public:
     vector<Symbol*> template_symbols;
     mutable map< vector<ExprNode*>, StructSymbol*> specs;
 };

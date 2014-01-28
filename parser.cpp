@@ -118,14 +118,17 @@ DeclarationNode* Parser::templateStructDecl()
     if ( getTokenType(1) != TokenType::GREATER )
     {
 	auto name = id();
+	auto type_info = typeInfo();
 	
-	template_params.push_back({name, typeInfo()});
+	template_params.push_back({name, type_info});
 	while ( getTokenType(1) == TokenType::COMMA )
 	{
 	    match(TokenType::COMMA);
 
-	    name = id();	
-	    template_params.push_back({name, typeInfo()});
+	    type_info = typeInfo();
+	    name = id();
+	     
+	    template_params.push_back({name, type_info});
 	}
     }
     
@@ -164,15 +167,18 @@ DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
 
     if ( getTokenType(1) != TokenType::RPAREN )
     {
+	auto type_info = typeInfo();
 	auto name = id();
-	params.push_back({name, typeInfo()});
+	
+	params.push_back({name, type_info});
 	
 	while ( getTokenType(1) != TokenType::RPAREN )
 	{
 	    match(TokenType::COMMA);	   
 
-	    auto name = id();
-	    params.push_back({name, typeInfo()});
+	    type_info = typeInfo();
+	    name = id();
+	    params.push_back({name, type_info});
 	}
     }
 
