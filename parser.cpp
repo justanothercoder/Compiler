@@ -117,11 +117,15 @@ DeclarationNode* Parser::templateStructDecl()
 
     if ( getTokenType(1) != TokenType::GREATER )
     {
-	template_params.push_back(var_and_type());
+	auto name = id();
+	
+	template_params.push_back({name, typeInfo()});
 	while ( getTokenType(1) == TokenType::COMMA )
 	{
 	    match(TokenType::COMMA);
-	    template_params.push_back(var_and_type());
+
+	    name = id();	
+	    template_params.push_back({name, typeInfo()});
 	}
     }
     
@@ -132,7 +136,7 @@ DeclarationNode* Parser::templateStructDecl()
     string struct_name = id();
     
     match(TokenType::LBRACE);
-    
+   
     vector<DeclarationNode*> struct_in;    
     while ( getTokenType(1) != TokenType::RBRACE )
     {
@@ -160,12 +164,15 @@ DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
 
     if ( getTokenType(1) != TokenType::RPAREN )
     {
-	params.push_back(var_and_type());
+	auto name = id();
+	params.push_back({name, typeInfo()});
 	
 	while ( getTokenType(1) != TokenType::RPAREN )
 	{
 	    match(TokenType::COMMA);	   
-	    params.push_back(var_and_type());
+
+	    auto name = id();
+	    params.push_back({name, typeInfo()});
 	}
     }
 
@@ -433,15 +440,6 @@ bool Parser::tryAssignment()
     release();
 
     return success;
-}
-
-pair<string, TypeInfo> Parser::var_and_type()
-{
-    string name = id();
-
-    match(TokenType::COLON);
-
-    return {name, typeInfo()};
 }
 
 TypeInfo Parser::typeInfo()

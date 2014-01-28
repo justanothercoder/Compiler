@@ -34,7 +34,6 @@ private:
 
     string id();
     TypeInfo typeInfo();
-    pair<string, TypeInfo> var_and_type();
     vector<ExprNode*> call_params_list();
     
     DeclarationNode* declaration(std::shared_ptr<string> struct_name = nullptr);
