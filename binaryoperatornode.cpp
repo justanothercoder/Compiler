@@ -85,3 +85,8 @@ void BinaryOperatorNode::gen()
     CodeGen::genCallCode(resolved_operator_symbol, {lhs, rhs});
     CodeGen::emit("pop rsi");
 }
+
+void BinaryOperatorNode::template_check()
+{
+    
+}

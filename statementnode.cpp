@@ -37,3 +37,9 @@ void StatementNode::gen()
     for ( auto i : statements )
 	i->gen();
 }
+
+void StatementNode::template_check()
+{
+    for ( auto i : statements )
+	i->template_check();
+}

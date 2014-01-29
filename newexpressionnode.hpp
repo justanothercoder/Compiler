@@ -17,7 +17,7 @@ using std::string;
 class NewExpressionNode : public ExprNode
 {
 public:
-    NewExpressionNode(string name, vector<ExprNode*> params);
+    NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params);
 
     virtual void build_scope();
     virtual void check();
@@ -26,9 +26,11 @@ public:
     virtual Type* getType() const;
     virtual bool isLeftValue() const;
 
+    virtual void template_check();
+
 private:
 
-    string name;
+    TypeInfo type_info;
     vector<ExprNode*> params;
     FunctionSymbol *resolved_constructor;
 };

@@ -26,7 +26,9 @@ public:
     string getCodeOperatorName();
 
     void special_check();
-    
+
+    virtual void template_check();    
+
 protected:
 
     ExprNode *lhs, *rhs;

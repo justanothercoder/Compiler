@@ -19,6 +19,8 @@ public:
     virtual void define() = 0;
     virtual void check() = 0;
     virtual void gen() = 0;
+
+    virtual void template_check() = 0;
 };
 
 #endif

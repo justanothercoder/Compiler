@@ -39,3 +39,8 @@ void WhileNode::gen()
 }
 
 string WhileNode::getNewLabel() { return "@while_label" + std::to_string(++WhileNode::label_num); }
+
+void WhileNode::template_check()
+{
+    
+}

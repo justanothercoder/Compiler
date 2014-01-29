@@ -1,6 +1,6 @@
 #include "newexpressionnode.hpp"
 
-NewExpressionNode::NewExpressionNode(string name, vector<ExprNode*> params) : name(name), params(params) { resolved_constructor = nullptr; }
+NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params) : type_info(type_info), params(params) { resolved_constructor = nullptr; }
 
 void NewExpressionNode::build_scope()
 {
@@ -13,6 +13,8 @@ void NewExpressionNode::build_scope()
 
 void NewExpressionNode::check()
 {
+    string name = type_info.getTypeName();
+    
     Symbol *_type = this->getScope()->resolve(name);
 
     if ( _type->getSymbolType() != SymbolType::STRUCT )
@@ -66,3 +68,7 @@ bool NewExpressionNode::isLeftValue() const
     return false;
 }
     
+void NewExpressionNode::template_check()
+{
+    
+}

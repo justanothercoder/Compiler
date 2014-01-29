@@ -67,3 +67,5 @@ void CallNode::build_scope()
 	i->build_scope();
     }
 }
+
+void CallNode::template_check() { }

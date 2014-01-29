@@ -37,14 +37,16 @@ void VariableDeclarationNode::check()
 {
     if ( !is_field )
     {
-	Symbol *_type = this->getScope()->resolve(type_info.getTypeName());
+	string type_name = type_info.getTypeName();
+	
+	Symbol *_type = this->getScope()->resolve(type_name);
 
 	if ( _type->getSymbolType() != SymbolType::STRUCT )
-	    throw SemanticError("No such struct " + type_info.getTypeName());
+	    throw SemanticError("No such struct " + type_name);
 	
 	StructSymbol *type = static_cast<StructSymbol*>(_type);
 
-	Symbol *_constr = type->resolve(type_info.getTypeName());
+	Symbol *_constr = type->resolve(type_name);
 	if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
 	    throw SemanticError("No constructor");
 
@@ -63,7 +65,7 @@ void VariableDeclarationNode::check()
 	resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
 
 	if ( resolved_constructor == nullptr )
-	    throw SemanticError("No viable overload of '" + type_info.getTypeName() + "'.");
+	    throw SemanticError("No viable overload of '" + type_name + "'.");
 	
 	auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
 
@@ -87,5 +89,13 @@ void VariableDeclarationNode::gen()
 
 	CodeGen::genCallCode(resolved_constructor, constructor_call_params);
 	CodeGen::emit("pop rsi");
+    }
+}
+
+void VariableDeclarationNode::template_check()
+{
+    if ( !is_field )
+    {
+	
     }
 }

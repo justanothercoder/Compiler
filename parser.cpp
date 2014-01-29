@@ -117,8 +117,8 @@ DeclarationNode* Parser::templateStructDecl()
 
     if ( getTokenType(1) != TokenType::GREATER )
     {
-	auto name = id();
 	auto type_info = typeInfo();
+	auto name = id();
 	
 	template_params.push_back({name, type_info});
 	while ( getTokenType(1) == TokenType::COMMA )
@@ -507,12 +507,12 @@ ExprNode* Parser::new_expr()
 {
     match(TokenType::NEW);
 
-    string name = id();
+    auto type = typeInfo();
     
     vector<ExprNode*> params = { };
 
     if ( getTokenType(1) == TokenType::LPAREN )
 	params = call_params_list();
 
-    return new NewExpressionNode(name, params);
+    return new NewExpressionNode(type, params);
 }

@@ -98,3 +98,8 @@ void VariableNode::gen()
 
 Type* VariableNode::getType() const { return TypeHelper::getReferenceType(variable->getType()); }
 bool VariableNode::isLeftValue() const { return true; }
+
+void VariableNode::template_check()
+{
+    
+}

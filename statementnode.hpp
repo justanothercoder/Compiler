@@ -20,6 +20,8 @@ public:
     virtual void check();
     virtual void gen();
 
+    virtual void template_check();
+    
 private:
 
     vector<AST*> statements;

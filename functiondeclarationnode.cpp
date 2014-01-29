@@ -76,3 +76,8 @@ void FunctionDeclarationNode::gen()
     CodeGen::emit("ret");
     CodeGen::emit("_~" + scoped_typed_name + ":");
 }
+
+void FunctionDeclarationNode::template_check()
+{
+    std::for_each(std::begin(statements), std::end(statements), [] (AST *t) { t->template_check(); });
+}

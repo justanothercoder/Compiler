@@ -29,6 +29,8 @@ public:
     virtual void check();
     virtual void gen();
 
+    virtual void template_check();
+    
     virtual Symbol* getDefinedSymbol() const;
     
 private:

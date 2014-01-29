@@ -26,6 +26,8 @@ public:
     virtual void gen();
 
     virtual Symbol* getDefinedSymbol() const;
+
+    virtual void template_check();
     
 private:
 

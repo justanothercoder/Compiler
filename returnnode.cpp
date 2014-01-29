@@ -38,3 +38,8 @@ void ReturnNode::gen()
     CodeGen::emit("pop rbp");
     CodeGen::emit("ret");
 }
+
+void ReturnNode::template_check()
+{
+    
+}

@@ -24,9 +24,8 @@ void FunctionSymbol::define(Symbol *sym)
 
 	OverloadedFunctionSymbol* ov_func = static_cast<OverloadedFunctionSymbol*>(table[sym_name]);	
 	
-	OverloadedFunctionTypeInfo type_info = ov_func->getTypeInfo();
-	
-	FunctionTypeInfo func_type_info = func->getTypeInfo();
+	auto type_info = ov_func->getTypeInfo();	
+	auto func_type_info = func->getTypeInfo();
 
 	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(table[sym_name])->getType());
 	ofs->addOverload(func_type_info, func);
