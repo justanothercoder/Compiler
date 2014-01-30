@@ -7,6 +7,8 @@
 #include "typehelper.hpp"
 #include "globalhelper.hpp"
 #include "codegen.hpp"
+#include "templatehelper.hpp"
+#include "templatestructsymbol.hpp"
 
 class DotNode : public ExprNode
 {
@@ -22,7 +24,7 @@ public:
     virtual Type* getType() const;
     virtual bool isLeftValue() const;
 
-    virtual void template_check();    
+    virtual void template_check(TemplateStructSymbol *template_sym);
 
 private:
 

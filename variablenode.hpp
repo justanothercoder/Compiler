@@ -9,6 +9,7 @@
 #include "structsymbol.hpp"
 #include "globalhelper.hpp"
 #include "codegen.hpp"
+#include "templatestructsymbol.hpp"
 
 class VariableNode : public ExprNode
 {
@@ -23,7 +24,7 @@ public:
     virtual void check();
     virtual void gen();
 
-    virtual void template_check();
+    virtual void template_check(TemplateStructSymbol *template_sym);
     
 private:
 

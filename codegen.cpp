@@ -81,7 +81,7 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params)
 		if ( !refconv )
 		{
 		    CodeGen::emit("sub rsp, " + std::to_string(current_address));
-		    CodeGen::emit("call _~" + conv->getScopedTypedName());
+		    CodeGen::emit("call " + conv->getScopedTypedName());
 		    CodeGen::emit("add rsp, " + std::to_string(current_address));
 		}
 		CodeGen::emit("add rsp, " + std::to_string(params_size));

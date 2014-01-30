@@ -27,7 +27,7 @@ public:
 
     void special_check();
 
-    virtual void template_check();    
+    virtual void template_check(TemplateStructSymbol *template_sym);
 
 protected:
 

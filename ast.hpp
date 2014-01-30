@@ -5,6 +5,7 @@
 #include "globalhelper.hpp"
 
 class Scope;
+class TemplateStructSymbol;
 
 class AST
 {
@@ -20,7 +21,7 @@ public:
     virtual void check() = 0;
     virtual void gen() = 0;
 
-    virtual void template_check() = 0;
+    virtual void template_check(TemplateStructSymbol *template_sym) = 0;
 };
 
 #endif

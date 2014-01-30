@@ -13,6 +13,9 @@ public:
 
     virtual void build_scope();
     virtual void define();
+    virtual void check();
+    
+    virtual void template_check(TemplateStructSymbol *template_sym);
     
 private:
 

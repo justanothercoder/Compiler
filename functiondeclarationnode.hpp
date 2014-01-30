@@ -27,7 +27,7 @@ public:
 
     virtual Symbol* getDefinedSymbol() const;
 
-    virtual void template_check();
+    virtual void template_check(TemplateStructSymbol *template_sym);
     
 private:
 

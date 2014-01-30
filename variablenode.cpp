@@ -99,7 +99,22 @@ void VariableNode::gen()
 Type* VariableNode::getType() const { return TypeHelper::getReferenceType(variable->getType()); }
 bool VariableNode::isLeftValue() const { return true; }
 
-void VariableNode::template_check()
+void VariableNode::template_check(TemplateStructSymbol *template_sym)
 {
-    
+    Symbol *sym = this->getScope()->resolve(name);
+
+    if ( sym == nullptr )
+	throw SemanticError("No such symbol " + name);
+
+    if ( sym->getSymbolType() == SymbolType::STRUCT )
+    {
+	variable = new VariableSymbol("", nullptr);
+    }
+    else
+    {
+	if ( sym->getSymbolType() != SymbolType::VARIABLE )
+	    throw SemanticError("'" + name + "' is not a variable.");
+    }
+
+    variable = static_cast<VariableSymbol*>(sym);
 }

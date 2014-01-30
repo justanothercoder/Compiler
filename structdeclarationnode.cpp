@@ -39,4 +39,4 @@ void StructDeclarationNode::gen()
 	i->gen();
 }
 
-void StructDeclarationNode::template_check() { std::for_each(std::begin(inner), std::end(inner), [] (DeclarationNode *decl) { decl->template_check(); }); }
+void StructDeclarationNode::template_check(TemplateStructSymbol *template_sym) { std::for_each(std::begin(inner), std::end(inner), [&] (DeclarationNode *decl) { decl->template_check(template_sym); }); }

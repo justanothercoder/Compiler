@@ -92,7 +92,7 @@ void VariableDeclarationNode::gen()
     }
 }
 
-void VariableDeclarationNode::template_check()
+void VariableDeclarationNode::template_check(TemplateStructSymbol *template_sym)
 {
     if ( !is_field )
     {

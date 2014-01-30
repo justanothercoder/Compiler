@@ -73,7 +73,40 @@ void DotNode::gen()
 Type* DotNode::getType() const { return TypeHelper::getReferenceType(static_cast<VariableSymbol*>(member)->getType()); }
 bool DotNode::isLeftValue() const { return true; }
 
-void DotNode::template_check()
+void DotNode::template_check(TemplateStructSymbol *template_sym)
 {
+    base->template_check(template_sym);
+
+    Type *_base_type = base->getType();
+
+    if ( _base_type->isReference() )
+	_base_type = static_cast<ReferenceType*>(_base_type)->getReferredType();
     
+    base_type = dynamic_cast<StructSymbol*>(_base_type);
+
+    if ( base_type == nullptr )
+	throw SemanticError("left side of '.' is not a struct instance.");
+
+    bool isSym = false;
+    for ( auto i : template_sym->getTemplateSymbols() )
+    {
+	if ( i == base_type )
+	{
+	    isSym = true;
+	    break;
+	}
+    }
+
+    if ( isSym )
+    {
+	member = new VariableSymbol(member_name, GlobalHelper::getTypeHint(this));
+	TemplateHelper::addNeededMember(template_sym, member);
+    }
+    else
+    {
+	member = base_type->resolveMember(member_name);
+	
+	if ( member == nullptr )
+	    throw SemanticError(member_name + " is not member of " + base_type->getName());
+    }
 }

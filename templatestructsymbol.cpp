@@ -13,3 +13,7 @@ StructSymbol* TemplateStructSymbol::getSpec(const vector<ExprNode*>& symbols) co
 
     return nullptr;
 }
+
+SymbolType TemplateStructSymbol::getSymbolType() const { return SymbolType::TEMPLATESTRUCT; }
+
+const vector<Symbol*>& TemplateStructSymbol::getTemplateSymbols() const { return template_symbols; }

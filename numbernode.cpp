@@ -16,4 +16,4 @@ Type* NumberNode::getType() const { return BuiltIns::int_type; }
 
 bool NumberNode::isLeftValue() const { return false; }
 
-void NumberNode::template_check() { }
+void NumberNode::template_check(TemplateStructSymbol *template_sym) { }

@@ -86,7 +86,7 @@ void BinaryOperatorNode::gen()
     CodeGen::emit("pop rsi");
 }
 
-void BinaryOperatorNode::template_check()
+void BinaryOperatorNode::template_check(TemplateStructSymbol *template_sym)
 {
     
 }

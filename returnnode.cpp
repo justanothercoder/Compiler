@@ -39,7 +39,7 @@ void ReturnNode::gen()
     CodeGen::emit("ret");
 }
 
-void ReturnNode::template_check()
+void ReturnNode::template_check(TemplateStructSymbol *template_sym)
 {
     
 }

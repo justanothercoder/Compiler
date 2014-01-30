@@ -40,6 +40,18 @@ void TemplateStructDeclarationNode::define()
     }
 
     static_cast<TemplateStructSymbol*>(definedSymbol)->template_symbols = template_symbols;
-    
-    std::for_each(std::begin(inner), std::end(inner), [&](DeclarationNode *decl) { decl->define(); });
+
+    for ( auto i : inner )
+	i->define();
+}
+
+void TemplateStructDeclarationNode::check()
+{
+    template_check(static_cast<TemplateStructSymbol*>(definedSymbol));
+}
+
+void TemplateStructDeclarationNode::template_check(TemplateStructSymbol *template_sym)
+{
+    for ( auto i : inner )
+	i->template_check(template_sym);
 }

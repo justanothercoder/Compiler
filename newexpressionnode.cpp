@@ -68,7 +68,7 @@ bool NewExpressionNode::isLeftValue() const
     return false;
 }
     
-void NewExpressionNode::template_check()
+void NewExpressionNode::template_check(TemplateStructSymbol *template_sym)
 {
     
 }

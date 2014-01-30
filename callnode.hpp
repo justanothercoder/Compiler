@@ -27,7 +27,7 @@ public:
     virtual void check();
     virtual void gen();
     
-    virtual void template_check();
+    virtual void template_check(TemplateStructSymbol *template_sym);
 
 private:
 

@@ -35,10 +35,9 @@ set<FunctionTypeInfo> FunctionHelper::getBestOverload(const set<FunctionTypeInfo
     return possible;
 }
 
-FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol* overloaded_func, const vector<Type*>& params_type)
+FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol *overloaded_func, const vector<Type*>& params_type)
 {
     auto overloads = FunctionHelper::getBestOverload(overloaded_func->getTypeInfo().overloads, params_type);
 
     return overloads.empty() ? nullptr : overloaded_func->getTypeInfo().symbols[*std::begin(overloads)];   
 }
-

@@ -60,7 +60,7 @@ string IfNode::getNewLabel()
     return "@if_label" + std::to_string(++IfNode::label_num);
 }
     
-void IfNode::template_check()
+void IfNode::template_check(TemplateStructSymbol *template_sym)
 {
 
     

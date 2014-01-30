@@ -11,6 +11,10 @@ public:
 
     StructSymbol* getSpec(const vector<ExprNode*>& symbols) const;
 
+    virtual SymbolType getSymbolType() const;
+
+    const vector<Symbol*>& getTemplateSymbols() const;
+    
 public:
     vector<Symbol*> template_symbols;
     mutable map< vector<ExprNode*>, StructSymbol*> specs;

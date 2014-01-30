@@ -38,8 +38,8 @@ void StatementNode::gen()
 	i->gen();
 }
 
-void StatementNode::template_check()
+void StatementNode::template_check(TemplateStructSymbol *template_sym)
 {
     for ( auto i : statements )
-	i->template_check();
+	i->template_check(template_sym);
 }
