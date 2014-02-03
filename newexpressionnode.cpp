@@ -15,12 +15,13 @@ void NewExpressionNode::check()
 {
     string name = type_info.getTypeName();
     
-    Symbol *_type = this->getScope()->resolve(name);
+//    Symbol *_type = this->getScope()->resolve(name);
 
-    if ( _type->getSymbolType() != SymbolType::STRUCT )
-	throw SemanticError("No such struct " + name);
-	
-    StructSymbol *type = static_cast<StructSymbol*>(_type);
+//    if ( _type->getSymbolType() != SymbolType::STRUCT )
+//	throw SemanticError("No such struct " + name);
+        
+//    StructSymbol *type = static_cast<StructSymbol*>(_type);
+    StructSymbol *type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, this->getScope()));
 
     Symbol *_constr = type->resolve(name);
     if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
@@ -68,7 +69,12 @@ bool NewExpressionNode::isLeftValue() const
     return false;
 }
     
-void NewExpressionNode::template_check(TemplateStructSymbol *template_sym)
+void NewExpressionNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}
+
+bool NewExpressionNode::isTemplated() const
 {
     
 }

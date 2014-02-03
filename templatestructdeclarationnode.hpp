@@ -15,7 +15,7 @@ public:
     virtual void define();
     virtual void check();
     
-    virtual void template_check(TemplateStructSymbol *template_sym);
+    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
     
 private:
 

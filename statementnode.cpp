@@ -38,8 +38,19 @@ void StatementNode::gen()
 	i->gen();
 }
 
-void StatementNode::template_check(TemplateStructSymbol *template_sym)
+void StatementNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     for ( auto i : statements )
-	i->template_check(template_sym);
+	i->template_check(template_sym, expr);
 }
+
+bool StatementNode::isTemplated() const
+{
+    bool is_templated = false;
+    
+    for ( auto i : statements )
+	is_templated |= i->isTemplated();
+
+    return is_templated;
+}
+    

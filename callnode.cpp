@@ -69,17 +69,17 @@ void CallNode::build_scope()
     }
 }
 
-void CallNode::template_check(TemplateStructSymbol *template_sym)
+void CallNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    caller->template_check(template_sym);
+    caller->template_check(template_sym, expr);
 
     for ( auto i : params )
-	i->template_check(template_sym);
+	i->template_check(template_sym, expr);
 
-    Type *caller_type = caller->getType();
+    if ( !isTemplated() )   
+    {	
+	Type *caller_type = caller->getType();
 
-    if ( caller_type != nullptr )
-    {    
 	if ( caller_type->isReference() )
 	    caller_type = static_cast<ReferenceType*>(caller_type)->getReferredType();
     
@@ -113,8 +113,9 @@ void CallNode::template_check(TemplateStructSymbol *template_sym)
     
 	GlobalHelper::setTypeHint(caller, resolved_function_symbol);
     }
-    else
-    {
-	
-    }
+}
+
+bool CallNode::isTemplated() const
+{
+    return caller->isTemplated() || std::accumulate(std::begin(params), std::end(params), false, [](bool a, ExprNode *b) { return a || b->isTemplated(); });
 }

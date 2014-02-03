@@ -39,4 +39,17 @@ void StructDeclarationNode::gen()
 	i->gen();
 }
 
-void StructDeclarationNode::template_check(TemplateStructSymbol *template_sym) { std::for_each(std::begin(inner), std::end(inner), [&] (DeclarationNode *decl) { decl->template_check(template_sym); }); }
+void StructDeclarationNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    std::for_each(std::begin(inner), std::end(inner), [&] (DeclarationNode *decl) { decl->template_check(template_sym, expr); });
+}
+
+bool StructDeclarationNode::isTemplated() const
+{
+    return std::accumulate(std::begin(inner), std::end(inner), false, [](bool a, bool b) { return a | b; });
+}
+
+const vector<DeclarationNode*>& StructDeclarationNode::getInner() const
+{
+    return inner;
+}

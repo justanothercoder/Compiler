@@ -24,13 +24,15 @@ public:
     virtual void check();
     virtual void gen();
 
-    virtual void template_check(TemplateStructSymbol *template_sym);
+    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual bool isTemplated() const;
     
 private:
 
     string name;
     
     VariableSymbol *variable;
+    bool is_templated;
 };
 
 #endif

@@ -26,8 +26,9 @@ public:
     virtual Type* getType() const;
     virtual bool isLeftValue() const;
 
-    virtual void template_check(TemplateStructSymbol *template_sym);
-
+    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual bool isTemplated() const;
+    
 private:
 
     TypeInfo type_info;

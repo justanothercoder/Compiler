@@ -5,9 +5,10 @@
 
 #include "declarationnode.hpp"
 #include "functionsymbol.hpp"
-#include "variablesymbol.hpp"
 #include "structsymbol.hpp"
 #include "typehelper.hpp"
+
+#include "variablesymbol.hpp"
 
 using std::vector;
 using std::pair;
@@ -27,7 +28,8 @@ public:
 
     virtual Symbol* getDefinedSymbol() const;
 
-    virtual void template_check(TemplateStructSymbol *template_sym);
+    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual bool isTemplated() const;
     
 private:
 

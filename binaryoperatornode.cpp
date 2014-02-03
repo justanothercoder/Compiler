@@ -86,7 +86,12 @@ void BinaryOperatorNode::gen()
     CodeGen::emit("pop rsi");
 }
 
-void BinaryOperatorNode::template_check(TemplateStructSymbol *template_sym)
+void BinaryOperatorNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     
+}
+
+bool BinaryOperatorNode::isTemplated() const
+{
+    return lhs->isTemplated() || rhs->isTemplated();
 }

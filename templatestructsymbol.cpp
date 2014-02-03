@@ -5,15 +5,11 @@ TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, 
     
 }
 
-StructSymbol* TemplateStructSymbol::getSpec(const vector<ExprNode*>& symbols) const
-{
-    auto it = specs.find(symbols);
-    if ( it != std::end(specs) )
-	return it->second;
-
-    return nullptr;
-}
-
 SymbolType TemplateStructSymbol::getSymbolType() const { return SymbolType::TEMPLATESTRUCT; }
 
 const vector<Symbol*>& TemplateStructSymbol::getTemplateSymbols() const { return template_symbols; }
+
+bool TemplateStructSymbol::isIn(Symbol *sym) const
+{
+    return std::accumulate(std::begin(template_symbols), std::end(template_symbols), false, [&](bool a, Symbol *s) { return a || (s == sym); });
+}

@@ -60,8 +60,14 @@ string IfNode::getNewLabel()
     return "@if_label" + std::to_string(++IfNode::label_num);
 }
     
-void IfNode::template_check(TemplateStructSymbol *template_sym)
+void IfNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
+    cond->template_check(template_sym, expr);
+    stats_true->template_check(template_sym, expr);
+    stats_false->template_check(template_sym, expr);
+}
 
-    
+bool IfNode::isTemplated() const
+{
+    return cond->isTemplated() || stats_true->isTemplated() || stats_false->isTemplated();
 }

@@ -77,7 +77,12 @@ void FunctionDeclarationNode::gen()
     CodeGen::emit("_~" + scoped_typed_name + ":");
 }
 
-void FunctionDeclarationNode::template_check(TemplateStructSymbol *template_sym)
+void FunctionDeclarationNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    std::for_each(std::begin(statements), std::end(statements), [&] (AST *t) { t->template_check(template_sym); });
+    std::for_each(std::begin(statements), std::end(statements), [&] (AST *t) { t->template_check(template_sym, expr); });
+}
+
+bool FunctionDeclarationNode::isTemplated() const
+{
+    return std::accumulate(std::begin(statements), std::end(statements), false, [](bool a, bool b) { return a || b; });
 }

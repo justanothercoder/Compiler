@@ -92,10 +92,20 @@ void VariableDeclarationNode::gen()
     }
 }
 
-void VariableDeclarationNode::template_check(TemplateStructSymbol *template_sym)
+void VariableDeclarationNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     if ( !is_field )
     {
 	
     }
+}
+
+bool VariableDeclarationNode::isTemplated() const
+{
+    bool is_templated = false;
+
+    for ( auto i : constructor_call_params ) 
+	is_templated |= i->isTemplated();
+
+    return is_templated;
 }

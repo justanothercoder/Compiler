@@ -8,6 +8,10 @@
 #include "scope.hpp"
 #include "structsymbol.hpp"
 #include "functionhelper.hpp"
+#include "templatestructsymbol.hpp"
+#include "templatehelper.hpp"
+
+#include "templatestructdeclaraionnode.hpp"
 
 using std::map;
 

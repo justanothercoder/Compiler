@@ -99,7 +99,7 @@ void VariableNode::gen()
 Type* VariableNode::getType() const { return TypeHelper::getReferenceType(variable->getType()); }
 bool VariableNode::isLeftValue() const { return true; }
 
-void VariableNode::template_check(TemplateStructSymbol *template_sym)
+void VariableNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     Symbol *sym = this->getScope()->resolve(name);
 
@@ -117,4 +117,11 @@ void VariableNode::template_check(TemplateStructSymbol *template_sym)
     }
 
     variable = static_cast<VariableSymbol*>(sym);
+
+    is_templated = template_sym->isIn(dynamic_cast<Symbol*>(variable->getType()));
+}
+
+bool VariableNode::isTemplated() const
+{
+    return is_templated;
 }

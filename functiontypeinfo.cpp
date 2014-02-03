@@ -15,11 +15,13 @@ bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
 	{
 	    long long res = 0;
 
-	    res += std::hash<std::string>()(fti.getReturnType()->getName());
-
+	    std::hash<std::string> hash_fn;
+	    
+	    res += hash_fn(fti.getReturnType()->getName());
+	    
 	    for ( int i = 0; i < fti.getNumberOfParams(); ++i )
-		res += std::hash<std::string>()(fti.getParamType(i)->getName());
-
+		res += hash_fn(fti.getParamType(i)->getName());
+	    
 	    return res;
 	};
     

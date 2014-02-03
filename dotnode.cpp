@@ -73,9 +73,9 @@ void DotNode::gen()
 Type* DotNode::getType() const { return TypeHelper::getReferenceType(static_cast<VariableSymbol*>(member)->getType()); }
 bool DotNode::isLeftValue() const { return true; }
 
-void DotNode::template_check(TemplateStructSymbol *template_sym)
+void DotNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    base->template_check(template_sym);
+    base->template_check(template_sym, expr);
 
     Type *_base_type = base->getType();
 
@@ -109,4 +109,9 @@ void DotNode::template_check(TemplateStructSymbol *template_sym)
 	if ( member == nullptr )
 	    throw SemanticError(member_name + " is not member of " + base_type->getName());
     }
+}
+
+bool DotNode::isTemplated() const
+{
+    return base->isTemplated();
 }

@@ -47,11 +47,11 @@ void TemplateStructDeclarationNode::define()
 
 void TemplateStructDeclarationNode::check()
 {
-    template_check(static_cast<TemplateStructSymbol*>(definedSymbol));
+
 }
 
-void TemplateStructDeclarationNode::template_check(TemplateStructSymbol *template_sym)
+void TemplateStructDeclarationNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     for ( auto i : inner )
-	i->template_check(template_sym);
+	i->template_check(template_sym, expr);
 }

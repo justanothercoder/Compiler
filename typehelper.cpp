@@ -67,6 +67,13 @@ Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope)
     if ( type == nullptr )
 	throw SemanticError(type_info.getTypeName() + " is not a type");
 
+    if ( type_info.getTemplateParams().size() > 0 )
+    {
+	type = TemplateHelper::getSpec(dynamic_cast<TemplateStructSymbol*>(type),
+				       type_info.getTemplateParams(),
+				       dynamic_cast<TemplateStructDeclaration*>(TemplateHelper::getNode(dynamic_cast<TemplateStructSymbol*>(type))->inner));
+    }
+    
     if ( type_info.getIsRef() )
 	type = TypeHelper::getReferenceType(type);
     
