@@ -11,8 +11,6 @@
 #include "templatestructsymbol.hpp"
 #include "templatehelper.hpp"
 
-#include "templatestructdeclaraionnode.hpp"
-
 using std::map;
 
 class TypeHelper

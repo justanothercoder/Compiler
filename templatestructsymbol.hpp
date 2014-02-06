@@ -5,6 +5,7 @@
 
 #include "structsymbol.hpp"
 #include "ast.hpp"
+#include "templatedeclholder.hpp"
 
 class TemplateStructSymbol : public StructSymbol
 {
@@ -20,6 +21,8 @@ public:
     
 public:
 
+    TemplateDeclHolder* holder;
+    
     vector<Symbol*> template_symbols;
 };
 

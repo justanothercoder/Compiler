@@ -1,8 +1,6 @@
 #include "templatestructdeclarationnode.hpp"
 
-TemplateStructDeclarationNode::TemplateStructDeclarationNode(string name,
-							     const vector<DeclarationNode*>& inner,
-							     const vector< pair<string, TypeInfo> >& template_params) : StructDeclarationNode(name, inner), template_params(template_params)
+TemplateStructDeclarationNode::TemplateStructDeclarationNode(string name, const vector<DeclarationNode*>& inner, const vector< pair<string, TypeInfo> >& template_params) : StructDeclarationNode(name, inner), template_params(template_params)
 {
     
 }
@@ -54,4 +52,9 @@ void TemplateStructDeclarationNode::template_check(TemplateStructSymbol *templat
 {
     for ( auto i : inner )
 	i->template_check(template_sym, expr);
+}
+
+void TemplateStructDeclarationNode::visitChildren()
+{
+    
 }

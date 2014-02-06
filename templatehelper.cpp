@@ -1,8 +1,9 @@
 #include "templatehelper.hpp"
+#include "structdeclarationnode.hpp"
 
 map< StructSymbol*, vector<Symbol*> > TemplateHelper::needed_members;
 
-map< TemplateStructSymbol*, AST*> TemplateHelper::nodes;
+map< vector<ExprNode*>, StructSymbol*> TemplateHelper::specs;
 
 const vector<Symbol*>& TemplateHelper::getNeededMembers(StructSymbol* sym)
 {
@@ -14,21 +15,7 @@ void TemplateHelper::addNeededMember(StructSymbol *sym, Symbol *needed)
     needed_members[sym].push_back(needed);
 }
 
-AST* TemplateHelper::getNode(TemplateStructSymbol *sym)
-{
-    auto it = nodes.find(sym);
-    if ( it == std::end(nodes) )
-	return nullptr;
-
-    return it->second;
-}
-
-void TemplateHelper::setNode(TemplateStructSymbol *sym, AST *node)
-{
-    nodes[sym] = node;
-}
-
-StructSymbol* TemplateHelper::getSpec(TemplateStructSymbol *sym, const vector<ExprNode*>& symbols, const std::vector<DeclarationNode*>& inner)
+StructSymbol* TemplateHelper::getSpec(TemplateStructSymbol *sym, const vector<ExprNode*>& symbols, TemplateDeclHolder *holder)
 {
     auto it = specs.find(symbols);
     if ( it != std::end(specs) )
@@ -47,6 +34,6 @@ StructSymbol* TemplateHelper::getSpec(TemplateStructSymbol *sym, const vector<Ex
 	    return ans;
 	};
 
-    StructDeclarationNode *decl = new StructDeclarationNode(sym->getName() + std::to_string(hash_func(symbols)), inner);
+    StructDeclarationNode *decl = new StructDeclarationNode(sym->getName() + std::to_string(hash_func(symbols)), decl->getInner());
 }
 

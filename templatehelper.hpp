@@ -2,7 +2,7 @@
 #define _TEMPLATEHELPER_HPP_
 
 #include "structsymbol.hpp"
-#include "templatestructdeclarationnode.hpp"
+#include "templatedeclholder.hpp"
 
 class TemplateHelper
 {
@@ -11,16 +11,11 @@ public:
     static const vector<Symbol*>& getNeededMembers(StructSymbol *sym);
     static void addNeededMember(StructSymbol *sym, Symbol *needed);
 
-    static AST* getNode(TemplateStructSymbol *sym);
-    static void setNode(TemplateStructSymbol *sym, AST *node);
-
-    static StructSymbol* getSpec(TemplateStructSymbol *sym, const vector<ExprNode*>& symbols, const std::vector<DeclarationNode*>& inner);
+    static StructSymbol* getSpec(TemplateStructSymbol *sym, const vector<ExprNode*>& symbols, TemplateDeclHolder *holder);
 
 private:
 
     static map< vector<ExprNode*>, StructSymbol*> specs;   
-
-    static map< TemplateStructSymbol*, AST* > nodes;
     static map< StructSymbol*, vector<Symbol*> > needed_members;
     
 };

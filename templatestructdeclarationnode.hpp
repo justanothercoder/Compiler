@@ -4,8 +4,9 @@
 #include "structdeclarationnode.hpp"
 #include "typeinfo.hpp"
 #include "templatestructsymbol.hpp"
+#include "templatedeclholder.hpp"
 
-class TemplateStructDeclarationNode : public StructDeclarationNode
+class TemplateStructDeclarationNode : public StructDeclarationNode, public TemplateDeclHolder
 {
 public:
 
@@ -16,6 +17,8 @@ public:
     virtual void check();
     
     virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+
+    virtual void visitChildren();
     
 private:
 

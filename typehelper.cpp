@@ -71,7 +71,7 @@ Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope)
     {
 	type = TemplateHelper::getSpec(dynamic_cast<TemplateStructSymbol*>(type),
 				       type_info.getTemplateParams(),
-				       dynamic_cast<TemplateStructDeclaration*>(TemplateHelper::getNode(dynamic_cast<TemplateStructSymbol*>(type))->inner));
+				       dynamic_cast<TemplateStructSymbol*>(type)->holder);
     }
     
     if ( type_info.getIsRef() )
