@@ -18,7 +18,7 @@ public:
     
     virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
 
-    virtual void visitChildren();
+    virtual vector<AST*> getChildren();
     
 private:
 

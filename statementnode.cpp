@@ -38,6 +38,12 @@ void StatementNode::gen()
 	i->gen();
 }
 
+void StatementNode::template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    for ( auto i : statements )
+	i->template_define(template_sym, expr);
+}
+
 void StatementNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     for ( auto i : statements )

@@ -1,10 +1,14 @@
 #ifndef _TEMPLATEDECLHOLDER_HPP_
 #define _TEMPLATEDECLHOLDER_HPP_
 
+#include <vector>
+
+class AST;
+
 class TemplateDeclHolder
 {
 public:
-    virtual void visitChildren() = 0;
+    virtual vector<AST*> getChildren() = 0;
 };
 
 #endif

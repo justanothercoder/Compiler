@@ -34,6 +34,16 @@ StructSymbol* TemplateHelper::getSpec(TemplateStructSymbol *sym, const vector<Ex
 	    return ans;
 	};
 
-    StructDeclarationNode *decl = new StructDeclarationNode(sym->getName() + std::to_string(hash_func(symbols)), decl->getInner());
+    auto children = holder->getChildren();
+
+    vector<DeclarationNode*> vec;
+
+    std::transform(std::begin(children), std::end(children), std::back_inserter(vec), [] (AST* t) { return static_cast<DeclarationNode*>(t); });
+
+    StructDeclarationNode *decl = new StructDeclarationNode(sym->getName() + std::to_string(hash_func(symbols)), vec);
+
+    decl->template_check(sym, symbols);
+
+    return dynamic_cast<StructSymbol*>(decl->getDefinedSymbol());
 }
 

@@ -92,6 +92,23 @@ void VariableDeclarationNode::gen()
     }
 }
 
+void VariableDeclarationNode::template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    Type *var_type = TypeHelper::fromTypeInfo(type_info, this->getScope());
+    
+    if ( var_type == BuiltIns::void_type )
+	throw SemanticError("can't declare a variable of 'void' type.");
+    else if ( template_sym->isIn(dynamic_cast<Symbol*>(var_type)) )
+    {
+	auto replace = template_sym->getReplacement(dynamic_cast<Symbol*>(var_type), expr);
+	replace->template_check(template_sym, expr);
+	var_type = replace->getType();
+    }
+    
+    definedSymbol->setType(var_type);
+    this->getScope()->define(definedSymbol);
+}
+
 void VariableDeclarationNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     if ( !is_field )

@@ -7,7 +7,7 @@ TemplateStructDeclarationNode::TemplateStructDeclarationNode(string name, const 
 
 void TemplateStructDeclarationNode::build_scope()
 {
-    definedSymbol = new TemplateStructSymbol(name, this->getScope(), { });
+    definedSymbol = new TemplateStructSymbol(name, this->getScope(), { }, this);
 
     std::for_each(std::begin(inner), std::end(inner), [&](DeclarationNode *decl) { decl->setScope(definedSymbol); decl->build_scope(); });
 }
@@ -54,7 +54,11 @@ void TemplateStructDeclarationNode::template_check(TemplateStructSymbol *templat
 	i->template_check(template_sym, expr);
 }
 
-void TemplateStructDeclarationNode::visitChildren()
+vector<AST*> TemplateStructDeclarationNode::getChildren()
 {
+    vector<AST*> res;
+
+    std::transform(std::begin(inner), std::end(inner), std::back_inserter(res), [](DeclarationNode* d) { return static_cast<AST*>(d); });
     
+    return res;
 }

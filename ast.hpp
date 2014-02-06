@@ -24,8 +24,11 @@ public:
     virtual void check() = 0;
     virtual void gen() = 0;
 
+    virtual void template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) = 0;
     virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) = 0;
+
 //    virtual void template_gen(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) = 0;
+
     virtual bool isTemplated() const = 0;
 };
 

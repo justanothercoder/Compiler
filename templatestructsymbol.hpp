@@ -4,26 +4,25 @@
 #include <algorithm>
 
 #include "structsymbol.hpp"
-#include "ast.hpp"
+#include "exprnode.hpp"
 #include "templatedeclholder.hpp"
 
 class TemplateStructSymbol : public StructSymbol
 {
 public:
 
-    TemplateStructSymbol(string name, Scope *enclosing_scope, const vector<Symbol*>& template_symbols);
+    TemplateStructSymbol(string name, Scope *enclosing_scope, const vector<Symbol*>& template_symbols, TemplateDeclHolder *holder);
 
     virtual SymbolType getSymbolType() const;
 
     const vector<Symbol*>& getTemplateSymbols() const;
 
     bool isIn(Symbol *sym) const;
-    
+    ExprNode* getReplacement(Symbol *sym, const vector<ExprNode*>& expr) const;
 public:
 
-    TemplateDeclHolder* holder;
-    
     vector<Symbol*> template_symbols;
+    TemplateDeclHolder *holder;    
 };
 
 #endif

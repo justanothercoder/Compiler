@@ -21,6 +21,7 @@ void NewExpressionNode::check()
 //	throw SemanticError("No such struct " + name);
         
 //    StructSymbol *type = static_cast<StructSymbol*>(_type);
+
     StructSymbol *type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, this->getScope()));
 
     Symbol *_constr = type->resolve(name);
