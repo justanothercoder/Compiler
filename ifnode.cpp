@@ -81,3 +81,8 @@ AST* IfNode::copyTree() const
 {
     
 }
+
+void IfNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}

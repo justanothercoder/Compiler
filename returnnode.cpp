@@ -58,3 +58,8 @@ AST* ReturnNode::copyTree() const
 {
     return new ReturnNode(static_cast<ExprNode*>(expr->copyTree()));
 }
+
+void ReturnNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}

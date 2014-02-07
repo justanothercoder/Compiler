@@ -28,3 +28,8 @@ AST* NumberNode::copyTree() const
 {
     return new NumberNode(num);
 }
+
+void NumberNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}

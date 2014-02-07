@@ -7,7 +7,6 @@
 #include "typehelper.hpp"
 #include "globalhelper.hpp"
 #include "codegen.hpp"
-#include "templatehelper.hpp"
 #include "templatestructsymbol.hpp"
 
 class DotNode : public ExprNode
@@ -28,6 +27,7 @@ public:
 
     virtual void template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
     virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
     virtual bool isTemplated() const;
 
 private:

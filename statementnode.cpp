@@ -68,3 +68,9 @@ AST* StatementNode::copyTree() const
     
     return new StatementNode(stats);
 }
+
+void StatementNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    for ( auto i : statements )
+	i->template_gen(template_sym, expr);
+}

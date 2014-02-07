@@ -50,6 +50,11 @@ void TemplateStructDeclarationNode::define()
 
 void TemplateStructDeclarationNode::check() { }
 
+void TemplateStructDeclarationNode::gen()
+{
+    
+}
+
 void TemplateStructDeclarationNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     for ( auto i : inner )

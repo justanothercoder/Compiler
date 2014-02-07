@@ -100,8 +100,6 @@ void VariableDeclarationNode::template_define(const TemplateStructSymbol *templa
     {
 	auto replace = template_sym->getReplacement(type_info.getTypeName(), expr);
 
-	std::cerr << "Debug: " << replace->getType() << '\n';
-	
 	auto sym = static_cast<ReferenceType*>(replace->getType())->getReferredType();
 	
 	type_info = TypeInfo(static_cast<ClassVariableSymbol*>(sym)->sym->getName(), type_info.getIsRef(), type_info.getTemplateParams());
@@ -147,4 +145,9 @@ AST* VariableDeclarationNode::copyTree() const
     std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::back_inserter(params), [&] (ExprNode *expr) { return static_cast<ExprNode*>(expr->copyTree()); });
     
     return new VariableDeclarationNode(name, type_info, is_field, params);
+}
+
+void VariableDeclarationNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
 }

@@ -15,13 +15,6 @@ void NewExpressionNode::check()
 {
     string name = type_info.getTypeName();
     
-//    Symbol *_type = this->getScope()->resolve(name);
-
-//    if ( _type->getSymbolType() != SymbolType::STRUCT )
-//	throw SemanticError("No such struct " + name);
-        
-//    StructSymbol *type = static_cast<StructSymbol*>(_type);
-
     StructSymbol *type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, this->getScope()));
 
     Symbol *_constr = type->resolve(name);
@@ -86,6 +79,11 @@ void NewExpressionNode::template_define(const TemplateStructSymbol *template_sym
 }
 
 AST* NewExpressionNode::copyTree() const
+{
+    
+}
+
+void NewExpressionNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     
 }

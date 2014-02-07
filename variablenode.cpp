@@ -136,3 +136,8 @@ AST* VariableNode::copyTree() const
 {
     return new VariableNode(name);
 }
+
+void VariableNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}

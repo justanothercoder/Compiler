@@ -90,8 +90,17 @@ bool FunctionDeclarationNode::isTemplated() const
 
 void FunctionDeclarationNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    Type *return_type = TypeHelper::fromTypeInfo(return_type_info, this->getScope());
+    if ( return_type_info.getTypeName() == template_sym->getName() )
+    {
+	return_type_info = TypeInfo(
+	    static_cast<StructSymbol*>(this->getScope())->getName(),
+	    return_type_info.getIsRef(),
+	    return_type_info.getTemplateParams()
+	    );
+    }
     
+    Type *return_type = TypeHelper::fromTypeInfo(return_type_info, this->getScope());
+
     vector<Type*> params_types;
     
     if ( traits.is_method )
@@ -126,4 +135,9 @@ AST* FunctionDeclarationNode::copyTree() const
     std::transform(std::begin(statements), std::end(statements), std::back_inserter(stats), [&](AST *t) { return t->copyTree(); });
 	
     return new FunctionDeclarationNode(name, params, return_type_info, stats, traits);
+}
+
+void FunctionDeclarationNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
 }

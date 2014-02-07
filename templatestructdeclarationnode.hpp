@@ -15,6 +15,7 @@ public:
     virtual void build_scope();
     virtual void define();
     virtual void check();
+    virtual void gen();
     
     virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
 

@@ -60,3 +60,8 @@ AST* WhileNode::copyTree() const
 {
     
 }
+
+void WhileNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}

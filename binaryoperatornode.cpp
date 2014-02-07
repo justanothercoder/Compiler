@@ -105,3 +105,8 @@ AST* BinaryOperatorNode::copyTree() const
 {
     
 }
+
+void BinaryOperatorNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}

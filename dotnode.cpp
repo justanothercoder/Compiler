@@ -82,8 +82,6 @@ void DotNode::template_check(const TemplateStructSymbol *template_sym, const std
     if ( _base_type->isReference() )
 	_base_type = static_cast<ReferenceType*>(_base_type)->getReferredType();
 
-    std::cerr << "Debug: " << _base_type << '\n';
-    
     base_type = dynamic_cast<StructSymbol*>(_base_type);
 
     if ( base_type == nullptr )
@@ -94,7 +92,6 @@ void DotNode::template_check(const TemplateStructSymbol *template_sym, const std
     if ( isTemplateSym )
     {
 	member = new VariableSymbol(member_name, GlobalHelper::getTypeHint(this));
-	TemplateHelper::addNeededMember(template_sym, member);
     }
     else
     {
@@ -118,4 +115,9 @@ void DotNode::template_define(const TemplateStructSymbol *template_sym, const st
 AST* DotNode::copyTree() const
 {
     return new DotNode(static_cast<ExprNode*>(base->copyTree()), member_name);
+}
+
+void DotNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
 }
