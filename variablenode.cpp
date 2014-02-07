@@ -13,7 +13,8 @@ void VariableNode::check()
 
     if ( sym->getSymbolType() == SymbolType::STRUCT )
     {
-	variable = new VariableSymbol("", nullptr);
+	variable = new VariableSymbol(name, new ClassVariableSymbol(static_cast<StructSymbol*>(sym)));
+	return;
     }
     else
     {

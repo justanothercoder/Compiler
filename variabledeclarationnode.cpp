@@ -28,7 +28,7 @@ void VariableDeclarationNode::define()
     Type *var_type = TypeHelper::fromTypeInfo(type_info, this->getScope());
 
     if ( var_type == BuiltIns::void_type )
-	throw SemanticError("can't declare a variable of 'void' type");
+		throw SemanticError("can't declare a variable of 'void' type");
     
     definedSymbol->setType(var_type);
     this->getScope()->define(definedSymbol);
@@ -38,43 +38,44 @@ void VariableDeclarationNode::check()
 {
     if ( !is_field )
     {
-	string type_name = type_info.getTypeName();
-	
-	Symbol *_type = this->getScope()->resolve(type_name);
+		string type_name = type_info.getTypeName();
+		
+		Symbol *_type = this->getScope()->resolve(type_name);
 
-	if ( _type->getSymbolType() != SymbolType::STRUCT )
-	    throw SemanticError("No such struct " + type_name);
-	
-	StructSymbol *type = static_cast<StructSymbol*>(_type);
+		if ( _type->getSymbolType() != SymbolType::STRUCT )
+			throw SemanticError("No such struct " + type_name);
+		
+		StructSymbol *type = static_cast<StructSymbol*>(_type);
 
-	Symbol *_constr = type->resolve(type_name);
-	if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
-	    throw SemanticError("No constructor");
+		Symbol *_constr = type->resolve(type_name);
+		if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
+			throw SemanticError("No constructor");
 
-	VariableSymbol *_constructor = static_cast<VariableSymbol*>(_constr);
-	if ( _constructor->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
-	    throw SemanticError("No constructor");
+		VariableSymbol *_constructor = static_cast<VariableSymbol*>(_constr);
+		if ( _constructor->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
+			throw SemanticError("No constructor");
 
-	OverloadedFunctionSymbol *constructor = static_cast<OverloadedFunctionSymbol*>(_constructor->getType());
+		OverloadedFunctionSymbol *constructor = static_cast<OverloadedFunctionSymbol*>(_constructor->getType());
 
-	vector<Type*> params_types;
-	params_types.push_back(TypeHelper::getReferenceType(definedSymbol->getType()));   
+		vector<Type*> params_types;
+		params_types.push_back(TypeHelper::getReferenceType(definedSymbol->getType()));   
 
-        std::for_each(std::begin(constructor_call_params), std::end(constructor_call_params), [](ExprNode *t) { t->check(); });
-	std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::back_inserter(params_types), [](ExprNode *t) { return t->getType(); });
-	
-	resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
+		for ( auto t : constructor_call_params )
+			t->check();
+		std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::back_inserter(params_types), [](ExprNode *t) { return t->getType(); });
+		
+		resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
 
-	if ( resolved_constructor == nullptr )
-	    throw SemanticError("No viable overload of '" + type_name + "'.");
-	
-	auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
+		if ( resolved_constructor == nullptr )
+			throw SemanticError("No viable overload of '" + type_name + "'.");
+		
+		auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
 
-	for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
-	{
-	    if ( resolved_constructor_type_info.getParamType(i)->isReference() && !constructor_call_params[i - 1]->isLeftValue() )
-		throw SemanticError("parameter is not an lvalue.");
-	}
+		for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
+		{
+			if ( resolved_constructor_type_info.getParamType(i)->isReference() && !constructor_call_params[i - 1]->isLeftValue() )
+			throw SemanticError("parameter is not an lvalue.");
+		}
     }
 }
 
@@ -82,14 +83,14 @@ void VariableDeclarationNode::gen()
 {
     if ( !is_field )
     {      
-	CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
-	CodeGen::emit("sub rsp, " + std::to_string(definedSymbol->getType()->getSize()));
+		CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
+		CodeGen::emit("sub rsp, " + std::to_string(definedSymbol->getType()->getSize()));
 
-	CodeGen::emit("push rsi");
-	CodeGen::emit("lea rsi, [" + resolved_constructor->getScopedTypedName() + "]");
+		CodeGen::emit("push rsi");
+		CodeGen::emit("lea rsi, [" + resolved_constructor->getScopedTypedName() + "]");
 
-	CodeGen::genCallCode(resolved_constructor, constructor_call_params);
-	CodeGen::emit("pop rsi");
+		CodeGen::genCallCode(resolved_constructor, constructor_call_params);
+		CodeGen::emit("pop rsi");
     }
 }
 
@@ -97,14 +98,16 @@ void VariableDeclarationNode::template_define(const TemplateStructSymbol *templa
 {
     if ( template_sym->isIn(type_info.getTypeName()) )
     {
-	type_info = TypeInfo(
-	    static_cast<ClassVariableSymbol*>(template_sym->getReplacement(type_info.getTypeName(), expr)->getType())->sym->getName(),
-	    type_info.getIsRef(),
-	    type_info.getTemplateParams()
-	    );
+	auto replace = template_sym->getReplacement(type_info.getTypeName(), expr);
+
+	std::cerr << "Debug: " << replace->getType() << '\n';
+	
+	auto sym = static_cast<ReferenceType*>(replace->getType())->getReferredType();
+	
+	type_info = TypeInfo(static_cast<ClassVariableSymbol*>(sym)->sym->getName(), type_info.getIsRef(), type_info.getTemplateParams());
     }
     
-    Type *var_type = TypeHelper::fromTypeInfo(type_info, this->getScope());
+    Type *var_type = TypeHelper::fromTypeInfo(type_info, this->getScope(), template_sym, expr);
     
     if ( var_type == BuiltIns::void_type )
 	throw SemanticError("can't declare a variable of 'void' type.");
@@ -130,12 +133,11 @@ void VariableDeclarationNode::template_check(const TemplateStructSymbol *templat
 
 bool VariableDeclarationNode::isTemplated() const
 {
-    bool is_templated = false;
-
-    for ( auto i : constructor_call_params ) 
-	is_templated |= i->isTemplated();
-
-    return is_templated;
+	return std::accumulate(std::begin(constructor_call_params), 
+						   std::end(constructor_call_params), 
+						   false, 
+						   [](bool a, ExprNode *exp) { return a || exp->isTemplated(); }
+						  );
 }
 
 AST* VariableDeclarationNode::copyTree() const

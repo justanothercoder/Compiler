@@ -1,4 +1,5 @@
 #include "typehelper.hpp"
+#include "classvariablesymbol.hpp"
 
 map<Type*, ReferenceType*> TypeHelper::references = map<Type*, ReferenceType*>();
 
@@ -55,9 +56,12 @@ FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
     return overloads.empty() ? nullptr : conversion->getTypeInfo().symbols[*std::begin(overloads)];
 }
 
-Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope)
+Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym, vector<ExprNode*> expr)
 {    
     auto type_name = type_info.getTypeName();
+
+    if ( template_sym && template_sym->isIn(type_name) )
+	type_name = static_cast<ClassVariableSymbol*>(static_cast<ReferenceType*>(template_sym->getReplacement(type_name, expr)->getType())->getReferredType())->sym->getName();
     
     Symbol *sym = scope->resolve(type_info.getTypeName());
 

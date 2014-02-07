@@ -42,6 +42,7 @@ void TemplateStructDeclarationNode::define()
     }
 
     static_cast<TemplateStructSymbol*>(definedSymbol)->template_symbols = template_symbols;
+    static_cast<TemplateStructSymbol*>(definedSymbol)->template_classes = template_classes;
 
 //    for ( auto i : inner )
 //	i->define();
@@ -64,7 +65,4 @@ vector<AST*> TemplateStructDeclarationNode::getChildren() const
     return res;
 }
 
-Scope* TemplateStructDeclarationNode::getDeclScope() const
-{
-    return this->getScope();
-}
+Scope* TemplateStructDeclarationNode::getDeclScope() const { return this->getScope(); }
