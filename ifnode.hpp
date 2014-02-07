@@ -11,13 +11,15 @@ public:
 
     IfNode(ExprNode *cond, AST *stats_true, AST *stats_false);
 
+    virtual AST* copyTree() const;
+
     virtual void build_scope();
     virtual void define();
     virtual void check();
     virtual void gen();
 
-    virtual void template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
-    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
     virtual bool isTemplated() const;
 	
 private:

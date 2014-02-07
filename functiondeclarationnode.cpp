@@ -77,12 +77,53 @@ void FunctionDeclarationNode::gen()
     CodeGen::emit("_~" + scoped_typed_name + ":");
 }
 
-void FunctionDeclarationNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void FunctionDeclarationNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    std::for_each(std::begin(statements), std::end(statements), [&] (AST *t) { t->template_check(template_sym, expr); });
+    for ( auto t : statements )
+	t->template_check(template_sym, expr);
 }
 
 bool FunctionDeclarationNode::isTemplated() const
 {
     return std::accumulate(std::begin(statements), std::end(statements), false, [](bool a, bool b) { return a || b; });
+}
+
+void FunctionDeclarationNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    Type *return_type = TypeHelper::fromTypeInfo(return_type_info, this->getScope());
+    
+    vector<Type*> params_types;
+    
+    if ( traits.is_method )
+    {
+	Type *_this_type = TypeHelper::getReferenceType(static_cast<StructSymbol*>(this->getScope()));
+	params_types.push_back(_this_type);
+
+	definedSymbol->define(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM));
+    }
+    
+    for ( auto i : params )
+    {
+	Type *param_type = TypeHelper::fromTypeInfo(i.second, this->getScope());	
+	params_types.push_back(param_type);
+
+	definedSymbol->define(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM));
+    }
+
+    FunctionTypeInfo function_type_info(return_type, params_types);
+
+    definedSymbol->setTypeInfo(function_type_info);
+
+    this->getScope()->define(definedSymbol);
+
+    for ( auto t : statements )
+	t->template_define(template_sym, expr);
+}
+
+AST* FunctionDeclarationNode::copyTree() const
+{
+    vector<AST*> stats;
+    std::transform(std::begin(statements), std::end(statements), std::back_inserter(stats), [&](AST *t) { return t->copyTree(); });
+	
+    return new FunctionDeclarationNode(name, params, return_type_info, stats, traits);
 }

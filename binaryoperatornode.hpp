@@ -15,6 +15,8 @@ public:
 
     BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type);
 
+    virtual AST* copyTree() const;
+
     virtual void build_scope();
     virtual void check();
     virtual void gen();
@@ -27,8 +29,8 @@ public:
 
     void special_check();
 
-    virtual void template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
-    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
     virtual bool isTemplated() const;
 
 protected:

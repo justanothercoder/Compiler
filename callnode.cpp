@@ -69,7 +69,7 @@ void CallNode::build_scope()
     }
 }
 
-void CallNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void CallNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     caller->template_check(template_sym, expr);
 
@@ -118,4 +118,18 @@ void CallNode::template_check(TemplateStructSymbol *template_sym, const std::vec
 bool CallNode::isTemplated() const
 {
     return caller->isTemplated() || std::accumulate(std::begin(params), std::end(params), false, [](bool a, ExprNode *b) { return a || b->isTemplated(); });
+}
+
+void CallNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}
+
+AST* CallNode::copyTree() const
+{
+    vector<ExprNode*> expr;
+
+    std::transform(std::begin(params), std::end(params), std::back_inserter(expr), [&] (ExprNode *ex) { return static_cast<ExprNode*>(ex->copyTree()); });
+    
+    return new CallNode(static_cast<ExprNode*>(caller->copyTree()), expr);
 }

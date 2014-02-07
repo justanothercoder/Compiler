@@ -73,7 +73,7 @@ void DotNode::gen()
 Type* DotNode::getType() const { return TypeHelper::getReferenceType(static_cast<VariableSymbol*>(member)->getType()); }
 bool DotNode::isLeftValue() const { return true; }
 
-void DotNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void DotNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     base->template_check(template_sym, expr);
 
@@ -81,23 +81,17 @@ void DotNode::template_check(TemplateStructSymbol *template_sym, const std::vect
 
     if ( _base_type->isReference() )
 	_base_type = static_cast<ReferenceType*>(_base_type)->getReferredType();
+
+    std::cerr << "Debug: " << _base_type << '\n';
     
     base_type = dynamic_cast<StructSymbol*>(_base_type);
 
     if ( base_type == nullptr )
 	throw SemanticError("left side of '.' is not a struct instance.");
 
-    bool isSym = false;
-    for ( auto i : template_sym->getTemplateSymbols() )
-    {
-	if ( i == base_type )
-	{
-	    isSym = true;
-	    break;
-	}
-    }
+    bool isTemplateSym = template_sym->isIn(base_type);
 
-    if ( isSym )
+    if ( isTemplateSym )
     {
 	member = new VariableSymbol(member_name, GlobalHelper::getTypeHint(this));
 	TemplateHelper::addNeededMember(template_sym, member);
@@ -114,4 +108,14 @@ void DotNode::template_check(TemplateStructSymbol *template_sym, const std::vect
 bool DotNode::isTemplated() const
 {
     return base->isTemplated();
+}
+
+void DotNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}
+
+AST* DotNode::copyTree() const
+{
+    return new DotNode(static_cast<ExprNode*>(base->copyTree()), member_name);
 }

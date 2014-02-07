@@ -86,7 +86,7 @@ void BinaryOperatorNode::gen()
     CodeGen::emit("pop rsi");
 }
 
-void BinaryOperatorNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void BinaryOperatorNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     
 }
@@ -94,4 +94,14 @@ void BinaryOperatorNode::template_check(TemplateStructSymbol *template_sym, cons
 bool BinaryOperatorNode::isTemplated() const
 {
     return lhs->isTemplated() || rhs->isTemplated();
+}
+
+void BinaryOperatorNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}
+
+AST* BinaryOperatorNode::copyTree() const
+{
+    
 }

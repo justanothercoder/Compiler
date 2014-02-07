@@ -40,7 +40,7 @@ void WhileNode::gen()
 
 string WhileNode::getNewLabel() { return "@while_label" + std::to_string(++WhileNode::label_num); }
 
-void WhileNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void WhileNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     cond->template_check(template_sym, expr);
     stats->template_check(template_sym, expr);
@@ -49,4 +49,14 @@ void WhileNode::template_check(TemplateStructSymbol *template_sym, const std::ve
 bool WhileNode::isTemplated() const
 {
     return cond->isTemplated() || stats->isTemplated();
+}
+
+void WhileNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}
+
+AST* WhileNode::copyTree() const
+{
+    
 }

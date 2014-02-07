@@ -9,13 +9,10 @@ class TemplateHelper
 public:
 
     static const vector<Symbol*>& getNeededMembers(StructSymbol *sym);
-    static void addNeededMember(StructSymbol *sym, Symbol *needed);
-
-    static StructSymbol* getSpec(TemplateStructSymbol *sym, const vector<ExprNode*>& symbols, TemplateDeclHolder *holder);
+    static void addNeededMember(const StructSymbol *sym, Symbol *needed);
 
 private:
 
-    static map< vector<ExprNode*>, StructSymbol*> specs;   
     static map< StructSymbol*, vector<Symbol*> > needed_members;
     
 };

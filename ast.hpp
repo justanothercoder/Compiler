@@ -19,17 +19,21 @@ public:
     virtual Scope* getScope() const;
     virtual void setScope(Scope *sc);
     
+    virtual AST* copyTree() const = 0;
+	
     virtual void build_scope() = 0;    
+
     virtual void define() = 0;
     virtual void check() = 0;
     virtual void gen() = 0;
 
-    virtual void template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) = 0;
-    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) = 0;
+    virtual void template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) = 0;
+    virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) = 0;
 
 //    virtual void template_gen(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) = 0;
 
     virtual bool isTemplated() const = 0;
+
 };
 
 #endif

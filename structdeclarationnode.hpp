@@ -15,6 +15,8 @@ public:
     StructDeclarationNode(string name, const vector<DeclarationNode*>& inner);
 
     virtual ~StructDeclarationNode();
+
+    virtual AST* copyTree() const;
     
     virtual void build_scope();    
     virtual void define();
@@ -23,8 +25,8 @@ public:
 
     virtual Symbol* getDefinedSymbol() const;
 
-    virtual void template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
-    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
     virtual bool isTemplated() const;
 
     const vector<DeclarationNode*>& getInner() const;

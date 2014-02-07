@@ -1,4 +1,5 @@
 #include "variabledeclarationnode.hpp"
+#include "classvariablesymbol.hpp"
 
 VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info, bool is_field, const vector<ExprNode*>& constructor_call_params) : name(name),
 																		     type_info(type_info),
@@ -92,8 +93,17 @@ void VariableDeclarationNode::gen()
     }
 }
 
-void VariableDeclarationNode::template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void VariableDeclarationNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
+    if ( template_sym->isIn(type_info.getTypeName()) )
+    {
+	type_info = TypeInfo(
+	    static_cast<ClassVariableSymbol*>(template_sym->getReplacement(type_info.getTypeName(), expr)->getType())->sym->getName(),
+	    type_info.getIsRef(),
+	    type_info.getTemplateParams()
+	    );
+    }
+    
     Type *var_type = TypeHelper::fromTypeInfo(type_info, this->getScope());
     
     if ( var_type == BuiltIns::void_type )
@@ -101,15 +111,16 @@ void VariableDeclarationNode::template_define(TemplateStructSymbol *template_sym
     else if ( template_sym->isIn(dynamic_cast<Symbol*>(var_type)) )
     {
 	auto replace = template_sym->getReplacement(dynamic_cast<Symbol*>(var_type), expr);
+	replace->setScope(this->getScope());
 	replace->template_check(template_sym, expr);
-	var_type = replace->getType();
+	var_type = static_cast<ClassVariableSymbol*>(static_cast<ReferenceType*>(replace->getType())->getReferredType())->sym;
     }
     
     definedSymbol->setType(var_type);
     this->getScope()->define(definedSymbol);
 }
 
-void VariableDeclarationNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void VariableDeclarationNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     if ( !is_field )
     {
@@ -125,4 +136,13 @@ bool VariableDeclarationNode::isTemplated() const
 	is_templated |= i->isTemplated();
 
     return is_templated;
+}
+
+AST* VariableDeclarationNode::copyTree() const
+{
+    vector<ExprNode*> params;
+
+    std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::back_inserter(params), [&] (ExprNode *expr) { return static_cast<ExprNode*>(expr->copyTree()); });
+    
+    return new VariableDeclarationNode(name, type_info, is_field, params);
 }

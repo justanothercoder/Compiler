@@ -97,9 +97,10 @@ void VariableNode::gen()
 }
 
 Type* VariableNode::getType() const { return TypeHelper::getReferenceType(variable->getType()); }
+
 bool VariableNode::isLeftValue() const { return true; }
 
-void VariableNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void VariableNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     Symbol *sym = this->getScope()->resolve(name);
 
@@ -108,7 +109,9 @@ void VariableNode::template_check(TemplateStructSymbol *template_sym, const std:
 
     if ( sym->getSymbolType() == SymbolType::STRUCT )
     {
-	variable = new VariableSymbol("", nullptr);
+	variable = new VariableSymbol(name, new ClassVariableSymbol(static_cast<StructSymbol*>(sym)));
+	is_templated = template_sym->isIn(dynamic_cast<Symbol*>(variable->getType()));
+	return;
     }
     else
     {
@@ -121,7 +124,14 @@ void VariableNode::template_check(TemplateStructSymbol *template_sym, const std:
     is_templated = template_sym->isIn(dynamic_cast<Symbol*>(variable->getType()));
 }
 
-bool VariableNode::isTemplated() const
+bool VariableNode::isTemplated() const { return is_templated; }
+
+void VariableNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    return is_templated;
+    
+}
+
+AST* VariableNode::copyTree() const
+{
+    return new VariableNode(name);
 }

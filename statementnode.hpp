@@ -2,6 +2,7 @@
 #define _STATEMENTNODE_HPP_
 
 #include <vector>
+#include <algorithm>
 
 #include "ast.hpp"
 
@@ -15,13 +16,15 @@ public:
 
     virtual ~StatementNode();
 
+    virtual AST* copyTree() const;
+    
     virtual void build_scope();
     virtual void define();
     virtual void check();
     virtual void gen();
 
-    virtual void template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
-    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
     virtual bool isTemplated() const;
 	
 private:

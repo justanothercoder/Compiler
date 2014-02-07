@@ -5,7 +5,7 @@
 
 using std::string;
 
-enum class TypeKind { BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE };
+enum class TypeKind { BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE, CLASSTYPE };
 
 class Type
 {

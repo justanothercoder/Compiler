@@ -39,7 +39,7 @@ void ReturnNode::gen()
     CodeGen::emit("ret");
 }
 
-void ReturnNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& _expr)
+void ReturnNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& _expr)
 {
     expr->template_check(template_sym, _expr);
 }
@@ -47,4 +47,14 @@ void ReturnNode::template_check(TemplateStructSymbol *template_sym, const std::v
 bool ReturnNode::isTemplated() const
 {
     return expr->isTemplated();
+}
+
+void ReturnNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    this->expr->template_define(template_sym, expr);
+}
+
+AST* ReturnNode::copyTree() const
+{
+    return new ReturnNode(static_cast<ExprNode*>(expr->copyTree()));
 }

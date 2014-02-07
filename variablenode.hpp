@@ -10,12 +10,15 @@
 #include "globalhelper.hpp"
 #include "codegen.hpp"
 #include "templatestructsymbol.hpp"
+#include "classvariablesymbol.hpp"
 
 class VariableNode : public ExprNode
 {
 public:
 
     VariableNode(string name);
+
+    virtual AST* copyTree() const;
 
     virtual Type *getType() const;
     virtual bool isLeftValue() const;    
@@ -24,8 +27,8 @@ public:
     virtual void check();
     virtual void gen();
 
-    virtual void template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
-    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
     virtual bool isTemplated() const;
     
 private:

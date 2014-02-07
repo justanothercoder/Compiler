@@ -16,9 +16,10 @@ public:
     virtual void define();
     virtual void check();
     
-    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
 
-    virtual vector<AST*> getChildren();
+    virtual vector<AST*> getChildren() const;
+    virtual Scope* getDeclScope() const;
     
 private:
 

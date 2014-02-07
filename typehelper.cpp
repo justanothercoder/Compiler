@@ -56,7 +56,9 @@ FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
 }
 
 Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope)
-{
+{    
+    auto type_name = type_info.getTypeName();
+    
     Symbol *sym = scope->resolve(type_info.getTypeName());
 
     if ( sym == nullptr )
@@ -69,9 +71,9 @@ Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope)
 
     if ( type_info.getTemplateParams().size() > 0 )
     {
-	type = TemplateHelper::getSpec(dynamic_cast<TemplateStructSymbol*>(type),
-				       type_info.getTemplateParams(),
-				       dynamic_cast<TemplateStructSymbol*>(type)->holder);
+	auto tmpl = dynamic_cast<TemplateStructSymbol*>(type);
+	auto sym = tmpl->getSpec(type_info.getTemplateParams());	
+	type = dynamic_cast<Type*>(sym);
     }
     
     if ( type_info.getIsRef() )

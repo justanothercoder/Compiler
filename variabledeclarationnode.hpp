@@ -23,14 +23,16 @@ public:
     VariableDeclarationNode(string name, TypeInfo type_info, bool is_field = false, const vector<ExprNode*>& constructor_call_params = {});
 
     virtual ~VariableDeclarationNode();
+
+    virtual AST* copyTree() const;
     
     virtual void build_scope();    
     virtual void define();
     virtual void check();
     virtual void gen();
 
-    virtual void template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
-    virtual void template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
     virtual bool isTemplated() const;
     
     virtual Symbol* getDefinedSymbol() const;

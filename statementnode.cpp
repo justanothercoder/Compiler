@@ -38,13 +38,13 @@ void StatementNode::gen()
 	i->gen();
 }
 
-void StatementNode::template_define(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void StatementNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     for ( auto i : statements )
 	i->template_define(template_sym, expr);
 }
 
-void StatementNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void StatementNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     for ( auto i : statements )
 	i->template_check(template_sym, expr);
@@ -59,4 +59,12 @@ bool StatementNode::isTemplated() const
 
     return is_templated;
 }
+
+AST* StatementNode::copyTree() const
+{
+    vector<AST*> stats;
+
+    std::transform(std::begin(statements), std::end(statements), std::back_inserter(stats), [&](AST *t) { return t->copyTree(); });
     
+    return new StatementNode(stats);
+}

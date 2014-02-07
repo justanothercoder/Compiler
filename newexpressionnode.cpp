@@ -70,12 +70,22 @@ bool NewExpressionNode::isLeftValue() const
     return false;
 }
     
-void NewExpressionNode::template_check(TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void NewExpressionNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     
 }
 
 bool NewExpressionNode::isTemplated() const
+{
+    
+}
+
+void NewExpressionNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+{
+    
+}
+
+AST* NewExpressionNode::copyTree() const
 {
     
 }

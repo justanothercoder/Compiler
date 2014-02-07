@@ -4,11 +4,13 @@
 #include <vector>
 
 class AST;
+class Scope;
 
 class TemplateDeclHolder
 {
 public:
-    virtual vector<AST*> getChildren() = 0;
+    virtual vector<AST*> getChildren() const = 0;
+    virtual Scope* getDeclScope() const = 0;
 };
 
 #endif

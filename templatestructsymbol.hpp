@@ -6,8 +6,9 @@
 #include "structsymbol.hpp"
 #include "exprnode.hpp"
 #include "templatedeclholder.hpp"
+#include "templatesymbol.hpp"
 
-class TemplateStructSymbol : public StructSymbol
+class TemplateStructSymbol : public StructSymbol, public TemplateSymbol
 {
 public:
 
@@ -15,14 +16,21 @@ public:
 
     virtual SymbolType getSymbolType() const;
 
-    const vector<Symbol*>& getTemplateSymbols() const;
-
     bool isIn(Symbol *sym) const;
+    bool isIn(string name) const;
+    
     ExprNode* getReplacement(Symbol *sym, const vector<ExprNode*>& expr) const;
+    ExprNode* getReplacement(string name, const vector<ExprNode*>& expr) const;
+
+    virtual Symbol* getSpec(const vector<ExprNode*>& symbols) const;
+    
 public:
 
+    static map< vector<ExprNode*>, StructSymbol*> specs;   
+
     vector<Symbol*> template_symbols;
-    TemplateDeclHolder *holder;    
+    TemplateDeclHolder *holder;
+    vector<string> template_classes;
 };
 
 #endif
