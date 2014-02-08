@@ -31,7 +31,8 @@ void VariableDeclarationNode::define()
 		throw SemanticError("can't declare a variable of 'void' type");
     
     definedSymbol->setType(var_type);
-    this->getScope()->define(definedSymbol);
+//    this->getScope()->define(definedSymbol);
+    this->getScope()->accept(new VariableSymbolDefine(definedSymbol));
 }
 
 void VariableDeclarationNode::check()
@@ -40,13 +41,8 @@ void VariableDeclarationNode::check()
     {
 	string type_name = type_info.getTypeName();
 		
-//	Symbol *_type = this->getScope()->resolve(type_name);
-
 	Type *_type = TypeHelper::fromTypeInfo(type_info, this->getScope());
 	
-//	if ( _type->getSymbolType() != SymbolType::STRUCT )
-//	    throw SemanticError("No such struct " + type_name);
-		
 	if ( _type->getTypeKind() != TypeKind::STRUCT )
 	    throw SemanticError("No such struct " + type_name);
 

@@ -5,6 +5,8 @@
 #include "type.hpp"
 #include "exprnode.hpp"
 
+#include "scopevisitor.hpp"
+
 class VariableSymbol;
 
 class Scope
@@ -24,6 +26,8 @@ public:
     virtual int getScopeSize() const = 0;
 
     virtual string getScopeName() const = 0;
+
+    virtual void accept(ScopeVisitor *visitor) = 0;
 };
 
 #endif

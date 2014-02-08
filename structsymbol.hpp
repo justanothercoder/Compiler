@@ -17,6 +17,8 @@ class StructSymbol : public Symbol, public BaseScope, public Type
 public:
 
     friend class VariableSymbolDefine;
+
+    virtual void accept(ScopeVisitor *visitor);
     
     StructSymbol(string name, Scope *enclosing_scope);
 

@@ -23,6 +23,8 @@ public:
 
     FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits);
 
+    virtual void accept(ScopeVisitor *visitor);
+
     virtual void define(Symbol *sym);
     virtual Scope* getEnclosingScope() const;
 

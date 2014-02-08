@@ -14,6 +14,8 @@
 #include "structsymbol.hpp"
 #include "builtins.hpp"
 
+#include "variablesymboldefine.hpp"
+
 using std::vector;
 
 class VariableDeclarationNode : public DeclarationNode

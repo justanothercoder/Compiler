@@ -85,3 +85,5 @@ FunctionTraits FunctionSymbol::getTraits() const { return traits; }
 
 SymbolType FunctionSymbol::getSymbolType() const { return SymbolType::FUNCTION; }
 TypeKind FunctionSymbol::getTypeKind() const { return TypeKind::FUNCTION; }
+
+void FunctionSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }

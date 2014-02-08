@@ -38,3 +38,5 @@ void LocalScope::define(Symbol *sym)
 Scope* LocalScope::getEnclosingScope() const { return enclosing_scope; }
 string LocalScope::getScopeName() const { return ""; }
 void LocalScope::recalc_scope_address() { scope_address = enclosing_scope->getScopeAddress(); }
+
+void LocalScope::accept(ScopeVisitor *visitor) { visitor->visit(this); }

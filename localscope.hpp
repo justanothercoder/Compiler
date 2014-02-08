@@ -11,6 +11,8 @@ public:
 
     LocalScope(Scope *enclosing_scope);
 
+    virtual void accept(ScopeVisitor *visitor);
+
     virtual void define(Symbol *sym);
     virtual Scope* getEnclosingScope() const;
     virtual string getScopeName() const;

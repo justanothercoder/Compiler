@@ -46,3 +46,5 @@ void GlobalScope::define(Symbol *sym)
 
 Scope* GlobalScope::getEnclosingScope() const { return nullptr; }
 string GlobalScope::getScopeName() const { return ""; }
+
+void GlobalScope::accept(ScopeVisitor *visitor) { visitor->visit(this); }

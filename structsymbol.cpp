@@ -75,3 +75,5 @@ string StructSymbol::getScopeName() const { return scope_name; }
 
 SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }
 TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }
+
+void StructSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
