@@ -9,15 +9,15 @@ void CallNode::check()
 {
     caller->check();   
 
+    for ( auto i : params )
+	i->check();
+
     Type *caller_type = caller->getType();
     if ( caller_type->isReference() )
 	caller_type = static_cast<ReferenceType*>(caller_type)->getReferredType();
     
     if ( caller_type->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	throw SemanticError("caller is not a function.");
-
-    for ( auto i : params )
-	i->check();
 
     OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(caller_type);
 

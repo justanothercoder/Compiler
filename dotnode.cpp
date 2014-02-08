@@ -55,7 +55,6 @@ void DotNode::gen()
 		throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
 
 	    member = new VariableSymbol(member_name, ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
-//	    member = dynamic_cast<VariableSymbol*>(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
 	}
 	else
 	{
@@ -87,30 +86,15 @@ void DotNode::template_check(const TemplateStructSymbol *template_sym, const std
     if ( base_type == nullptr )
 	throw SemanticError("left side of '.' is not a struct instance.");
 
-//    bool isTemplateSym = template_sym->isIn(base_type);
-//
-//      if ( isTemplateSym )
-//    {
-//	member = new VariableSymbol(member_name, GlobalHelper::getTypeHint(this));
-//    }
-//    else
-    {
-	member = base_type->resolveMember(member_name);
+    member = base_type->resolveMember(member_name);
 	
-	if ( member == nullptr )
-	    throw SemanticError(member_name + " is not member of " + base_type->getName());
-    }
+    if ( member == nullptr )
+	throw SemanticError(member_name + " is not member of " + base_type->getName());
 }
 
-void DotNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    
-}
+void DotNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) { }
 
-AST* DotNode::copyTree() const
-{
-    return new DotNode(static_cast<ExprNode*>(base->copyTree()), member_name);
-}
+AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base->copyTree()), member_name); }
 
 void DotNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {    
@@ -137,7 +121,6 @@ void DotNode::template_gen(const TemplateStructSymbol *template_sym, const std::
 		throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
 
 	    member = new VariableSymbol(member_name, ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
-//	    member = dynamic_cast<VariableSymbol*>(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
 	}
 	else
 	{
