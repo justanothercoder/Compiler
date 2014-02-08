@@ -69,11 +69,6 @@ void NewExpressionNode::template_check(const TemplateStructSymbol *template_sym,
     
 }
 
-bool NewExpressionNode::isTemplated() const
-{
-    
-}
-
 void NewExpressionNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     

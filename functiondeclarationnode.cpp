@@ -83,11 +83,6 @@ void FunctionDeclarationNode::template_check(const TemplateStructSymbol *templat
 	t->template_check(template_sym, expr);
 }
 
-bool FunctionDeclarationNode::isTemplated() const
-{
-    return std::accumulate(std::begin(statements), std::end(statements), false, [](bool a, bool b) { return a || b; });
-}
-
 void FunctionDeclarationNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     if ( return_type_info.getTypeName() == template_sym->getName() )

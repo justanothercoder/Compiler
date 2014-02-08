@@ -111,7 +111,6 @@ void VariableNode::template_check(const TemplateStructSymbol *template_sym, cons
     if ( sym->getSymbolType() == SymbolType::STRUCT )
     {
 	variable = new VariableSymbol(name, new ClassVariableSymbol(static_cast<StructSymbol*>(sym)));
-	is_templated = template_sym->isIn(dynamic_cast<Symbol*>(variable->getType()));
 	return;
     }
     else
@@ -121,11 +120,7 @@ void VariableNode::template_check(const TemplateStructSymbol *template_sym, cons
     }
 
     variable = static_cast<VariableSymbol*>(sym);
-
-    is_templated = template_sym->isIn(dynamic_cast<Symbol*>(variable->getType()));
 }
-
-bool VariableNode::isTemplated() const { return is_templated; }
 
 void VariableNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {

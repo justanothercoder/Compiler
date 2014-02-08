@@ -37,7 +37,7 @@ void TemplateStructDeclarationNode::define()
 	    
 	    template_symbols.push_back(sym);
 	    
-	    definedSymbol->define(sym);
+//	    definedSymbol->define(sym);
 	}
     }
 

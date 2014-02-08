@@ -102,11 +102,6 @@ void DotNode::template_check(const TemplateStructSymbol *template_sym, const std
     }
 }
 
-bool DotNode::isTemplated() const
-{
-    return base->isTemplated();
-}
-
 void DotNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     

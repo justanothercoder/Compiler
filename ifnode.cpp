@@ -67,11 +67,6 @@ void IfNode::template_check(const TemplateStructSymbol *template_sym, const std:
     stats_false->template_check(template_sym, expr);
 }
 
-bool IfNode::isTemplated() const
-{
-    return cond->isTemplated() || stats_true->isTemplated() || stats_false->isTemplated();
-}
-
 void IfNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     

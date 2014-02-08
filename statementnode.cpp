@@ -50,16 +50,6 @@ void StatementNode::template_check(const TemplateStructSymbol *template_sym, con
 	i->template_check(template_sym, expr);
 }
 
-bool StatementNode::isTemplated() const
-{
-    bool is_templated = false;
-    
-    for ( auto i : statements )
-	is_templated |= i->isTemplated();
-
-    return is_templated;
-}
-
 AST* StatementNode::copyTree() const
 {
     vector<AST*> stats;

@@ -53,8 +53,6 @@ void StructDeclarationNode::template_check(const TemplateStructSymbol *template_
 	decl->template_check(template_sym, expr);	
 }
 
-bool StructDeclarationNode::isTemplated() const { return std::accumulate(std::begin(inner), std::end(inner), false, [](bool a, bool b) { return a | b; }); }
-
 const vector<DeclarationNode*>& StructDeclarationNode::getInner() const { return inner; }
 
 AST* StructDeclarationNode::copyTree() const

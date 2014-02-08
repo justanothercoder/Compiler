@@ -46,11 +46,6 @@ void WhileNode::template_check(const TemplateStructSymbol *template_sym, const s
     stats->template_check(template_sym, expr);
 }
 
-bool WhileNode::isTemplated() const
-{
-    return cond->isTemplated() || stats->isTemplated();
-}
-
 void WhileNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     

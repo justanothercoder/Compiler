@@ -91,11 +91,6 @@ void BinaryOperatorNode::template_check(const TemplateStructSymbol *template_sym
     
 }
 
-bool BinaryOperatorNode::isTemplated() const
-{
-    return lhs->isTemplated() || rhs->isTemplated();
-}
-
 void BinaryOperatorNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     

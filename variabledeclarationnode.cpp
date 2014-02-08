@@ -129,15 +129,6 @@ void VariableDeclarationNode::template_check(const TemplateStructSymbol *templat
     }
 }
 
-bool VariableDeclarationNode::isTemplated() const
-{
-	return std::accumulate(std::begin(constructor_call_params), 
-						   std::end(constructor_call_params), 
-						   false, 
-						   [](bool a, ExprNode *exp) { return a || exp->isTemplated(); }
-						  );
-}
-
 AST* VariableDeclarationNode::copyTree() const
 {
     vector<ExprNode*> params;

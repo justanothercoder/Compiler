@@ -44,11 +44,6 @@ void ReturnNode::template_check(const TemplateStructSymbol *template_sym, const 
     expr->template_check(template_sym, _expr);
 }
 
-bool ReturnNode::isTemplated() const
-{
-    return expr->isTemplated();
-}
-
 void ReturnNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
     this->expr->template_define(template_sym, expr);

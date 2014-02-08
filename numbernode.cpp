@@ -17,7 +17,6 @@ Type* NumberNode::getType() const { return BuiltIns::int_type; }
 bool NumberNode::isLeftValue() const { return false; }
 
 void NumberNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) { }
-bool NumberNode::isTemplated() const { return false; }
 
 void NumberNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
