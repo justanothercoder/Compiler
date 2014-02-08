@@ -138,6 +138,6 @@ void CallNode::template_gen(const TemplateStructSymbol *template_sym, const std:
     CodeGen::emit("push rsi");
     CodeGen::emit("mov rsi, rax");
 
-    CodeGen::genCallCode(resolved_function_symbol, params);
+    CodeGen::genCallCode(resolved_function_symbol, params, template_sym, expr);
     CodeGen::emit("pop rsi");
 }

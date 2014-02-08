@@ -28,14 +28,6 @@ void CodeGen::genConversion(FunctionSymbol *conv, int offset, Type *par_type)
 
     pushOnStack(par_type->getSize(), GlobalConfig::int_size);
 
-/*
-  int _size = par_type->getSize();
-  for ( int j = 0; j < _size; j += GlobalConfig::int_size, current_address += GlobalConfig::int_size )
-  {
-  CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-  CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rbx");
-  }
-*/
     current_address += par_type->getSize();
     
     CodeGen::emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size * 10) + "]");
@@ -58,7 +50,7 @@ void CodeGen::pushOnStack(unsigned int size, int offset)
     }
 }
 
-void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params, TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr)
+void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr)
 {
     int params_size = 0;
     int current_address = 0;
@@ -108,30 +100,6 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 
 		    genConversion(conv, params_size, par_type);
 		}
-		/*
-		CodeGen::emit("sub rsp, " + std::to_string(params_size));
-		
-		int current_address = 0;
-
-		int _size = par_type->getSize();
-		for ( int j = 0; j < _size; j += GlobalConfig::int_size, current_address += GlobalConfig::int_size )
-		{
-		    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-		    CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rbx");
-		}
-
-		CodeGen::emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size * 10) + "]");
-		CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rbx");
-		current_address += GlobalConfig::int_size;
-
-		if ( !refconv )
-		{
-		    CodeGen::emit("sub rsp, " + std::to_string(current_address));
-		    CodeGen::emit("call " + conv->getScopedTypedName());
-		    CodeGen::emit("add rsp, " + std::to_string(current_address));
-		}
-		CodeGen::emit("add rsp, " + std::to_string(params_size));
-		*/
 	    }
 	}
 
