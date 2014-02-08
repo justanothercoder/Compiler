@@ -112,7 +112,7 @@ void VariableDeclarationNode::template_define(const TemplateStructSymbol *templa
 	throw SemanticError("can't declare a variable of 'void' type.");
     
     definedSymbol->setType(var_type);
-    this->getScope()->define(definedSymbol);
+    this->getScope()->accept(new VariableSymbolDefine(definedSymbol));
 }
 
 void VariableDeclarationNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)

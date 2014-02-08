@@ -10,6 +10,9 @@
 
 #include "variablesymbol.hpp"
 
+#include "variablesymboldefine.hpp"
+#include "functionsymboldefine.hpp"
+
 using std::vector;
 using std::pair;
 

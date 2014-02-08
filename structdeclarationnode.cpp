@@ -21,7 +21,7 @@ void StructDeclarationNode::build_scope()
 
 void StructDeclarationNode::define()
 {
-    this->getScope()->define(definedSymbol);
+    this->getScope()->accept(new SymbolDefine(definedSymbol));
 
     for ( auto i : inner )
 	i->define();    
@@ -41,7 +41,7 @@ void StructDeclarationNode::gen()
 
 void StructDeclarationNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    this->getScope()->define(definedSymbol);
+    this->getScope()->accept(new SymbolDefine(definedSymbol));
 
     for ( auto decl : inner )
 	decl->template_define(template_sym, expr);

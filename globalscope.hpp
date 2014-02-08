@@ -23,7 +23,6 @@ public:
     virtual void accept(ScopeVisitor *visitor);
 
     virtual Scope* getEnclosingScope() const;
-    virtual void define(Symbol *sym);
     virtual string getScopeName() const;
 };
 

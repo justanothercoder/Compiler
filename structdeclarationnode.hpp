@@ -5,6 +5,7 @@
 
 #include "declarationnode.hpp"
 #include "structsymbol.hpp"
+#include "symboldefine.hpp"
 
 using std::vector;
 

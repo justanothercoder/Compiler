@@ -1,5 +1,5 @@
-#ifndef _VARIABLESYMBOLDEFINE_HPP_
-#define _VARIABLESYMBOLDEFINE_HPP_
+#ifndef _SYMBOLDEFINE_HPP_
+#define _SYMBOLDEFINE_HPP_
 
 #include "scopevisitor.hpp"
 #include "variablesymbol.hpp"
@@ -8,11 +8,11 @@
 #include "structsymbol.hpp"
 #include "functionsymbol.hpp"
 
-class VariableSymbolDefine : public ScopeVisitor
+class SymbolDefine : public ScopeVisitor
 {
 public:
 
-    VariableSymbolDefine(VariableSymbol *sym);
+    SymbolDefine(Symbol *sym);
 
     virtual void visit(GlobalScope *sc);
     virtual void visit(LocalScope *sc);
@@ -20,7 +20,7 @@ public:
     virtual void visit(FunctionSymbol *sc);
 
 private:
-    VariableSymbol *sym;
+    Symbol *sym;
 };
 
 #endif

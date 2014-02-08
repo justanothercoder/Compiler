@@ -15,6 +15,8 @@ class BaseScope : public Scope
 public:
 
     friend class VariableSymbolDefine;
+    friend class FunctionSymbolDefine;
+    friend class SymbolDefine;
     
     BaseScope();
 

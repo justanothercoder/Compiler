@@ -30,7 +30,7 @@ void FunctionDeclarationNode::define()
 	Type *_this_type = TypeHelper::getReferenceType(static_cast<StructSymbol*>(this->getScope()));
 	params_types.push_back(_this_type);
 
-	definedSymbol->define(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM));
+	definedSymbol->accept(new VariableSymbolDefine(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM)));
     }
     
     for ( auto i : params )
@@ -38,14 +38,14 @@ void FunctionDeclarationNode::define()
 	Type *param_type = TypeHelper::fromTypeInfo(i.second, this->getScope());	
 	params_types.push_back(param_type);
 
-	definedSymbol->define(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM));
+	definedSymbol->accept(new VariableSymbolDefine(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM)));
     }
 
     FunctionTypeInfo function_type_info(return_type, params_types);
 
     definedSymbol->setTypeInfo(function_type_info);
 
-    this->getScope()->define(definedSymbol);
+    this->getScope()->accept(new FunctionSymbolDefine(definedSymbol));
     
     for ( auto i : statements )
 	i->define();	
@@ -103,7 +103,7 @@ void FunctionDeclarationNode::template_define(const TemplateStructSymbol *templa
 	Type *_this_type = TypeHelper::getReferenceType(static_cast<StructSymbol*>(this->getScope()));
 	params_types.push_back(_this_type);
 
-	definedSymbol->define(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM));
+	definedSymbol->accept(new VariableSymbolDefine(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM)));
     }
     
     for ( auto i : params )
@@ -111,14 +111,14 @@ void FunctionDeclarationNode::template_define(const TemplateStructSymbol *templa
 	Type *param_type = TypeHelper::fromTypeInfo(i.second, this->getScope());	
 	params_types.push_back(param_type);
 
-	definedSymbol->define(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM));
+	definedSymbol->accept(new VariableSymbolDefine(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM)));
     }
 
     FunctionTypeInfo function_type_info(return_type, params_types);
 
     definedSymbol->setTypeInfo(function_type_info);
 
-    this->getScope()->define(definedSymbol);
+    this->getScope()->accept(new FunctionSymbolDefine(definedSymbol));
 
     for ( auto t : statements )
 	t->template_define(template_sym, expr);

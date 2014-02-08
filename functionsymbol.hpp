@@ -25,7 +25,6 @@ public:
 
     virtual void accept(ScopeVisitor *visitor);
 
-    virtual void define(Symbol *sym);
     virtual Scope* getEnclosingScope() const;
 
     void setTypeInfo(FunctionTypeInfo function_type_info);

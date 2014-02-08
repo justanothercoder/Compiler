@@ -24,7 +24,6 @@ public:
 
     virtual Scope* getEnclosingScope() const;
     virtual Symbol* resolve(string name) const;
-    virtual void define(Symbol *sym);
 
     virtual string getName() const;
     virtual int getSize() const;

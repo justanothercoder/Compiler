@@ -18,8 +18,6 @@ public:
     virtual Scope* getEnclosingScope() const = 0;
     virtual Symbol* resolve(string name) const = 0;
 
-    virtual void define(Symbol *sym) = 0;
-
     virtual int getAddress(VariableSymbol* sym) const = 0;
 
     virtual int getScopeAddress() const = 0;
