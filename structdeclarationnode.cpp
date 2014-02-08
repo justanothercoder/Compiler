@@ -68,5 +68,6 @@ AST* StructDeclarationNode::copyTree() const
 
 void StructDeclarationNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    
+    for ( auto decl : inner )
+	decl->template_gen(template_sym, expr);
 }

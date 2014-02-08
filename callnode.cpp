@@ -132,6 +132,12 @@ AST* CallNode::copyTree() const
 }
 
 void CallNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    
+{    
+    caller->template_gen(template_sym, expr);
+
+    CodeGen::emit("push rsi");
+    CodeGen::emit("mov rsi, rax");
+
+    CodeGen::genCallCode(resolved_function_symbol, params);
+    CodeGen::emit("pop rsi");
 }

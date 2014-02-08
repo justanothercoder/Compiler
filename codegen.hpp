@@ -12,6 +12,7 @@ using std::string;
 #include "functionsymbol.hpp"
 #include "referencetype.hpp"
 #include "typehelper.hpp"
+#include "templatestructsymbol.hpp"
 
 class CodeGen
 {
@@ -21,7 +22,10 @@ public:
 
     static void construct_object(Type *type, FunctionSymbol *constructor, const vector<ExprNode*>& params, int offset = 0);
 
-    static void genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params);
+    static void genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params, TemplateStructSymbol *template_sym = nullptr, std::vector<ExprNode*> template_expr = { });
+
+    static void pushOnStack(unsigned int size, int offset);
+    static void genConversion(FunctionSymbol *conv, int offset, Type *par_type);
 };
 
 #endif

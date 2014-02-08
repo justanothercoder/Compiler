@@ -50,6 +50,7 @@ void NewExpressionNode::check()
 
 void NewExpressionNode::gen()
 {
+	CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
     CodeGen::construct_object(getType(), resolved_constructor, params);
 }
 

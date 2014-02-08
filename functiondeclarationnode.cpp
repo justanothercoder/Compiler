@@ -138,6 +138,19 @@ AST* FunctionDeclarationNode::copyTree() const
 }
 
 void FunctionDeclarationNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
+{    
+    string scoped_typed_name = definedSymbol->getScopedTypedName();
     
+    CodeGen::emit("jmp _~" + scoped_typed_name);
+    CodeGen::emit(scoped_typed_name + ":");
+    CodeGen::emit("push rbp");
+    CodeGen::emit("mov rbp, rsp");
+
+    for ( auto i : statements )
+	i->template_gen(template_sym, expr);
+    
+    CodeGen::emit("mov rsp, rbp");
+    CodeGen::emit("pop rbp");
+    CodeGen::emit("ret");
+    CodeGen::emit("_~" + scoped_typed_name + ":");
 }

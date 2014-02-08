@@ -14,13 +14,51 @@ void CodeGen::construct_object(Type *type, FunctionSymbol *constructor, const ve
     
     CodeGen::emit("push rsi");
     CodeGen::emit("lea rsi, [" + constructor->getScopedTypedName() + "]");
-
+   
     CodeGen::genCallCode(constructor, params);
 
     CodeGen::emit("pop rsi");
 }
 
-void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params)
+void CodeGen::genConversion(FunctionSymbol *conv, int offset, Type *par_type)
+{
+    CodeGen::emit("sub rsp, " + std::to_string(offset));
+		
+    int current_address = 0;
+
+    pushOnStack(par_type->getSize(), GlobalConfig::int_size);
+
+/*
+  int _size = par_type->getSize();
+  for ( int j = 0; j < _size; j += GlobalConfig::int_size, current_address += GlobalConfig::int_size )
+  {
+  CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
+  CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rbx");
+  }
+*/
+    current_address += par_type->getSize();
+    
+    CodeGen::emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size * 10) + "]");
+    CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rbx");
+    current_address += GlobalConfig::int_size;
+
+    CodeGen::emit("sub rsp, " + std::to_string(current_address));
+    CodeGen::emit("call " + conv->getScopedTypedName());
+    CodeGen::emit("add rsp, " + std::to_string(current_address));
+
+    CodeGen::emit("add rsp, " + std::to_string(offset));
+}
+
+void CodeGen::pushOnStack(unsigned int size, int offset)
+{
+    for ( unsigned int i = 0; i < size; i += GlobalConfig::int_size )
+    {
+	CodeGen::emit("mov rbx, [rax - " + std::to_string(i) + "]");
+	CodeGen::emit("mov [rsp - " + std::to_string(offset + i) + "], rbx");
+    }
+}
+
+void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params, TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr)
 {
     int params_size = 0;
     int current_address = 0;
@@ -41,7 +79,10 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params)
     
     for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
     {
-	params[i - is_meth]->gen();
+	if ( template_sym )
+	    params[i - is_meth]->template_gen(template_sym, template_expr);
+	else
+	    params[i - is_meth]->gen();
 
 	Type *param_type = resolved_function_type_info.getParamType(i);
 
@@ -61,8 +102,13 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params)
 		
 		if ( refconv )
 		    par_type = static_cast<ReferenceType*>(par_type)->getReferredType();
+		else
+		{
+		    auto conv = TypeHelper::getConversion(par_type, param_type);
 
-		auto conv = TypeHelper::getConversion(par_type, param_type);
+		    genConversion(conv, params_size, par_type);
+		}
+		/*
 		CodeGen::emit("sub rsp, " + std::to_string(params_size));
 		
 		int current_address = 0;
@@ -85,6 +131,7 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params)
 		    CodeGen::emit("add rsp, " + std::to_string(current_address));
 		}
 		CodeGen::emit("add rsp, " + std::to_string(params_size));
+		*/
 	    }
 	}
 
