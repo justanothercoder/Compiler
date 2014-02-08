@@ -17,6 +17,8 @@ using std::pair;
 
 class FunctionSymbol : public Symbol, public BaseScope, public Type
 {
+    friend class VariableSymbolDefine;
+    
 public:
 
     FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits);

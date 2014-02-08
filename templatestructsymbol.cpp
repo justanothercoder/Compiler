@@ -3,7 +3,7 @@
 
 map< vector<ExprNode*>, StructSymbol*> TemplateStructSymbol::specs;
 
-TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, Type*> >& template_symbols, TemplateDeclHolder *holder) : 
+TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, TemplateDeclHolder *holder) : 
     StructSymbol(name, enclosing_scope),
     template_symbols(template_symbols),
     holder(holder)
@@ -13,19 +13,12 @@ TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, 
 
 SymbolType TemplateStructSymbol::getSymbolType() const { return SymbolType::TEMPLATESTRUCT; }
 
-bool TemplateStructSymbol::isVarIn(string name) const 
+bool TemplateStructSymbol::isIn(string name) const 
 { 
     return std::find_if(std::begin(template_symbols),
 			std::end(template_symbols),
-			[&](const pair<string, Type*>& p){ return name == p.first; }
+			[&](const pair<string, TypeInfo>& p){ return name == p.first; }
 	) != std::end(template_symbols);
-}
-
-bool TemplateStructSymbol::isClassIn(string name) const 
-{    
-    return std::find(std::begin(template_classes), 
-		     std::end(template_classes), 
-		     name) != std::end(template_classes); 
 }
 
 ExprNode* TemplateStructSymbol::getReplacement(string name, const vector<ExprNode*>& expr) const
@@ -36,16 +29,6 @@ ExprNode* TemplateStructSymbol::getReplacement(string name, const vector<ExprNod
 	    return expr[i];
     }
     return nullptr;
-}
-
-ExprNode* TemplateStructSymbol::getReplacementForClass(string name, const vector<ExprNode*>& expr) const
-{
-    for ( unsigned int i = 0; i < template_classes.size(); ++i )
-    {
-	if ( template_classes[i] == name )
-	    return expr[i];
-    }
-    return nullptr;    
 }
 
 Symbol* TemplateStructSymbol::getSpec(const vector<ExprNode*>& symbols) const

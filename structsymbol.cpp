@@ -59,9 +59,6 @@ void StructSymbol::define(Symbol *sym)
 
 	VariableSymbol *_sym = static_cast<VariableSymbol*>(sym);
 	
-	if ( !_sym->isField() )
-	    throw SemanticError("internal error.");
-
 	addresses[_sym] = scope_size;
 	scope_size += _sym->getType()->getSize();
 

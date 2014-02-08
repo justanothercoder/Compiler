@@ -14,6 +14,8 @@ class BaseScope : public Scope
 {
 public:
 
+    friend class VariableSymbolDefine;
+    
     BaseScope();
 
     virtual Symbol* resolve(string name) const;

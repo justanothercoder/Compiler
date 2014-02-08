@@ -30,12 +30,17 @@ public:
     virtual void template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
     virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
     virtual void template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+
+    bool isTemplateParam() const;
     
 private:
 
     string name;
     
     VariableSymbol *variable;
+
+    TemplateStructSymbol *template_sym;
+    vector<ExprNode*> template_expr;
 };
 
 #endif

@@ -30,5 +30,6 @@ AST* NumberNode::copyTree() const
 
 void NumberNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    
+    CodeGen::emit("mov qword [rsp - " + std::to_string(GlobalConfig::int_size + getType()->getSize()) + "], " + num);
+    CodeGen::emit("lea rax, [rsp - " + std::to_string(GlobalConfig::int_size + getType()->getSize()) + "]");    
 }

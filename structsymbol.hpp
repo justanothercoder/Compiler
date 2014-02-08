@@ -15,6 +15,8 @@ using std::map;
 class StructSymbol : public Symbol, public BaseScope, public Type
 {
 public:
+
+    friend class VariableSymbolDefine;
     
     StructSymbol(string name, Scope *enclosing_scope);
 

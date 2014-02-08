@@ -27,11 +27,8 @@ void ReturnNode::check()
 void ReturnNode::gen()
 {
     expr->gen();
-    for ( int i = 0; i < expr->getType()->getSize(); i += GlobalConfig::int_size )
-    {
-	CodeGen::emit("mov rbx, [rax - " + std::to_string(i) +  "]");
-	CodeGen::emit("mov [rsp - " + std::to_string(i + GlobalConfig::int_size) +  "], rbx");
-    }
+
+    CodeGen::pushOnStack(expr->getType()->getSize(), GlobalConfig::int_size);
     CodeGen::emit("lea rax, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 
     CodeGen::emit("mov rsp, rbp");
@@ -56,5 +53,12 @@ AST* ReturnNode::copyTree() const
 
 void ReturnNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    
+    this->expr->template_gen(template_sym, expr);
+
+    CodeGen::pushOnStack(this->expr->getType()->getSize(), GlobalConfig::int_size);
+    CodeGen::emit("lea rax, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
+
+    CodeGen::emit("mov rsp, rbp");
+    CodeGen::emit("pop rbp");
+    CodeGen::emit("ret");
 }

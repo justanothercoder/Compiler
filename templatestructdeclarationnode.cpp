@@ -19,8 +19,8 @@ void TemplateStructDeclarationNode::build_scope()
 void TemplateStructDeclarationNode::define()
 {
     this->getScope()->define(definedSymbol);
-
-    vector< pair<string, Type*> > template_symbols;
+/*
+    vector< pair<string, TypeInfo> > template_symbols;
     vector<string> template_classes;
     
     for ( auto p : template_params )
@@ -32,15 +32,15 @@ void TemplateStructDeclarationNode::define()
 	else
 	{
 	    auto type = TypeHelper::fromTypeInfo(p.second, this->getScope());
-	    template_symbols.push_back({p.first, type});	    
+	    template_symbols.push_back({p.first, type});
 	}
     }
 
     static_cast<TemplateStructSymbol*>(definedSymbol)->template_symbols = template_symbols;
     static_cast<TemplateStructSymbol*>(definedSymbol)->template_classes = template_classes;
-
-//    for ( auto i : inner )
-//	i->define();
+*/
+    
+    static_cast<TemplateStructSymbol*>(definedSymbol)->template_symbols = template_params;
 }
 
 void TemplateStructDeclarationNode::check() { }

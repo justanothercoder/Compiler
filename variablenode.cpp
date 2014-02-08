@@ -1,6 +1,6 @@
 #include "variablenode.hpp"
 
-VariableNode::VariableNode(string name) : name(name), variable(nullptr) { }
+VariableNode::VariableNode(string name) : name(name), variable(nullptr) { template_sym = nullptr; }
 
 void VariableNode::build_scope() { }
 
@@ -97,12 +97,30 @@ void VariableNode::gen()
     }
 }
 
-Type* VariableNode::getType() const { return TypeHelper::getReferenceType(variable->getType()); }
+Type* VariableNode::getType() const
+{
+    if ( isTemplateParam() )
+    {
+	auto replace = template_sym->getReplacement(name, template_expr);
+	return replace->getType();
+    }
+    
+    return TypeHelper::getReferenceType(variable->getType());
+}
 
 bool VariableNode::isLeftValue() const { return true; }
 
+bool VariableNode::isTemplateParam() const { return template_sym != nullptr; }
+
 void VariableNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
+    if ( template_sym->isIn(name) )
+    {
+	this->template_sym = const_cast<TemplateStructSymbol*>(template_sym);
+	this->template_expr = expr;
+	return;
+    }
+    
     Symbol *sym = this->getScope()->resolve(name);
 
     if ( sym == nullptr )
@@ -133,7 +151,14 @@ AST* VariableNode::copyTree() const
 }
 
 void VariableNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{    
+{
+    if ( template_sym->isIn(name) )
+    {
+	auto replace = template_sym->getReplacement(name, expr);
+	replace->template_gen(template_sym, expr);	
+	return;
+    }
+    
     Type *var_type = variable->getType();
     
     if ( var_type->isReference() )
@@ -187,9 +212,6 @@ void VariableNode::template_gen(const TemplateStructSymbol *template_sym, const 
 	{
 	    Symbol *_this = this->getScope()->resolve("this");
 
-	    if ( _this == nullptr || _this->getSymbolType() != SymbolType::VARIABLE )
-		throw SemanticError("internal error");
-	    
 	    VariableSymbol *sym = static_cast<VariableSymbol*>(_this);
 
 	    Scope *struc_scope = static_cast<StructSymbol*>(static_cast<ReferenceType*>(sym->getType())->getReferredType());

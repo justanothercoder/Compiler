@@ -40,11 +40,16 @@ void VariableDeclarationNode::check()
     {
 	string type_name = type_info.getTypeName();
 		
-	Symbol *_type = this->getScope()->resolve(type_name);
+//	Symbol *_type = this->getScope()->resolve(type_name);
 
-	if ( _type->getSymbolType() != SymbolType::STRUCT )
-	    throw SemanticError("No such struct " + type_name);
+	Type *_type = TypeHelper::fromTypeInfo(type_info, this->getScope());
+	
+//	if ( _type->getSymbolType() != SymbolType::STRUCT )
+//	    throw SemanticError("No such struct " + type_name);
 		
+	if ( _type->getTypeKind() != TypeKind::STRUCT )
+	    throw SemanticError("No such struct " + type_name);
+
 	StructSymbol *type = static_cast<StructSymbol*>(_type);
 
 	Symbol *_constr = type->resolve(type_name);
@@ -96,9 +101,9 @@ void VariableDeclarationNode::gen()
 
 void VariableDeclarationNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    if ( template_sym->isClassIn(type_info.getTypeName()) )
+    if ( template_sym->isIn(type_info.getTypeName()) )
     {
-	auto replace = template_sym->getReplacementForClass(type_info.getTypeName(), expr);
+	auto replace = template_sym->getReplacement(type_info.getTypeName(), expr);
 
 	auto sym = static_cast<ReferenceType*>(replace->getType())->getReferredType();
 	
