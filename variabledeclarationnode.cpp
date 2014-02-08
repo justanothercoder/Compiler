@@ -38,44 +38,44 @@ void VariableDeclarationNode::check()
 {
     if ( !is_field )
     {
-		string type_name = type_info.getTypeName();
+	string type_name = type_info.getTypeName();
 		
-		Symbol *_type = this->getScope()->resolve(type_name);
+	Symbol *_type = this->getScope()->resolve(type_name);
 
-		if ( _type->getSymbolType() != SymbolType::STRUCT )
-			throw SemanticError("No such struct " + type_name);
+	if ( _type->getSymbolType() != SymbolType::STRUCT )
+	    throw SemanticError("No such struct " + type_name);
 		
-		StructSymbol *type = static_cast<StructSymbol*>(_type);
+	StructSymbol *type = static_cast<StructSymbol*>(_type);
 
-		Symbol *_constr = type->resolve(type_name);
-		if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
-			throw SemanticError("No constructor");
+	Symbol *_constr = type->resolve(type_name);
+	if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
+	    throw SemanticError("No constructor");
 
-		VariableSymbol *_constructor = static_cast<VariableSymbol*>(_constr);
-		if ( _constructor->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
-			throw SemanticError("No constructor");
+	VariableSymbol *_constructor = static_cast<VariableSymbol*>(_constr);
+	if ( _constructor->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
+	    throw SemanticError("No constructor");
 
-		OverloadedFunctionSymbol *constructor = static_cast<OverloadedFunctionSymbol*>(_constructor->getType());
+	OverloadedFunctionSymbol *constructor = static_cast<OverloadedFunctionSymbol*>(_constructor->getType());
 
-		vector<Type*> params_types;
-		params_types.push_back(TypeHelper::getReferenceType(definedSymbol->getType()));   
+	vector<Type*> params_types;
+	params_types.push_back(TypeHelper::getReferenceType(definedSymbol->getType()));   
 
-		for ( auto t : constructor_call_params )
-			t->check();
-		std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::back_inserter(params_types), [](ExprNode *t) { return t->getType(); });
+	for ( auto t : constructor_call_params )
+	    t->check();
+	std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::back_inserter(params_types), [](ExprNode *t) { return t->getType(); });
 		
-		resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
+	resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
 
-		if ( resolved_constructor == nullptr )
-			throw SemanticError("No viable overload of '" + type_name + "'.");
+	if ( resolved_constructor == nullptr )
+	    throw SemanticError("No viable overload of '" + type_name + "'.");
 		
-		auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
+	auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
 
-		for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
-		{
-			if ( resolved_constructor_type_info.getParamType(i)->isReference() && !constructor_call_params[i - 1]->isLeftValue() )
-			throw SemanticError("parameter is not an lvalue.");
-		}
+	for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
+	{
+	    if ( resolved_constructor_type_info.getParamType(i)->isReference() && !constructor_call_params[i - 1]->isLeftValue() )
+		throw SemanticError("parameter is not an lvalue.");
+	}
     }
 }
 
@@ -96,9 +96,9 @@ void VariableDeclarationNode::gen()
 
 void VariableDeclarationNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
 {
-    if ( template_sym->isIn(type_info.getTypeName()) )
+    if ( template_sym->isClassIn(type_info.getTypeName()) )
     {
-	auto replace = template_sym->getReplacement(type_info.getTypeName(), expr);
+	auto replace = template_sym->getReplacementForClass(type_info.getTypeName(), expr);
 
 	auto sym = static_cast<ReferenceType*>(replace->getType())->getReferredType();
 	
@@ -109,13 +109,6 @@ void VariableDeclarationNode::template_define(const TemplateStructSymbol *templa
     
     if ( var_type == BuiltIns::void_type )
 	throw SemanticError("can't declare a variable of 'void' type.");
-    else if ( template_sym->isIn(dynamic_cast<Symbol*>(var_type)) )
-    {
-	auto replace = template_sym->getReplacement(dynamic_cast<Symbol*>(var_type), expr);
-	replace->setScope(this->getScope());
-	replace->template_check(template_sym, expr);
-	var_type = static_cast<ClassVariableSymbol*>(static_cast<ReferenceType*>(replace->getType())->getReferredType())->sym;
-    }
     
     definedSymbol->setType(var_type);
     this->getScope()->define(definedSymbol);

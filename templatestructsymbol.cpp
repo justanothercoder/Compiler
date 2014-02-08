@@ -3,7 +3,7 @@
 
 map< vector<ExprNode*>, StructSymbol*> TemplateStructSymbol::specs;
 
-TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector<Symbol*>& template_symbols, TemplateDeclHolder *holder) : 
+TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, Type*> >& template_symbols, TemplateDeclHolder *holder) : 
     StructSymbol(name, enclosing_scope),
     template_symbols(template_symbols),
     holder(holder)
@@ -13,31 +13,32 @@ TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, 
 
 SymbolType TemplateStructSymbol::getSymbolType() const { return SymbolType::TEMPLATESTRUCT; }
 
-bool TemplateStructSymbol::isIn(Symbol *sym) const 
+bool TemplateStructSymbol::isVarIn(string name) const 
 { 
-    return std::find(std::begin(template_symbols), 
-		     std::end(template_symbols), 
-		     sym) != std::end(template_symbols);
+    return std::find_if(std::begin(template_symbols),
+			std::end(template_symbols),
+			[&](const pair<string, Type*>& p){ return name == p.first; }
+	) != std::end(template_symbols);
 }
 
-bool TemplateStructSymbol::isIn(string name) const 
+bool TemplateStructSymbol::isClassIn(string name) const 
 {    
     return std::find(std::begin(template_classes), 
 		     std::end(template_classes), 
 		     name) != std::end(template_classes); 
 }
 
-ExprNode* TemplateStructSymbol::getReplacement(Symbol *sym, const vector<ExprNode*>& expr) const
+ExprNode* TemplateStructSymbol::getReplacement(string name, const vector<ExprNode*>& expr) const
 {
     for ( unsigned int i = 0; i < template_symbols.size(); ++i )
     {
-	if ( template_symbols[i] == sym )
+	if ( template_symbols[i].first == name )
 	    return expr[i];
     }
     return nullptr;
 }
 
-ExprNode* TemplateStructSymbol::getReplacement(string name, const vector<ExprNode*>& expr) const
+ExprNode* TemplateStructSymbol::getReplacementForClass(string name, const vector<ExprNode*>& expr) const
 {
     for ( unsigned int i = 0; i < template_classes.size(); ++i )
     {

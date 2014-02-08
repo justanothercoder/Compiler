@@ -103,19 +103,11 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 	    }
 	}
 
-	int _size = param_type->getSize();
-	for ( int j = 0; j < _size; j += GlobalConfig::int_size, current_address += GlobalConfig::int_size )
-	{
-	    CodeGen::emit("mov rbx, [rax - " + std::to_string(j) + "]");
-	    CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rbx");
-	}
+	pushOnStack(param_type->getSize(), current_address + GlobalConfig::int_size);
     }
 
     if ( is_method && !is_operator )
-    {
 	CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rdi");
-//	current_address += GlobalConfig::int_size;
-    }
 
     CodeGen::emit("sub rsp, " + std::to_string(params_size));
     

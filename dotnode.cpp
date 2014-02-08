@@ -87,13 +87,13 @@ void DotNode::template_check(const TemplateStructSymbol *template_sym, const std
     if ( base_type == nullptr )
 	throw SemanticError("left side of '.' is not a struct instance.");
 
-    bool isTemplateSym = template_sym->isIn(base_type);
-
-    if ( isTemplateSym )
-    {
-	member = new VariableSymbol(member_name, GlobalHelper::getTypeHint(this));
-    }
-    else
+//    bool isTemplateSym = template_sym->isIn(base_type);
+//
+//      if ( isTemplateSym )
+//    {
+//	member = new VariableSymbol(member_name, GlobalHelper::getTypeHint(this));
+//    }
+//    else
     {
 	member = base_type->resolveMember(member_name);
 	

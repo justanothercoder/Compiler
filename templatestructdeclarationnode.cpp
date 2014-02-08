@@ -20,7 +20,7 @@ void TemplateStructDeclarationNode::define()
 {
     this->getScope()->define(definedSymbol);
 
-    vector<Symbol*> template_symbols;
+    vector< pair<string, Type*> > template_symbols;
     vector<string> template_classes;
     
     for ( auto p : template_params )
@@ -32,12 +32,7 @@ void TemplateStructDeclarationNode::define()
 	else
 	{
 	    auto type = TypeHelper::fromTypeInfo(p.second, this->getScope());
-
-	    auto sym = new VariableSymbol(p.first, type);
-	    
-	    template_symbols.push_back(sym);
-	    
-//	    definedSymbol->define(sym);
+	    template_symbols.push_back({p.first, type});	    
 	}
     }
 

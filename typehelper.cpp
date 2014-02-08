@@ -60,8 +60,8 @@ Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateS
 {    
     auto type_name = type_info.getTypeName();
 
-    if ( template_sym && template_sym->isIn(type_name) )
-	type_name = static_cast<ClassVariableSymbol*>(static_cast<ReferenceType*>(template_sym->getReplacement(type_name, expr)->getType())->getReferredType())->sym->getName();
+    if ( template_sym && template_sym->isClassIn(type_name) )
+	type_name = static_cast<ClassVariableSymbol*>(static_cast<ReferenceType*>(template_sym->getReplacementForClass(type_name, expr)->getType())->getReferredType())->sym->getName();
     
     Symbol *sym = scope->resolve(type_info.getTypeName());
 
