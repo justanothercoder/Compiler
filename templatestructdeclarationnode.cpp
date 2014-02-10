@@ -11,31 +11,29 @@ void TemplateStructDeclarationNode::build_scope()
 
     for ( auto decl : inner )
     {
-	decl->setScope(definedSymbol);
-	decl->build_scope();
+		decl->setScope(definedSymbol);
+		decl->build_scope();
     }
 }
 
-void TemplateStructDeclarationNode::define()
+void TemplateStructDeclarationNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
     this->getScope()->accept(new SymbolDefine(definedSymbol));
     
     static_cast<TemplateStructSymbol*>(definedSymbol)->template_symbols = template_params;
 }
 
-void TemplateStructDeclarationNode::check() { }
-
-void TemplateStructDeclarationNode::gen()
+void TemplateStructDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
     
 }
 
-void TemplateStructDeclarationNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void TemplateStructDeclarationNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    for ( auto i : inner )
-	i->template_check(template_sym, expr);
+//    for ( auto i : inner )
+//		i->check(template_sym, expr);
 }
-
+	
 vector<AST*> TemplateStructDeclarationNode::getChildren() const
 {
     vector<AST*> res;

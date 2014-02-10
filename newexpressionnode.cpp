@@ -4,82 +4,70 @@ NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> param
 
 void NewExpressionNode::build_scope()
 {
-    for ( auto i : params )
-    {
-	i->setScope(this->getScope());
-	i->build_scope();
-    }
+	for ( auto i : params )
+	{
+		i->setScope(this->getScope());
+		i->build_scope();
+	}
 }
 
-void NewExpressionNode::check()
+void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    string name = type_info.getTypeName();
-    
-    StructSymbol *type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, this->getScope()));
+	string name = type_info.getTypeName();
 
-    Symbol *_constr = type->resolve(name);
-    if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
-	throw SemanticError("No constructor");
+	StructSymbol *type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, this->getScope()));
 
-    VariableSymbol *_constructor = static_cast<VariableSymbol*>(_constr);
-    if ( _constructor->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
-	throw SemanticError("No constructor");
+	Symbol *_constr = type->resolve(name);
+	if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
+		throw SemanticError("No constructor");
 
-    OverloadedFunctionSymbol *constructor = static_cast<OverloadedFunctionSymbol*>(_constructor->getType());
+	VariableSymbol *_constructor = static_cast<VariableSymbol*>(_constr);
+	if ( _constructor->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
+		throw SemanticError("No constructor");
 
-    vector<Type*> params_types;
+	OverloadedFunctionSymbol *constructor = static_cast<OverloadedFunctionSymbol*>(_constructor->getType());
 
-    params_types.push_back(TypeHelper::getReferenceType(type));   
+	vector<Type*> params_types;
 
-    std::for_each(std::begin(params), std::end(params), [](ExprNode *t) { t->check(); });
-    std::transform(std::begin(params), std::end(params), std::back_inserter(params_types), [](ExprNode *t) { return t->getType(); });
-    
-    resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
+	params_types.push_back(TypeHelper::getReferenceType(type));   
 
-    if ( resolved_constructor == nullptr )
-	throw SemanticError("No viable overload of '" + name + "'.");
-	
-    auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
+	std::for_each(std::begin(params), std::end(params), [](ExprNode *t) { t->check(); });
+	std::transform(std::begin(params), std::end(params), std::back_inserter(params_types), [](ExprNode *t) { return t->getType(); });
 
-    for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
-    {
-	if ( resolved_constructor_type_info.getParamType(i)->isReference() && !params[i - 1]->isLeftValue() )
-	    throw SemanticError("parameter is not an lvalue.");
-    }
+	resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
+
+	if ( resolved_constructor == nullptr )
+		throw SemanticError("No viable overload of '" + name + "'.");
+
+	auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
+
+	for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
+	{
+		if ( resolved_constructor_type_info.getParamType(i)->isReference() && !params[i - 1]->isLeftValue() )
+			throw SemanticError("parameter is not an lvalue.");
+	}
 }
 
-void NewExpressionNode::gen()
+void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
-    CodeGen::construct_object(getType(), resolved_constructor, params);
+	CodeGen::construct_object(getType(), resolved_constructor, params);
 }
 
 Type* NewExpressionNode::getType() const
 {
-    return resolved_constructor->getTypeInfo().getReturnType();
+	return resolved_constructor->getTypeInfo().getReturnType();
 }
 
 bool NewExpressionNode::isLeftValue() const
 {
-    return false;
-}
-    
-void NewExpressionNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    
+	return false;
 }
 
-void NewExpressionNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+AST* NewExpressionNode::copyTree() const 
 {
-    
-}
+	vector<ExprNode*> vec;
+	std::transform(std::begin(params), std::end(params), std::back_inserter(vec), [&](ExprNode *e) { return static_cast<ExprNode*>(e->copyTree()); });
 
-AST* NewExpressionNode::copyTree() const
-{
-    
-}
-
-void NewExpressionNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    
+	return new NewExpressionNode(type_info, vec);
 }

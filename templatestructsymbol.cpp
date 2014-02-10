@@ -71,9 +71,9 @@ Symbol* TemplateStructSymbol::getSpec(const vector<ExprNode*>& symbols) const
     decl->setScope(holder->getDeclScope());
     decl->build_scope();
     
-    decl->template_define(this, symbols);
-    decl->template_check(this, symbols);    
-    decl->template_gen(this, symbols);
+    decl->define(this, symbols);
+    decl->check(this, symbols);    
+    decl->gen(this, symbols);
     
     return (specs[symbols] = static_cast<StructSymbol*>(decl->getDefinedSymbol()));
 }

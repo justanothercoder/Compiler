@@ -69,41 +69,38 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
     if ( is_method && !is_operator )
 	params_size += GlobalConfig::int_size;
     
-    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
-    {
-	if ( template_sym )
-	    params[i - is_meth]->template_gen(template_sym, template_expr);
-	else
-	    params[i - is_meth]->gen();
-
-	Type *param_type = resolved_function_type_info.getParamType(i);
-
-	if ( param_type->isReference() )
+	for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
 	{
-	    CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rax");
-	    current_address += GlobalConfig::int_size;
-	}
-	else
-	{
-	    if ( params[i - is_meth]->getType() != param_type )
-	    {
-		bool refconv = params[i - is_meth]->getType()->isReference() &&
-		    static_cast<ReferenceType*>(params[i - is_meth]->getType())->getReferredType() == param_type;
+		params[i - is_meth]->gen(template_sym, template_expr);
 
-		Type *par_type = params[i - is_meth]->getType();
-		
-		if ( refconv )
-		    par_type = static_cast<ReferenceType*>(par_type)->getReferredType();
+		Type *param_type = resolved_function_type_info.getParamType(i);
+
+		if ( param_type->isReference() )
+		{
+			CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rax");
+			current_address += GlobalConfig::int_size;
+		}
 		else
 		{
-		    auto conv = TypeHelper::getConversion(par_type, param_type);
+			if ( params[i - is_meth]->getType() != param_type )
+			{
+				bool refconv = params[i - is_meth]->getType()->isReference() &&
+					static_cast<ReferenceType*>(params[i - is_meth]->getType())->getReferredType() == param_type;
 
-		    genConversion(conv, params_size, par_type);
+				Type *par_type = params[i - is_meth]->getType();
+
+				if ( refconv )
+					par_type = static_cast<ReferenceType*>(par_type)->getReferredType();
+				else
+				{
+					auto conv = TypeHelper::getConversion(par_type, param_type);
+
+					genConversion(conv, params_size, par_type);
+				}
+			}
 		}
-	    }
-	}
 
-	pushOnStack(param_type->getSize(), current_address + GlobalConfig::int_size);
+		pushOnStack(param_type->getSize(), current_address + GlobalConfig::int_size);
     }
 
     if ( is_method && !is_operator )

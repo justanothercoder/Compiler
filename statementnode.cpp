@@ -7,60 +7,42 @@ StatementNode::StatementNode(const vector<AST*>& statements) : statements(statem
 
 StatementNode::~StatementNode()
 {
-    for ( auto i : statements )
-	delete i;
+	for ( auto i : statements )
+		delete i;
 }
 
 void StatementNode::build_scope()
 {
-    for ( auto i : this->statements )
-    {
-	i->setScope(getScope());
-	i->build_scope();
-    }
+	for ( auto i : this->statements )
+	{
+		i->setScope(getScope());
+		i->build_scope();
+	}
 }
 
-void StatementNode::define()
+void StatementNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    for ( auto i : statements )
-	i->define();
+	for ( auto i : statements )
+		i->define(template_sym, expr);
 }
 
-void StatementNode::check()
+void StatementNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    for ( auto i : statements )
-	i->check();
-}
-
-void StatementNode::gen()
-{
-    for ( auto i : statements )
-	i->gen();
-}
-
-void StatementNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    for ( auto i : statements )
-	i->template_define(template_sym, expr);
-}
-
-void StatementNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    for ( auto i : statements )
-	i->template_check(template_sym, expr);
+	for ( auto i : statements )
+		i->check(template_sym, expr);
 }
 
 AST* StatementNode::copyTree() const
 {
-    vector<AST*> stats;
+	vector<AST*> stats;
 
-    std::transform(std::begin(statements), std::end(statements), std::back_inserter(stats), [&](AST *t) { return t->copyTree(); });
-    
-    return new StatementNode(stats);
+	std::transform(std::begin(statements), std::end(statements), std::back_inserter(stats), [&](AST *t) { return t->copyTree(); });
+
+	return new StatementNode(stats);
 }
 
-void StatementNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void StatementNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    for ( auto i : statements )
-	i->template_gen(template_sym, expr);
+	for ( auto i : statements )
+		i->gen(template_sym, expr);
 }

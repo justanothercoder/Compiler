@@ -15,21 +15,21 @@ void BinaryOperatorNode::build_scope()
     rhs->build_scope();
 }
 
-void BinaryOperatorNode::check()
+void BinaryOperatorNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    lhs->check();
-    rhs->check();
+	lhs->check(template_sym, expr);
+	rhs->check(template_sym, expr);
 
-    special_check();
-    
-    Symbol *op_sym = this->getScope()->resolve(getOperatorName());
-    
-    OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(op_sym)->getType());
+	special_check();
 
-    resolved_operator_symbol = FunctionHelper::getViableOverload(ov_func, {lhs->getType(), rhs->getType()});
+	Symbol *op_sym = this->getScope()->resolve(getOperatorName());
 
-    if ( resolved_operator_symbol == nullptr )
-	throw SemanticError("No viable overload for '" + getOperatorName() + "' with '" + lhs->getType()->getName() + "' and '" + rhs->getType()->getName() + "' arguments.");
+	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(op_sym)->getType());
+
+	resolved_operator_symbol = FunctionHelper::getViableOverload(ov_func, {lhs->getType(), rhs->getType()});
+
+	if ( resolved_operator_symbol == nullptr )
+		throw SemanticError("No viable overload for '" + getOperatorName() + "' with '" + lhs->getType()->getName() + "' and '" + rhs->getType()->getName() + "' arguments.");
 }
 
 void BinaryOperatorNode::special_check()
@@ -72,7 +72,7 @@ string BinaryOperatorNode::getCodeOperatorName()
     }    
 }
 
-void BinaryOperatorNode::gen()
+void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
     string call_name = resolved_operator_symbol->getEnclosingScope()->getScopeName() + "_";
 
@@ -86,22 +86,7 @@ void BinaryOperatorNode::gen()
     CodeGen::emit("pop rsi");
 }
 
-void BinaryOperatorNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    
-}
-
-void BinaryOperatorNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    
-}
-
 AST* BinaryOperatorNode::copyTree() const
 {
-    
-}
-
-void BinaryOperatorNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    
+	return new BinaryOperatorNode(static_cast<ExprNode*>(lhs->copyTree()), static_cast<ExprNode*>(rhs->copyTree()), op_type);    
 }

@@ -23,13 +23,13 @@ public:
 	
     virtual void build_scope() = 0;    
 
-    virtual void define() = 0;
-    virtual void check() = 0;
-    virtual void gen() = 0;
+    void define();
+    void check();
+    void gen();
 
-    virtual void template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) = 0;
-    virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) = 0;
-    virtual void template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) = 0;
+    virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) = 0;
+    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) = 0;
+    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) = 0;
 
 };
 

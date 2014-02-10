@@ -10,127 +10,68 @@ void DotNode::build_scope()
     base->build_scope();    
 }
 
-void DotNode::check()
+void DotNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    base->check();
+	base->check(template_sym, expr);
 
-    Type *_base_type = base->getType();
+	Type *_base_type = base->getType();
 
-    if ( _base_type->isReference() )
-	_base_type = static_cast<ReferenceType*>(_base_type)->getReferredType();
-    
-    base_type = dynamic_cast<StructSymbol*>(_base_type);
+	if ( _base_type->isReference() )
+		_base_type = static_cast<ReferenceType*>(_base_type)->getReferredType();
 
-    if ( base_type == nullptr )
-	throw SemanticError("left side of '.' is not a struct instance.");
+	base_type = dynamic_cast<StructSymbol*>(_base_type);
 
-    member = base_type->resolveMember(member_name);
+	if ( base_type == nullptr )
+		throw SemanticError("left side of '.' is not a struct instance.");
 
-    if ( member == nullptr )
-	throw SemanticError(member_name + " is not member of " + base_type->getName());
-}
+	member = base_type->resolveMember(member_name);
 
-void DotNode::gen()
-{
-    base->gen();
-
-    CodeGen::emit("mov rdi, rax");
-
-    Type *member_type = static_cast<VariableSymbol*>(member)->getType();
-    
-    if ( member_type->isReference() )
-    {
-	CodeGen::emit("mov rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(static_cast<VariableSymbol*>(member))) + "]");
-    }
-    else if ( member_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
-    {
-	OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(member_type);
-
-	auto ov_func_type_info = ov_func->getTypeInfo();
-
-	if ( ov_func_type_info.overloads.size() > 1 )
-	{
-	    Type *hint_type = GlobalHelper::getTypeHint(this);
-	    if ( hint_type == nullptr )
-		throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
-
-	    member = new VariableSymbol(member_name, ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
-	}
-	else
-	{
-	    member = new VariableSymbol(ov_func->getName(), ov_func_type_info.symbols.begin()->second);
-	}
-
-	CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(static_cast<VariableSymbol*>(member)->getType())->getScopedTypedName() + "]");
-    }
-    else
-    {
-	CodeGen::emit("lea rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(static_cast<VariableSymbol*>(member))) + "]");
-    }
+	if ( member == nullptr )
+		throw SemanticError(member_name + " is not member of " + base_type->getName());
 }
 
 Type* DotNode::getType() const { return TypeHelper::getReferenceType(static_cast<VariableSymbol*>(member)->getType()); }
 bool DotNode::isLeftValue() const { return true; }
 
-void DotNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    base->template_check(template_sym, expr);
-
-    Type *_base_type = base->getType();
-
-    if ( _base_type->isReference() )
-	_base_type = static_cast<ReferenceType*>(_base_type)->getReferredType();
-
-    base_type = dynamic_cast<StructSymbol*>(_base_type);
-
-    if ( base_type == nullptr )
-	throw SemanticError("left side of '.' is not a struct instance.");
-
-    member = base_type->resolveMember(member_name);
-	
-    if ( member == nullptr )
-	throw SemanticError(member_name + " is not member of " + base_type->getName());
-}
-
-void DotNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr) { }
+void DotNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
 
 AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base->copyTree()), member_name); }
 
-void DotNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
+void DotNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {    
-    base->template_gen(template_sym, expr);
+	base->gen(template_sym, expr);
 
-    CodeGen::emit("mov rdi, rax");
+	CodeGen::emit("mov rdi, rax");
 
-    Type *member_type = static_cast<VariableSymbol*>(member)->getType();
-    
-    if ( member_type->isReference() )
-    {
-	CodeGen::emit("mov rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(static_cast<VariableSymbol*>(member))) + "]");
-    }
-    else if ( member_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
-    {
-	OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(member_type);
+	Type *member_type = static_cast<VariableSymbol*>(member)->getType();
 
-	auto ov_func_type_info = ov_func->getTypeInfo();
-
-	if ( ov_func_type_info.overloads.size() > 1 )
+	if ( member_type->isReference() )
 	{
-	    Type *hint_type = GlobalHelper::getTypeHint(this);
-	    if ( hint_type == nullptr )
-		throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
+		CodeGen::emit("mov rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(static_cast<VariableSymbol*>(member))) + "]");
+	}
+	else if ( member_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
+	{
+		OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(member_type);
 
-	    member = new VariableSymbol(member_name, ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
+		auto ov_func_type_info = ov_func->getTypeInfo();
+
+		if ( ov_func_type_info.overloads.size() > 1 )
+		{
+			Type *hint_type = GlobalHelper::getTypeHint(this);
+			if ( hint_type == nullptr )
+				throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
+
+			member = new VariableSymbol(member_name, ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
+		}
+		else
+		{
+			member = new VariableSymbol(ov_func->getName(), ov_func_type_info.symbols.begin()->second);
+		}
+
+		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(static_cast<VariableSymbol*>(member)->getType())->getScopedTypedName() + "]");
 	}
 	else
 	{
-	    member = new VariableSymbol(ov_func->getName(), ov_func_type_info.symbols.begin()->second);
+		CodeGen::emit("lea rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(static_cast<VariableSymbol*>(member))) + "]");
 	}
-
-	CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(static_cast<VariableSymbol*>(member)->getType())->getScopedTypedName() + "]");
-    }
-    else
-    {
-	CodeGen::emit("lea rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(static_cast<VariableSymbol*>(member))) + "]");
-    }
 }

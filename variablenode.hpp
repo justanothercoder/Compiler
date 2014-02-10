@@ -24,12 +24,9 @@ public:
     virtual bool isLeftValue() const;    
 
     virtual void build_scope();
-    virtual void check();
-    virtual void gen();
 
-    virtual void template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
-    virtual void template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
-    virtual void template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr);
+    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
 
     bool isTemplateParam() const;
     

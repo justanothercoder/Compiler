@@ -15,48 +15,29 @@ void WhileNode::build_scope()
     stats->build_scope();
 }
 
-void WhileNode::define() { stats->define(); }
-
-void WhileNode::check()
+void WhileNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    while_scope->recalc_scope_address();
+	while_scope->recalc_scope_address();
 
-    cond->check();
-    stats->check();
-}
-
-void WhileNode::gen()
-{
-    string exit_label = WhileNode::getNewLabel(), cycle_label = WhileNode::getNewLabel();
-    
-    CodeGen::emit(cycle_label + ":");
-    cond->gen();
-    CodeGen::emit("cmp qword [rax], 0");
-    CodeGen::emit("jz " + exit_label);
-    stats->gen();
-    CodeGen::emit("jmp " + cycle_label);
-    CodeGen::emit(exit_label + ":");
+    cond->check(template_sym, expr);
+    stats->check(template_sym, expr);
 }
 
 string WhileNode::getNewLabel() { return "@while_label" + std::to_string(++WhileNode::label_num); }
 
-void WhileNode::template_check(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    cond->template_check(template_sym, expr);
-    stats->template_check(template_sym, expr);
-}
-
-void WhileNode::template_define(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
+void WhileNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { stats->define(template_sym, expr); }
     
-}
+AST* WhileNode::copyTree() const { return new WhileNode(static_cast<ExprNode*>(cond->copyTree()), stats->copyTree()); }
 
-AST* WhileNode::copyTree() const
+void WhileNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
+    string exit_label = WhileNode::getNewLabel(), cycle_label = WhileNode::getNewLabel();
     
-}
-
-void WhileNode::template_gen(const TemplateStructSymbol *template_sym, const std::vector<ExprNode*>& expr)
-{
-    
+    CodeGen::emit(cycle_label + ":");
+    cond->gen(template_sym, expr);
+    CodeGen::emit("cmp qword [rax], 0");
+    CodeGen::emit("jz " + exit_label);
+    stats->gen(template_sym, expr);
+    CodeGen::emit("jmp " + cycle_label);
+    CodeGen::emit(exit_label + ":");
 }
