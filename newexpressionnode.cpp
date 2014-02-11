@@ -11,6 +11,12 @@ void NewExpressionNode::build_scope()
 	}
 }
 
+virtual NewExpressionNode::~NewExpressionNode()
+{
+	for ( auto i : params )
+		delete i;
+}
+
 void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	string name = type_info.getTypeName();

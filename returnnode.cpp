@@ -8,6 +8,8 @@ void ReturnNode::build_scope()
     expr->build_scope();
 }
 
+ReturnNode::~ReturnNode() { delete expr; }
+
 void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
     this->expr->gen(template_sym, expr);
@@ -32,12 +34,6 @@ void ReturnNode::check(const TemplateStructSymbol *template_sym, std::vector<Exp
     expr->check(template_sym, _expr);
 }
 
-void ReturnNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
-{
-    this->expr->define(template_sym, expr);
-}
+void ReturnNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { this->expr->define(template_sym, expr); }
 
-AST* ReturnNode::copyTree() const
-{
-    return new ReturnNode(static_cast<ExprNode*>(expr->copyTree()));
-}
+AST* ReturnNode::copyTree() const { return new ReturnNode(static_cast<ExprNode*>(expr->copyTree())); }

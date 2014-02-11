@@ -5,7 +5,13 @@ StructDeclarationNode::StructDeclarationNode(string name, const vector<Declarati
     definedSymbol = nullptr;
 }
 
-StructDeclarationNode::~StructDeclarationNode() { delete definedSymbol; }
+StructDeclarationNode::~StructDeclarationNode() 
+{ 
+	delete definedSymbol; 
+
+	for ( auto i : inner )
+		delete i;
+}
 
 Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 

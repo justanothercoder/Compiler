@@ -11,6 +11,8 @@ public:
 
     IfNode(ExprNode *cond, AST *stats_true, AST *stats_false);
 
+	virtual ~IfNode();
+
     virtual AST* copyTree() const;
 
     virtual void build_scope();

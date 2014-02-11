@@ -10,7 +10,13 @@ VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info
     resolved_constructor = nullptr;
 }
 
-VariableDeclarationNode::~VariableDeclarationNode() { delete definedSymbol; }
+VariableDeclarationNode::~VariableDeclarationNode() 
+{ 
+	delete definedSymbol; 
+
+	for ( auto i : constructor_call_params )
+		delete i;
+}
 
 Symbol* VariableDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 

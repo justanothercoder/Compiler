@@ -2,6 +2,8 @@
 
 BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type) { resolved_operator_symbol = nullptr; }
 
+BinaryOperatorNode::~BinaryOperatorNode() { delete lhs; delete rhs; }
+
 bool BinaryOperatorNode::isLeftValue() const { return getType()->isReference(); }
 
 Type* BinaryOperatorNode::getType() const { return resolved_operator_symbol->getTypeInfo().getReturnType(); }

@@ -11,6 +11,8 @@ class ReturnNode : public AST
 public:
 
     ReturnNode(ExprNode *expr);
+	
+	virtual ~ReturnNode();
 
     virtual AST* copyTree() const;
 

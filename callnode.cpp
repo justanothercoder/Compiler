@@ -1,6 +1,8 @@
 #include "callnode.hpp"
 
 CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), resolved_function_symbol(nullptr) { }
+
+CallNode::~CallNode() { delete caller; }
     
 Type* CallNode::getType() const { return resolved_function_symbol->getTypeInfo().getReturnType(); }
 bool CallNode::isLeftValue() const { return false; }

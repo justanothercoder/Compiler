@@ -5,7 +5,13 @@ FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair
 	definedSymbol = nullptr;
 }
 
-FunctionDeclarationNode::~FunctionDeclarationNode() { delete definedSymbol; }   
+FunctionDeclarationNode::~FunctionDeclarationNode() 
+{ 
+	delete definedSymbol; 
+	
+	for ( auto i : statements )
+		delete i;
+}   
 
 void FunctionDeclarationNode::build_scope()
 {

@@ -15,6 +15,8 @@ public:
 
     BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type);
 
+	virtual ~BinaryOperatorNode();
+
     virtual AST* copyTree() const;
 
     virtual void build_scope();

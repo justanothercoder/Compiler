@@ -19,6 +19,8 @@ class NewExpressionNode : public ExprNode
 public:
     NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params);
 
+	virtual ~NewExpressionNode();
+
     virtual AST* copyTree() const;
 
     virtual void build_scope();

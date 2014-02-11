@@ -8,6 +8,15 @@ IfNode::IfNode(ExprNode *cond, AST *stats_true, AST *stats_false) : cond(cond), 
     else_scope = nullptr;
 }
 
+IfNode::~IfNode()
+{
+	delete if_scope;
+	delete else_scope;
+	delete cond;
+	delete stats_true;
+	delete stats_false;
+}
+
 void IfNode::build_scope()
 {
     if_scope = new LocalScope(this->getScope());

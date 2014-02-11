@@ -19,6 +19,8 @@ class CallNode : public ExprNode
 public:
 
     CallNode(ExprNode *caller, const vector<ExprNode*>& params);
+
+	virtual ~CallNode();
     
     virtual AST* copyTree() const;
 

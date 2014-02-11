@@ -11,6 +11,8 @@ public:
 
     WhileNode(ExprNode *cond, AST *stats);
 
+	virtual ~WhileNode();
+
     virtual AST* copyTree() const;
 
     virtual void build_scope();
