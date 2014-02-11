@@ -1,9 +1,6 @@
 #include "structdeclarationnode.hpp"
 
-StructDeclarationNode::StructDeclarationNode(string name, const vector<DeclarationNode*>& inner) : name(name), inner(inner)
-{
-    definedSymbol = nullptr;
-}
+StructDeclarationNode::StructDeclarationNode(string name, const vector<DeclarationNode*>& inner) : name(name), inner(inner) { definedSymbol = nullptr; }
 
 StructDeclarationNode::~StructDeclarationNode() 
 { 
@@ -45,7 +42,12 @@ AST* StructDeclarationNode::copyTree() const
 {
     vector<DeclarationNode*> in;
 
-    std::transform(std::begin(inner), std::end(inner), std::back_inserter(in), [&](DeclarationNode *decl) { return static_cast<DeclarationNode*>(decl->copyTree()); });
+    std::transform(std::begin(inner), std::end(inner), std::back_inserter(in), 
+		[&](DeclarationNode *decl) 
+		{ 
+			return static_cast<DeclarationNode*>(decl->copyTree()); 
+		}
+	);
     
     return new StructDeclarationNode(name, in);
 }

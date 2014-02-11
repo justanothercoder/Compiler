@@ -11,7 +11,7 @@ void NewExpressionNode::build_scope()
 	}
 }
 
-virtual NewExpressionNode::~NewExpressionNode()
+NewExpressionNode::~NewExpressionNode()
 {
 	for ( auto i : params )
 		delete i;
@@ -37,8 +37,11 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 
 	params_types.push_back(TypeHelper::getReferenceType(type));   
 
-	std::for_each(std::begin(params), std::end(params), [](ExprNode *t) { t->check(); });
-	std::transform(std::begin(params), std::end(params), std::back_inserter(params_types), [](ExprNode *t) { return t->getType(); });
+	for ( auto i : params ) 
+	{
+		i->check();
+		params_types.push_back(i->getType());
+	}
 
 	resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
 
@@ -60,15 +63,9 @@ void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vecto
 	CodeGen::construct_object(getType(), resolved_constructor, params);
 }
 
-Type* NewExpressionNode::getType() const
-{
-	return resolved_constructor->getTypeInfo().getReturnType();
-}
+Type* NewExpressionNode::getType() const { return resolved_constructor->getTypeInfo().getReturnType(); }
 
-bool NewExpressionNode::isLeftValue() const
-{
-	return false;
-}
+bool NewExpressionNode::isLeftValue() const { return false; }
 
 AST* NewExpressionNode::copyTree() const 
 {
