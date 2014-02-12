@@ -12,10 +12,16 @@ string to_string(TokenType tt)
     case TokenType::IF:        return "if";
     case TokenType::ELSE:      return "else";
     case TokenType::WHILE:     return "while";
+    case TokenType::DEF:       return "def";
+    case TokenType::NEW:       return "new";
+    case TokenType::TEMPLATE:  return "template";
+	case TokenType::OPERATOR:  return "operator";
     case TokenType::LPAREN:    return "(";
     case TokenType::RPAREN:    return ")";
     case TokenType::LBRACE:    return "{";
     case TokenType::RBRACE:    return "}";
+	case TokenType::LBRACKET:  return "[";
+	case TokenType::RBRACKET:  return "]"; 
     case TokenType::COMMA:     return ",";
     case TokenType::COLON:     return ":";
     case TokenType::SEMICOLON: return ";";
@@ -26,9 +32,6 @@ string to_string(TokenType tt)
     case TokenType::DIV:       return "/";
     case TokenType::REF:       return "&";
     case TokenType::DOT:       return ".";
-    case TokenType::DEF:       return "def";
-    case TokenType::NEW:       return "new";
-    case TokenType::TEMPLATE:  return "template";
     case TokenType::LESS:      return "<";
     case TokenType::GREATER:   return ">";
     }

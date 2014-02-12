@@ -84,7 +84,13 @@ void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vect
     CodeGen::emit("push rsi");
     CodeGen::emit("lea rsi, [" + call_name + "]");
 
-    CodeGen::genCallCode(resolved_operator_symbol, {lhs, rhs});
+	if ( resolved_operator_symbol->isMethod() )
+	{
+		CodeGen::genCallCode(resolved_operator_symbol, {rhs}, template_sym, expr);
+	}
+	else
+	    CodeGen::genCallCode(resolved_operator_symbol, {lhs, rhs}, template_sym, expr);
+
     CodeGen::emit("pop rsi");
 }
 

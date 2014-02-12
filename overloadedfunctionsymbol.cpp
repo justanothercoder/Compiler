@@ -20,7 +20,7 @@ bool OverloadedFunctionSymbol::isOperator() const { return traits.is_operator; }
 Type* OverloadedFunctionSymbol::getBaseType() const
 {
     if ( !isMethod() )
-	throw;    
+		throw;    
     return type_info.overloads.begin()->getParamType(0);
 }
 

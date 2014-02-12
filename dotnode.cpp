@@ -2,7 +2,7 @@
 
 DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(member_name) { base_type = nullptr; member = nullptr; }
 
-DotNode::~DotNode() { delete member; }
+DotNode::~DotNode() { }
 
 void DotNode::build_scope()
 {

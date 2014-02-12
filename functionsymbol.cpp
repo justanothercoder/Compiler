@@ -2,30 +2,36 @@
 
 FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits) : name(name), function_type_info(function_type_info), enclosing_scope(enclosing_scope), traits(traits)
 {
-    scope_size = 0;
-    params_size = GlobalConfig::int_size;
-    
-    scope_name = enclosing_scope->getScopeName() + "_" + name;
+	scope_size = 0;
+	params_size = GlobalConfig::int_size;
+
+	scope_name = enclosing_scope->getScopeName() + "_" + ((traits.is_operator && name == "operator[]") ? "operatorelem" : name);
 }
 
 string FunctionSymbol::getTypedName() const
 {
-    string res = name;
+	string res = name;
 
-    for ( int i = 0; i < function_type_info.getNumberOfParams(); ++i )
-	res += "_" + function_type_info.getParamType(i)->getName();
+	if ( traits.is_operator )
+	{
+		if ( name == "operator[]" )
+			res = "operatorelem";
+	}
 
-    return res;
+	for ( int i = 0; i < function_type_info.getNumberOfParams(); ++i )
+		res += "_" + function_type_info.getParamType(i)->getName();
+
+	return res;
 }
 
 string FunctionSymbol::getScopedTypedName() const
 {
-    string res = scope_name;
+	string res = scope_name;
 
-    for ( int i = 0; i < function_type_info.getNumberOfParams(); ++i )
-	res += "_" + function_type_info.getParamType(i)->getName();
+	for ( int i = 0; i < function_type_info.getNumberOfParams(); ++i )
+		res += "_" + function_type_info.getParamType(i)->getName();
 
-    return res;
+	return res;
 }
 
 Scope* FunctionSymbol::getEnclosingScope() const { return enclosing_scope; }

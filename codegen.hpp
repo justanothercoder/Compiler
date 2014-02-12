@@ -20,7 +20,7 @@ public:
 
     static void emit(string text);
 
-    static void construct_object(Type *type, FunctionSymbol *constructor, const vector<ExprNode*>& params, int offset = 0);
+    static void construct_object(Type *type, FunctionSymbol *constructor, const vector<ExprNode*>& params, int offset = 0, const TemplateStructSymbol *template_sym = nullptr, std::vector<ExprNode*> template_expr = { });
 
     static void genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params, const TemplateStructSymbol *template_sym = nullptr, std::vector<ExprNode*> template_expr = { });
 

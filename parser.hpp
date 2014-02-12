@@ -21,6 +21,7 @@
 #include "variablenode.hpp"
 #include "numbernode.hpp"
 #include "newexpressionnode.hpp"
+#include "bracketnode.hpp"
 
 class Parser : public AbstractParser
 {
@@ -33,6 +34,7 @@ public:
 private:
 
     string id();
+	string operator_name();
     TypeInfo typeInfo();
     vector<ExprNode*> call_params_list();
     

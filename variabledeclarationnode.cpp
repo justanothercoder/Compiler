@@ -85,7 +85,7 @@ void VariableDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 		CodeGen::emit("push rsi");
 		CodeGen::emit("lea rsi, [" + resolved_constructor->getScopedTypedName() + "]");
 
-		CodeGen::genCallCode(resolved_constructor, constructor_call_params);
+		CodeGen::genCallCode(resolved_constructor, constructor_call_params, template_sym, expr);
 		CodeGen::emit("pop rsi");
 	}
 }

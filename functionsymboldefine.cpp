@@ -1,89 +1,86 @@
 #include "functionsymboldefine.hpp"
 
-FunctionSymbolDefine::FunctionSymbolDefine(FunctionSymbol *sym) : sym(sym)
-{
-    
-}
+FunctionSymbolDefine::FunctionSymbolDefine(FunctionSymbol *sym) : sym(sym) { }
 
 void FunctionSymbolDefine::visit(GlobalScope *sc)
 {
-    string sym_name = sym->getName();
-    
-    auto it = sc->table.find(sym_name);
+	string sym_name = sym->getName();
 
-    if ( it == std::end(sc->table) )
-	sc->table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym->getTraits()));
+	auto it = sc->table.find(sym_name);
 
-    Symbol *_sym = sc->table[sym_name];
+	if ( it == std::end(sc->table) )
+		sc->table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym->getTraits()));
 
-    if ( _sym->getSymbolType() != SymbolType::VARIABLE )
-	throw SemanticError(sym_name + " is already defined.");
+	Symbol *_sym = sc->table[sym_name];
 
-    if ( static_cast<VariableSymbol*>(_sym)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
-	throw SemanticError(sym_name + " is already defined as not function");
+	if ( _sym->getSymbolType() != SymbolType::VARIABLE )
+		throw SemanticError(sym_name + " is already defined.");
 
-    auto func_type_info = sym->getTypeInfo();
+	if ( static_cast<VariableSymbol*>(_sym)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
+		throw SemanticError(sym_name + " is already defined as not function");
 
-    auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym)->getType());
-    ofs->addOverload(func_type_info, sym);
+	auto func_type_info = sym->getTypeInfo();
+
+	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym)->getType());
+	ofs->addOverload(func_type_info, sym);
 }
 
 void FunctionSymbolDefine::visit(LocalScope *sc)
 {
-    string sym_name = sym->getName();
-    
-    auto it = sc->table.find(sym_name);
-	
-    if ( it == std::end(sc->table) )
-	sc->table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym->getTraits()));
+	string sym_name = sym->getName();
 
-    Symbol *_sym = sc->table[sym_name];	
+	auto it = sc->table.find(sym_name);
 
-    if ( _sym->getSymbolType() != SymbolType::VARIABLE || static_cast<VariableSymbol*>(_sym)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
-	throw SemanticError(sym_name + " is already defined.");
+	if ( it == std::end(sc->table) )
+		sc->table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym->getTraits()));
 
-    auto func_type_info = sym->getTypeInfo();
+	Symbol *_sym = sc->table[sym_name];	
 
-    auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym)->getType());
-    ofs->addOverload(func_type_info, sym);
+	if ( _sym->getSymbolType() != SymbolType::VARIABLE || static_cast<VariableSymbol*>(_sym)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
+		throw SemanticError(sym_name + " is already defined.");
+
+	auto func_type_info = sym->getTypeInfo();
+
+	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym)->getType());
+	ofs->addOverload(func_type_info, sym);
 }
 
 void FunctionSymbolDefine::visit(StructSymbol *sc)
 {
-    string sym_name = sym->getName();
-	
-    auto it = sc->table.find(sym_name);
-	
-    if ( it == std::end(sc->table) )
-	sc->table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym->getTraits()));
+	string sym_name = sym->getName();
 
-    Symbol *_sym = sc->table[sym_name];	
+	auto it = sc->table.find(sym_name);
 
-    if ( _sym->getSymbolType() != SymbolType::VARIABLE || static_cast<VariableSymbol*>(_sym)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
-	throw SemanticError(sym_name + " is already defined.");
+	if ( it == std::end(sc->table) )
+		sc->table[sym_name] = new VariableSymbol(sym_name, new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym->getTraits()));
 
-    auto func_type_info = sym->getTypeInfo();
+	Symbol *_sym = sc->table[sym_name];	
 
-    auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym)->getType());
-    ofs->addOverload(func_type_info, sym);	
+	if ( _sym->getSymbolType() != SymbolType::VARIABLE || static_cast<VariableSymbol*>(_sym)->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
+		throw SemanticError(sym_name + " is already defined.");
+
+	auto func_type_info = sym->getTypeInfo();
+
+	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym)->getType());
+	ofs->addOverload(func_type_info, sym);	
 }
 
 void FunctionSymbolDefine::visit(FunctionSymbol *sc)
 {
-    string sym_name = sym->getName();
+	string sym_name = sym->getName();
 
-    if ( sc->table[sym_name] == nullptr )
-	sc->table[sym_name] = new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym->getTraits());
+	if ( sc->table[sym_name] == nullptr )
+		sc->table[sym_name] = new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym->getTraits());
 
-    if ( sc->table[sym_name]->getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
-	throw SemanticError(sym_name + " is not a function");
+	if ( sc->table[sym_name]->getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
+		throw SemanticError(sym_name + " is not a function");
 
-    OverloadedFunctionSymbol* ov_func = static_cast<OverloadedFunctionSymbol*>(sc->table[sym_name]);	
-	
-    auto type_info = ov_func->getTypeInfo();	
-    auto func_type_info = sym->getTypeInfo();
+	OverloadedFunctionSymbol* ov_func = static_cast<OverloadedFunctionSymbol*>(sc->table[sym_name]);	
 
-    auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(sc->table[sym_name])->getType());
-    ofs->addOverload(func_type_info, sym);
+	auto type_info = ov_func->getTypeInfo();	
+	auto func_type_info = sym->getTypeInfo();
+
+	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(sc->table[sym_name])->getType());
+	ofs->addOverload(func_type_info, sym);
 
 }
