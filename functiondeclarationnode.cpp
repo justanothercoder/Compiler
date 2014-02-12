@@ -94,8 +94,8 @@ void FunctionDeclarationNode::check(const TemplateStructSymbol *template_sym, st
 
 AST* FunctionDeclarationNode::copyTree() const
 {
-	vector<AST*> stats;
-	std::transform(std::begin(statements), std::end(statements), std::back_inserter(stats), [&](AST *t) { return t->copyTree(); });
+	vector<AST*> stats(statements.size());
+	std::transform(std::begin(statements), std::end(statements), std::begin(stats), [&](AST *t) { return t->copyTree(); });
 
 	return new FunctionDeclarationNode(name, params, return_type_info, stats, traits);
 }

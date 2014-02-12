@@ -40,13 +40,9 @@ const vector<DeclarationNode*>& StructDeclarationNode::getInner() const { return
 
 AST* StructDeclarationNode::copyTree() const
 {
-    vector<DeclarationNode*> in;
+    vector<DeclarationNode*> in(inner.size());
 
-    std::transform(std::begin(inner), std::end(inner), std::back_inserter(in), 
-		[&](DeclarationNode *decl) 
-		{ 
-			return static_cast<DeclarationNode*>(decl->copyTree()); 
-		}
+    std::transform(std::begin(inner), std::end(inner), std::begin(in), [&](DeclarationNode *decl) { return static_cast<DeclarationNode*>(decl->copyTree()); }
 	);
     
     return new StructDeclarationNode(name, in);

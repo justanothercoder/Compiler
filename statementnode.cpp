@@ -1,9 +1,6 @@
 #include "statementnode.hpp"
 
-StatementNode::StatementNode(const vector<AST*>& statements) : statements(statements)
-{
-
-}
+StatementNode::StatementNode(const vector<AST*>& statements) : statements(statements) { }
 
 StatementNode::~StatementNode()
 {
@@ -34,9 +31,9 @@ void StatementNode::check(const TemplateStructSymbol *template_sym, std::vector<
 
 AST* StatementNode::copyTree() const
 {
-	vector<AST*> stats;
+	vector<AST*> stats(statements.size());
 
-	std::transform(std::begin(statements), std::end(statements), std::back_inserter(stats), [&](AST *t) { return t->copyTree(); });
+	std::transform(std::begin(statements), std::end(statements), std::begin(stats), [&](AST *t) { return t->copyTree(); });
 
 	return new StatementNode(stats);
 }

@@ -112,9 +112,9 @@ void VariableDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 
 AST* VariableDeclarationNode::copyTree() const
 {
-    vector<ExprNode*> params;
+    vector<ExprNode*> params(constructor_call_params.size());
 
-    std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::back_inserter(params), [&] (ExprNode *expr) { return static_cast<ExprNode*>(expr->copyTree()); });
+    std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::begin(params), [&] (ExprNode *expr) { return static_cast<ExprNode*>(expr->copyTree()); });
     
     return new VariableDeclarationNode(name, type_info, is_field, params);
 }

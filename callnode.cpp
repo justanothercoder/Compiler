@@ -47,9 +47,9 @@ void CallNode::build_scope()
 
 AST* CallNode::copyTree() const
 {
-    vector<ExprNode*> expr;
+    vector<ExprNode*> expr(params.size());
 
-    std::transform(std::begin(params), std::end(params), std::back_inserter(expr), [&] (ExprNode *ex) { return static_cast<ExprNode*>(ex->copyTree()); });
+    std::transform(std::begin(params), std::end(params), std::begin(expr), [&] (ExprNode *ex) { return static_cast<ExprNode*>(ex->copyTree()); });
     
     return new CallNode(static_cast<ExprNode*>(caller->copyTree()), expr);
 }

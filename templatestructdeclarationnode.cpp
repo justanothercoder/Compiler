@@ -22,11 +22,12 @@ void TemplateStructDeclarationNode::define(const TemplateStructSymbol *template_
 void TemplateStructDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
 void TemplateStructDeclarationNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
 	
-vector<AST*> TemplateStructDeclarationNode::getChildren() const
-{
-    vector<AST*> res; 
-    std::transform(std::begin(inner), std::end(inner), std::back_inserter(res), [](DeclarationNode* d) { return static_cast<AST*>(d); }); 
-    return res;
-}
-
 Scope* TemplateStructDeclarationNode::getDeclScope() const { return this->getScope(); }
+
+vector<AST*> TemplateStructDeclarationNode::getChildren() const
+{ 
+	vector<AST*> res(inner.size());
+	std::transform(std::begin(inner), std::end(inner), std::begin(res), [](DeclarationNode *decl) { return static_cast<AST*>(decl); });
+
+	return res; 
+}
