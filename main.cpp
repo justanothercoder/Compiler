@@ -61,9 +61,9 @@ int main()
 		CodeGen::emit("section .text");
 
 		CodeGen::emit("extern _int_~operatorassign_int~ref_int");
-		CodeGen::emit("extern _int_~operatorplus_int_int");
-		CodeGen::emit("extern _int_~operatorminus_int_int");
-		CodeGen::emit("extern _int_~operatormul_int_int");	
+		CodeGen::emit("extern _int_~operatorplus_int~ref_int");
+		CodeGen::emit("extern _int_~operatorminus_int~ref_int");
+		CodeGen::emit("extern _int_~operatormul_int~ref_int");	
 		CodeGen::emit("extern _int_int_int~ref_~~int");
 		CodeGen::emit("extern _int_int_int~ref");
 		CodeGen::emit("extern _putchar_int");

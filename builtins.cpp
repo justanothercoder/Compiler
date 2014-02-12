@@ -14,19 +14,19 @@ FunctionSymbol *BuiltIns::int_assign = new FunctionSymbol("operator=",
     );
 
 FunctionSymbol *BuiltIns::int_plus = new FunctionSymbol("operator+",
-							FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_struct, BuiltIns::int_struct}),
+							FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_ref, BuiltIns::int_struct}),
 							BuiltIns::int_struct,
 							{true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_minus = new FunctionSymbol("operator-",
-							 FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_struct, BuiltIns::int_struct}),
+							 FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_ref, BuiltIns::int_struct}),
 							 BuiltIns::int_struct,
 							 {true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_mul = new FunctionSymbol("operator*",
-						       FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_struct, BuiltIns::int_struct}),
+						       FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_ref, BuiltIns::int_struct}),
 						       BuiltIns::int_struct,
 						       {true, false, true}
     );
