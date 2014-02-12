@@ -44,9 +44,8 @@ int main()
 
 		BuiltIns::int_struct->accept(new SymbolDefine(BuiltIns::int_type));
 
-		BuiltIns::int_struct->accept(new VariableSymbolDefine(new VariableSymbol("__impl", BuiltIns::int_type, VariableSymbolType::FIELD)));
+		BuiltIns::int_struct->accept(new VariableSymbolDefine(new VariableSymbol("~~impl", BuiltIns::int_type, VariableSymbolType::FIELD)));
 
-		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_constructor));
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_default_constructor));
 
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_assign));
@@ -60,11 +59,10 @@ int main()
 
 		CodeGen::emit("section .text");
 
-		CodeGen::emit("extern _int_~operatorassign_int~ref_int");
-		CodeGen::emit("extern _int_~operatorplus_int~ref_int");
-		CodeGen::emit("extern _int_~operatorminus_int~ref_int");
-		CodeGen::emit("extern _int_~operatormul_int~ref_int");	
-		CodeGen::emit("extern _int_int_int~ref_~~int");
+		CodeGen::emit("extern _int_operatorassign_int~ref_int");
+		CodeGen::emit("extern _int_operatorplus_int~ref_int");
+		CodeGen::emit("extern _int_operatorminus_int~ref_int");
+		CodeGen::emit("extern _int_operatormul_int~ref_int");	
 		CodeGen::emit("extern _int_int_int~ref");
 		CodeGen::emit("extern _putchar_int");
 		CodeGen::emit("extern _getchar");

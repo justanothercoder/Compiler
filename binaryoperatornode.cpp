@@ -56,7 +56,7 @@ void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vect
 {
     string call_name = resolved_operator_symbol->getEnclosingScope()->getScopeName() + "_";
 
-    call_name += "~" + getCodeOperatorName();
+    call_name += getCodeOperatorName();
     call_name += resolved_operator_symbol->getTypedName().substr(resolved_operator_symbol->getName().length());
 
     CodeGen::emit("push rsi");
