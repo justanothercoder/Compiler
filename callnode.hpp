@@ -11,6 +11,7 @@
 #include "globalhelper.hpp"
 #include "functionsymbol.hpp"
 #include "codegen.hpp"
+#include "callhelper.hpp"
 
 using std::vector;
 

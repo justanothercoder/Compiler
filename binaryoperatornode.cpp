@@ -19,37 +19,17 @@ void BinaryOperatorNode::build_scope()
 
 void BinaryOperatorNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	lhs->check(template_sym, expr);
-	rhs->check(template_sym, expr);
-
-	special_check();
-
 	Symbol *op_sym = this->getScope()->resolve(getOperatorName());
 
 	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(op_sym)->getType());
 
-	resolved_operator_symbol = FunctionHelper::getViableOverload(ov_func, {lhs->getType(), rhs->getType()});
-
-	if ( resolved_operator_symbol == nullptr )
-		throw SemanticError("No viable overload for '" + getOperatorName() + "' with '" + lhs->getType()->getName() + "' and '" + rhs->getType()->getName() + "' arguments.");
-}
-
-void BinaryOperatorNode::special_check()
-{
-    switch ( op_type )
-    {
-    case BinaryOp::ASSIGN:
-    {
-	if ( !lhs->isLeftValue() )
-	    throw SemanticError("left side of an assignment should be left value.");
-    }
-    case BinaryOp::PLUS:
-    case BinaryOp::MINUS:
-    case BinaryOp::MUL:
-    {
-	break;
-    }
-    }
+	if ( ov_func->isMethod() )
+	{
+		lhs->check(template_sym, expr);
+		resolved_operator_symbol = CallHelper::callCheck(ov_func, {rhs}, template_sym, expr);
+	}
+	else
+		resolved_operator_symbol = CallHelper::callCheck(ov_func, {lhs, rhs}, template_sym, expr);
 }
 
 string BinaryOperatorNode::getOperatorName()

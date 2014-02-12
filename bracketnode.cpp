@@ -32,10 +32,7 @@ void BracketNode::check(const TemplateStructSymbol *template_sym, std::vector<Ex
 
 	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(op->getType());
 
-	resolved_operator = FunctionHelper::getViableOverload(ov_func, {this->base->getType(), this->expr->getType()});
-
-	if ( resolved_operator == nullptr )
-		throw SemanticError("No viable overload");
+	resolved_operator = CallHelper::callCheck(ov_func, {this->expr}, template_sym, expr);
 }
 
 void BracketNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
