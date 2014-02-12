@@ -55,7 +55,6 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 	bool is_method = func->isMethod();
 	bool is_operator = func->isOperator();
 
-//	int is_meth = ((is_method && !is_operator) ? 1 : 0);
 	int is_meth = (is_method ? 1 : 0);
 
 	auto resolved_function_type_info = func->getTypeInfo();
@@ -64,7 +63,7 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 
 	params_size = std::accumulate(std::begin(pt) + is_meth, std::end(pt), 0, [](int x, Type *type) { return x += type->getSize(); });
 
-	if ( is_method && !is_operator )
+	if ( is_method )
 		params_size += GlobalConfig::int_size;
 
 	for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
@@ -99,9 +98,10 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 		}
 
 		pushOnStack(param_type->getSize(), current_address + GlobalConfig::int_size);
+		current_address += param_type->getSize();
 	}
 
-	if ( is_method && !is_operator )
+	if ( is_method )		
 		CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rdi");
 
 	CodeGen::emit("sub rsp, " + std::to_string(params_size));
