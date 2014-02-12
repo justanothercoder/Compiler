@@ -4,7 +4,7 @@ NumberNode::NumberNode(string num) : num(num) { }
 
 void NumberNode::build_scope() { }
 
-Type* NumberNode::getType() const { return /*BuiltIns::int_type;*/ BuiltIns::int_struct; }
+Type* NumberNode::getType() const { return BuiltIns::int_struct; }
 
 bool NumberNode::isLeftValue() const { return false; }
 

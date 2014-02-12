@@ -35,7 +35,7 @@ private:
     string member_name;
 
     StructSymbol *base_type;
-    Symbol *member;
+    VariableSymbol *member;
 };
 
 #endif
