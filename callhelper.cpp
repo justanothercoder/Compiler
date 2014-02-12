@@ -30,3 +30,14 @@ FunctionSymbol* CallHelper::callCheck(OverloadedFunctionSymbol *ov_func, const s
 	
 	return resolved_function_symbol; 
 }
+
+OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(string name, Scope *scope)
+{
+	Symbol *_sym = scope->resolve(name);
+	
+	if ( dynamic_cast<VariableSymbol*>(_sym) == nullptr )
+		throw SemanticError("No such symbol " + name);	
+
+	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_sym)->getType());
+	
+}

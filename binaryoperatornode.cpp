@@ -19,9 +19,7 @@ void BinaryOperatorNode::build_scope()
 
 void BinaryOperatorNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	Symbol *op_sym = this->getScope()->resolve(getOperatorName());
-
-	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(op_sym)->getType());
+	auto ov_func = CallHelper::getOverloadedFunc(getOperatorName(), this->getScope());
 
 	if ( ov_func->isMethod() )
 	{

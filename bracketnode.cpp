@@ -16,22 +16,10 @@ void BracketNode::build_scope()
 void BracketNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	base->check(template_sym, expr);
-	this->expr->check(template_sym, expr);
 
 	StructSymbol *base_type = dynamic_cast<StructSymbol*>(static_cast<ReferenceType*>(base->getType())->getReferredType());
 	
-	Symbol *_op = base_type->resolve("operator[]");
-
-	if ( _op == nullptr )
-		throw SemanticError("No such operator[] in " + base_type->getName());
-
-	VariableSymbol *op = dynamic_cast<VariableSymbol*>(_op);
-
-	if ( op == nullptr )
-		throw SemanticError("No such operator[] in " + base_type->getName());
-
-	OverloadedFunctionSymbol *ov_func = dynamic_cast<OverloadedFunctionSymbol*>(op->getType());
-
+	auto ov_func = CallHelper::getOverloadedFunc("operator[]", base_type);
 	resolved_operator = CallHelper::callCheck(ov_func, {this->expr}, template_sym, expr);
 }
 
