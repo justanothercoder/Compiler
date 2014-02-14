@@ -3,7 +3,7 @@
 
 map< vector<ExprNode*>, StructSymbol*> TemplateStructSymbol::specs;
 
-TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, TemplateDeclHolder *holder) : 
+TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, AST *holder) : 
 	StructSymbol(name, enclosing_scope),
 	template_symbols(template_symbols),
 	holder(holder)
@@ -61,14 +61,14 @@ Symbol* TemplateStructSymbol::getSpec(const vector<ExprNode*>& symbols) const
 
 	for ( auto i : symbols )
 	{
-		i->setScope(holder->getDeclScope());
+		i->setScope(holder->getScope());
 		i->build_scope();	
 	}
 
 	for ( auto i : symbols )
 		i->check();	
 
-	decl->setScope(holder->getDeclScope());
+	decl->setScope(holder->getScope());
 	decl->build_scope();
 
 	decl->define(this, symbols);

@@ -5,7 +5,6 @@
 
 #include "structsymbol.hpp"
 #include "exprnode.hpp"
-#include "templatedeclholder.hpp"
 #include "templatesymbol.hpp"
 
 #include "typeinfo.hpp"
@@ -14,7 +13,7 @@ class TemplateStructSymbol : public StructSymbol, public TemplateSymbol
 {
 public:
 
-    TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, TemplateDeclHolder *holder);
+    TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, AST *holder);
 
     virtual SymbolType getSymbolType() const;
 
@@ -29,7 +28,7 @@ public:
     static map< vector<ExprNode*>, StructSymbol*> specs;   
 
     vector< pair<string, TypeInfo> > template_symbols;
-    TemplateDeclHolder *holder;
+    AST *holder;
 };
 
 #endif

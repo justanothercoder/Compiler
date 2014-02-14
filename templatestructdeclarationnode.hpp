@@ -4,9 +4,8 @@
 #include "structdeclarationnode.hpp"
 #include "typeinfo.hpp"
 #include "templatestructsymbol.hpp"
-#include "templatedeclholder.hpp"
 
-class TemplateStructDeclarationNode : public StructDeclarationNode, public TemplateDeclHolder
+class TemplateStructDeclarationNode : public StructDeclarationNode
 {
 public:
 
