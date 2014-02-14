@@ -53,3 +53,5 @@ void StructDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::v
     for ( auto decl : inner )
 		decl->gen(template_sym, expr);
 }
+
+vector<AST*> StructDeclarationNode::getChildren() const { return vector<AST*>(std::begin(inner), std::end(inner)); }

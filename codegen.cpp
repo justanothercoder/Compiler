@@ -53,7 +53,6 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 	int current_address = 0;
 
 	bool is_method = func->isMethod();
-	bool is_operator = func->isOperator();
 
 	int is_meth = (is_method ? 1 : 0);
 

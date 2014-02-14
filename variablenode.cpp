@@ -127,3 +127,5 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 		}
 	}
 }
+	
+vector<AST*> VariableNode::getChildren() const { return { }; }

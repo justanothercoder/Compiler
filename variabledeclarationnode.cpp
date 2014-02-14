@@ -118,3 +118,5 @@ AST* VariableDeclarationNode::copyTree() const
     
     return new VariableDeclarationNode(name, type_info, is_field, params);
 }
+
+vector<AST*> VariableDeclarationNode::getChildren() const { return vector<AST*>(std::begin(constructor_call_params), std::end(constructor_call_params)); }

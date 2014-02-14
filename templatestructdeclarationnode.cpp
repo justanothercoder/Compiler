@@ -24,10 +24,4 @@ void TemplateStructDeclarationNode::check(const TemplateStructSymbol *template_s
 	
 Scope* TemplateStructDeclarationNode::getDeclScope() const { return this->getScope(); }
 
-vector<AST*> TemplateStructDeclarationNode::getChildren() const
-{ 
-	vector<AST*> res(inner.size());
-	std::transform(std::begin(inner), std::end(inner), std::begin(res), [](DeclarationNode *decl) { return static_cast<AST*>(decl); });
-
-	return res; 
-}
+vector<AST*> TemplateStructDeclarationNode::getChildren() const { return vector<AST*>(std::begin(inner), std::end(inner)); }

@@ -43,3 +43,5 @@ void StatementNode::gen(const TemplateStructSymbol *template_sym, std::vector<Ex
 	for ( auto i : statements )
 		i->gen(template_sym, expr);
 }
+
+vector<AST*> StatementNode::getChildren() const { return statements; }

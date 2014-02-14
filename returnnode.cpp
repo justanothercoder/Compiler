@@ -37,3 +37,5 @@ void ReturnNode::check(const TemplateStructSymbol *template_sym, std::vector<Exp
 void ReturnNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { this->expr->define(template_sym, expr); }
 
 AST* ReturnNode::copyTree() const { return new ReturnNode(static_cast<ExprNode*>(expr->copyTree())); }
+
+vector<AST*> ReturnNode::getChildren() const { return {expr}; }

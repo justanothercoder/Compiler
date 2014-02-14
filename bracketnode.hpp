@@ -26,6 +26,8 @@ public:
 
 	virtual AST* copyTree() const;
 
+	virtual vector<AST*> getChildren() const;
+
 private:
 
 	ExprNode *base, *expr;

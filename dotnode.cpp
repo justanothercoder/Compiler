@@ -75,3 +75,5 @@ void DotNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode
 		CodeGen::emit("lea rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(member)) + "]");
 	}
 }
+	
+vector<AST*> DotNode::getChildren() const { return {base}; }

@@ -35,6 +35,8 @@ public:
     virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
     
     virtual Symbol* getDefinedSymbol() const;
+
+	virtual vector<AST*> getChildren() const;
     
 private:
 

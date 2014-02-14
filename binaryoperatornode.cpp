@@ -79,3 +79,5 @@ AST* BinaryOperatorNode::copyTree() const
 {
 	return new BinaryOperatorNode(static_cast<ExprNode*>(lhs->copyTree()), static_cast<ExprNode*>(rhs->copyTree()), op_type);    
 }
+	
+vector<AST*> BinaryOperatorNode::getChildren() const { return {lhs, rhs}; }

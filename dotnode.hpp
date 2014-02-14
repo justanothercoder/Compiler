@@ -27,6 +27,8 @@ public:
     virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
     virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
     virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);    
+
+	virtual vector<AST*> getChildren() const;
     
 private:
 

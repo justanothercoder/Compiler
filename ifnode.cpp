@@ -67,3 +67,5 @@ void IfNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*
 string IfNode::getNewLabel() { return "@if_label" + std::to_string(++IfNode::label_num); }
 
 AST* IfNode::copyTree() const { return new IfNode(static_cast<ExprNode*>(cond->copyTree()), stats_true->copyTree(), stats_false->copyTree()); }
+	
+vector<AST*> IfNode::getChildren() const { return {cond, stats_true, stats_false}; }

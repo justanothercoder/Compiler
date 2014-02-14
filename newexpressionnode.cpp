@@ -74,3 +74,5 @@ AST* NewExpressionNode::copyTree() const
 
 	return new NewExpressionNode(type_info, vec);
 }
+
+vector<AST*> NewExpressionNode::getChildren() const { return vector<AST*>(std::begin(params), std::end(params)); }

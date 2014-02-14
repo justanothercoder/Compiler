@@ -45,3 +45,5 @@ Type* BracketNode::getType() const { return resolved_operator->getTypeInfo().get
 bool BracketNode::isLeftValue() const { return resolved_operator->getTypeInfo().getReturnType()->getTypeKind() == TypeKind::REFERENCE; }
 
 AST* BracketNode::copyTree() const { return new BracketNode(static_cast<ExprNode*>(base->copyTree()), static_cast<ExprNode*>(expr->copyTree())); }
+	
+vector<AST*> BracketNode::getChildren() const { return {base, expr}; }

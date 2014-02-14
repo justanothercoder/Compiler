@@ -28,6 +28,8 @@ public:
     virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
 
     const vector<DeclarationNode*>& getInner() const;
+
+	virtual vector<AST*> getChildren() const;
     
 protected:
 

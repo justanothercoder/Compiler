@@ -6,6 +6,7 @@
 #include "globalscope.hpp"
 #include "typehelper.hpp"
 #include "structsymbol.hpp"
+#include "templatestructsymbol.hpp"
 
 class BuiltIns
 {
@@ -27,6 +28,8 @@ public:
 
     static FunctionSymbol *putchar_func;
     static FunctionSymbol *getchar_func;
+
+//	static TemplateStructSymbol *array_struct; 
 };
 
 #endif

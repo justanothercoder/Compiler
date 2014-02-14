@@ -100,3 +100,4 @@ AST* FunctionDeclarationNode::copyTree() const
 	return new FunctionDeclarationNode(name, params, return_type_info, stats, traits);
 }
 
+vector<AST*> FunctionDeclarationNode::getChildren() const { return statements; }
