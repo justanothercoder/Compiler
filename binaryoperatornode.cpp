@@ -65,6 +65,7 @@ void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vect
 	if ( resolved_operator_symbol->isMethod() )
 	{
 		lhs->gen(template_sym, expr);
+		CodeGen::emit("push rdi");
 		CodeGen::emit("mov rdi, rax");
 
 		CodeGen::genCallCode(resolved_operator_symbol, {rhs}, template_sym, expr);

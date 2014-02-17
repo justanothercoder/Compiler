@@ -62,7 +62,8 @@ void VariableDeclarationNode::check(const TemplateStructSymbol *template_sym, st
 void VariableDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	if ( !is_field )
-	{      
+	{   
+	 	CodeGen::emit("push rdi");	
 		CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 		CodeGen::emit("sub rsp, " + std::to_string(definedSymbol->getType()->getSize()));
 

@@ -100,11 +100,14 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 		current_address += param_type->getSize();
 	}
 
-	if ( is_method )		
+	if ( is_method )
 		CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rdi");
 
 	CodeGen::emit("sub rsp, " + std::to_string(params_size));
 
 	CodeGen::emit("call rsi");
 	CodeGen::emit("add rsp, " + std::to_string(params_size));
+
+	if ( is_method )
+		CodeGen::emit("pop rdi");
 }
