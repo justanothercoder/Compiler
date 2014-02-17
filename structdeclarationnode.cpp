@@ -1,11 +1,14 @@
 #include "structdeclarationnode.hpp"
 
-StructDeclarationNode::StructDeclarationNode(string name, const vector<DeclarationNode*>& inner) : name(name), inner(inner)
-{
+StructDeclarationNode::StructDeclarationNode(string name, const vector<AST*>& inner) : name(name), inner(inner), definedSymbol(nullptr) { }
 
+StructDeclarationNode::~StructDeclarationNode() 
+{ 
+	delete definedSymbol; 
+
+	for ( auto i : inner )
+		delete i;
 }
-
-StructDeclarationNode::~StructDeclarationNode() { delete definedSymbol; }
 
 Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 
@@ -14,28 +17,35 @@ void StructDeclarationNode::build_scope()
     definedSymbol = new StructSymbol(name, this->getScope());
     for ( auto i : inner )
     {
-	i->setScope(definedSymbol);
-	i->build_scope();
+		i->setScope(definedSymbol);
+		i->build_scope();
     }
 }
 
-void StructDeclarationNode::define()
+void StructDeclarationNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    getScope()->define(definedSymbol);
+    this->getScope()->accept(new SymbolDefine(definedSymbol));
 
-    for ( auto i : inner )
-	i->define();    
+    for ( auto decl : inner )
+		decl->define(template_sym, expr);
 }
 
-void StructDeclarationNode::check()
+void StructDeclarationNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    for ( auto i : inner )
-	i->check();
+    for ( auto decl : inner )
+		decl->check(template_sym, expr);	
 }
 
-void StructDeclarationNode::gen()
-{    
-    for ( auto i : inner )
-	i->gen();
+void StructDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+{
+    for ( auto decl : inner )
+		decl->gen(template_sym, expr);
 }
 
+AST* StructDeclarationNode::copyTree() const 
+{ 
+	auto in = inner;
+	return new StructDeclarationNode(name, in); 
+}
+
+vector<AST*> StructDeclarationNode::getChildren() const { return inner; } 

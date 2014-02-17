@@ -11,7 +11,7 @@ class DeclarationNode : public AST
 public:
 
     virtual ~DeclarationNode();    
-    virtual Symbol* getDefinedSymbol() const = 0;    
+    virtual Symbol* getDefinedSymbol() const = 0;
 };
 
 #endif

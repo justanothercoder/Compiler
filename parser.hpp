@@ -8,6 +8,7 @@
 #include "structdeclarationnode.hpp"
 #include "variabledeclarationnode.hpp"
 #include "functiondeclarationnode.hpp"
+#include "templatestructdeclarationnode.hpp"
 
 #include "emptystatementnode.hpp"
 #include "binaryoperatornode.hpp"
@@ -20,6 +21,7 @@
 #include "variablenode.hpp"
 #include "numbernode.hpp"
 #include "newexpressionnode.hpp"
+#include "bracketnode.hpp"
 
 class Parser : public AbstractParser
 {
@@ -32,11 +34,12 @@ public:
 private:
 
     string id();
-    TypeInfo type_info();
-    pair<string, TypeInfo> var_and_type();
+	string operator_name();
+    TypeInfo typeInfo();
     vector<ExprNode*> call_params_list();
     
     DeclarationNode* declaration(std::shared_ptr<string> struct_name = nullptr);
+    DeclarationNode* templateStructDecl();
     DeclarationNode* structDecl();
     DeclarationNode* variableDecl(std::shared_ptr<string> struct_name = nullptr);
     DeclarationNode* functionDecl(std::shared_ptr<string> struct_name = nullptr);
@@ -59,6 +62,7 @@ private:
     ExprNode* number();
     
     bool tryAssignment();
+    bool tryVarDecl();
 };
 
 #endif

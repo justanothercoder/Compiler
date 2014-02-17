@@ -7,6 +7,7 @@
 #include "typehelper.hpp"
 #include "globalhelper.hpp"
 #include "codegen.hpp"
+#include "templatestructsymbol.hpp"
 
 class DotNode : public ExprNode
 {
@@ -14,12 +15,20 @@ public:
 
     DotNode(ExprNode *base, string member_name);   
 
+	virtual ~DotNode();
+    
+    virtual AST* copyTree() const;
+
     virtual void build_scope();
-    virtual void check();
-    virtual void gen();
 
     virtual Type* getType() const;
     virtual bool isLeftValue() const;
+
+    virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);    
+
+	virtual vector<AST*> getChildren() const;
     
 private:
 
@@ -28,7 +37,7 @@ private:
     string member_name;
 
     StructSymbol *base_type;
-    Symbol *member;
+    VariableSymbol *member;
 };
 
 #endif

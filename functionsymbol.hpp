@@ -3,7 +3,6 @@
 
 #include <map>
 
-#include "variablesymbol.hpp"
 #include "basescope.hpp"
 #include "globalconfig.hpp"
 #include "functiontraits.hpp"
@@ -11,16 +10,21 @@
 
 #include "overloadedfunctionsymbol.hpp"
 
+class VariableSymbol;
+
 using std::map;
 using std::pair;
 
 class FunctionSymbol : public Symbol, public BaseScope, public Type
 {
+    friend class VariableSymbolDefine;
+    
 public:
 
     FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits);
 
-    virtual void define(Symbol *sym);
+    virtual void accept(ScopeVisitor *visitor);
+
     virtual Scope* getEnclosingScope() const;
 
     void setTypeInfo(FunctionTypeInfo function_type_info);

@@ -9,7 +9,7 @@ using std::string;
 
 class Scope;
 
-enum class SymbolType { FUNCTION, OVERLOADED_FUNCTION, VARIABLE, STRUCT, BUILTINTYPE };
+enum class SymbolType { FUNCTION, OVERLOADED_FUNCTION, VARIABLE, STRUCT, BUILTINTYPE, TEMPLATESTRUCT };
 
 class Symbol
 {

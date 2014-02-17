@@ -11,13 +11,20 @@ public:
 
     NumberNode(string num);
 
+    virtual AST* copyTree() const;
+
     virtual void build_scope();
-    virtual void check();    
-    virtual void gen();
     
     virtual Type* getType() const;
     virtual bool isLeftValue() const;
-    
+
+    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+
+	virtual vector<AST*> getChildren() const;
+
+	string getNum() const;
+
 private:
 
     string num;

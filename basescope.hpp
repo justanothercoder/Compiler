@@ -4,6 +4,7 @@
 #include <map>
 
 #include "scope.hpp"
+#include "variablesymbol.hpp"
 
 using std::map;
 
@@ -13,6 +14,10 @@ class BaseScope : public Scope
 {
 public:
 
+    friend class VariableSymbolDefine;
+    friend class FunctionSymbolDefine;
+    friend class SymbolDefine;
+    
     BaseScope();
 
     virtual Symbol* resolve(string name) const;
@@ -23,7 +28,7 @@ public:
     virtual int getScopeAddress() const;
 
 protected:
-
+public:
     map<string, Symbol*> table;
     map<VariableSymbol*, int> addresses;
 

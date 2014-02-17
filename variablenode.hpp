@@ -9,6 +9,8 @@
 #include "structsymbol.hpp"
 #include "globalhelper.hpp"
 #include "codegen.hpp"
+#include "templatestructsymbol.hpp"
+#include "classvariablesymbol.hpp"
 
 class VariableNode : public ExprNode
 {
@@ -16,18 +18,28 @@ public:
 
     VariableNode(string name);
 
+    virtual AST* copyTree() const;
+
     virtual Type *getType() const;
     virtual bool isLeftValue() const;    
 
     virtual void build_scope();
-    virtual void check();
-    virtual void gen();
 
+    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+
+	virtual vector<AST*> getChildren() const;
+
+    bool isTemplateParam() const;
+    
 private:
 
     string name;
     
     VariableSymbol *variable;
+
+    TemplateStructSymbol *template_sym;
+    vector<ExprNode*> template_expr;
 };
 
 #endif

@@ -14,27 +14,21 @@ FunctionSymbol *BuiltIns::int_assign = new FunctionSymbol("operator=",
     );
 
 FunctionSymbol *BuiltIns::int_plus = new FunctionSymbol("operator+",
-							FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_struct, BuiltIns::int_struct}),
+							FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_ref, BuiltIns::int_struct}),
 							BuiltIns::int_struct,
 							{true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_minus = new FunctionSymbol("operator-",
-							 FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_struct, BuiltIns::int_struct}),
+							 FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_ref, BuiltIns::int_struct}),
 							 BuiltIns::int_struct,
 							 {true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_mul = new FunctionSymbol("operator*",
-						       FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_struct, BuiltIns::int_struct}),
+						       FunctionTypeInfo(BuiltIns::int_struct, {BuiltIns::int_ref, BuiltIns::int_struct}),
 						       BuiltIns::int_struct,
 						       {true, false, true}
-    );
-
-FunctionSymbol *BuiltIns::int_constructor = new FunctionSymbol("int",
-							       FunctionTypeInfo(int_ref, {int_ref, BuiltIns::int_type}),
-							       BuiltIns::int_struct,
-							       {true, true, false}
     );
 
 FunctionSymbol *BuiltIns::int_default_constructor = new FunctionSymbol("int",
@@ -56,3 +50,17 @@ FunctionSymbol *BuiltIns::getchar_func = new FunctionSymbol("getchar",
 							    BuiltIns::global_scope,
 							    {false, false, false}
     );
+
+TemplateStructSymbol *BuiltIns::array_struct = new TemplateStructSymbol("array",
+																		BuiltIns::global_scope,
+																		{ {"T", TypeInfo("class", false, { }) }, 
+																		  { "size", TypeInfo("int", false, { }) }
+																		},
+																		new TemplateStructDeclarationNode(
+																			"array",
+																			{new AsmArrayNode()},
+																			{ {"T", TypeInfo("class", false, { }) }, 
+																			  { "size", TypeInfo("int", false, { }) }
+																			}
+																		)
+		);	

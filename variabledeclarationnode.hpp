@@ -13,6 +13,9 @@
 #include "overloadedfunctionsymbol.hpp"
 #include "structsymbol.hpp"
 #include "builtins.hpp"
+#include "callhelper.hpp"
+
+#include "variablesymboldefine.hpp"
 
 using std::vector;
 
@@ -23,13 +26,18 @@ public:
     VariableDeclarationNode(string name, TypeInfo type_info, bool is_field = false, const vector<ExprNode*>& constructor_call_params = {});
 
     virtual ~VariableDeclarationNode();
+
+    virtual AST* copyTree() const;
     
     virtual void build_scope();    
-    virtual void define();
-    virtual void check();
-    virtual void gen();
 
+    virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    
     virtual Symbol* getDefinedSymbol() const;
+
+	virtual vector<AST*> getChildren() const;
     
 private:
 

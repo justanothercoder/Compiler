@@ -11,10 +11,17 @@ public:
 
     WhileNode(ExprNode *cond, AST *stats);
 
+	virtual ~WhileNode();
+
+    virtual AST* copyTree() const;
+
     virtual void build_scope();
-    virtual void define();
-    virtual void check();
-    virtual void gen();    
+
+    virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+   
+   	virtual vector<AST*> getChildren() const;
     
 private:
 

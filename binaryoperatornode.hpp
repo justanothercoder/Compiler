@@ -6,6 +6,7 @@
 #include "referencetype.hpp"
 #include "functionhelper.hpp"
 #include "codegen.hpp"
+#include "callhelper.hpp"
 
 enum class BinaryOp { ASSIGN, PLUS, MINUS, MUL };
 
@@ -15,9 +16,11 @@ public:
 
     BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type);
 
+	virtual ~BinaryOperatorNode();
+
+    virtual AST* copyTree() const;
+
     virtual void build_scope();
-    virtual void check();
-    virtual void gen();
     
     virtual bool isLeftValue() const;
     virtual Type *getType() const;
@@ -25,8 +28,11 @@ public:
     string getOperatorName();
     string getCodeOperatorName();
 
-    void special_check();
-    
+    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+
+	virtual vector<AST*> getChildren() const;
+
 protected:
 
     ExprNode *lhs, *rhs;

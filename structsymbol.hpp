@@ -15,12 +15,15 @@ using std::map;
 class StructSymbol : public Symbol, public BaseScope, public Type
 {
 public:
+
+    friend class VariableSymbolDefine;
+
+    virtual void accept(ScopeVisitor *visitor);
     
     StructSymbol(string name, Scope *enclosing_scope);
 
     virtual Scope* getEnclosingScope() const;
     virtual Symbol* resolve(string name) const;
-    virtual void define(Symbol *sym);
 
     virtual string getName() const;
     virtual int getSize() const;

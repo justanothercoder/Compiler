@@ -11,11 +11,18 @@ public:
 
     IfNode(ExprNode *cond, AST *stats_true, AST *stats_false);
 
+	virtual ~IfNode();
+
+    virtual AST* copyTree() const;
+
     virtual void build_scope();
-    virtual void define();
-    virtual void check();
-    virtual void gen();
-    
+
+    virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+	
+	virtual vector<AST*> getChildren() const;
+		
 private:
 
     ExprNode *cond;

@@ -5,9 +5,13 @@
 
 #include "declarationnode.hpp"
 #include "functionsymbol.hpp"
-#include "variablesymbol.hpp"
 #include "structsymbol.hpp"
 #include "typehelper.hpp"
+
+#include "variablesymbol.hpp"
+
+#include "variablesymboldefine.hpp"
+#include "functionsymboldefine.hpp"
 
 using std::vector;
 using std::pair;
@@ -20,12 +24,17 @@ public:
 
     virtual ~FunctionDeclarationNode();
     
+    virtual AST* copyTree() const;
+
     virtual void build_scope();    
-    virtual void define();
-    virtual void check();
-    virtual void gen();
 
     virtual Symbol* getDefinedSymbol() const;
+
+    virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+
+	virtual vector<AST*> getChildren() const;
     
 private:
 

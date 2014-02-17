@@ -8,33 +8,34 @@ void ReturnNode::build_scope()
     expr->build_scope();
 }
 
-void ReturnNode::define() { }
+ReturnNode::~ReturnNode() { delete expr; }
 
-void ReturnNode::check()
+void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    Scope *sc = this->getScope();
-    while ( sc != nullptr && dynamic_cast<FunctionSymbol*>(sc) == nullptr )
-	sc = sc->getEnclosingScope();
+    this->expr->gen(template_sym, expr);
 
-    if ( sc == nullptr )
-	throw SemanticError("return is not a in a function");
-
-    func = dynamic_cast<FunctionSymbol*>(sc);
-
-    expr->check();    
-}
-
-void ReturnNode::gen()
-{
-    expr->gen();
-    for ( int i = 0; i < expr->getType()->getSize(); i += GlobalConfig::int_size )
-    {
-	CodeGen::emit("mov rbx, [rax - " + std::to_string(i) +  "]");
-	CodeGen::emit("mov [rsp - " + std::to_string(i + GlobalConfig::int_size) +  "], rbx");
-    }
+    CodeGen::pushOnStack(this->expr->getType()->getSize(), GlobalConfig::int_size);
     CodeGen::emit("lea rax, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");
     CodeGen::emit("ret");
 }
+
+void ReturnNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> _expr)
+{
+	Scope *sc = this->getScope();
+	while ( sc != nullptr && dynamic_cast<FunctionSymbol*>(sc) == nullptr )
+		sc = sc->getEnclosingScope();
+
+	if ( sc == nullptr )
+		throw SemanticError("return is not a in a function");
+
+    expr->check(template_sym, _expr);
+}
+
+void ReturnNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { this->expr->define(template_sym, expr); }
+
+AST* ReturnNode::copyTree() const { return new ReturnNode(static_cast<ExprNode*>(expr->copyTree())); }
+
+vector<AST*> ReturnNode::getChildren() const { return {expr}; }

@@ -5,7 +5,37 @@
 
 using string = std::string;
 
-enum class TokenType { EOF_TYPE, ID, NUMBER, LPAREN, RPAREN, LBRACE, RBRACE, COMMA, STRUCT, VAR, COLON, DEF, SEMICOLON, ASSIGN, PLUS, DIV, REF, RETURN, IF, ELSE, WHILE, DOT, MINUS, MUL, NEW };
+enum class TokenType { EOF_TYPE,
+	ID,
+	NUMBER,
+	LPAREN,
+	RPAREN,
+	LBRACE,
+	RBRACE,
+	COMMA,
+	STRUCT,
+	COLON,
+	DEF,
+	SEMICOLON,
+	ASSIGN,
+	PLUS,
+	DIV,
+	REF,
+	RETURN,
+	IF,
+	ELSE,
+	WHILE,
+	DOT,
+	MINUS,
+	MUL,
+	NEW,
+	TEMPLATE,
+	LESS,
+	GREATER,
+	LBRACKET,
+	RBRACKET,
+	OPERATOR
+	};
 
 string to_string(TokenType tt);
 

@@ -17,18 +17,25 @@ using std::string;
 class NewExpressionNode : public ExprNode
 {
 public:
-    NewExpressionNode(string name, vector<ExprNode*> params);
+    NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params);
+
+	virtual ~NewExpressionNode();
+
+    virtual AST* copyTree() const;
 
     virtual void build_scope();
-    virtual void check();
-    virtual void gen();
 
     virtual Type* getType() const;
     virtual bool isLeftValue() const;
 
+    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+
+	virtual vector<AST*> getChildren() const;
+    
 private:
 
-    string name;
+    TypeInfo type_info;
     vector<ExprNode*> params;
     FunctionSymbol *resolved_constructor;
 };

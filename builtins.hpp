@@ -6,7 +6,9 @@
 #include "globalscope.hpp"
 #include "typehelper.hpp"
 #include "structsymbol.hpp"
-
+#include "templatestructsymbol.hpp"
+#include "asmarraynode.hpp"
+#include "templatestructdeclarationnode.hpp"
 class BuiltIns
 {
 public:
@@ -21,13 +23,14 @@ public:
     static FunctionSymbol *int_plus;
     static FunctionSymbol *int_minus;
     static FunctionSymbol *int_mul;
-    static FunctionSymbol *int_constructor;
     static FunctionSymbol *int_default_constructor;
 
     static BuiltInTypeSymbol *void_type;
 
     static FunctionSymbol *putchar_func;
     static FunctionSymbol *getchar_func;
+
+	static TemplateStructSymbol *array_struct; 
 };
 
 #endif

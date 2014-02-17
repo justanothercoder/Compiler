@@ -8,6 +8,7 @@
 #include "scope.hpp"
 #include "structsymbol.hpp"
 #include "functionhelper.hpp"
+#include "templatestructsymbol.hpp"
 
 using std::map;
 
@@ -19,7 +20,7 @@ public:
 
     static bool existsConversion(Type *lhs, Type *rhs);
 
-    static Type* fromTypeInfo(TypeInfo type_info, Scope *scope);
+    static Type* fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym = nullptr, vector<ExprNode*> expr = { });
     
     static bool isConvertable(Type *lhs, Type *rhs);
     
