@@ -13,6 +13,7 @@
 #include "overloadedfunctionsymbol.hpp"
 #include "structsymbol.hpp"
 #include "builtins.hpp"
+#include "callhelper.hpp"
 
 #include "variablesymboldefine.hpp"
 

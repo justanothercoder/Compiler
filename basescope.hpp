@@ -28,7 +28,7 @@ public:
     virtual int getScopeAddress() const;
 
 protected:
-
+public:
     map<string, Symbol*> table;
     map<VariableSymbol*, int> addresses;
 

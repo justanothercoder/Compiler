@@ -79,7 +79,7 @@ DeclarationNode* Parser::structDecl()
 
 	match(TokenType::LBRACE);
 
-	vector<DeclarationNode*> struct_in;
+	vector<AST*> struct_in;
 
 	while ( getTokenType(1) != TokenType::RBRACE )
 	{
@@ -127,7 +127,7 @@ DeclarationNode* Parser::templateStructDecl()
 
 	match(TokenType::LBRACE);
 
-	vector<DeclarationNode*> struct_in;    
+	vector<AST*> struct_in;    
 	while ( getTokenType(1) != TokenType::RBRACE )
 	{
 		while ( getTokenType(1) == TokenType::SEMICOLON )

@@ -1,6 +1,6 @@
 #include "structdeclarationnode.hpp"
 
-StructDeclarationNode::StructDeclarationNode(string name, const vector<DeclarationNode*>& inner) : name(name), inner(inner) { definedSymbol = nullptr; }
+StructDeclarationNode::StructDeclarationNode(string name, const vector<AST*>& inner) : name(name), inner(inner), definedSymbol(nullptr) { }
 
 StructDeclarationNode::~StructDeclarationNode() 
 { 
@@ -36,22 +36,16 @@ void StructDeclarationNode::check(const TemplateStructSymbol *template_sym, std:
 		decl->check(template_sym, expr);	
 }
 
-const vector<DeclarationNode*>& StructDeclarationNode::getInner() const { return inner; }
-
-AST* StructDeclarationNode::copyTree() const
-{
-    vector<DeclarationNode*> in(inner.size());
-
-    std::transform(std::begin(inner), std::end(inner), std::begin(in), [&](DeclarationNode *decl) { return static_cast<DeclarationNode*>(decl->copyTree()); }
-	);
-    
-    return new StructDeclarationNode(name, in);
-}
-
 void StructDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
     for ( auto decl : inner )
 		decl->gen(template_sym, expr);
 }
 
-vector<AST*> StructDeclarationNode::getChildren() const { return vector<AST*>(std::begin(inner), std::end(inner)); }
+AST* StructDeclarationNode::copyTree() const 
+{ 
+	auto in = inner;
+	return new StructDeclarationNode(name, in); 
+}
+
+vector<AST*> StructDeclarationNode::getChildren() const { return inner; } 

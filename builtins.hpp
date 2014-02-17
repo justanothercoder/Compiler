@@ -7,7 +7,8 @@
 #include "typehelper.hpp"
 #include "structsymbol.hpp"
 #include "templatestructsymbol.hpp"
-
+#include "asmarraynode.hpp"
+#include "templatestructdeclarationnode.hpp"
 class BuiltIns
 {
 public:
@@ -29,7 +30,7 @@ public:
     static FunctionSymbol *putchar_func;
     static FunctionSymbol *getchar_func;
 
-//	static TemplateStructSymbol *array_struct; 
+	static TemplateStructSymbol *array_struct; 
 };
 
 #endif

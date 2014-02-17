@@ -1,6 +1,6 @@
 #include "variablenode.hpp"
 
-VariableNode::VariableNode(string name) : name(name), variable(nullptr) { template_sym = nullptr; }
+VariableNode::VariableNode(string name) : name(name), variable(nullptr), template_sym(nullptr) { }
 
 void VariableNode::build_scope() { }
 
@@ -47,10 +47,7 @@ bool VariableNode::isLeftValue() const { return true; }
 
 bool VariableNode::isTemplateParam() const { return template_sym != nullptr; }
 
-AST* VariableNode::copyTree() const
-{
-	return new VariableNode(name);
-}
+AST* VariableNode::copyTree() const { return new VariableNode(name); }
 
 void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {

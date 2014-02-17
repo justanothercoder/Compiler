@@ -1,8 +1,6 @@
 #include "templatestructsymbol.hpp"
 #include "structdeclarationnode.hpp"
 
-map< vector<ExprNode*>, StructSymbol*> TemplateStructSymbol::specs;
-
 TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, AST *holder) : 
 	StructSymbol(name, enclosing_scope),
 	template_symbols(template_symbols),
@@ -31,7 +29,7 @@ ExprNode* TemplateStructSymbol::getReplacement(string name, const vector<ExprNod
 	return nullptr;
 }
 
-Symbol* TemplateStructSymbol::getSpec(const vector<ExprNode*>& symbols) const
+Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 {
 	auto it = specs.find(symbols);
 	if ( it != std::end(specs) )
@@ -52,10 +50,10 @@ Symbol* TemplateStructSymbol::getSpec(const vector<ExprNode*>& symbols) const
 
 	auto children = holder->getChildren();
 
-	vector<DeclarationNode*> vec;
+	vector<AST*> vec;
 
 	for ( auto t : children )
-		vec.push_back(static_cast<DeclarationNode*>(t->copyTree()));
+		vec.push_back(t->copyTree());
 
 	StructDeclarationNode *decl = new StructDeclarationNode(this->getName() + std::to_string(hash_func(symbols)), vec);
 

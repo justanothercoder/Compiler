@@ -57,6 +57,9 @@ int main()
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::putchar_func));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::getchar_func));
 
+		BuiltIns::array_struct->holder->setScope(BuiltIns::global_scope);
+		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::array_struct));
+
 		CodeGen::emit("section .text");
 
 		CodeGen::emit("extern _int_operatorassign_int~ref_int");

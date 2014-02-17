@@ -9,7 +9,7 @@ class ExprNode;
 
 class TemplateSymbol
 {
-    virtual Symbol* getSpec(const std::vector<ExprNode*>& symbols) const = 0;
+    virtual Symbol* getSpec(std::vector<ExprNode*> symbols) const = 0;
 };
 
 #endif

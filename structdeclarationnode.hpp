@@ -13,7 +13,7 @@ class StructDeclarationNode : public DeclarationNode
 {
 public:
 
-    StructDeclarationNode(string name, const vector<DeclarationNode*>& inner);
+    StructDeclarationNode(string name, const vector<AST*>& inner);
 
     virtual ~StructDeclarationNode();
 
@@ -27,14 +27,12 @@ public:
     virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
     virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
 
-    const vector<DeclarationNode*>& getInner() const;
-
 	virtual vector<AST*> getChildren() const;
     
 protected:
 
     string name;
-    vector<DeclarationNode*> inner;
+    vector<AST*> inner;
 
     StructSymbol *definedSymbol;
 };

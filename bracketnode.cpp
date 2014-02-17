@@ -1,6 +1,6 @@
 #include "bracketnode.hpp"
 
-BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr) { }
+BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr), resolved_operator(nullptr) { }
 
 BracketNode::~BracketNode() { delete expr; }
 

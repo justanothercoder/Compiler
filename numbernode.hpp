@@ -22,7 +22,9 @@ public:
     virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
 
 	virtual vector<AST*> getChildren() const;
-    
+
+	string getNum() const;
+
 private:
 
     string num;

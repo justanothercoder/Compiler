@@ -36,14 +36,16 @@ void VariableDeclarationNode::check(const TemplateStructSymbol *template_sym, st
 	{
 		string type_name = type_info.getTypeName();
 
-		Type *_type = TypeHelper::fromTypeInfo(type_info, this->getScope());
+		Type *_type = TypeHelper::fromTypeInfo(type_info, this->getScope(), template_sym, expr);
 
 		if ( _type->getTypeKind() != TypeKind::STRUCT )
 			throw SemanticError("No such struct " + type_name);
 
 		StructSymbol *type = static_cast<StructSymbol*>(_type);
-
+		
 		Symbol *_constr = type->resolve(type_name);
+
+//		Symbol *_constr = type->resolve(type->getName());
 		if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
 			throw SemanticError("No constructor");
 
@@ -53,25 +55,7 @@ void VariableDeclarationNode::check(const TemplateStructSymbol *template_sym, st
 
 		OverloadedFunctionSymbol *constructor = static_cast<OverloadedFunctionSymbol*>(_constructor->getType());
 
-		vector<Type*> params_types;
-		params_types.push_back(TypeHelper::getReferenceType(definedSymbol->getType()));   
-
-		for ( auto t : constructor_call_params )
-			t->check(template_sym, expr);
-		std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::back_inserter(params_types), [](ExprNode *t) { return t->getType(); });
-
-		resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
-
-		if ( resolved_constructor == nullptr )
-			throw SemanticError("No viable overload of '" + type_name + "'.");
-
-		auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
-
-		for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
-		{
-			if ( resolved_constructor_type_info.getParamType(i)->isReference() && !constructor_call_params[i - 1]->isLeftValue() )
-				throw SemanticError("parameter is not an lvalue.");
-		}
+		resolved_constructor = CallHelper::callCheck(constructor, constructor_call_params, template_sym, expr);
 	}
 }
 

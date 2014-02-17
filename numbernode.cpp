@@ -19,3 +19,5 @@ void NumberNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprN
 }
 	
 vector<AST*> NumberNode::getChildren() const { return { }; }
+	
+string NumberNode::getNum() const { return num; }

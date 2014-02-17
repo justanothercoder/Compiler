@@ -21,11 +21,11 @@ public:
     
     ExprNode* getReplacement(string name, const vector<ExprNode*>& expr) const;
 
-    virtual Symbol* getSpec(const vector<ExprNode*>& symbols) const;
+    virtual Symbol* getSpec(vector<ExprNode*> symbols) const;
     
 public:
 
-    static map< vector<ExprNode*>, StructSymbol*> specs;   
+	mutable map< vector<ExprNode*>, StructSymbol*> specs;   
 
     vector< pair<string, TypeInfo> > template_symbols;
     AST *holder;

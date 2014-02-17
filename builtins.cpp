@@ -51,10 +51,16 @@ FunctionSymbol *BuiltIns::getchar_func = new FunctionSymbol("getchar",
 							    {false, false, false}
     );
 
-/*TemplateStructSymbol *BuiltIns::array_struct = new TemplateStructSymbol("array",
+TemplateStructSymbol *BuiltIns::array_struct = new TemplateStructSymbol("array",
 																		BuiltIns::global_scope,
 																		{ {"T", TypeInfo("class", false, { }) }, 
 																		  { "size", TypeInfo("int", false, { }) }
 																		},
-																		new AsmArrayNode(i
-																		*/
+																		new TemplateStructDeclarationNode(
+																			"array",
+																			{new AsmArrayNode()},
+																			{ {"T", TypeInfo("class", false, { }) }, 
+																			  { "size", TypeInfo("int", false, { }) }
+																			}
+																		)
+		);	

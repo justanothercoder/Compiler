@@ -9,7 +9,7 @@ class TemplateStructDeclarationNode : public StructDeclarationNode
 {
 public:
 
-    TemplateStructDeclarationNode(string name, const vector<DeclarationNode*>& inner, const vector< pair<string, TypeInfo> >& template_params);
+    TemplateStructDeclarationNode(string name, const vector<AST*>& inner, const vector< pair<string, TypeInfo> >& template_params);
 
     virtual void build_scope();
 	    
@@ -17,10 +17,6 @@ public:
     virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
     virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
 
-    virtual Scope* getDeclScope() const;
-
-	virtual vector<AST*> getChildren() const;
-    
 private:
 
     vector< pair<string, TypeInfo> > template_params;
