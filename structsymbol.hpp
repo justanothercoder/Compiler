@@ -22,22 +22,19 @@ public:
     
     StructSymbol(string name, Scope *enclosing_scope);
 
+    virtual SymbolType getSymbolType() const;
+    virtual string getName() const;
+
+    virtual int getSize() const;
+    virtual TypeKind getTypeKind() const ;
+	
+    Symbol* resolveMember(string name) const;
+
     virtual Scope* getEnclosingScope() const;
     virtual Symbol* resolve(string name) const;
 
-    virtual string getName() const;
-    virtual int getSize() const;
-
-    virtual int getScopeSize() const;
-	
     virtual string getScopeName() const;
-
-    Symbol* resolveMember(string name) const;
-
-    virtual SymbolType getSymbolType() const;
-
-    virtual TypeKind getTypeKind() const ;
-
+    virtual int getScopeSize() const;
 	virtual int getFreeAddress() const;
 
 private:

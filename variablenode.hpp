@@ -21,7 +21,6 @@ public:
     virtual AST* copyTree() const;
 
     virtual Type *getType() const;
-    virtual bool isLeftValue() const;    
 
     virtual void build_scope();
 

@@ -26,7 +26,6 @@ public:
     virtual void build_scope();
 
     virtual Type* getType() const;
-    virtual bool isLeftValue() const;
 
     virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
     virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);

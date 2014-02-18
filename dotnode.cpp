@@ -31,7 +31,6 @@ void DotNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNo
 }
 
 Type* DotNode::getType() const { return TypeHelper::getReferenceType(member->getType()); }
-bool DotNode::isLeftValue() const { return true; }
 
 void DotNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
 

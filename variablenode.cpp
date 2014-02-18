@@ -43,8 +43,6 @@ Type* VariableNode::getType() const
 	return TypeHelper::getReferenceType(variable->getType());
 }
 
-bool VariableNode::isLeftValue() const { return true; }
-
 bool VariableNode::isTemplateParam() const { return template_sym != nullptr; }
 
 AST* VariableNode::copyTree() const { return new VariableNode(name); }

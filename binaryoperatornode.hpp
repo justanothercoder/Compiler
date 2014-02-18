@@ -22,7 +22,6 @@ public:
 
     virtual void build_scope();
     
-    virtual bool isLeftValue() const;
     virtual Type *getType() const;
 
     string getOperatorName();

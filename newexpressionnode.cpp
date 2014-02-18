@@ -67,8 +67,6 @@ void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vecto
 
 Type* NewExpressionNode::getType() const { return resolved_constructor->getTypeInfo().getReturnType(); }
 
-bool NewExpressionNode::isLeftValue() const { return false; }
-
 AST* NewExpressionNode::copyTree() const 
 {
 	vector<ExprNode*> vec(params.size());

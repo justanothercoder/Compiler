@@ -44,8 +44,6 @@ void BracketNode::gen(const TemplateStructSymbol *template_sym, std::vector<Expr
 
 Type* BracketNode::getType() const { return resolved_operator->getTypeInfo().getReturnType(); }
 
-bool BracketNode::isLeftValue() const { return resolved_operator->getTypeInfo().getReturnType()->getTypeKind() == TypeKind::REFERENCE; }
-
 AST* BracketNode::copyTree() const { return new BracketNode(static_cast<ExprNode*>(base->copyTree()), static_cast<ExprNode*>(expr->copyTree())); }
 	
 vector<AST*> BracketNode::getChildren() const { return {base, expr}; }

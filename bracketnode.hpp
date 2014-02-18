@@ -22,7 +22,6 @@ public:
 	virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);	
 
 	virtual Type* getType() const;
-	virtual bool isLeftValue() const;
 
 	virtual AST* copyTree() const;
 

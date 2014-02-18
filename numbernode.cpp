@@ -6,8 +6,6 @@ void NumberNode::build_scope() { }
 
 Type* NumberNode::getType() const { return BuiltIns::int_struct; }
 
-bool NumberNode::isLeftValue() const { return false; }
-
 void NumberNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
 
 AST* NumberNode::copyTree() const { return new NumberNode(num); }
