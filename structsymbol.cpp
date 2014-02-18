@@ -2,32 +2,32 @@
 
 StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope)
 {
-    type_size = 0;
-    scope_size = 0;
+	type_size = 0;
+	scope_size = 0;
 
-    scope_name = getEnclosingScope()->getScopeName() + "_" + name;
+	scope_name = getEnclosingScope()->getScopeName() + "_" + name;
 }
 
 Scope* StructSymbol::getEnclosingScope() const { return enclosing_scope; }
 
 Symbol* StructSymbol::resolve(string name) const
 {
-    auto it = table.find(name);
-    if ( it == std::end(table) )
-    {
-	if ( getEnclosingScope() )
-	    return getEnclosingScope()->resolve(name);
-	return nullptr;
-    }
-    return it->second;
+	auto it = table.find(name);
+	if ( it == std::end(table) )
+	{
+		if ( getEnclosingScope() )
+			return getEnclosingScope()->resolve(name);
+		return nullptr;
+	}
+	return it->second;
 }
 
 Symbol* StructSymbol::resolveMember(string name) const
 {
-    auto it = table.find(name);
-    if ( it == std::end(table) )
-	return nullptr;
-    return it->second;    
+	auto it = table.find(name);
+	if ( it == std::end(table) )
+		return nullptr;
+	return it->second;    
 }
 
 int StructSymbol::getSize() const { return type_size; }

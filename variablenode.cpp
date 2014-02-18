@@ -72,9 +72,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 			CodeGen::emit("mov rax, [rax - " + std::to_string(struc_scope->getAddress(variable)) + "]");
 		}
 		else
-		{
 			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(variable)) + "]");
-		}
 	}    
 	else if ( var_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
@@ -99,9 +97,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 				variable = new VariableSymbol(ov_func->getName(), ov_func_type_info.symbols[type_info]);
 		}
 		else
-		{
 			variable = new VariableSymbol(ov_func->getName(), std::begin(ov_func_type_info.symbols)->second);
-		}
 
 		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(variable->getType())->getScopedTypedName() + "]");
 	}
@@ -119,9 +115,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 			CodeGen::emit("lea rax, [rax - " + std::to_string(struc_scope->getAddress(variable)) + "]");
 		}
 		else
-		{
 			CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->getAddress(variable)) + "]");
-		}
 	}
 }
 	

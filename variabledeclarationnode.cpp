@@ -45,7 +45,6 @@ void VariableDeclarationNode::check(const TemplateStructSymbol *template_sym, st
 		
 		Symbol *_constr = type->resolve(type_name);
 
-//		Symbol *_constr = type->resolve(type->getName());
 		if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
 			throw SemanticError("No constructor");
 
