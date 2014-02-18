@@ -4,11 +4,11 @@ ReturnNode::ReturnNode(ExprNode *expr) : expr(expr) { }
 
 ReturnNode::~ReturnNode() { delete expr; }
 
-void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> _expr)
 {
-    this->expr->gen(template_sym, expr);
+    expr->gen(template_sym, _expr);
 
-    CodeGen::pushOnStack(this->expr->getType()->getSize(), this->getScope()->getFreeAddress());
+    CodeGen::pushOnStack(expr->getType()->getSize(), this->getScope()->getFreeAddress());
     CodeGen::emit("lea rax, [rsp - " + std::to_string(this->getScope()->getFreeAddress()) + "]");
 
     CodeGen::emit("mov rsp, rbp");
@@ -28,7 +28,7 @@ void ReturnNode::check(const TemplateStructSymbol *template_sym, std::vector<Exp
     expr->check(template_sym, _expr);
 }
 
-void ReturnNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { this->expr->define(template_sym, expr); }
+void ReturnNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> _expr) { expr->define(template_sym, _expr); }
 
 AST* ReturnNode::copyTree() const { return new ReturnNode(static_cast<ExprNode*>(expr->copyTree())); }
 
