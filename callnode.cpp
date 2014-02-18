@@ -32,6 +32,8 @@ void CallNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNod
 
     CodeGen::genCallCode(resolved_function_symbol, params, template_sym, expr);
     CodeGen::emit("pop rsi");
+	if ( resolved_function_symbol->isMethod() )
+		CodeGen::emit("pop rdi");
 }
 
 void CallNode::build_scope()

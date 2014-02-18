@@ -64,13 +64,9 @@ void VariableDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 	{   
 	 	CodeGen::emit("push rdi");	
 		CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
-		CodeGen::emit("sub rsp, " + std::to_string(definedSymbol->getType()->getSize()));
 
-		CodeGen::emit("push rsi");
-		CodeGen::emit("lea rsi, [" + resolved_constructor->getScopedTypedName() + "]");
-
-		CodeGen::genCallCode(resolved_constructor, constructor_call_params, template_sym, expr);
-		CodeGen::emit("pop rsi");
+		CodeGen::construct_object(definedSymbol->getType(), resolved_constructor, constructor_call_params, this->getScope()->getFreeAddress() ,template_sym, expr);
+		CodeGen::emit("pop rdi");
 	}
 }
 

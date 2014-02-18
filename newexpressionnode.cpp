@@ -59,8 +59,10 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 
 void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
+	CodeGen::emit("push rdi");
 	CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 	CodeGen::construct_object(getType(), resolved_constructor, params, 0, template_sym, expr);
+	CodeGen::emit("pop rdi");
 }
 
 Type* NewExpressionNode::getType() const { return resolved_constructor->getTypeInfo().getReturnType(); }

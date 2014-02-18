@@ -6,7 +6,6 @@ void CodeGen::construct_object(Type *type, FunctionSymbol *constructor, const ve
 {
 	offset += std::accumulate(std::begin(params), std::end(params), 0, [](int x, ExprNode *expr) { return x += expr->getType()->getSize(); });
 
-	CodeGen::emit("mov [rsp - " + std::to_string(GlobalConfig::int_size + offset) + "], rdi");
 	CodeGen::emit("sub rsp, " + std::to_string(type->getSize()));
 
 	CodeGen::emit("push rsi");
@@ -107,7 +106,4 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 
 	CodeGen::emit("call rsi");
 	CodeGen::emit("add rsp, " + std::to_string(params_size));
-
-	if ( is_method )
-		CodeGen::emit("pop rdi");
 }

@@ -38,7 +38,7 @@ void BracketNode::gen(const TemplateStructSymbol *template_sym, std::vector<Expr
 	CodeGen::emit("mov rdi, rax");
 
     CodeGen::genCallCode(resolved_operator, {this->expr}, template_sym, expr);
-//	CodeGen::emit("pop rdi");
+	CodeGen::emit("pop rdi");
 	CodeGen::emit("pop rsi");
 }
 

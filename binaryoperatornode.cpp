@@ -69,6 +69,7 @@ void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vect
 		CodeGen::emit("mov rdi, rax");
 
 		CodeGen::genCallCode(resolved_operator_symbol, {rhs}, template_sym, expr);
+		CodeGen::emit("pop rdi");
 	}
 	else
 	    CodeGen::genCallCode(resolved_operator_symbol, {lhs, rhs}, template_sym, expr);

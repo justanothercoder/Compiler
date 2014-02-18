@@ -18,8 +18,10 @@ string FunctionSymbol::getTypedName() const
 			res = "operatorelem";
 	}
 
-	for ( int i = 0; i < function_type_info.getNumberOfParams(); ++i )
-		res += "_" + function_type_info.getParamType(i)->getName();
+	auto& pt = function_type_info.getParamsTypes();
+
+	for ( auto type : pt )
+		res += "_" + type->getName();
 
 	return res;
 }
@@ -28,8 +30,10 @@ string FunctionSymbol::getScopedTypedName() const
 {
 	string res = scope_name;
 
-	for ( int i = 0; i < function_type_info.getNumberOfParams(); ++i )
-		res += "_" + function_type_info.getParamType(i)->getName();
+	auto& pt = function_type_info.getParamsTypes();
+
+	for ( auto type : pt )
+		res += "_" + type->getName();
 
 	return res;
 }
