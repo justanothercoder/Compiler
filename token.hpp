@@ -34,7 +34,8 @@ enum class TokenType { EOF_TYPE,
 	GREATER,
 	LBRACKET,
 	RBRACKET,
-	OPERATOR
+	OPERATOR,
+	FOR
 	};
 
 string to_string(TokenType tt);

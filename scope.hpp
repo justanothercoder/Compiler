@@ -22,6 +22,7 @@ public:
 
     virtual int getScopeAddress() const = 0;
     virtual int getScopeSize() const = 0;
+	virtual int getFreeAddress() const = 0;
 
     virtual string getScopeName() const = 0;
 

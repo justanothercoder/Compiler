@@ -18,6 +18,8 @@ public:
     
     void recalc_scope_address();
 
+	virtual int getFreeAddress() const;
+		
 private:
 
     Scope *enclosing_scope;

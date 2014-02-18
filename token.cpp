@@ -16,7 +16,8 @@ string to_string(TokenType tt)
     case TokenType::NEW:       return "new";
     case TokenType::TEMPLATE:  return "template";
 	case TokenType::OPERATOR:  return "operator";
-    case TokenType::LPAREN:    return "(";
+ 	case TokenType::FOR:       return "for";
+ 	case TokenType::LPAREN:    return "(";
     case TokenType::RPAREN:    return ")";
     case TokenType::LBRACE:    return "{";
     case TokenType::RBRACE:    return "}";

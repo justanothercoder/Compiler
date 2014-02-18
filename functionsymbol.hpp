@@ -50,6 +50,8 @@ public:
     virtual SymbolType getSymbolType() const;
     virtual TypeKind getTypeKind() const;
     
+	virtual int getFreeAddress() const;
+
 private:
 
     int params_size;

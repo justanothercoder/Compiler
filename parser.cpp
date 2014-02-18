@@ -22,10 +22,26 @@ AST* Parser::statement()
 	else if ( getTokenType(1) == TokenType::STRUCT || getTokenType(1) == TokenType::DEF || tryVarDecl() || getTokenType(1) == TokenType::TEMPLATE )
 		return declaration();
 	else if ( getTokenType(1) == TokenType::RETURN ) return return_stat();
-	else if ( getTokenType(1) == TokenType::IF )     return if_stat();
-	else if ( getTokenType(1) == TokenType::WHILE )  return while_stat();
+	else if ( getTokenType(1) == TokenType::IF     ) return if_stat();
+	else if ( getTokenType(1) == TokenType::WHILE  ) return while_stat();
+	else if ( getTokenType(1) == TokenType::FOR    ) return for_stat();
 	else if ( tryAssignment() )                      return assignment();
+	else if ( getTokenType(1) == TokenType::LBRACE ) return block();
 	else                                             return expression();
+}
+
+AST* Parser::block()
+{
+	match(TokenType::LBRACE);
+
+	vector<AST*> statements;
+
+	while ( getTokenType(1) != TokenType::RBRACE )
+		statements.push_back(statement());
+
+	match(TokenType::RBRACE);
+
+	return new StatementNode(statements);
 }
 
 DeclarationNode* Parser::declaration(std::shared_ptr<string> struct_name)
@@ -376,47 +392,15 @@ AST* Parser::if_stat()
 
 	AST *stats_true, *stats_false; 
 
-	if ( getTokenType(1) == TokenType::LBRACE )
-	{
-		match(TokenType::LBRACE);
-
-		vector<AST*> statements;
-
-		while ( getTokenType(1) != TokenType::RBRACE )
-			statements.push_back(statement());
-
-		stats_true = new StatementNode(statements);
-		match(TokenType::RBRACE);
-	}
-	else
-	{
-		stats_true = new StatementNode({statement()});
-	}
+	stats_true = statement();
 
 	if ( getTokenType(1) == TokenType::ELSE )
 	{
 		match(TokenType::ELSE);
-		if ( getTokenType(1) == TokenType::LBRACE )
-		{
-			match(TokenType::LBRACE);
-
-			vector<AST*> statements;
-
-			while ( getTokenType(1) != TokenType::RBRACE )
-				statements.push_back(statement());
-
-			stats_false = new StatementNode(statements);
-			match(TokenType::RBRACE);
-		}
-		else
-		{
-			stats_false = new StatementNode({statement()});
-		}
+		stats_false = statement();
 	}
 	else
-	{
-		stats_false = new StatementNode({});
-	}
+		stats_false = new EmptyStatementNode();
 
 	return new IfNode(cond, stats_true, stats_false);
 }
@@ -429,24 +413,7 @@ AST* Parser::while_stat()
 	ExprNode *cond = expression();
 	match(TokenType::RPAREN);
 
-	AST *stats;
-
-	if ( getTokenType(1) == TokenType::LBRACE )
-	{
-		match(TokenType::LBRACE);
-
-		vector<AST*> statements;
-
-		while ( getTokenType(1) != TokenType::RBRACE )
-			statements.push_back(statement());
-
-		stats = new StatementNode(statements);
-		match(TokenType::RBRACE);
-	}
-	else
-	{
-		stats = new StatementNode({statement()});
-	}
+	AST *stats = statement();
 
 	return new WhileNode(cond, stats);
 }
@@ -469,6 +436,49 @@ bool Parser::tryAssignment()
 	release();
 
 	return success;
+}
+
+AST* Parser::for_stat()
+{
+	match(TokenType::FOR);
+	match(TokenType::LPAREN);
+
+	AST *init;
+
+	if ( getTokenType(1) == TokenType::SEMICOLON )
+		init = new EmptyStatementNode(); 
+	else if ( tryVarDecl() )	
+		init = variableDecl();
+	else if ( tryAssignment() )
+		init = assignment();
+	else
+		throw RecognitionError("");
+
+	match(TokenType::SEMICOLON);
+
+	ExprNode *cond;
+
+	if ( getTokenType(1) == TokenType::SEMICOLON )
+		cond = new NumberNode("1");
+	else
+		cond = expression();
+
+	match(TokenType::SEMICOLON);
+
+	AST *step;
+
+	if ( getTokenType(1) == TokenType::RPAREN )
+		step = new EmptyStatementNode();
+	else if ( tryAssignment() )
+		step = assignment();
+	else
+		step = expression();
+
+	match(TokenType::RPAREN);
+
+	AST *stats = statement();
+	
+	return new ForNode(init, cond, step, stats);
 }
 
 TypeInfo Parser::typeInfo()

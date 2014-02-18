@@ -39,3 +39,5 @@ SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }
 TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }
 
 void StructSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
+
+int StructSymbol::getFreeAddress() const { return 0; }

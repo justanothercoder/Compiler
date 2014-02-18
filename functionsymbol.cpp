@@ -56,3 +56,5 @@ SymbolType FunctionSymbol::getSymbolType() const { return SymbolType::FUNCTION; 
 TypeKind FunctionSymbol::getTypeKind() const { return TypeKind::FUNCTION; }
 
 void FunctionSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
+	
+int FunctionSymbol::getFreeAddress() const { return getScopeSize() + GlobalConfig::int_size; }

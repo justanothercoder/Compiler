@@ -81,6 +81,7 @@ Token Lexer::getToken()
 			else if ( buf == "new"      ) token_type = TokenType::NEW;
 			else if ( buf == "template" ) token_type = TokenType::TEMPLATE;
 			else if ( buf == "operator" ) token_type = TokenType::OPERATOR;
+			else if ( buf == "for"      ) token_type = TokenType::FOR;
 			else                          token_type = TokenType::ID;
 
 			return Token(token_type, buf, l, s);

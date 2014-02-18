@@ -24,6 +24,8 @@ public:
 
     virtual Scope* getEnclosingScope() const;
     virtual string getScopeName() const;
+
+	virtual int getFreeAddress() const;
 };
 
 #endif
