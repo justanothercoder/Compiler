@@ -1,6 +1,6 @@
 #include "asmarraynode.hpp"
 
-AsmArrayNode::AsmArrayNode()
+AsmArrayNode::AsmArrayNode() : array_size(0), size_of_type(0)
 {
 	setScope(BuiltIns::global_scope);
 }

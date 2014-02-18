@@ -15,6 +15,8 @@ public:
 
 	ForNode(AST *init, ExprNode *cond, AST *step, AST *stats);
 
+	~ForNode();
+
 	virtual void build_scope();
 	virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
 	virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
@@ -32,7 +34,7 @@ private:
 	AST *step;
     AST	*stats;
 
-	Scope *for_scope;
+	LocalScope *for_scope;
 };
 
 #endif

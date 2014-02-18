@@ -2,6 +2,16 @@
 
 ForNode::ForNode(AST *init, ExprNode *cond, AST *step, AST *stats) : init(init), cond(cond), step(step), stats(stats), for_scope(nullptr) { }
 
+ForNode::~ForNode() 
+{
+	delete init;
+	delete cond;
+	delete step;
+	delete stats;
+
+	delete for_scope;
+}
+
 void ForNode::build_scope()
 {
 	for_scope = new LocalScope(this->getScope());
@@ -29,6 +39,8 @@ void ForNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprN
 
 void ForNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
+	for_scope->recalc_scope_address();
+
 	init->check(template_sym, expr);
 	cond->check(template_sym, expr);
 	step->check(template_sym, expr);
