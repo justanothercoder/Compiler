@@ -18,9 +18,6 @@ public:
     static Type* getTypeHint(ExprNode *expr);
     static void setTypeHint(ExprNode *expr, Type *type);
 
-    static Scope* getSymbolScope(Symbol *sym);
-    static void setSymbolScope(Symbol *sym, Scope *scope);
-
     static int getDefinitionTime(Symbol *sym);
     static int setDefinitionTime(Symbol *sym);
 
@@ -32,10 +29,7 @@ private:
     GlobalHelper();
 
     static map<ExprNode*, Type*> type_hints;
-    static map<Symbol*, Scope*> symbol_scopes;
-
     static map<Symbol*, int> definition_time;
-
     static map<AST*, Scope*> ast_scopes;
 };
 

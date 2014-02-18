@@ -1,5 +1,7 @@
 #include "token.hpp"
 
+Token::Token(TokenType type, string text, int line, int symbol) : type(type), text(text), line(line), symbol(symbol) { }
+
 string to_string(TokenType tt)
 {
     switch ( tt )
@@ -36,10 +38,4 @@ string to_string(TokenType tt)
     case TokenType::LESS:      return "<";
     case TokenType::GREATER:   return ">";
     }
-}
-
-
-Token::Token(TokenType type, string text, int line, int symbol) : type(type), text(text), line(line), symbol(symbol)
-{
-    
 }

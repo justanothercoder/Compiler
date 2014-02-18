@@ -1,10 +1,6 @@
 #include "globalscope.hpp"
 
-GlobalScope::GlobalScope() 
-{
-    scope_size = 0;
-    scope_address = 0;
-}
+GlobalScope::GlobalScope() : BaseScope() { } 
 
 Scope* GlobalScope::getEnclosingScope() const { return nullptr; }
 string GlobalScope::getScopeName() const { return ""; }
