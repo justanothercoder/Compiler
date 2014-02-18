@@ -8,15 +8,6 @@ StatementNode::~StatementNode()
 		delete i;
 }
 
-void StatementNode::build_scope()
-{
-	for ( auto i : this->statements )
-	{
-		i->setScope(getScope());
-		i->build_scope();
-	}
-}
-
 void StatementNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	for ( auto i : statements )

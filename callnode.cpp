@@ -35,17 +35,6 @@ void CallNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNod
 		CodeGen::emit("pop rdi");
 }
 
-void CallNode::build_scope()
-{
-    caller->setScope(this->getScope());
-    caller->build_scope();
-    for ( auto i : params )
-    {
-		i->setScope(this->getScope());
-		i->build_scope();
-    }
-}
-
 AST* CallNode::copyTree() const
 {
     vector<ExprNode*> expr(params.size());

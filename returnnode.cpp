@@ -2,12 +2,6 @@
 
 ReturnNode::ReturnNode(ExprNode *expr) : expr(expr) { }
 
-void ReturnNode::build_scope()
-{
-    expr->setScope(this->getScope());
-    expr->build_scope();
-}
-
 ReturnNode::~ReturnNode() { delete expr; }
 
 void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)

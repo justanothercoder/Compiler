@@ -27,8 +27,6 @@ public:
 
     virtual Type* getType() const;
     
-    virtual void build_scope();
-    
     virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
     virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
 

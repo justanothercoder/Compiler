@@ -6,15 +6,6 @@ BinaryOperatorNode::~BinaryOperatorNode() { delete lhs; delete rhs; }
 
 Type* BinaryOperatorNode::getType() const { return resolved_operator_symbol->getTypeInfo().getReturnType(); }
 
-void BinaryOperatorNode::build_scope()
-{
-    lhs->setScope(this->getScope());
-    lhs->build_scope();
-    
-    rhs->setScope(this->getScope());
-    rhs->build_scope();
-}
-
 void BinaryOperatorNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	auto ov_func = CallHelper::getOverloadedFunc(getOperatorName(), this->getScope());

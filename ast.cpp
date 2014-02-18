@@ -9,3 +9,13 @@ void AST::define() { define(nullptr, { }); }
 void AST::check() { check(nullptr, { }); }
 void AST::gen() { gen(nullptr, { }); }
 
+void AST::build_scope()
+{
+	std::vector<AST*> children = getChildren();
+
+	for ( auto child : children )
+	{
+		child->setScope(this->getScope());
+		child->build_scope();
+	}
+}

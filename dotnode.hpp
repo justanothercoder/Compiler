@@ -19,8 +19,6 @@ public:
     
     virtual AST* copyTree() const;
 
-    virtual void build_scope();
-
     virtual Type* getType() const;
 
     virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);

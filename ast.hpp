@@ -21,7 +21,7 @@ public:
     
     virtual AST* copyTree() const = 0;
 	
-    virtual void build_scope() = 0;    
+    virtual void build_scope(); 
 
     void define();
     void check();

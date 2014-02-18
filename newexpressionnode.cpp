@@ -2,15 +2,6 @@
 
 NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params) : type_info(type_info), params(params) { resolved_constructor = nullptr; }
 
-void NewExpressionNode::build_scope()
-{
-	for ( auto i : params )
-	{
-		i->setScope(this->getScope());
-		i->build_scope();
-	}
-}
-
 NewExpressionNode::~NewExpressionNode()
 {
 	for ( auto i : params )

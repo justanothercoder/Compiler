@@ -2,8 +2,6 @@
 
 VariableNode::VariableNode(string name) : name(name), variable(nullptr), template_sym(nullptr) { }
 
-void VariableNode::build_scope() { }
-
 void VariableNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	if ( template_sym && template_sym->isIn(name) )

@@ -20,8 +20,6 @@ public:
 
     virtual AST* copyTree() const;
 
-    virtual void build_scope();
-    
     virtual Type *getType() const;
 
     string getOperatorName();

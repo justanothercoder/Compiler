@@ -4,15 +4,6 @@ BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr
 
 BracketNode::~BracketNode() { delete expr; }
 
-void BracketNode::build_scope()
-{
-	base->setScope(this->getScope());
-	base->build_scope();
-
-	expr->setScope(this->getScope());
-	expr->build_scope();
-}
-
 void BracketNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	base->check(template_sym, expr);

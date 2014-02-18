@@ -4,12 +4,6 @@ DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(m
 
 DotNode::~DotNode() { }
 
-void DotNode::build_scope()
-{
-	base->setScope(getScope());
-	base->build_scope();    
-}
-
 void DotNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	base->check(template_sym, expr);

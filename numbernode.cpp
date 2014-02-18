@@ -2,8 +2,6 @@
 
 NumberNode::NumberNode(string num) : num(num) { }
 
-void NumberNode::build_scope() { }
-
 Type* NumberNode::getType() const { return BuiltIns::int_struct; }
 
 void NumberNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
