@@ -14,8 +14,8 @@ void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprN
 {
     this->expr->gen(template_sym, expr);
 
-    CodeGen::pushOnStack(this->expr->getType()->getSize(), GlobalConfig::int_size);
-    CodeGen::emit("lea rax, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
+    CodeGen::pushOnStack(this->expr->getType()->getSize(), this->getScope()->getFreeAddress());
+    CodeGen::emit("lea rax, [rsp - " + std::to_string(this->getScope()->getFreeAddress()) + "]");
 
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");
