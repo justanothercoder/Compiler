@@ -19,6 +19,8 @@ public:
     virtual void visit(StructSymbol *sc);
     virtual void visit(FunctionSymbol *sc);
 
+	void visit(BaseScope *sc);
+
 private:
     FunctionSymbol *sym;
 };
