@@ -1,7 +1,5 @@
 #include "whilenode.hpp"
 
-int WhileNode::label_num = 0;
-
 WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats), while_scope(nullptr) { }
 
 WhileNode::~WhileNode() 
@@ -45,7 +43,12 @@ void WhileNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNo
     CodeGen::emit(exit_label + ":");
 }
 
-string WhileNode::getNewLabel() { return "@while_label" + std::to_string(++WhileNode::label_num); }
+string WhileNode::getNewLabel() 
+{
+	static int label_num = 0;
+	return "@while_label" + std::to_string(++label_num); 
+}
+
 AST* WhileNode::copyTree() const { return new WhileNode(static_cast<ExprNode*>(cond->copyTree()), stats->copyTree()); }
    	
 vector<AST*> WhileNode::getChildren() const { return {cond, stats}; }

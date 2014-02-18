@@ -1,6 +1,3 @@
 #include "scope.hpp"
 
-Scope::~Scope()
-{
-    
-}
+Scope::~Scope() { }

@@ -30,7 +30,6 @@ private:
 
     LocalScope *if_scope, *else_scope;
     
-    static int label_num;
     static string getNewLabel();
 };
 

@@ -91,7 +91,7 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 				{
 					auto conv = TypeHelper::getConversion(par_type, param_type);
 
-					genConversion(conv, params_size, par_type);
+					CodeGen::genConversion(conv, params_size, par_type);
 				}
 			}
 		}

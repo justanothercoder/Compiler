@@ -30,7 +30,6 @@ private:
 
     LocalScope *while_scope;
 
-    static int label_num;
     static string getNewLabel();
 };
 
