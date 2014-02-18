@@ -1,26 +1,19 @@
 #include "functiondeclarationnode.hpp"
 
-FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, const vector<AST*>& statements, FunctionTraits traits) : name(name), params(params), return_type_info(return_type_info), statements(statements), traits(traits)
-{
-	definedSymbol = nullptr;
-}
+FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, AST* statements, FunctionTraits traits) : name(name), params(params), return_type_info(return_type_info), statements(statements), traits(traits), definedSymbol(nullptr) { }
 
 FunctionDeclarationNode::~FunctionDeclarationNode() 
 { 
 	delete definedSymbol; 
-	
-	for ( auto i : statements )
-		delete i;
+	delete statements;	
 }   
 
 void FunctionDeclarationNode::build_scope()
 {
 	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }), this->getScope(), traits);
-	for ( auto i : statements )
-	{
-		i->setScope(definedSymbol);
-		i->build_scope();
-	}
+
+	statements->setScope(definedSymbol);
+	statements->build_scope();
 }
 
 Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
@@ -62,8 +55,7 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 
 	this->getScope()->accept(new FunctionSymbolDefine(definedSymbol));
 
-	for ( auto t : statements )
-		t->define(template_sym, expr);
+	statements->define(template_sym, expr);
 }
 
 void FunctionDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
@@ -75,8 +67,7 @@ void FunctionDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 	CodeGen::emit("push rbp");
 	CodeGen::emit("mov rbp, rsp");
 
-	for ( auto i : statements )
-		i->gen(template_sym, expr);
+	statements->gen(template_sym, expr);
 
 	CodeGen::emit("mov rsp, rbp");
 	CodeGen::emit("pop rbp");
@@ -87,17 +78,9 @@ void FunctionDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 void FunctionDeclarationNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	definedSymbol->recalc_scope_address();
-
-	for ( auto t : statements )
-		t->check(template_sym, expr);
+	statements->check(template_sym, expr);
 }
 
-AST* FunctionDeclarationNode::copyTree() const
-{
-	vector<AST*> stats(statements.size());
-	std::transform(std::begin(statements), std::end(statements), std::begin(stats), [&](AST *t) { return t->copyTree(); });
+AST* FunctionDeclarationNode::copyTree() const { return new FunctionDeclarationNode(name, params, return_type_info, statements->copyTree(), traits); }
 
-	return new FunctionDeclarationNode(name, params, return_type_info, stats, traits);
-}
-
-vector<AST*> FunctionDeclarationNode::getChildren() const { return statements; }
+vector<AST*> FunctionDeclarationNode::getChildren() const { return {statements}; }

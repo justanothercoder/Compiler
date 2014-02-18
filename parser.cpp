@@ -93,9 +93,8 @@ DeclarationNode* Parser::structDecl()
 
 	string struct_name = id();
 
-	match(TokenType::LBRACE);
-
 	vector<AST*> struct_in;
+	match(TokenType::LBRACE);
 
 	while ( getTokenType(1) != TokenType::RBRACE )
 	{
@@ -141,9 +140,9 @@ DeclarationNode* Parser::templateStructDecl()
 
 	string struct_name = id();
 
+	vector<AST*> struct_in;    
 	match(TokenType::LBRACE);
 
-	vector<AST*> struct_in;    
 	while ( getTokenType(1) != TokenType::RBRACE )
 	{
 		while ( getTokenType(1) == TokenType::SEMICOLON )
@@ -201,23 +200,12 @@ DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
 			return_type = typeInfo();
 		}
 		else
-		{
 			return_type = TypeInfo("void", false);
-		}
 	}
 	else
-	{
 		return_type = TypeInfo(*struct_name, true);
-	}
 
-	vector < AST* > statements;
-
-	match(TokenType::LBRACE);
-
-	while ( getTokenType(1) != TokenType::RBRACE )
-		statements.push_back(statement());
-
-	match(TokenType::RBRACE);
+	AST *statements = block();
 
 	return new FunctionDeclarationNode(function_name, params, return_type, statements, {struct_name != nullptr, is_constructor, is_operator});
 }
