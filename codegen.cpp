@@ -114,21 +114,10 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 					CodeGen::genConversion(conv, params_size, par_type);
 				}
 			}
-		
-//			pushOnStack(param_type->getSize(), current_address + GlobalConfig::int_size);
-//			current_address += param_type->getSize();
-
 			auto copy_constr = TypeHelper::getCopyConstructor(param_type);	
 			CodeGen::genCopy(copy_constr, 10 * GlobalConfig::int_size, current_address, param_type);
 			current_address += param_type->getSize();
 		}
-
-//		pushOnStack(param_type->getSize(), current_address + GlobalConfig::int_size);
-	
-//		auto copy_constr = TypeHelper::getCopyConstructor(param_type);	
-//		genCopy(copy_constr, 10 * GlobalConfig::int_size, current_address, param_type);
-
-//		current_address += param_type->getSize();
 	}
 
 	if ( is_method )

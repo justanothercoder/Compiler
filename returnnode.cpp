@@ -8,8 +8,13 @@ void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprN
 {
     expr->gen(template_sym, _expr);
 
-    CodeGen::pushOnStack(expr->getType()->getSize(), this->getScope()->getFreeAddress());
-    CodeGen::emit("lea rax, [rsp - " + std::to_string(this->getScope()->getFreeAddress()) + "]");
+	auto copy_constr = TypeHelper::getCopyConstructor(
+			expr->getType()->isReference() ? 
+				static_cast<ReferenceType*>(expr->getType())->getReferredType() : 
+				expr->getType()
+			);
+
+	CodeGen::genCopy(copy_constr, 10 * GlobalConfig::int_size, this->getScope()->getFreeAddress(), expr->getType());
 
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");

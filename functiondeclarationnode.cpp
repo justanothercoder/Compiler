@@ -69,6 +69,9 @@ void FunctionDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 
 	statements->gen(template_sym, expr);
 
+	if ( definedSymbol->isConstructor() )
+		CodeGen::emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
+
 	CodeGen::emit("mov rsp, rbp");
 	CodeGen::emit("pop rbp");
 	CodeGen::emit("ret");
