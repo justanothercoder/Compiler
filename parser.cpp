@@ -83,6 +83,11 @@ DeclarationNode* Parser::variableDecl(std::shared_ptr<string> struct_name)
 
 	if ( getTokenType(1) == TokenType::LPAREN )
 		constructor_call_params = call_params_list();
+	else if ( getTokenType(1) == TokenType::ASSIGN )
+	{
+		match(TokenType::ASSIGN);
+		constructor_call_params = {expression()};
+	}
 
 	return new VariableDeclarationNode(var_name, type_info, struct_name != nullptr, constructor_call_params);
 }
