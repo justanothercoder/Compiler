@@ -37,6 +37,12 @@ FunctionSymbol *BuiltIns::int_default_constructor = new FunctionSymbol("int",
 								       {true, true, false}
     );
 
+FunctionSymbol *BuiltIns::int_copy_constructor = new FunctionSymbol("int",
+									   FunctionTypeInfo(int_ref, {int_ref, int_struct}),
+									   BuiltIns::int_struct,
+									   {true, true, false}
+		);
+
 BuiltInTypeSymbol *BuiltIns::void_type = new BuiltInTypeSymbol("void", 0);
 
 FunctionSymbol *BuiltIns::putchar_func = new FunctionSymbol("putchar",

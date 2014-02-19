@@ -47,6 +47,7 @@ int main()
 		BuiltIns::int_struct->accept(new VariableSymbolDefine(new VariableSymbol("~~impl", BuiltIns::int_type, VariableSymbolType::FIELD)));
 
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_default_constructor));
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_copy_constructor));
 
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_assign));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_plus));
@@ -67,6 +68,7 @@ int main()
 		CodeGen::emit("extern _int_operatorminus_int~ref_int");
 		CodeGen::emit("extern _int_operatormul_int~ref_int");	
 		CodeGen::emit("extern _int_int_int~ref");
+		CodeGen::emit("extern _int_int_int~ref_int");
 		CodeGen::emit("extern _putchar_int");
 		CodeGen::emit("extern _getchar");
 
