@@ -56,6 +56,23 @@ FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
 	return overloads.empty() ? nullptr : conversion->getTypeInfo().symbols[*std::begin(overloads)];
 }
 
+FunctionSymbol* TypeHelper::getCopyConstructor(Type *type)
+{
+	if ( type->getTypeKind() != TypeKind::STRUCT )
+		return nullptr;
+
+	StructSymbol *struc = static_cast<StructSymbol*>(type);
+
+	auto type_name = struc->getName();
+
+	VariableSymbol *_constructor = dynamic_cast<VariableSymbol*>(struc->resolve(type_name));
+	OverloadedFunctionSymbol *constructor = dynamic_cast<OverloadedFunctionSymbol*>(_constructor->getType());
+
+	auto overloads = FunctionHelper::getBestOverload(constructor->getTypeInfo().overloads, {getReferenceType(type), type});
+
+	return overloads.empty() ? nullptr : constructor->getTypeInfo().symbols[*std::begin(overloads)];
+}
+
 Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym, vector<ExprNode*> expr)
 {    
 	auto type_name = type_info.getTypeName();

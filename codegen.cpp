@@ -37,6 +37,27 @@ void CodeGen::genConversion(FunctionSymbol *conv, int offset, Type *par_type)
 	CodeGen::emit("add rsp, " + std::to_string(offset));
 }
 
+void CodeGen::genCopy(FunctionSymbol *copy_constructor, int offset, int stack_offset, Type *type)
+{
+	CodeGen::emit("sub rsp, " + std::to_string(offset));
+
+	int current_address = 0;
+
+	pushOnStack(type->getSize(), GlobalConfig::int_size);
+
+	current_address += type->getSize();
+
+	CodeGen::emit("lea rbx, [rsp - " + std::to_string(stack_offset - offset + GlobalConfig::int_size) + "]");
+	CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rbx");
+	current_address += GlobalConfig::int_size;
+
+	CodeGen::emit("sub rsp, " + std::to_string(current_address));
+	CodeGen::emit("call " + copy_constructor->getScopedTypedName());
+	CodeGen::emit("add rsp, " + std::to_string(current_address));
+	
+	CodeGen::emit("add rsp, " + std::to_string(offset));
+}
+
 void CodeGen::pushOnStack(unsigned int size, int offset)
 {
 	for ( unsigned int i = 0; i < size; i += GlobalConfig::int_size )
@@ -93,10 +114,21 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 					CodeGen::genConversion(conv, params_size, par_type);
 				}
 			}
+		
+//			pushOnStack(param_type->getSize(), current_address + GlobalConfig::int_size);
+//			current_address += param_type->getSize();
+
+			auto copy_constr = TypeHelper::getCopyConstructor(param_type);	
+			CodeGen::genCopy(copy_constr, 10 * GlobalConfig::int_size, current_address, param_type);
+			current_address += param_type->getSize();
 		}
 
-		pushOnStack(param_type->getSize(), current_address + GlobalConfig::int_size);
-		current_address += param_type->getSize();
+//		pushOnStack(param_type->getSize(), current_address + GlobalConfig::int_size);
+	
+//		auto copy_constr = TypeHelper::getCopyConstructor(param_type);	
+//		genCopy(copy_constr, 10 * GlobalConfig::int_size, current_address, param_type);
+
+//		current_address += param_type->getSize();
 	}
 
 	if ( is_method )

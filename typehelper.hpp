@@ -24,6 +24,7 @@ public:
     
     static bool isConvertable(Type *lhs, Type *rhs);
     
+	static FunctionSymbol* getCopyConstructor(Type *type);
     static ReferenceType* getReferenceType(Type *target);
 
     static map<Type*, ReferenceType*> references;

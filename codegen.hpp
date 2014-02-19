@@ -26,6 +26,7 @@ public:
 
     static void pushOnStack(unsigned int size, int offset);
     static void genConversion(FunctionSymbol *conv, int offset, Type *par_type);
+	static void genCopy(FunctionSymbol *copy_constructor, int offset, int stack_offset, Type *type);
 };
 
 #endif
