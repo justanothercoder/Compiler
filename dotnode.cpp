@@ -1,6 +1,6 @@
 #include "dotnode.hpp"
 
-DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(member_name) { base_type = nullptr; member = nullptr; }
+DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(member_name), base_type(nullptr), member(nullptr) { }
 
 DotNode::~DotNode() { delete base; }
 

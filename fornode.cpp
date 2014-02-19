@@ -73,6 +73,5 @@ vector<AST*> ForNode::getChildren() const { return {init, cond, step, stats}; }
 string ForNode::getNewLabel() 
 {
 	static int label_num = 0;
-
 	return "@for_label" + std::to_string(++label_num);
 }

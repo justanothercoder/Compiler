@@ -1,6 +1,6 @@
 #include "newexpressionnode.hpp"
 
-NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params) : type_info(type_info), params(params) { resolved_constructor = nullptr; }
+NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params) : type_info(type_info), params(params), resolved_constructor(nullptr) { }
 
 NewExpressionNode::~NewExpressionNode()
 {
