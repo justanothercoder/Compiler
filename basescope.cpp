@@ -31,3 +31,14 @@ int BaseScope::getAddress(VariableSymbol *sym) const
 
 int BaseScope::getScopeSize() const { return scope_size; }
 int BaseScope::getScopeAddress() const { return scope_address; }
+	
+int BaseScope::getScopeTreeSize() const { return scope_tree_size; }
+
+void BaseScope::increaseScopeTreeSize(int size)
+{
+	scope_tree_size += size;
+	
+	if ( getEnclosingScope() )
+		getEnclosingScope()->increaseScopeTreeSize(size);
+}
+

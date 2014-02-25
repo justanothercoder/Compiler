@@ -10,7 +10,7 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 
 void FunctionDeclarationNode::build_scope()
 {
-	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }), this->getScope(), traits);
+	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }), getScope(), traits);
 
 	statements->setScope(definedSymbol);
 	statements->build_scope();
@@ -23,19 +23,19 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 	if ( template_sym != nullptr && return_type_info.getTypeName() == template_sym->getName() )
 	{
 		return_type_info = TypeInfo(
-				static_cast<StructSymbol*>(this->getScope())->getName(),
+				static_cast<StructSymbol*>(getScope())->getName(),
 				return_type_info.getIsRef(),
 				return_type_info.getTemplateParams()
 				);
 	}
 	
-	Type *return_type = TypeHelper::fromTypeInfo(return_type_info, this->getScope());
+	Type *return_type = TypeHelper::fromTypeInfo(return_type_info, getScope());
 
 	vector<Type*> params_types;
 
 	if ( traits.is_method )
 	{
-		Type *_this_type = TypeHelper::getReferenceType(static_cast<StructSymbol*>(this->getScope()));
+		Type *_this_type = TypeHelper::getReferenceType(static_cast<StructSymbol*>(getScope()));
 		params_types.push_back(_this_type);
 
 		definedSymbol->accept(new VariableSymbolDefine(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM)));
@@ -43,7 +43,7 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 
 	for ( auto i : params )
 	{
-		Type *param_type = TypeHelper::fromTypeInfo(i.second, this->getScope());	
+		Type *param_type = TypeHelper::fromTypeInfo(i.second, getScope());	
 		params_types.push_back(param_type);
 
 		definedSymbol->accept(new VariableSymbolDefine(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM)));
@@ -53,7 +53,7 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 
 	definedSymbol->setTypeInfo(function_type_info);
 
-	this->getScope()->accept(new FunctionSymbolDefine(definedSymbol));
+	getScope()->accept(new FunctionSymbolDefine(definedSymbol));
 
 	statements->define(template_sym, expr);
 }

@@ -79,9 +79,9 @@ int main()
 		CodeGen::emit("mov rbp, rsp");	
 
 		root->build_scope();
-		root->define();
-		root->check();
-		root->gen();
+		root->define(nullptr, { });
+		root->check (nullptr, { });
+		root->gen   (nullptr, { });
 
 		CodeGen::emit("mov rsp, rbp");
 		CodeGen::emit("pop rbp");

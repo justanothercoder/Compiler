@@ -30,7 +30,7 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 
 	for ( auto i : params ) 
 	{
-		i->check();
+		i->check(template_sym, expr);
 		params_types.push_back(i->getType());
 	}
 

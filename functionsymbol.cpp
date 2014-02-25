@@ -62,3 +62,5 @@ TypeKind FunctionSymbol::getTypeKind() const { return TypeKind::FUNCTION; }
 void FunctionSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
 	
 int FunctionSymbol::getFreeAddress() const { return getScopeSize() + GlobalConfig::int_size; }
+	
+void FunctionSymbol::increaseScopeTreeSize(int size) { scope_tree_size += size; }

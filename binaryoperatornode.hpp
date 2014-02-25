@@ -33,8 +33,8 @@ public:
 protected:
 
     ExprNode *lhs, *rhs;
-    FunctionSymbol *resolved_operator_symbol;
     BinaryOp op_type;
+    FunctionSymbol *resolved_operator_symbol;
 };
 
 #endif

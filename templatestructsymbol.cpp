@@ -64,7 +64,7 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 	}
 
 	for ( auto i : symbols )
-		i->check();	
+		i->check(nullptr, { });	
 
 	decl->setScope(holder->getScope());
 	decl->build_scope();

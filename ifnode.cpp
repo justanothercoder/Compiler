@@ -51,11 +51,15 @@ void IfNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*
 
     CodeGen::emit("cmp qword [rax], 0");
     CodeGen::emit("jz " + false_label);
-    stats_true->gen();
-    CodeGen::emit("jmp " + exit_label);
+    
+	stats_true->gen(template_sym, expr);
+    
+	CodeGen::emit("jmp " + exit_label);
     CodeGen::emit(false_label + ":");
-    stats_false->gen();
-    CodeGen::emit(exit_label + ":");
+    
+	stats_false->gen(template_sym, expr);
+ 
+ 	CodeGen::emit(exit_label + ":");
 }
 
 string IfNode::getNewLabel() 

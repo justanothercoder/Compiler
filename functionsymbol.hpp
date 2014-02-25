@@ -48,7 +48,8 @@ public:
     
     virtual TypeKind getTypeKind() const;
     virtual int getSize() const;
-    
+
+	virtual void increaseScopeTreeSize(int size);
 
 private:
 
