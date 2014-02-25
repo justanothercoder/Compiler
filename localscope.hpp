@@ -5,6 +5,8 @@
 #include "functionsymbol.hpp"
 #include "globalconfig.hpp"
 
+#include "globalscope.hpp"
+
 class LocalScope : public BaseScope
 {
 public:
@@ -19,7 +21,9 @@ public:
     void recalc_scope_address();
 
 	virtual int getFreeAddress() const;
-		
+
+	virtual int getAddress(VariableSymbol *sym) const;
+
 private:
 
     Scope *enclosing_scope;
