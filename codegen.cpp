@@ -4,8 +4,6 @@ void CodeGen::emit(string text) { std::cout << text << '\n'; }
 
 void CodeGen::construct_object(FunctionSymbol *constructor, const vector<ExprNode*>& params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr)
 {
-//	CodeGen::emit("sub rsp, " + std::to_string(type->getSize()));
-
 	CodeGen::emit("push rsi");
 	CodeGen::emit("lea rsi, [" + constructor->getScopedTypedName() + "]");
 

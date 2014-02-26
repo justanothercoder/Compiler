@@ -26,8 +26,6 @@ void VariableSymbolDefine::visit(StructSymbol *sc)
 	sc->addresses[sym] = sc->scope_size;
 	sc->scope_size += sym->getType()->getSize();
 	sc->type_size += sym->getType()->getSize();
-
-//	sc->increaseScopeTreeSize(sym->getType()->getSize());
 }
 
 void VariableSymbolDefine::visit(FunctionSymbol *sc)
