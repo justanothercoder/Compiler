@@ -61,6 +61,10 @@ int main()
 		BuiltIns::array_struct->holder->setScope(BuiltIns::global_scope);
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::array_struct));
 
+		root->build_scope();
+		root->define(nullptr, { });
+		root->check (nullptr, { });
+		
 		CodeGen::emit("section .text");
 
 		CodeGen::emit("extern _int_operatorassign_int~ref_int");
@@ -78,9 +82,8 @@ int main()
 		CodeGen::emit("push rbp");
 		CodeGen::emit("mov rbp, rsp");	
 
-		root->build_scope();
-		root->define(nullptr, { });
-		root->check (nullptr, { });
+		CodeGen::emit("sub rsp, " + std::to_string(root->getScope()->getScopeTreeSize()));
+
 		root->gen   (nullptr, { });
 
 		CodeGen::emit("mov rsp, rbp");

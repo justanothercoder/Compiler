@@ -1,6 +1,6 @@
 #include "basescope.hpp"
 
-BaseScope::BaseScope() { scope_size = 0; scope_address = 0; }
+BaseScope::BaseScope() { scope_size = 0; scope_address = 0; scope_tree_size = 0; }
 
 Symbol* BaseScope::resolve(string name) const
 {

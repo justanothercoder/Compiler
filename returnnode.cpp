@@ -14,7 +14,7 @@ void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprN
 				expr->getType()
 			);
 
-	CodeGen::genCopy(copy_constr, 10 * GlobalConfig::int_size, this->getScope()->getFreeAddress(), expr->getType());
+	CodeGen::genCopy(copy_constr, this->getScope()->getFreeAddress(), expr->getType());
 
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");

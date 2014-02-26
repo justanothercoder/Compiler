@@ -5,7 +5,6 @@
 #include <string>
 #include <algorithm>
 
-using std::cout;
 using std::string;
 
 #include "type.hpp"
@@ -20,13 +19,13 @@ public:
 
     static void emit(string text);
 
-    static void construct_object(Type *type, FunctionSymbol *constructor, const vector<ExprNode*>& params, int offset = 0, const TemplateStructSymbol *template_sym = nullptr, std::vector<ExprNode*> template_expr = { });
+    static void construct_object(FunctionSymbol *constructor, const vector<ExprNode*>& params, const TemplateStructSymbol *template_sym = nullptr, std::vector<ExprNode*> template_expr = { });
 
     static void genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params, const TemplateStructSymbol *template_sym = nullptr, std::vector<ExprNode*> template_expr = { });
 
     static void pushOnStack(unsigned int size, int offset);
-    static void genConversion(FunctionSymbol *conv, int offset, Type *par_type);
-	static void genCopy(FunctionSymbol *copy_constructor, int offset, int stack_offset, Type *type);
+    static void genConversion(FunctionSymbol *conv);
+	static void genCopy(FunctionSymbol *copy_constructor, int stack_offset, Type *type);
 };
 
 #endif

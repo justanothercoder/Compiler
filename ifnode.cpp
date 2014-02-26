@@ -34,6 +34,9 @@ void IfNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNo
     
 void IfNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
+	if_scope->recalc_scope_address();
+	else_scope->recalc_scope_address();
+
     cond->check(template_sym, expr);
 
 	if_scope->recalc_scope_address();

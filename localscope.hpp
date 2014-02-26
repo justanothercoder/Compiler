@@ -23,7 +23,7 @@ public:
 	virtual int getFreeAddress() const;
 
 	virtual int getAddress(VariableSymbol *sym) const;
-
+	
 private:
 
     Scope *enclosing_scope;

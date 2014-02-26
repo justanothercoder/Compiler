@@ -52,7 +52,7 @@ void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vecto
 {
 	CodeGen::emit("push rdi");
 	CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
-	CodeGen::construct_object(getType(), resolved_constructor, params, 0, template_sym, expr);
+	CodeGen::construct_object(resolved_constructor, params, template_sym, expr);
 	CodeGen::emit("pop rdi");
 }
 
