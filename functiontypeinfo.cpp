@@ -19,9 +19,7 @@ bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
 	    
 	    res += hash_fn(fti.getReturnType()->getName());
 	    
-		auto& pt = fti.getParamsTypes();
-
-	    for ( auto type : pt )
+	    for ( auto type : fti.getParamsTypes() )
 			res += hash_fn(type->getName());
 	    
 	    return res;

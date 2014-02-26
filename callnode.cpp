@@ -46,9 +46,8 @@ AST* CallNode::copyTree() const
 
 vector<AST*> CallNode::getChildren() const
 {
-	vector<AST*> vec;
+	vector<AST*> vec { caller };
 
-	vec.push_back(caller);
 	vec.insert(std::begin(vec), std::begin(params), std::end(params));
 
 	return vec;

@@ -68,7 +68,10 @@ void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vect
 
 AST* BinaryOperatorNode::copyTree() const
 {
-	return new BinaryOperatorNode(static_cast<ExprNode*>(lhs->copyTree()), static_cast<ExprNode*>(rhs->copyTree()), op_type);    
+	auto lhs_copy = static_cast<ExprNode*>(lhs->copyTree()), 
+		 rhs_copy = static_cast<ExprNode*>(rhs->copyTree());
+
+	return new BinaryOperatorNode(lhs_copy, rhs_copy,  op_type);    
 }
 	
 vector<AST*> BinaryOperatorNode::getChildren() const { return {lhs, rhs}; }
