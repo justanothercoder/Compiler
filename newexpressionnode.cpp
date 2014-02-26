@@ -12,7 +12,7 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 {
 	string name = type_info.getTypeName();
 
-	StructSymbol *type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, this->getScope()));
+	StructSymbol *type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope()));
 
 	Symbol *_constr = type->resolve(name);
 	if ( _constr->getSymbolType() != SymbolType::VARIABLE )	

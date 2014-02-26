@@ -8,7 +8,7 @@ Type* BinaryOperatorNode::getType() const { return resolved_operator_symbol->get
 
 void BinaryOperatorNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	auto ov_func = CallHelper::getOverloadedFunc(getOperatorName(), this->getScope());
+	auto ov_func = CallHelper::getOverloadedFunc(getOperatorName(), getScope());
 
 	if ( ov_func->isMethod() )
 	{

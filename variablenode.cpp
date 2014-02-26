@@ -11,7 +11,7 @@ void VariableNode::check(const TemplateStructSymbol *template_sym, std::vector<E
 		return;
 	}
 
-	Symbol *sym = this->getScope()->resolve(name);
+	Symbol *sym = getScope()->resolve(name);
 
 	if ( sym == nullptr )
 		throw SemanticError("No such symbol " + name);
@@ -60,11 +60,11 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 	{
 		if ( variable->isField() )
 		{
-			VariableSymbol *sym = static_cast<VariableSymbol*>(this->getScope()->resolve("this"));
+			VariableSymbol *sym = static_cast<VariableSymbol*>(getScope()->resolve("this"));
 
 			Scope *struc_scope = static_cast<StructSymbol*>(sym->getType());
 
-			CodeGen::emit("mov rax, [rbp - " + std::to_string(this->getScope()->getAddress(sym)) + "]");
+			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(sym)) + "]");
 			CodeGen::emit("mov rax, [rax - " + std::to_string(struc_scope->getAddress(variable)) + "]");
 		}
 		else
@@ -101,7 +101,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 	{
 		if ( variable->isField() )
 		{
-			Symbol *_this = this->getScope()->resolve("this");
+			Symbol *_this = getScope()->resolve("this");
 
 			VariableSymbol *sym = static_cast<VariableSymbol*>(_this);
 

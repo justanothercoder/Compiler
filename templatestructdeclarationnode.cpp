@@ -4,7 +4,7 @@ TemplateStructDeclarationNode::TemplateStructDeclarationNode(string name, const 
 
 void TemplateStructDeclarationNode::build_scope()
 {
-    definedSymbol = new TemplateStructSymbol(name, this->getScope(), template_params, this);
+    definedSymbol = new TemplateStructSymbol(name, getScope(), template_params, this);
 
     for ( auto decl : inner )
     {
@@ -13,10 +13,7 @@ void TemplateStructDeclarationNode::build_scope()
     }
 }
 
-void TemplateStructDeclarationNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
-{
-    this->getScope()->accept(new SymbolDefine(definedSymbol)); 
-}
+void TemplateStructDeclarationNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { getScope()->accept(new SymbolDefine(definedSymbol)); }
 
 void TemplateStructDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
 void TemplateStructDeclarationNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }

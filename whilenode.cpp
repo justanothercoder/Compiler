@@ -11,7 +11,7 @@ WhileNode::~WhileNode()
 
 void WhileNode::build_scope()
 {
-    while_scope = new LocalScope(this->getScope());
+    while_scope = new LocalScope(getScope());
 
     cond->setScope(getScope());
     cond->build_scope();

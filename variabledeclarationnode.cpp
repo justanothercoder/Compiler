@@ -24,7 +24,7 @@ void VariableDeclarationNode::build_scope()
 {
     for ( auto i : constructor_call_params )
     {
-		i->setScope(this->getScope());
+		i->setScope(getScope());
 		i->build_scope();
     }
 }
@@ -36,7 +36,7 @@ void VariableDeclarationNode::check(const TemplateStructSymbol *template_sym, st
 	{
 		string type_name = type_info.getTypeName();
 
-		Type *_type = TypeHelper::fromTypeInfo(type_info, this->getScope(), template_sym, expr);
+		Type *_type = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);
 
 		if ( _type->getTypeKind() != TypeKind::STRUCT )
 			throw SemanticError("No such struct " + type_name);
@@ -81,13 +81,13 @@ void VariableDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 		type_info = TypeInfo(static_cast<ClassVariableSymbol*>(sym)->sym->getName(), type_info.getIsRef(), type_info.getTemplateParams());
     }
     
-    Type *var_type = TypeHelper::fromTypeInfo(type_info, this->getScope(), template_sym, expr);
+    Type *var_type = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);
     
     if ( var_type == BuiltIns::void_type )
 		throw SemanticError("can't declare a variable of 'void' type.");
     
     definedSymbol->setType(var_type);
-    this->getScope()->accept(new VariableSymbolDefine(definedSymbol));
+    getScope()->accept(new VariableSymbolDefine(definedSymbol));
 }
 
 AST* VariableDeclarationNode::copyTree() const

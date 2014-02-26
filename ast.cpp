@@ -11,7 +11,7 @@ void AST::build_scope()
 
 	for ( auto child : children )
 	{
-		child->setScope(this->getScope());
+		child->setScope(getScope());
 		child->build_scope();
 	}
 }

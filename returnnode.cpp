@@ -14,7 +14,7 @@ void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprN
 				expr->getType()
 			);
 
-	CodeGen::genCopy(copy_constr, this->getScope()->getFreeAddress(), expr->getType());
+	CodeGen::genCopy(copy_constr, getScope()->getFreeAddress(), expr->getType());
 
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");
@@ -23,7 +23,7 @@ void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprN
 
 void ReturnNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> _expr)
 {
-	Scope *sc = this->getScope();
+	Scope *sc = getScope();
 	while ( sc != nullptr && dynamic_cast<FunctionSymbol*>(sc) == nullptr )
 		sc = sc->getEnclosingScope();
 

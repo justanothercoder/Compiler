@@ -14,7 +14,7 @@ ForNode::~ForNode()
 
 void ForNode::build_scope()
 {
-	for_scope = new LocalScope(this->getScope());
+	for_scope = new LocalScope(getScope());
 
 	init->setScope(for_scope);
 	init->build_scope();

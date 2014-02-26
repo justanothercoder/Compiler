@@ -14,7 +14,7 @@ Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; 
 
 void StructDeclarationNode::build_scope()
 {
-    definedSymbol = new StructSymbol(name, this->getScope());
+    definedSymbol = new StructSymbol(name, getScope());
     for ( auto i : inner )
     {
 		i->setScope(definedSymbol);
@@ -24,7 +24,7 @@ void StructDeclarationNode::build_scope()
 
 void StructDeclarationNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    this->getScope()->accept(new SymbolDefine(definedSymbol));
+    getScope()->accept(new SymbolDefine(definedSymbol));
 
     for ( auto decl : inner )
 		decl->define(template_sym, expr);
