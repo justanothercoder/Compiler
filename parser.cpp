@@ -59,15 +59,8 @@ bool Parser::tryVarDecl()
 
 	mark();
 
-	try
-	{
-		typeInfo();
-		id();
-	}
-	catch ( RecognitionError& re )
-	{
-		success = false;
-	}
+	try { typeInfo(); id(); }
+	catch ( RecognitionError& re ) { success = false; }
 
 	release();
 
@@ -170,7 +163,7 @@ DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
 
 	string function_name = (is_operator ? operator_name() : id());
 
-	vector< std::pair<string, TypeInfo> > params;
+	vector< pair<string, TypeInfo> > params;
 
 	match(TokenType::LPAREN);
 
@@ -253,11 +246,7 @@ ExprNode* Parser::literal()
 	return number();
 }
 
-ExprNode* Parser::variable()
-{
-	string name = id();
-	return new VariableNode(name);
-}
+ExprNode* Parser::variable() { return new VariableNode(id()); }
 
 ExprNode* Parser::number()
 {
@@ -417,14 +406,8 @@ bool Parser::tryAssignment()
 
 	mark();
 
-	try
-	{
-		assignment();
-	}
-	catch ( RecognitionError& re )
-	{
-		success = false;
-	}
+	try { assignment(); }
+	catch ( RecognitionError& re ) { success = false; }
 
 	release();
 
