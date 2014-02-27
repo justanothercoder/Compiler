@@ -43,16 +43,7 @@ void VariableDeclarationNode::check(const TemplateStructSymbol *template_sym, st
 
 		StructSymbol *type = static_cast<StructSymbol*>(_type);
 		
-		Symbol *_constr = type->resolve(type_name);
-
-		if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
-			throw SemanticError("No constructor");
-
-		VariableSymbol *_constructor = static_cast<VariableSymbol*>(_constr);
-		if ( _constructor->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
-			throw SemanticError("No constructor");
-
-		OverloadedFunctionSymbol *constructor = static_cast<OverloadedFunctionSymbol*>(_constructor->getType());
+		auto constructor = CallHelper::getOverloadedMethod(type_name, type);
 
 		resolved_constructor = CallHelper::callCheck(constructor, constructor_call_params, template_sym, expr);
 	}

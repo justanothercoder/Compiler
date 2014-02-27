@@ -48,8 +48,7 @@ FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
 	string lhs_name = lhs->getName();    
 	string rhs_name = rhs->getName();
 
-	VariableSymbol *_conversion = dynamic_cast<VariableSymbol*>(struc->resolve(rhs_name));
-	OverloadedFunctionSymbol *conversion = dynamic_cast<OverloadedFunctionSymbol*>(_conversion->getType());
+	auto conversion = CallHelper::getOverloadedMethod(rhs_name, struc);
 
 	auto overloads = FunctionHelper::getBestOverload(conversion->getTypeInfo().overloads, {getReferenceType(rhs), lhs});
 
@@ -65,8 +64,7 @@ FunctionSymbol* TypeHelper::getCopyConstructor(Type *type)
 
 	auto type_name = struc->getName();
 
-	VariableSymbol *_constructor = dynamic_cast<VariableSymbol*>(struc->resolve(type_name));
-	OverloadedFunctionSymbol *constructor = dynamic_cast<OverloadedFunctionSymbol*>(_constructor->getType());
+	auto constructor = CallHelper::getOverloadedMethod(type_name, struc);
 
 	auto overloads = FunctionHelper::getBestOverload(constructor->getTypeInfo().overloads, {getReferenceType(type), type});
 

@@ -17,7 +17,10 @@ void CallNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprN
     
     if ( caller_type->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	{
-		auto call_op = CallHelper::getOverloadedFunc("operator()", static_cast<StructSymbol*>(caller_type));
+		if ( caller_type->getTypeKind() != TypeKind::STRUCT )
+			throw SemanticError("caller is not a function.");
+
+		auto call_op = CallHelper::getOverloadedMethod("operator()", static_cast<StructSymbol*>(caller_type));
 
 		if ( call_op == nullptr )
 			throw SemanticError("caller is not a function.");

@@ -14,6 +14,7 @@ public:
 
 	static FunctionSymbol* callCheck(OverloadedFunctionSymbol *ov_func, const std::vector<ExprNode*>& params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*>& expr);
 	static OverloadedFunctionSymbol* getOverloadedFunc(string name, Scope *scope);
+	static OverloadedFunctionSymbol* getOverloadedMethod(string name, StructSymbol *scope);
 };
 
 #endif

@@ -14,15 +14,7 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 
 	StructSymbol *type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope()));
 
-	Symbol *_constr = type->resolve(name);
-	if ( _constr->getSymbolType() != SymbolType::VARIABLE )	
-		throw SemanticError("No constructor");
-
-	VariableSymbol *_constructor = static_cast<VariableSymbol*>(_constr);
-	if ( _constructor->getType()->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
-		throw SemanticError("No constructor");
-
-	OverloadedFunctionSymbol *constructor = static_cast<OverloadedFunctionSymbol*>(_constructor->getType());
+	OverloadedFunctionSymbol *constructor = CallHelper::getOverloadedMethod(name, type);
 
 	vector<Type*> params_types;
 

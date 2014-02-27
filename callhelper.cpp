@@ -39,5 +39,14 @@ OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(string name, Scope *scop
 		throw SemanticError("No such symbol " + name);	
 
 	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_sym)->getType());
+}
+
+OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(string name, StructSymbol *scope)
+{
+	Symbol *_sym = scope->resolveMember(name);
 	
+	if ( dynamic_cast<VariableSymbol*>(_sym) == nullptr )
+		throw SemanticError("No such symbol " + name);	
+
+	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_sym)->getType());
 }

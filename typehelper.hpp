@@ -9,6 +9,7 @@
 #include "structsymbol.hpp"
 #include "functionhelper.hpp"
 #include "templatestructsymbol.hpp"
+#include "callhelper.hpp"
 
 using std::map;
 
