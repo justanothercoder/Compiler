@@ -16,10 +16,20 @@ void CallNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprN
 		caller_type = static_cast<ReferenceType*>(caller_type)->getReferredType();
     
     if ( caller_type->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
-		throw SemanticError("caller is not a function.");
+	{
+		auto call_op = CallHelper::getOverloadedFunc("operator()", static_cast<StructSymbol*>(caller_type));
 
-	resolved_function_symbol = CallHelper::callCheck(static_cast<OverloadedFunctionSymbol*>(caller_type), params, template_sym, expr);
-    GlobalHelper::setTypeHint(caller, resolved_function_symbol);
+		if ( call_op == nullptr )
+			throw SemanticError("caller is not a function.");
+
+		resolved_function_symbol = CallHelper::callCheck(call_op, params, template_sym, expr);
+		GlobalHelper::setTypeHint(caller, resolved_function_symbol);
+	}
+	else
+	{
+		resolved_function_symbol = CallHelper::callCheck(static_cast<OverloadedFunctionSymbol*>(caller_type), params, template_sym, expr);
+	    GlobalHelper::setTypeHint(caller, resolved_function_symbol);
+	}
 }
 
 void CallNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)

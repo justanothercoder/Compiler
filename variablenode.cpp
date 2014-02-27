@@ -111,7 +111,13 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 			CodeGen::emit("lea rax, [rax - " + std::to_string(struc_scope->getAddress(variable)) + "]");
 		}
 		else
-			CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->getAddress(variable)) + "]");
+		{
+			auto hint = GlobalHelper::getTypeHint(this);
+			if ( hint != nullptr )
+				CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(hint)->getScopedTypedName() + "]");
+			else
+				CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->getAddress(variable)) + "]");
+		}
 	}
 }
 	

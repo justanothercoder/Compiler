@@ -27,6 +27,8 @@ public:
 	static FunctionSymbol* getCopyConstructor(Type *type);
     static ReferenceType* getReferenceType(Type *target);
 
+	static OverloadedFunctionSymbol* getOperatorCall(StructSymbol *sym);
+
     static map<Type*, ReferenceType*> references;
 };
 

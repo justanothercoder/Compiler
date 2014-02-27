@@ -5,7 +5,17 @@ FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info,
 	scope_size = 0;
 	params_size = GlobalConfig::int_size;
 
-	scope_name = enclosing_scope->getScopeName() + "_" + ((traits.is_operator && name == "operator[]") ? "operatorelem" : name);
+	scope_name = enclosing_scope->getScopeName() + "_";
+	
+	if ( traits.is_operator )
+	{
+		if ( name == "operator[]")
+			scope_name += "operatorelem";
+		else if ( name == "operator()")
+			scope_name += "operatorcall";
+	}
+	else
+		scope_name += name;
 }
 
 string FunctionSymbol::getTypedName() const
@@ -16,11 +26,11 @@ string FunctionSymbol::getTypedName() const
 	{
 		if ( name == "operator[]" )
 			res = "operatorelem";
+		else if ( name == "operatorcall" )
+			res = "operatorcall";
 	}
 
-	auto& pt = function_type_info.getParamsTypes();
-
-	for ( auto type : pt )
+	for ( auto type : function_type_info.getParamsTypes() )
 		res += "_" + type->getName();
 
 	return res;
