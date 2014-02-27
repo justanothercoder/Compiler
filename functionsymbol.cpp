@@ -26,7 +26,7 @@ string FunctionSymbol::getTypedName() const
 	{
 		if ( name == "operator[]" )
 			res = "operatorelem";
-		else if ( name == "operatorcall" )
+		else if ( name == "operator()" )
 			res = "operatorcall";
 	}
 

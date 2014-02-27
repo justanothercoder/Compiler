@@ -56,7 +56,7 @@ void DotNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode
 			member = new VariableSymbol(member_name, ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]);
 		}
 		else
-			member = new VariableSymbol(ov_func->getName(), ov_func_type_info.symbols.begin()->second);
+			member = new VariableSymbol(ov_func->getName(), std::begin(ov_func_type_info.symbols)->second);
 
 		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(member->getType())->getScopedTypedName() + "]");
 	}

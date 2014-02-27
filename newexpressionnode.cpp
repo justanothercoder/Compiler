@@ -14,7 +14,7 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 
 	StructSymbol *type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope()));
 
-	OverloadedFunctionSymbol *constructor = CallHelper::getOverloadedMethod(name, type);
+	auto constructor = CallHelper::getOverloadedMethod(name, type);
 
 	vector<Type*> params_types;
 
