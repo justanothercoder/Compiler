@@ -8,7 +8,6 @@ void CodeGen::construct_object(FunctionSymbol *constructor, const vector<ExprNod
 	CodeGen::emit("lea rsi, [" + constructor->getScopedTypedName() + "]");
 
 	CodeGen::genCallCode(constructor, params, template_sym, template_expr);
-
 	CodeGen::emit("pop rsi");
 }
 

@@ -74,3 +74,5 @@ void FunctionSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
 int FunctionSymbol::getFreeAddress() const { return getScopeSize() + GlobalConfig::int_size; }
 	
 void FunctionSymbol::increaseScopeTreeSize(int size) { scope_tree_size += size; }
+
+int FunctionSymbol::getParamsSize() const { return params_size; }

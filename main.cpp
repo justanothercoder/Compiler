@@ -84,7 +84,7 @@ int main()
 
 		CodeGen::emit("sub rsp, " + std::to_string(root->getScope()->getScopeTreeSize()));
 
-		root->gen   (nullptr, { });
+		root->gen(nullptr, { });
 
 		CodeGen::emit("mov rsp, rbp");
 		CodeGen::emit("pop rbp");
