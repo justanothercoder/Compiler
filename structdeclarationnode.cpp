@@ -44,8 +44,9 @@ void StructDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::v
 
 AST* StructDeclarationNode::copyTree() const 
 { 
-	auto in = inner;
-	return new StructDeclarationNode(name, in); 
+	vector<AST*> in(inner.size());
+	std::transform(std::begin(inner), std::end(inner), std::begin(in), [&](AST *t) { return t->copyTree(); });
+	return new StructDeclarationNode(name, in);
 }
 
 vector<AST*> StructDeclarationNode::getChildren() const { return inner; } 

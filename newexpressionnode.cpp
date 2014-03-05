@@ -12,32 +12,11 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 {
 	string name = type_info.getTypeName();
 
-	StructSymbol *type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope()));
+	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope()));
 
 	auto constructor = CallHelper::getOverloadedMethod(name, type);
 
-	vector<Type*> params_types;
-
-	params_types.push_back(TypeHelper::getReferenceType(type));   
-
-	for ( auto i : params ) 
-	{
-		i->check(template_sym, expr);
-		params_types.push_back(i->getType());
-	}
-
-	resolved_constructor = FunctionHelper::getViableOverload(constructor, params_types);
-
-	if ( resolved_constructor == nullptr )
-		throw SemanticError("No viable overload of '" + name + "'.");
-
-	auto resolved_constructor_type_info = resolved_constructor->getTypeInfo();
-
-	for ( int i = resolved_constructor_type_info.getNumberOfParams() - 1; i >= 1; --i )
-	{
-		if ( resolved_constructor_type_info.getParamType(i)->isReference() && !params[i - 1]->isLeftValue() )
-			throw SemanticError("parameter is not an lvalue.");
-	}
+	resolved_constructor = CallHelper::callCheck(constructor, params, template_sym, expr); 
 }
 
 void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)

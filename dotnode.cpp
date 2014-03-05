@@ -34,13 +34,13 @@ void DotNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode
 	CodeGen::emit("push rdi");
 	CodeGen::emit("mov rdi, rax");
 
-	Type *member_type = member->getType();
+	auto member_type = member->getType();
 
 	if ( member_type->isReference() )
 		CodeGen::emit("mov rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(member)) + "]");
 	else if ( member_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
-		OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(member_type);
+		auto ov_func = static_cast<OverloadedFunctionSymbol*>(member_type);
 
 		auto ov_func_type_info = ov_func->getTypeInfo();
 
