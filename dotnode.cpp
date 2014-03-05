@@ -8,10 +8,7 @@ void DotNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNo
 {
 	base->check(template_sym, expr);
 
-	Type *_base_type = base->getType();
-
-	if ( _base_type->isReference() )
-		_base_type = static_cast<ReferenceType*>(_base_type)->getReferredType();
+	Type *_base_type = TypeHelper::removeReference(base->getType());
 
 	base_type = dynamic_cast<StructSymbol*>(_base_type);
 

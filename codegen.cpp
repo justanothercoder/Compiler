@@ -90,12 +90,12 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 			if ( params[i - is_meth]->getType() != param_type )
 			{
 				bool refconv = params[i - is_meth]->getType()->isReference() &&
-					static_cast<ReferenceType*>(params[i - is_meth]->getType())->getReferredType() == param_type;
+					TypeHelper::removeReference(params[i - is_meth]->getType()) == param_type;
 
 				Type *par_type = params[i - is_meth]->getType();
 
 				if ( refconv )
-					par_type = static_cast<ReferenceType*>(par_type)->getReferredType();
+					par_type = TypeHelper::removeReference(par_type);
 				else
 				{
 					auto conv = TypeHelper::getConversion(par_type, param_type);

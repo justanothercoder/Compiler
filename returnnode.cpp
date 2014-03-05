@@ -8,11 +8,7 @@ void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprN
 {
     expr->gen(template_sym, _expr);
 
-	auto copy_constr = TypeHelper::getCopyConstructor(
-			expr->getType()->isReference() ? 
-				static_cast<ReferenceType*>(expr->getType())->getReferredType() : 
-				expr->getType()
-			);
+	auto copy_constr = TypeHelper::getCopyConstructor(TypeHelper::removeReference(expr->getType()));
 
 	CodeGen::genCopy(copy_constr, getScope()->getFreeAddress(), expr->getType());
 

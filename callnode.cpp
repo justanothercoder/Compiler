@@ -10,11 +10,8 @@ void CallNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprN
 {
     caller->check(template_sym, expr);
 
-    Type *caller_type = caller->getType();
+    auto caller_type = TypeHelper::removeReference(caller->getType());
 
-    if ( caller_type->isReference() )
-		caller_type = static_cast<ReferenceType*>(caller_type)->getReferredType();
-    
     if ( caller_type->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	{
 		if ( caller_type->getTypeKind() != TypeKind::STRUCT )

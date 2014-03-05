@@ -67,12 +67,12 @@ void VariableDeclarationNode::define(const TemplateStructSymbol *template_sym, s
     {
 		auto replace = template_sym->getReplacement(type_info.getTypeName(), expr);
 
-		auto sym = static_cast<ReferenceType*>(replace->getType())->getReferredType();
+		auto sym = TypeHelper::removeReference(replace->getType());
 		
 		type_info = TypeInfo(static_cast<ClassVariableSymbol*>(sym)->sym->getName(), type_info.getIsRef(), type_info.getTemplateParams());
     }
     
-    Type *var_type = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);
+    auto var_type = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);
     
     if ( var_type == BuiltIns::void_type )
 		throw SemanticError("can't declare a variable of 'void' type.");

@@ -8,7 +8,7 @@ void BracketNode::check(const TemplateStructSymbol *template_sym, std::vector<Ex
 {
 	base->check(template_sym, expr);
 
-	StructSymbol *base_type = dynamic_cast<StructSymbol*>(static_cast<ReferenceType*>(base->getType())->getReferredType());
+	StructSymbol *base_type = dynamic_cast<StructSymbol*>(TypeHelper::removeReference(base->getType()));
 	
 	auto ov_func = CallHelper::getOverloadedFunc("operator[]", base_type);
 	resolved_operator = CallHelper::callCheck(ov_func, {this->expr}, template_sym, expr);

@@ -30,6 +30,8 @@ public:
 
 	static OverloadedFunctionSymbol* getOperatorCall(StructSymbol *sym);
 
+	static Type* removeReference(Type *t);
+
     static map<Type*, ReferenceType*> references;
 };
 
