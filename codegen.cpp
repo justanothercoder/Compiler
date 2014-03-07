@@ -15,7 +15,7 @@ void CodeGen::genConversion(FunctionSymbol *conv)
 {
 	int current_address = 0;
 
-	auto par_type = conv->getTypeInfo().getParamType(0);
+	auto par_type = conv->getTypeInfo().params_types[0];
 
 	pushOnStack(par_type->getSize(), GlobalConfig::int_size);
 
@@ -67,18 +67,18 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 
 	auto resolved_function_type_info = func->getTypeInfo();
 
-	auto& pt = resolved_function_type_info.getParamsTypes();
+	auto& pt = resolved_function_type_info.params_types;
 
 	params_size = std::accumulate(std::begin(pt) + is_meth, std::end(pt), 0, [](int x, Type *type) { return x += type->getSize(); });
 
 	if ( is_method )
 		params_size += GlobalConfig::int_size;
 
-	for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
+	for ( int i = resolved_function_type_info.params_types.size() - 1; i >= is_meth; --i )
 	{
 		params[i - is_meth]->gen(template_sym, template_expr);
 
-		Type *param_type = resolved_function_type_info.getParamType(i);
+		auto param_type = resolved_function_type_info.params_types[i];
 
 		if ( param_type->isReference() )
 		{

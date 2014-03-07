@@ -5,40 +5,14 @@ FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info,
 	scope_size = 0;
 	params_size = GlobalConfig::int_size;
 
-	scope_name = enclosing_scope->getScopeName() + "_";
-	
-	if ( traits.is_operator )
-	{
-		if ( name == "operator[]")
-			scope_name += "operatorelem";
-		else if ( name == "operator()")
-			scope_name += "operatorcall";
-		else if ( name == "operator+" )
-			scope_name += "operatorplus";
-		else if ( name == "operator=" )
-			scope_name += "operatorassign";
-	}
-	else
-		scope_name += name;
+	scope_name = enclosing_scope->getScopeName() + "_" + (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
 }
 
 string FunctionSymbol::getTypedName() const
 {
-	string res = name;
+	string res = (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
 
-	if ( traits.is_operator )
-	{
-		if ( name == "operator[]" )
-			res = "operatorelem";
-		else if ( name == "operator()" )
-			res = "operatorcall";
-		else if ( name == "operator+" )
-			res = "operatorplus";
-		else if ( name == "operator=" )
-			res = "operatorassign";
-	}
-
-	for ( auto type : function_type_info.getParamsTypes() )
+	for ( auto type : function_type_info.params_types )
 		res += "_" + type->getName();
 
 	return res;
@@ -48,7 +22,7 @@ string FunctionSymbol::getScopedTypedName() const
 {
 	string res = scope_name;
 
-	auto& pt = function_type_info.getParamsTypes();
+	auto& pt = function_type_info.params_types;
 
 	for ( auto type : pt )
 		res += "_" + type->getName();

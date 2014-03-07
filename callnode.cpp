@@ -4,7 +4,7 @@ CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(c
 
 CallNode::~CallNode() { delete caller; }
     
-Type* CallNode::getType() const { return resolved_function_symbol->getTypeInfo().getReturnType(); }
+Type* CallNode::getType() const { return resolved_function_symbol->getTypeInfo().return_type; }
     
 void CallNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {

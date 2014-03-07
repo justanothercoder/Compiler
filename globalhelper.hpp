@@ -1,6 +1,7 @@
 #ifndef _GLOBALHELPER_HPP_
 #define _GLOBALHELPER_HPP_
 
+#include <string>
 #include <map>
 
 class AST;
@@ -23,7 +24,9 @@ public:
 
     static Scope* getASTScope(const AST *t);
     static void setASTScope(AST *t, Scope *sc);
-    
+
+	static std::string getCodeOperatorName(std::string op);
+
 private:
 
     GlobalHelper();

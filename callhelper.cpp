@@ -14,9 +14,9 @@ FunctionSymbol* CallHelper::callCheck(string name, Scope *sc, const std::vector<
     
     int is_meth = (resolved_function_symbol->isMethod() ? 1 : 0);
     
-    for ( int i = resolved_function_type_info.getNumberOfParams() - 1; i >= is_meth; --i )
+    for ( int i = resolved_function_type_info.params_types.size() - 1; i >= is_meth; --i )
     {
-		if ( resolved_function_type_info.getParamType(i)->isReference() && !params[i - is_meth]->isLeftValue() )
+		if ( resolved_function_type_info.params_types[i]->isReference() && !params[i - is_meth]->isLeftValue() )
 			throw SemanticError("parameter is not an lvalue.");
     }   
 	

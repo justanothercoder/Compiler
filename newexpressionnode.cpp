@@ -25,7 +25,7 @@ void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vecto
 	CodeGen::emit("pop rdi");
 }
 
-Type* NewExpressionNode::getType() const { return resolved_constructor->getTypeInfo().getReturnType(); }
+Type* NewExpressionNode::getType() const { return resolved_constructor->getTypeInfo().return_type; }
 
 AST* NewExpressionNode::copyTree() const 
 {

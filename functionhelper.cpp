@@ -2,12 +2,12 @@
 
 bool FunctionHelper::isCompatible(FunctionTypeInfo ft, const vector<Type*>& params_type)
 {
-	if ( ft.getNumberOfParams() != static_cast<int>(params_type.size()) )
+	if ( ft.params_types.size() != static_cast<int>(params_type.size()) )
 		return false;	
 
 	for ( int i = 0; i < static_cast<int>(params_type.size()); ++i )
 	{
-		if ( !TypeHelper::isConvertable(params_type[i], ft.getParamType(i)) )
+		if ( !TypeHelper::isConvertable(params_type[i], ft.params_types[i]) )
 			return false;
 	}
 

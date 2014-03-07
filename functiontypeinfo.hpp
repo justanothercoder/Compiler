@@ -7,22 +7,13 @@
 
 using std::vector;
 
-class FunctionTypeInfo
+struct FunctionTypeInfo
 {
 public:
 
     FunctionTypeInfo(Type *return_type, const vector<Type*>& params_types);
 
-    Type* getReturnType() const;
-    Type* getParamType(int i) const;
-
-    int getNumberOfParams() const;
-
-    const vector<Type*>& getParamsTypes() const;
-
 	string toString() const;
-
-private:
 
     Type *return_type;
     vector<Type*> params_types;

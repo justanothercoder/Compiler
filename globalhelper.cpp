@@ -27,3 +27,13 @@ Scope* GlobalHelper::getASTScope(const AST *t)
 }
 
 void GlobalHelper::setASTScope(AST *t, Scope *sc) { ast_scopes[t] = sc; }
+	
+std::string GlobalHelper::getCodeOperatorName(std::string op)
+{
+    if      ( op == "operator()" ) return "operatorcall";
+	else if ( op == "operator[]" ) return "operatorelem";
+	else if ( op == "operator+"  ) return "operatorplus";
+	else if ( op == "operator-"  ) return "operatorminus";
+	else if ( op == "operator="  ) return "operatorassign";
+	else if ( op == "operator*"  ) return "operatormul";
+}

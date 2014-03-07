@@ -86,7 +86,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 
 			if ( ov_func_type_info.symbols.find(type_info) == std::end(ov_func_type_info.symbols) )
 			{
-				auto sym = FunctionHelper::getViableOverload(ov_func, type_info.getParamsTypes());
+				auto sym = FunctionHelper::getViableOverload(ov_func, type_info.params_types);
 				variable = new VariableSymbol(ov_func->getName(), sym);
 			}
 			else

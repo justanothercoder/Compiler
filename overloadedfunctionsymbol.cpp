@@ -21,7 +21,7 @@ Type* OverloadedFunctionSymbol::getBaseType() const
 {
     if ( !isMethod() )
 		throw;    
-    return type_info.overloads.begin()->getParamType(0);
+    return std::begin(type_info.overloads)->params_types[0];
 }
 
 SymbolType OverloadedFunctionSymbol::getSymbolType() const { return SymbolType::OVERLOADED_FUNCTION; }
