@@ -3,7 +3,7 @@
 bool FunctionHelper::isCompatible(FunctionTypeInfo ft, const vector<Type*>& params_type)
 {
 	if ( ft.getNumberOfParams() != static_cast<int>(params_type.size()) )
-		return false;
+		return false;	
 
 	for ( int i = 0; i < static_cast<int>(params_type.size()); ++i )
 	{

@@ -47,9 +47,8 @@ FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
 
 	auto conversion = CallHelper::getOverloadedMethod(rhs_name, struc);
 
-	auto overloads = FunctionHelper::getBestOverload(conversion->getTypeInfo().overloads, {getReferenceType(rhs), lhs});
-
-	return overloads.empty() ? nullptr : conversion->getTypeInfo().symbols[*std::begin(overloads)];
+//	return FunctionHelper::getViableOverload(conversion, {getReferenceType(rhs), lhs});	
+	return conversion->getTypeInfo().symbols[FunctionTypeInfo(getReferenceType(rhs), {getReferenceType(rhs), lhs})];
 }
 
 FunctionSymbol* TypeHelper::getCopyConstructor(Type *type)
@@ -63,9 +62,7 @@ FunctionSymbol* TypeHelper::getCopyConstructor(Type *type)
 
 	auto constructor = CallHelper::getOverloadedMethod(type_name, struc);
 
-	auto overloads = FunctionHelper::getBestOverload(constructor->getTypeInfo().overloads, {getReferenceType(type), type});
-
-	return overloads.empty() ? nullptr : constructor->getTypeInfo().symbols[*std::begin(overloads)];
+	return FunctionHelper::getViableOverload(constructor, {getReferenceType(type), getReferenceType(type)});
 }
 
 Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym, vector<ExprNode*> expr)
@@ -75,12 +72,8 @@ Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateS
 	if ( template_sym && template_sym->isIn(type_name) )
 		type_name = static_cast<ClassVariableSymbol*>(TypeHelper::removeReference(template_sym->getReplacement(type_name, expr)->getType()))->sym->getName();
 
-	Symbol *sym = scope->resolve(type_info.getTypeName());
-
-	if ( sym == nullptr )
-		throw SemanticError("No such symbol " + type_info.getTypeName());
-
-	Type *type = dynamic_cast<Type*>(sym);
+//	Symbol *sym = scope->resolve(type_info.getTypeName());
+	auto type = TypeHelper::resolveType(type_info.getTypeName(), scope);
 
 	if ( type == nullptr )
 		throw SemanticError(type_info.getTypeName() + " is not a type");
@@ -103,4 +96,25 @@ Type* TypeHelper::removeReference(Type *t)
 	if ( t->isReference() )
 		t = static_cast<ReferenceType*>(t)->getReferredType();
 	return t;
+}
+	
+Type* TypeHelper::resolveType(string name, Scope *sc)
+{
+	auto scope = sc;
+
+	Symbol* _ = nullptr;
+
+	while ( true )
+	{
+		while ( scope != nullptr && scope->resolve(name) == _ )
+			scope = scope->getEnclosingScope();
+
+		if ( scope == nullptr ) 
+			return nullptr;
+
+		_ = scope->resolve(name);
+
+		if ( dynamic_cast<Type*>(_) != nullptr )
+			return dynamic_cast<Type*>(_);		
+	}
 }

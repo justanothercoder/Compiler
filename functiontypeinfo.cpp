@@ -27,3 +27,23 @@ bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
     
     return hash_func(lhs) < hash_func(rhs);
 }
+
+string FunctionTypeInfo::toString() const
+{
+	string res = return_type->getName();
+
+	res += "(";
+
+	if ( !params_types.empty() )
+	{
+		auto it = std::begin(params_types);
+
+		res += (*it)->getName();
+		for ( ++it; it != std::end(params_types); ++it )
+			res += ", " + (*it)->getName();
+	}
+
+	res += ")";
+
+	return res;	
+}

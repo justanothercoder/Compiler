@@ -14,9 +14,7 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 
 	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope()));
 
-	auto constructor = CallHelper::getOverloadedMethod(name, type);
-
-	resolved_constructor = CallHelper::callCheck(constructor, params, template_sym, expr); 
+	resolved_constructor = CallHelper::callCheck(name, type, params, template_sym, expr); 
 }
 
 void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)

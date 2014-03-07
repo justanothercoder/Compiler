@@ -29,7 +29,11 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 				);
 	}
 	
-	Type *return_type = TypeHelper::fromTypeInfo(return_type_info, getScope());
+	Type *return_type = nullptr;
+   	if ( definedSymbol->isMethod() && return_type_info.getTypeName() == static_cast<StructSymbol*>(getScope())->getName() )
+		return_type = static_cast<StructSymbol*>(getScope());
+	else
+		return_type = TypeHelper::fromTypeInfo(return_type_info, getScope());
 
 	vector<Type*> params_types;
 
@@ -43,7 +47,12 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 
 	for ( auto i : params )
 	{
-		Type *param_type = TypeHelper::fromTypeInfo(i.second, getScope());	
+		Type *param_type = nullptr;
+   		if ( definedSymbol->isMethod() && i.second.getTypeName() == static_cast<StructSymbol*>(getScope())->getName() )
+			param_type = static_cast<StructSymbol*>(getScope());
+		else
+			param_type = TypeHelper::fromTypeInfo(i.second, getScope());
+
 		params_types.push_back(param_type);
 
 		definedSymbol->accept(new VariableSymbolDefine(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM)));

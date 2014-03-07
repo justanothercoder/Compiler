@@ -13,6 +13,10 @@ FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info,
 			scope_name += "operatorelem";
 		else if ( name == "operator()")
 			scope_name += "operatorcall";
+		else if ( name == "operator+" )
+			scope_name += "operatorplus";
+		else if ( name == "operator=" )
+			scope_name += "operatorassign";
 	}
 	else
 		scope_name += name;
@@ -28,6 +32,10 @@ string FunctionSymbol::getTypedName() const
 			res = "operatorelem";
 		else if ( name == "operator()" )
 			res = "operatorcall";
+		else if ( name == "operator+" )
+			res = "operatorplus";
+		else if ( name == "operator=" )
+			res = "operatorassign";
 	}
 
 	for ( auto type : function_type_info.getParamsTypes() )

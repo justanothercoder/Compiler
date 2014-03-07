@@ -17,17 +17,12 @@ void CallNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprN
 		if ( caller_type->getTypeKind() != TypeKind::STRUCT )
 			throw SemanticError("caller is not a function.");
 
-		auto call_op = CallHelper::getOverloadedMethod("operator()", static_cast<StructSymbol*>(caller_type));
-
-		if ( call_op == nullptr )
-			throw SemanticError("caller is not a function.");
-
-		resolved_function_symbol = CallHelper::callCheck(call_op, params, template_sym, expr);
+		resolved_function_symbol = CallHelper::callCheck("operator()", static_cast<StructSymbol*>(caller_type), params, template_sym, expr);
 		GlobalHelper::setTypeHint(caller, resolved_function_symbol);
 	}
 	else
 	{
-		resolved_function_symbol = CallHelper::callCheck(static_cast<OverloadedFunctionSymbol*>(caller_type), params, template_sym, expr);
+		resolved_function_symbol = CallHelper::callCheck(static_cast<OverloadedFunctionSymbol*>(caller_type)->getName(), getScope(), params, template_sym, expr);
 	    GlobalHelper::setTypeHint(caller, resolved_function_symbol);
 	}
 }
@@ -50,9 +45,7 @@ void CallNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNod
 AST* CallNode::copyTree() const
 {
     vector<ExprNode*> expr(params.size());
-
     std::transform(std::begin(params), std::end(params), std::begin(expr), [&] (ExprNode *ex) { return static_cast<ExprNode*>(ex->copyTree()); });
-    
     return new CallNode(static_cast<ExprNode*>(caller->copyTree()), expr);
 }
 

@@ -32,6 +32,8 @@ public:
 
 	static Type* removeReference(Type *t);
 
+	static Type* resolveType(string name, Scope *sc);
+
     static map<Type*, ReferenceType*> references;
 };
 

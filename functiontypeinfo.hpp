@@ -19,7 +19,9 @@ public:
     int getNumberOfParams() const;
 
     const vector<Type*>& getParamsTypes() const;
-    
+
+	string toString() const;
+
 private:
 
     Type *return_type;
