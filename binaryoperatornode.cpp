@@ -44,45 +44,22 @@ void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vect
     call_name += getCodeOperatorName();
     call_name += resolved_operator_symbol->getTypedName().substr(getCodeOperatorName().length());
 
-	if ( TypeHelper::removeReference(lhs->getType()) == BuiltIns::int_struct && 
-		 TypeHelper::removeReference(rhs->getType()) == BuiltIns::int_struct )
+	CodeGen::emit("push rsi");
+	CodeGen::emit("lea rsi, [" + call_name + "]");
+
+	if ( resolved_operator_symbol->isMethod() )
 	{
-		rhs->gen(template_sym, expr);
-
-		CodeGen::emit("mov rbx, [rax]");
-//		if ( rhs->getType() == BuiltIns::int_ref )
-//			CodeGen::emit("mov rbx, [rbx]");
-		CodeGen::emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");
-
 		lhs->gen(template_sym, expr);
-		CodeGen::emit("mov rbx, [rax]");
-//		if ( lhs->getType() == BuiltIns::int_ref )
-//			CodeGen::emit("mov rbx, [rbx]");
-		CodeGen::emit("mov [rsp - " + std::to_string(2 * GlobalConfig::int_size) + "], rbx");
+		CodeGen::emit("push rdi");
+		CodeGen::emit("mov rdi, rax");
 
-		CodeGen::emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size));
-		CodeGen::emit("call " + call_name);
-		CodeGen::emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
+		CodeGen::genCallCode(resolved_operator_symbol, {rhs}, template_sym, expr);
+		CodeGen::emit("pop rdi");
 	}
 	else
-	{
-		CodeGen::emit("push rsi");
-		CodeGen::emit("lea rsi, [" + call_name + "]");
+		CodeGen::genCallCode(resolved_operator_symbol, {lhs, rhs}, template_sym, expr);
 
-		if ( resolved_operator_symbol->isMethod() )
-		{
-			lhs->gen(template_sym, expr);
-			CodeGen::emit("push rdi");
-			CodeGen::emit("mov rdi, rax");
-
-			CodeGen::genCallCode(resolved_operator_symbol, {rhs}, template_sym, expr);
-			CodeGen::emit("pop rdi");
-		}
-		else
-			CodeGen::genCallCode(resolved_operator_symbol, {lhs, rhs}, template_sym, expr);
-
-		CodeGen::emit("pop rsi");
-	}
+	CodeGen::emit("pop rsi");
 }
 
 AST* BinaryOperatorNode::copyTree() const
