@@ -19,16 +19,16 @@ void BracketNode::gen(const TemplateStructSymbol *template_sym, std::vector<Expr
     call_name += "operatorelem";
     call_name += resolved_operator->getTypedName().substr(string("operatorelem").length());
 
-    CodeGen::emit("push rsi");
-    CodeGen::emit("lea rsi, [" + call_name + "]");
-
-	base->gen(template_sym, expr);
-	CodeGen::emit("push rdi");
-	CodeGen::emit("mov rdi, rax");
-
-    CodeGen::genCallCode(resolved_operator, {this->expr}, template_sym, expr);
-	CodeGen::emit("pop rdi");
-	CodeGen::emit("pop rsi");
+    CodeGen::genCallCode(resolved_operator, {this->expr}, template_sym, expr,
+			[&]()
+			{
+    			CodeGen::emit("lea rax, [" + call_name + "]");
+			},
+			[&]()
+			{
+				base->gen(template_sym, expr);
+			}
+	);
 }
 
 Type* BracketNode::getType() const { return resolved_operator->getTypeInfo().return_type; }

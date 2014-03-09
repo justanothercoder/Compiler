@@ -4,6 +4,7 @@
 #include <map>
 
 #include "variablesymbol.hpp"
+#include "globalconfig.hpp"
 
 class VarAllocator
 {

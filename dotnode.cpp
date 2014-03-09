@@ -31,9 +31,6 @@ void DotNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode
 {    
 	base->gen(template_sym, expr);
 
-//	CodeGen::emit("push rdi");
-//	CodeGen::emit("mov rdi, rax");
-
 	auto member_type = member->getType();
 
 	if ( member_type->isReference() )

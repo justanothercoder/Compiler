@@ -29,17 +29,19 @@ void CallNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprN
 
 void CallNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {    
-    caller->gen(template_sym, expr);
+    CodeGen::genCallCode(resolved_function_symbol, params, template_sym, expr,
+			[&]()
+			{
+				caller->gen(template_sym, expr);
 
-	if ( resolved_function_symbol->getName() == "operator()" )
-		CodeGen::emit("lea rax, [" + resolved_function_symbol->getScopedTypedName() + "]");
-    CodeGen::emit("push rsi");
-    CodeGen::emit("mov rsi, rax");
-
-    CodeGen::genCallCode(resolved_function_symbol, params, template_sym, expr);
-    CodeGen::emit("pop rsi");
-	if ( resolved_function_symbol->isMethod() )
-		CodeGen::emit("pop rdi");
+				if ( resolved_function_symbol->getName() == "operator()" )
+					CodeGen::emit("lea rax, [" + resolved_function_symbol->getScopedTypedName() + "]");
+			},
+			[&]()
+			{
+				caller->gen(template_sym, expr);
+			}
+	);
 }
 
 AST* CallNode::copyTree() const

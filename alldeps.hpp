@@ -14,6 +14,4 @@
 #include "globalconfig.hpp"
 #include "builtins.hpp"
 
-#include "codegen.hpp"
-
 #endif

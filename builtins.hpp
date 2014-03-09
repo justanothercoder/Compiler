@@ -7,7 +7,6 @@
 #include "typehelper.hpp"
 #include "structsymbol.hpp"
 #include "templatestructsymbol.hpp"
-#include "asmarraynode.hpp"
 
 class TemplateStructDeclarationNode;
 

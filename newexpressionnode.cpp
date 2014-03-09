@@ -19,10 +19,16 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 
 void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	CodeGen::emit("push rdi");
-	CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size + static_cast<ParamVarAllocator*>(resolved_constructor->get_valloc())->getSpaceForParams()) + "]");
-	CodeGen::construct_object(resolved_constructor, params, template_sym, expr);
-	CodeGen::emit("pop rdi");
+	CodeGen::genCallCode(resolved_constructor, params, template_sym, expr, 
+			[&]() 
+			{  
+				CodeGen::emit("lea rax, [" + resolved_constructor->getScopedTypedName() + "]");
+			},
+			[&]()
+			{
+				CodeGen::emit("lea rax, [rsp - " + std::to_string(GlobalConfig::int_size + static_cast<ParamVarAllocator*>(resolved_constructor->get_valloc())->getSpaceForParams()) + "]");
+			}
+	);
 }
 
 Type* NewExpressionNode::getType() const { return resolved_constructor->getTypeInfo().return_type; }

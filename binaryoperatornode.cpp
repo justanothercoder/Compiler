@@ -44,22 +44,27 @@ void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vect
     call_name += getCodeOperatorName();
     call_name += resolved_operator_symbol->getTypedName().substr(getCodeOperatorName().length());
 
-	CodeGen::emit("push rsi");
-	CodeGen::emit("lea rsi, [" + call_name + "]");
-
 	if ( resolved_operator_symbol->isMethod() )
 	{
-		lhs->gen(template_sym, expr);
-		CodeGen::emit("push rdi");
-		CodeGen::emit("mov rdi, rax");
-
-		CodeGen::genCallCode(resolved_operator_symbol, {rhs}, template_sym, expr);
-		CodeGen::emit("pop rdi");
+		CodeGen::genCallCode(resolved_operator_symbol, {rhs}, template_sym, expr,
+				[&]()
+				{
+					CodeGen::emit("lea rax, [" + call_name + "]");
+				},
+				[&]()
+				{
+					lhs->gen(template_sym, expr);
+				}
+		);
 	}
 	else
-		CodeGen::genCallCode(resolved_operator_symbol, {lhs, rhs}, template_sym, expr);
-
-	CodeGen::emit("pop rsi");
+		CodeGen::genCallCode(resolved_operator_symbol, {lhs, rhs}, template_sym, expr,
+				[&]()
+				{
+					CodeGen::emit("lea rax, [" + call_name + "]");
+				},
+				[](){}
+		);
 }
 
 AST* BinaryOperatorNode::copyTree() const

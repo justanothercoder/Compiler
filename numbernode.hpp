@@ -4,6 +4,7 @@
 #include "exprnode.hpp"
 #include "globalconfig.hpp"
 #include "builtins.hpp"
+#include "codegen.hpp"
 
 class NumberNode : public ExprNode
 {

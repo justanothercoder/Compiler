@@ -13,6 +13,8 @@
 #include "variablesymboldefine.hpp"
 #include "functionsymboldefine.hpp"
 
+#include "codegen.hpp"
+
 using std::vector;
 using std::pair;
 
