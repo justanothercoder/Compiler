@@ -19,11 +19,11 @@ void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprN
 
 void ReturnNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> _expr)
 {
-	Scope *sc = getScope();
-	while ( sc != nullptr && dynamic_cast<FunctionSymbol*>(sc) == nullptr )
-		sc = sc->getEnclosingScope();
+	auto scope = getScope();
+	while ( scope != nullptr && dynamic_cast<FunctionSymbol*>(scope) == nullptr )
+		scope = scope->getEnclosingScope();
 
-	if ( sc == nullptr )
+	if ( scope == nullptr )
 		throw SemanticError("return is not a in a function");
 
     expr->check(template_sym, _expr);

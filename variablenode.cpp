@@ -11,7 +11,7 @@ void VariableNode::check(const TemplateStructSymbol *template_sym, std::vector<E
 		return;
 	}
 
-	Symbol *sym = getScope()->resolve(name);
+	auto sym = getScope()->resolve(name);
 
 	if ( sym == nullptr )
 		throw SemanticError("No such symbol " + name);
@@ -54,7 +54,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 		return;
 	}
 
-	Type *var_type = variable->getType();
+	auto var_type = variable->getType();
 
 	if ( var_type->isReference() )
 	{
@@ -72,7 +72,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 	}    
 	else if ( var_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
-		OverloadedFunctionSymbol *ov_func = static_cast<OverloadedFunctionSymbol*>(var_type);
+		auto ov_func = static_cast<OverloadedFunctionSymbol*>(var_type);
 
 		auto ov_func_type_info = ov_func->getTypeInfo();
 
@@ -101,9 +101,9 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 	{
 		if ( variable->isField() )
 		{
-			Symbol *_this = getScope()->resolve("this");
+			auto _this = getScope()->resolve("this");
 
-			VariableSymbol *sym = static_cast<VariableSymbol*>(_this);
+			auto sym = static_cast<VariableSymbol*>(_this);
 
 			Scope *struc_scope = static_cast<StructSymbol*>(TypeHelper::removeReference(sym->getType()));
 

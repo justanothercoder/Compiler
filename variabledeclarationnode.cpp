@@ -51,14 +51,8 @@ void VariableDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 	if ( !is_field )
 	{   
 		CodeGen::genCallCode(resolved_constructor, constructor_call_params, template_sym, expr, 
-				[&]() 
-				{  
-					CodeGen::emit("lea rax, [" + resolved_constructor->getScopedTypedName() + "]");
-				},
-				[&]()
-				{
-					CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]");
-				}
+				[&]() {  CodeGen::emit("lea rax, [" + resolved_constructor->getScopedTypedName() + "]"); },
+				[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]"); }
 		);
 	}
 }

@@ -43,17 +43,12 @@ OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(string name, StructSym
 	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_)->getType());
 }
 	
-FunctionSymbol* CallHelper::resolveOverload(string name, Scope *sc, std::vector<Type*> params_types)
+FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vector<Type*> params_types)
 {
-	auto scope = sc;
-
-	while ( true )
+	while ( scope != nullptr )
 	{
 		OverloadedFunctionSymbol *ov_func = nullptr;
 	  
-		if ( scope == nullptr )
-			return nullptr;
-
 		try { ov_func = CallHelper::getOverloadedFunc(name, scope); }
 		catch ( SemanticError& e ) { return nullptr; }
 

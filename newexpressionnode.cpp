@@ -20,14 +20,8 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	CodeGen::genCallCode(resolved_constructor, params, template_sym, expr, 
-			[&]() 
-			{  
-				CodeGen::emit("lea rax, [" + resolved_constructor->getScopedTypedName() + "]");
-			},
-			[&]()
-			{
-				CodeGen::emit("lea rax, [rsp - " + std::to_string(GlobalConfig::int_size + static_cast<ParamVarAllocator*>(resolved_constructor->get_valloc())->getSpaceForParams()) + "]");
-			}
+			[&]() {  CodeGen::emit("lea rax, [" + resolved_constructor->getScopedTypedName() + "]"); },
+			[&]() { CodeGen::emit("lea rax, [rsp - " + std::to_string(GlobalConfig::int_size + static_cast<ParamVarAllocator*>(resolved_constructor->get_valloc())->getSpaceForParams()) + "]"); }
 	);
 }
 

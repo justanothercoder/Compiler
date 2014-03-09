@@ -39,10 +39,7 @@ void CallNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNod
 				if ( resolved_function_symbol->getName() == "operator()" )
 					CodeGen::emit("lea rax, [" + resolved_function_symbol->getScopedTypedName() + "]");
 			},
-			[&]()
-			{
-				caller->gen(template_sym, expr);
-			}
+			[&]() { caller->gen(template_sym, expr); }
 	);
 }
 

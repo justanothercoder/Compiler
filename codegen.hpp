@@ -46,8 +46,8 @@ class CodeGen
 
 				if ( param_type->isReference() )
 				{
-					CodeGen::emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
-					CodeGen::emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+					emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
+					emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 				}
 				else
 				{
@@ -64,21 +64,21 @@ class CodeGen
 						{
 							auto conv = TypeHelper::getConversion(par_type, param_type);
 
-							CodeGen::genConversion(conv);
+							genConversion(conv);
 						}
 					}
 
 					auto copy_constr = TypeHelper::getCopyConstructor(param_type);	
 					if ( copy_constr == BuiltIns::int_copy_constructor )
 					{
-						CodeGen::emit("mov rbx, [rax]");
-						CodeGen::emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");
-						CodeGen::emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+						emit("mov rbx, [rax]");
+						emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");
+						emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 					}
 					else
 					{
-						CodeGen::genCopy(copy_constr, 0, param_type);
-						CodeGen::emit("sub rsp, " + std::to_string(param_type->getSize())); 
+						genCopy(copy_constr, 0, param_type);
+						emit("sub rsp, " + std::to_string(param_type->getSize())); 
 					}
 				}
 			}
@@ -86,13 +86,13 @@ class CodeGen
 			if ( is_method )
 			{
 				genThis();
-				CodeGen::emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
-				CodeGen::emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+				emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
+				emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 			}
 
 			genFunc();
-			CodeGen::emit("call rax");
-			CodeGen::emit("add rsp, " + std::to_string(params_size));
+			emit("call rax");
+			emit("add rsp, " + std::to_string(params_size));
 		}
 
 		static void pushOnStack(unsigned int size, int offset);

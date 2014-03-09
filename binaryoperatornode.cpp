@@ -39,27 +39,16 @@ string BinaryOperatorNode::getCodeOperatorName()
 
 void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	string call_name = resolved_operator_symbol->getScopedTypedName();
-
 	if ( resolved_operator_symbol->isMethod() )
 	{
 		CodeGen::genCallCode(resolved_operator_symbol, {rhs}, template_sym, expr,
-				[&]()
-				{
-					CodeGen::emit("lea rax, [" + call_name + "]");
-				},
-				[&]()
-				{
-					lhs->gen(template_sym, expr);
-				}
+				[&]() { CodeGen::emit("lea rax, [" + resolved_operator_symbol->getScopedTypedName() + "]"); },
+				[&]() { lhs->gen(template_sym, expr); }
 		);
 	}
 	else
 		CodeGen::genCallCode(resolved_operator_symbol, {lhs, rhs}, template_sym, expr,
-				[&]()
-				{
-					CodeGen::emit("lea rax, [" + call_name + "]");
-				},
+				[&]() { CodeGen::emit("lea rax, [" + resolved_operator_symbol->getScopedTypedName() + "]"); },
 				[](){}
 		);
 }

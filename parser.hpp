@@ -12,7 +12,7 @@
 #include "functiondeclarationnode.hpp"
 #include "templatestructdeclarationnode.hpp"
 
-#include "emptystatementnode.hpp"
+#include "statementnode.hpp"
 #include "binaryoperatornode.hpp"
 #include "returnnode.hpp"
 #include "ifnode.hpp"

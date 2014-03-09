@@ -16,9 +16,6 @@ public:
     
     virtual Token getToken();
     
-private:
-
-    
 };
 
 #endif

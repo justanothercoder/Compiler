@@ -1,9 +1,6 @@
 #include "lexer.hpp"
 
-Lexer::Lexer(string input) : AbstractLexer(input)
-{
-
-}
+Lexer::Lexer(string input) : AbstractLexer(input) { }
 
 Token Lexer::getToken()
 {

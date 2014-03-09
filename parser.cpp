@@ -17,7 +17,7 @@ AST* Parser::statement()
 	if ( getTokenType(1) == TokenType::SEMICOLON )
 	{
 		match(TokenType::SEMICOLON);
-		return new EmptyStatementNode();
+		return new StatementNode({ });
 	}
 	else if ( getTokenType(1) == TokenType::STRUCT || getTokenType(1) == TokenType::DEF || tryVarDecl() || getTokenType(1) == TokenType::TEMPLATE )
 		return declaration();
@@ -382,7 +382,7 @@ AST* Parser::if_stat()
 		stats_false = statement();
 	}
 	else
-		stats_false = new EmptyStatementNode();
+		stats_false = new StatementNode({ });
 
 	return new IfNode(cond, stats_true, stats_false);
 }
@@ -422,7 +422,7 @@ AST* Parser::for_stat()
 	AST *init;
 
 	if ( getTokenType(1) == TokenType::SEMICOLON )
-		init = new EmptyStatementNode(); 
+		init = new StatementNode({ }); 
 	else if ( tryVarDecl() )	
 		init = variableDecl();
 	else if ( tryAssignment() )
@@ -444,7 +444,7 @@ AST* Parser::for_stat()
 	AST *step;
 
 	if ( getTokenType(1) == TokenType::RPAREN )
-		step = new EmptyStatementNode();
+		step = new StatementNode({ });
 	else if ( tryAssignment() )
 		step = assignment();
 	else

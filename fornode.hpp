@@ -15,7 +15,7 @@ public:
 
 	ForNode(AST *init, ExprNode *cond, AST *step, AST *stats);
 
-	~ForNode();
+	virtual	~ForNode();
 
 	virtual void build_scope();
 	virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);

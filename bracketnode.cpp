@@ -14,20 +14,9 @@ void BracketNode::check(const TemplateStructSymbol *template_sym, std::vector<Ex
 
 void BracketNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    string call_name = resolved_operator->getEnclosingScope()->getScopeName() + "_";
-
-    call_name += "operatorelem";
-    call_name += resolved_operator->getTypedName().substr(string("operatorelem").length());
-
     CodeGen::genCallCode(resolved_operator, {this->expr}, template_sym, expr,
-			[&]()
-			{
-    			CodeGen::emit("lea rax, [" + call_name + "]");
-			},
-			[&]()
-			{
-				base->gen(template_sym, expr);
-			}
+			[&]() { CodeGen::emit("lea rax, [" + resolved_operator->getScopedTypedName() + "]"); },
+			[&]() { base->gen(template_sym, expr); }
 	);
 }
 
