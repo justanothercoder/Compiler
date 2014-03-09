@@ -22,7 +22,9 @@ void CallNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprN
 	}
 	else
 	{
-		resolved_function_symbol = CallHelper::callCheck(static_cast<OverloadedFunctionSymbol*>(caller_type)->getName(), getScope(), params, template_sym, expr);
+		auto ov_func = static_cast<OverloadedFunctionSymbol*>(caller_type);
+		auto scope = ov_func->isMethod() ? static_cast<StructSymbol*>(TypeHelper::removeReference(ov_func->getBaseType())) : getScope();
+		resolved_function_symbol = CallHelper::callCheck(ov_func->getName(), scope, params, template_sym, expr);
 	    GlobalHelper::setTypeHint(caller, resolved_function_symbol);
 	}
 }

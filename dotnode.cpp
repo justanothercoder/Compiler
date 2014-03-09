@@ -54,6 +54,10 @@ void DotNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode
 
 		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(member->getType())->getScopedTypedName() + "]");
 	}
+	else if ( member_type->getTypeKind() == TypeKind::FUNCTION ) 
+	{
+		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(member->getType())->getScopedTypedName() + "]");
+	}
 	else
 		CodeGen::emit("lea rax, [rax - " + std::to_string(base_type->get_valloc()->getAddress(member)) + "]");
 }
