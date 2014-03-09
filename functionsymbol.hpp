@@ -9,7 +9,7 @@
 #include "functiontypeinfo.hpp"
 
 #include "overloadedfunctionsymbol.hpp"
-#include "varallocator.hpp"
+#include "paramvarallocator.hpp"
 
 class VariableSymbol;
 
@@ -32,11 +32,9 @@ public:
     bool isMethod() const;
     bool isConstructor() const;
 
-    virtual int getScopeSize() const;
     virtual string getScopeName() const;
     virtual Scope* getEnclosingScope() const;
     virtual void accept(ScopeVisitor *visitor);
-
 
     virtual string getName() const;
     virtual SymbolType getSymbolType() const;
@@ -46,17 +44,10 @@ public:
     
     virtual TypeKind getTypeKind() const;
     virtual int getSize() const;
-
-	virtual void increaseScopeTreeSize(int size);
-
-	int getParamsSize() const;
-
 	virtual VarAllocator* get_valloc() const;
 
 private:
 
-    int params_size;
-    
     string name;
     
     FunctionTypeInfo function_type_info;
@@ -67,7 +58,7 @@ private:
 
     FunctionTraits traits;
 
-	mutable VarAllocator valloc;
+	mutable ParamVarAllocator valloc;
 };
 
 #endif

@@ -24,12 +24,6 @@ public:
     virtual string getScopeName() const = 0;
 
     virtual void accept(ScopeVisitor *visitor) = 0;
-
-//    virtual int getScopeAddress() const = 0;
-    virtual int getScopeSize() const = 0;
-
-	virtual int getScopeTreeSize() const = 0;
-	virtual void increaseScopeTreeSize(int size) = 0;
 };
 
 #endif

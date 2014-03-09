@@ -1,9 +1,8 @@
 #include "structsymbol.hpp"
 
-StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope)
+StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope), valloc()
 {
 	type_size = 0;
-	scope_size = 0;
 
 	scope_name = getEnclosingScope()->getScopeName() + "_" + name;
 }
@@ -40,4 +39,4 @@ TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }
 
 void StructSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
 
-VarAllocator* StructSymbol::get_valloc() const { return nullptr; }
+VarAllocator* StructSymbol::get_valloc() const { return &valloc; }

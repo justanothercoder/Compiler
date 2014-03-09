@@ -9,6 +9,7 @@
 #include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
+#include "fieldvarallocator.hpp"
 
 using std::map;
 
@@ -47,6 +48,8 @@ private:
     int type_size;
 
     string scope_name;
+
+	mutable FieldVarAllocator valloc;
 };
 		     
 #endif

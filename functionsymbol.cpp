@@ -2,9 +2,6 @@
 
 FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits) : name(name), function_type_info(function_type_info), enclosing_scope(enclosing_scope), traits(traits), valloc()
 {
-	scope_size = 0;
-	params_size = GlobalConfig::int_size;
-
 	scope_name = enclosing_scope->getScopeName() + "_" + (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
 }
 
@@ -31,7 +28,6 @@ string FunctionSymbol::getScopedTypedName() const
 }
 
 Scope* FunctionSymbol::getEnclosingScope() const { return enclosing_scope; }
-int FunctionSymbol::getScopeSize() const { return scope_size + params_size; }
 string FunctionSymbol::getScopeName() const { return scope_name; }
 
 bool FunctionSymbol::isOperator() const { return traits.is_operator; }
@@ -51,8 +47,4 @@ TypeKind FunctionSymbol::getTypeKind() const { return TypeKind::FUNCTION; }
 
 void FunctionSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
 	
-void FunctionSymbol::increaseScopeTreeSize(int size) { scope_tree_size += size; }
-
-int FunctionSymbol::getParamsSize() const { return params_size; }
-
 VarAllocator* FunctionSymbol::get_valloc() const { return &valloc; }

@@ -10,13 +10,15 @@ class VarAllocator
 public:
 	VarAllocator();
 
-	void addVariable(VariableSymbol *var);
+	virtual void addVariable(VariableSymbol *var);
 	void addLocal(int type_size);
 
 	int getAddress(VariableSymbol *var) const;
 	int getAddressForLocal() const;
 
-private:
+	int getSpace() const;
+		
+protected:
 
 	int space_for_variables;
 	int space_for_locals;

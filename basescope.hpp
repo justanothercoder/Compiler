@@ -18,23 +18,10 @@ public:
     friend class FunctionSymbolDefine;
     friend class SymbolDefine;
     
-    BaseScope();
-
     virtual Symbol* resolve(string name) const;
-
-//    virtual int getAddress(VariableSymbol *sym) const;
-
-	virtual int getScopeTreeSize() const;
-	virtual void increaseScopeTreeSize(int size);
-
-    virtual int getScopeSize() const;
-  //  virtual int getScopeAddress() const;
 
 public:
     map<string, Symbol*> table;
-    map<VariableSymbol*, int> addresses;
-
-    int scope_size, /*scope_address,*/ scope_tree_size;
 };
 
 #endif

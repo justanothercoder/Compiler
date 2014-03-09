@@ -9,17 +9,9 @@ void VarAllocator::addVariable(VariableSymbol *var)
 	var_addresses[var] = space_for_variables;
 }
 
-void VarAllocator::addLocal(int type_size) 
-{
-	space_for_locals += type_size;
-}
+void VarAllocator::addLocal(int type_size) { space_for_locals += type_size; }
 
-int VarAllocator::getAddress(VariableSymbol *var) const
-{
-	return var_addresses.at(var);
-}
+int VarAllocator::getAddress(VariableSymbol *var) const { return var_addresses.at(var); }
+int VarAllocator::getAddressForLocal() const { return space_for_variables; }
 	
-int VarAllocator::getAddressForLocal() const 
-{
-	return space_for_variables;
-}
+int VarAllocator::getSpace() const { return space_for_variables + space_for_locals; }

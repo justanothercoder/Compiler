@@ -76,8 +76,8 @@ void FunctionDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 	CodeGen::emit("push rbp");
 	CodeGen::emit("mov rbp, rsp");
 
-	if ( definedSymbol->getScopeTreeSize() > 0 )
-		CodeGen::emit("sub rsp, " + std::to_string(definedSymbol->getScopeTreeSize()));
+	if ( definedSymbol->get_valloc()->getSpace() > 0 )
+		CodeGen::emit("sub rsp, " + std::to_string(definedSymbol->get_valloc()->getSpace()));
 
 	statements->gen(template_sym, expr);
 

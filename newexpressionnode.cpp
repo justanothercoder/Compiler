@@ -20,7 +20,7 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	CodeGen::emit("push rdi");
-	CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size + resolved_constructor->getParamsSize()) + "]");
+	CodeGen::emit("lea rdi, [rsp - " + std::to_string(GlobalConfig::int_size + static_cast<ParamVarAllocator*>(resolved_constructor->get_valloc())->getSpaceForParams()) + "]");
 	CodeGen::construct_object(resolved_constructor, params, template_sym, expr);
 	CodeGen::emit("pop rdi");
 }
