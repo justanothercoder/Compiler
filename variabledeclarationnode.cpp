@@ -51,7 +51,7 @@ void VariableDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 	if ( !is_field )
 	{   
 	 	CodeGen::emit("push rdi");	
-		CodeGen::emit("lea rdi, [rbp - " + std::to_string(getScope()->getAddress(definedSymbol)) + "]");
+		CodeGen::emit("lea rdi, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]");
 
 		CodeGen::construct_object(resolved_constructor, constructor_call_params, template_sym, expr);
 		CodeGen::emit("pop rdi");

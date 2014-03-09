@@ -1,6 +1,6 @@
 #include "asmarraynode.hpp"
 
-AsmArrayNode::AsmArrayNode() : array_size(0), size_of_type(0) { setScope(BuiltIns::global_scope); }
+AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) { setScope(BuiltIns::global_scope); }
 
 void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) 
 {

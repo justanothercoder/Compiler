@@ -104,7 +104,13 @@ void CodeGen::genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params,
 				}
 			}
 			auto copy_constr = TypeHelper::getCopyConstructor(param_type);	
-			CodeGen::genCopy(copy_constr, current_address, param_type);
+			if ( copy_constr == BuiltIns::int_copy_constructor )
+			{
+				CodeGen::emit("mov rbx, [rax]");
+				CodeGen::emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rbx");
+			}
+			else
+				CodeGen::genCopy(copy_constr, current_address, param_type);
 			current_address += param_type->getSize();
 		}
 	}

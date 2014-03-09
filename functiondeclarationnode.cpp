@@ -92,7 +92,7 @@ void FunctionDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 
 void FunctionDeclarationNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	definedSymbol->recalc_scope_address();
+//	definedSymbol->recalc_scope_address();
 	statements->check(template_sym, expr);
 }
 

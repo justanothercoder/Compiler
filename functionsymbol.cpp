@@ -1,6 +1,6 @@
 #include "functionsymbol.hpp"
 
-FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits) : name(name), function_type_info(function_type_info), enclosing_scope(enclosing_scope), traits(traits)
+FunctionSymbol::FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits) : name(name), function_type_info(function_type_info), enclosing_scope(enclosing_scope), traits(traits), valloc()
 {
 	scope_size = 0;
 	params_size = GlobalConfig::int_size;
@@ -34,8 +34,6 @@ Scope* FunctionSymbol::getEnclosingScope() const { return enclosing_scope; }
 int FunctionSymbol::getScopeSize() const { return scope_size + params_size; }
 string FunctionSymbol::getScopeName() const { return scope_name; }
 
-void FunctionSymbol::recalc_scope_address() { scope_address = enclosing_scope->getScopeAddress() + enclosing_scope->getScopeSize() + GlobalConfig::int_size; }
-
 bool FunctionSymbol::isOperator() const { return traits.is_operator; }
 bool FunctionSymbol::isMethod() const { return traits.is_method; }
 bool FunctionSymbol::isConstructor() const { return traits.is_constructor; }
@@ -53,8 +51,8 @@ TypeKind FunctionSymbol::getTypeKind() const { return TypeKind::FUNCTION; }
 
 void FunctionSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
 	
-int FunctionSymbol::getFreeAddress() const { return getScopeSize() + GlobalConfig::int_size; }
-	
 void FunctionSymbol::increaseScopeTreeSize(int size) { scope_tree_size += size; }
 
 int FunctionSymbol::getParamsSize() const { return params_size; }
+
+VarAllocator* FunctionSymbol::get_valloc() const { return &valloc; }

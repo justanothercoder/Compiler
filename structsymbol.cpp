@@ -40,4 +40,4 @@ TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }
 
 void StructSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
 
-int StructSymbol::getFreeAddress() const { return 0; }
+VarAllocator* StructSymbol::get_valloc() const { return nullptr; }

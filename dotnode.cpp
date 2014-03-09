@@ -37,7 +37,7 @@ void DotNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode
 	auto member_type = member->getType();
 
 	if ( member_type->isReference() )
-		CodeGen::emit("mov rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(member)) + "]");
+		CodeGen::emit("mov rax, [rax - " + std::to_string(base_type->get_valloc()->getAddress(member)) + "]");
 	else if ( member_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
 		auto ov_func = static_cast<OverloadedFunctionSymbol*>(member_type);
@@ -58,7 +58,7 @@ void DotNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode
 		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(member->getType())->getScopedTypedName() + "]");
 	}
 	else
-		CodeGen::emit("lea rax, [rax - " + std::to_string(static_cast<StructSymbol*>(base_type)->getAddress(member)) + "]");
+		CodeGen::emit("lea rax, [rax - " + std::to_string(base_type->get_valloc()->getAddress(member)) + "]");
 }
 	
 vector<AST*> DotNode::getChildren() const { return {base}; }

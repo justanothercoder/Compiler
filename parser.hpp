@@ -5,6 +5,8 @@
 
 #include "abstractparser.hpp"
 
+#include "alldeps.hpp"
+
 #include "structdeclarationnode.hpp"
 #include "variabledeclarationnode.hpp"
 #include "functiondeclarationnode.hpp"

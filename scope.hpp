@@ -6,6 +6,7 @@
 #include "exprnode.hpp"
 
 #include "scopevisitor.hpp"
+#include "varallocator.hpp"
 
 class VariableSymbol;
 
@@ -18,14 +19,13 @@ public:
     virtual Scope* getEnclosingScope() const = 0;
     virtual Symbol* resolve(string name) const = 0;
 
-    virtual int getAddress(VariableSymbol* sym) const = 0;
-	virtual int getFreeAddress() const = 0;
+	virtual VarAllocator* get_valloc() const = 0;
 
     virtual string getScopeName() const = 0;
 
     virtual void accept(ScopeVisitor *visitor) = 0;
 
-    virtual int getScopeAddress() const = 0;
+//    virtual int getScopeAddress() const = 0;
     virtual int getScopeSize() const = 0;
 
 	virtual int getScopeTreeSize() const = 0;

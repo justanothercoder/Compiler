@@ -1,4 +1,5 @@
 #include "builtins.hpp"
+#include "templatestructdeclarationnode.hpp"
 
 Scope *BuiltIns::global_scope = new GlobalScope();
 

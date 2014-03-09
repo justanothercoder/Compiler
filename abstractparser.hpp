@@ -4,7 +4,8 @@
 #include <vector>
 
 #include "abstractlexer.hpp"
-#include "ast.hpp"
+
+class AST;
 
 using std::vector;
 

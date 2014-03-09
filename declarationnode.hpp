@@ -2,7 +2,6 @@
 #define _DECLARATIONNODE_HPP_
 
 #include "ast.hpp"
-#include "codegen.hpp"
 
 class Symbol;
 

@@ -24,7 +24,7 @@ void WhileNode::define(const TemplateStructSymbol *template_sym, std::vector<Exp
 
 void WhileNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	while_scope->recalc_scope_address();
+//	while_scope->recalc_scope_address();
 
     cond->check(template_sym, expr);
     stats->check(template_sym, expr);

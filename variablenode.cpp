@@ -64,11 +64,11 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 
 			Scope *struc_scope = static_cast<StructSymbol*>(sym->getType());
 
-			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(sym)) + "]");
-			CodeGen::emit("mov rax, [rax - " + std::to_string(struc_scope->getAddress(variable)) + "]");
+			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
+			CodeGen::emit("mov rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");
 		}
 		else
-			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(variable)) + "]");
+			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(variable)) + "]");
 	}    
 	else if ( var_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
@@ -107,8 +107,8 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 
 			Scope *struc_scope = static_cast<StructSymbol*>(TypeHelper::removeReference(sym->getType()));
 
-			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->getAddress(sym)) + "]");
-			CodeGen::emit("lea rax, [rax - " + std::to_string(struc_scope->getAddress(variable)) + "]");
+			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
+			CodeGen::emit("lea rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");
 		}
 		else
 		{
@@ -116,7 +116,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 			if ( hint != nullptr )
 				CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(hint)->getScopedTypedName() + "]");
 			else
-				CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->getAddress(variable)) + "]");
+				CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(variable)) + "]");
 		}
 	}
 }

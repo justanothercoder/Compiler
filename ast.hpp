@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "semanticerror.hpp"
 #include "globalhelper.hpp"
 
 class Scope;

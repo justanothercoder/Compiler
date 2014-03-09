@@ -8,7 +8,9 @@
 #include "structsymbol.hpp"
 #include "templatestructsymbol.hpp"
 #include "asmarraynode.hpp"
-#include "templatestructdeclarationnode.hpp"
+
+class TemplateStructDeclarationNode;
+
 class BuiltIns
 {
 public:

@@ -10,8 +10,8 @@ AST* NumberNode::copyTree() const { return new NumberNode(num); }
 
 void NumberNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    CodeGen::emit("mov qword [rsp - " + std::to_string(getScope()->getFreeAddress() + getType()->getSize()) + "], " + num);
-    CodeGen::emit("lea rax, [rsp - " + std::to_string(getScope()->getFreeAddress() + getType()->getSize()) + "]");    
+    CodeGen::emit("mov qword [rsp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal() + getType()->getSize()) + "], " + num);
+	CodeGen::emit("lea rax, [rsp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal() + getType()->getSize()) + "]");
 }
 	
 vector<AST*> NumberNode::getChildren() const { return { }; }

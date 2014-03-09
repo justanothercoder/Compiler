@@ -17,12 +17,8 @@ public:
 
     virtual Scope* getEnclosingScope() const;
     virtual string getScopeName() const;
-    
-    void recalc_scope_address();
 
-	virtual int getFreeAddress() const;
-
-	virtual int getAddress(VariableSymbol *sym) const;
+	virtual VarAllocator* get_valloc() const;
 	
 private:
 

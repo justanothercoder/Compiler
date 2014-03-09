@@ -1,6 +1,6 @@
 #include "basescope.hpp"
 
-BaseScope::BaseScope() { scope_size = 0; scope_address = 0; scope_tree_size = 0; }
+BaseScope::BaseScope() { scope_size = 0; /*scope_address = 0;*/ scope_tree_size = 0; }
 
 Symbol* BaseScope::resolve(string name) const
 {
@@ -14,6 +14,7 @@ Symbol* BaseScope::resolve(string name) const
 	return it->second;    
 }
 
+/*
 int BaseScope::getAddress(VariableSymbol *sym) const
 {
 	auto it = addresses.find(sym);
@@ -28,9 +29,11 @@ int BaseScope::getAddress(VariableSymbol *sym) const
 
 	return it->second;
 }
+*/
 
 int BaseScope::getScopeSize() const { return scope_size; }
-int BaseScope::getScopeAddress() const { return scope_address; }
+
+//int BaseScope::getScopeAddress() const { return scope_address; }
 	
 int BaseScope::getScopeTreeSize() const { return scope_tree_size; }
 

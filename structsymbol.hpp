@@ -35,7 +35,8 @@ public:
 
     virtual string getScopeName() const;
     virtual int getScopeSize() const;
-	virtual int getFreeAddress() const;
+
+	virtual VarAllocator* get_valloc() const;
 
 private:
 

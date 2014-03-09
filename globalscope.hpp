@@ -3,14 +3,15 @@
 
 #include <map>
 
+#include "alldeps.hpp"
+
 #include "basescope.hpp"
 #include "functionsymbol.hpp"
 #include "overloadedfunctiontypeinfo.hpp"
 #include "variablesymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 
-#include "codegen.hpp"
-#include "globalconfig.hpp"
+#include "varallocator.hpp"
 
 using std::map;
 
@@ -24,8 +25,12 @@ public:
 
     virtual Scope* getEnclosingScope() const;
     virtual string getScopeName() const;
+	
+	virtual VarAllocator* get_valloc() const;
 
-	virtual int getFreeAddress() const;
+private:
+
+	mutable VarAllocator valloc;
 };
 
 #endif

@@ -12,6 +12,7 @@ using std::string;
 #include "referencetype.hpp"
 #include "typehelper.hpp"
 #include "templatestructsymbol.hpp"
+#include "builtins.hpp"
 
 class CodeGen
 {

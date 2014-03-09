@@ -39,7 +39,7 @@ void ForNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprN
 
 void ForNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	for_scope->recalc_scope_address();
+//	for_scope->recalc_scope_address();
 
 	init->check(template_sym, expr);
 	cond->check(template_sym, expr);
