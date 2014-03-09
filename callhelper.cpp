@@ -81,8 +81,8 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *sc, std::vector<
 
 FunctionSymbol* CallHelper::resolveOverload(string name, Scope *sc, std::vector<ExprNode*> params)
 {
-    vector<Type*> params_types;     
-	std::transform(std::begin(params), std::end(params), std::back_inserter(params_types), [](ExprNode *t) { return t->getType(); });
+    vector<Type*> params_types(params.size());
+	std::transform(std::begin(params), std::end(params), std::begin(params_types), [](ExprNode *t) { return t->getType(); });
 
 	return resolveOverload(name, sc, params_types);
 }

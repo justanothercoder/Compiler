@@ -39,10 +39,7 @@ string BinaryOperatorNode::getCodeOperatorName()
 
 void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	string call_name = resolved_operator_symbol->getEnclosingScope()->getScopeName() + "_";
-
-    call_name += getCodeOperatorName();
-    call_name += resolved_operator_symbol->getTypedName().substr(getCodeOperatorName().length());
+	string call_name = resolved_operator_symbol->getScopedTypedName();
 
 	if ( resolved_operator_symbol->isMethod() )
 	{
