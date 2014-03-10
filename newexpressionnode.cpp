@@ -10,9 +10,11 @@ NewExpressionNode::~NewExpressionNode()
 
 void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	string name = type_info.getTypeName();
+	string name = type_info.type_name;
 
 	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope()));
+
+	getScope()->get_valloc()->addLocal(type->getSize());
 
 	resolved_constructor = CallHelper::callCheck(name, type, params, template_sym, expr); 
 }
@@ -21,7 +23,7 @@ void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vecto
 {
 	CodeGen::genCallCode(resolved_constructor, params, template_sym, expr, 
 			[&]() {  CodeGen::emit("lea rax, [" + resolved_constructor->getScopedTypedName() + "]"); },
-			[&]() { CodeGen::emit("lea rax, [rsp - " + std::to_string(GlobalConfig::int_size + static_cast<ParamVarAllocator*>(resolved_constructor->get_valloc())->getSpaceForParams()) + "]"); }
+			[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
 	);
 }
 

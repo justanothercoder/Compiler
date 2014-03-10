@@ -8,7 +8,10 @@ void CodeGen::genConversion(FunctionSymbol *conv)
 
 	auto par_type = conv->getTypeInfo().params_types[0];
 
-	pushOnStack(par_type->getSize(), GlobalConfig::int_size);
+	if ( par_type->isReference() )
+		CodeGen::emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
+	else
+		pushOnStack(par_type->getSize(), GlobalConfig::int_size);
 
 	current_address += par_type->getSize();
 

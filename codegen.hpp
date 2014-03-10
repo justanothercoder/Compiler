@@ -38,7 +38,7 @@ class CodeGen
 			if ( is_method )
 				params_size += GlobalConfig::int_size;
 
-			for ( int i = resolved_function_type_info.params_types.size() - 1; i >= is_meth; --i )
+			for ( int i = static_cast<int>(resolved_function_type_info.params_types.size()) - 1; i >= is_meth; --i )
 			{
 				params[i - is_meth]->gen(template_sym, template_expr);
 
@@ -53,12 +53,9 @@ class CodeGen
 				{
 					if ( params[i - is_meth]->getType() != param_type )
 					{
-						bool refconv = params[i - is_meth]->getType()->isReference() &&
-							TypeHelper::removeReference(params[i - is_meth]->getType()) == param_type;
-
-						Type *par_type = params[i - is_meth]->getType();
-
-						if ( refconv )
+						auto par_type = params[i - is_meth]->getType();
+						
+						if ( par_type->isReference() && TypeHelper::removeReference(par_type) == param_type )
 							par_type = TypeHelper::removeReference(par_type);
 						else
 						{

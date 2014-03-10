@@ -15,11 +15,6 @@ public:
     TypeInfo();
     TypeInfo(string type_name, bool is_ref, const vector<ExprNode*>& template_params = { });
 
-    string getTypeName() const;
-    bool getIsRef() const;
-    const vector<ExprNode*>& getTemplateParams() const;
-
-private:
     string type_name;
     bool is_ref;
     vector<ExprNode*> template_params;

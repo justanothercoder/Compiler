@@ -67,25 +67,25 @@ FunctionSymbol* TypeHelper::getCopyConstructor(Type *type)
 
 Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym, vector<ExprNode*> expr)
 {    
-	auto type_name = type_info.getTypeName();
+	auto type_name = type_info.type_name;
 
 	if ( template_sym && template_sym->isIn(type_name) )
 		type_name = static_cast<ClassVariableSymbol*>(TypeHelper::removeReference(template_sym->getReplacement(type_name, expr)->getType()))->sym->getName();
 
 //	Symbol *sym = scope->resolve(type_info.getTypeName());
-	auto type = TypeHelper::resolveType(type_info.getTypeName(), scope);
+	auto type = TypeHelper::resolveType(type_info.type_name, scope);
 
 	if ( type == nullptr )
-		throw SemanticError(type_info.getTypeName() + " is not a type");
+		throw SemanticError(type_info.type_name + " is not a type");
 
-	if ( type_info.getTemplateParams().size() > 0 )
+	if ( type_info.template_params.size() > 0 )
 	{
 		auto tmpl = dynamic_cast<TemplateStructSymbol*>(type);
-		auto sym = tmpl->getSpec(type_info.getTemplateParams());	
+		auto sym = tmpl->getSpec(type_info.template_params);	
 		type = dynamic_cast<Type*>(sym);
 	}
 
-	if ( type_info.getIsRef() )
+	if ( type_info.is_ref )
 		type = TypeHelper::getReferenceType(type);
 
 	return type;

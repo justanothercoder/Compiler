@@ -34,14 +34,14 @@ void VariableDeclarationNode::check(const TemplateStructSymbol *template_sym, st
 {
 	if ( !is_field )
 	{
-		string type_name = type_info.getTypeName();
+		string type_name = type_info.type_name;
 
-		Type *_type = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);
+		auto _ = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);
 
-		if ( _type->getTypeKind() != TypeKind::STRUCT )
+		if ( _->getTypeKind() != TypeKind::STRUCT )
 			throw SemanticError("No such struct " + type_name);
 
-		StructSymbol *type = static_cast<StructSymbol*>(_type);
+		auto type = static_cast<StructSymbol*>(_);
 		resolved_constructor = CallHelper::callCheck(type_name, type, constructor_call_params, template_sym, expr);
 	}
 }
@@ -59,13 +59,13 @@ void VariableDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 
 void VariableDeclarationNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    if ( template_sym && template_sym->isIn(type_info.getTypeName()) )
+    if ( template_sym && template_sym->isIn(type_info.type_name) )
     {
-		auto replace = template_sym->getReplacement(type_info.getTypeName(), expr);
+		auto replace = template_sym->getReplacement(type_info.type_name, expr);
 
 		auto sym = TypeHelper::removeReference(replace->getType());
 		
-		type_info = TypeInfo(static_cast<ClassVariableSymbol*>(sym)->sym->getName(), type_info.getIsRef(), type_info.getTemplateParams());
+		type_info = TypeInfo(static_cast<ClassVariableSymbol*>(sym)->sym->getName(), type_info.is_ref, type_info.template_params);
     }
     
     auto var_type = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);
