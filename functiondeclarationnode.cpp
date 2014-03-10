@@ -49,7 +49,11 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 	{
 		Type *param_type = nullptr;
    		if ( definedSymbol->isMethod() && i.second.getTypeName() == static_cast<StructSymbol*>(getScope())->getName() )
+		{			
 			param_type = static_cast<StructSymbol*>(getScope());
+			if ( i.second.getIsRef() )
+				param_type = TypeHelper::getReferenceType(param_type);
+		}
 		else
 			param_type = TypeHelper::fromTypeInfo(i.second, getScope());
 
