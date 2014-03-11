@@ -10,7 +10,12 @@ void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprN
 
 	auto copy_constr = TypeHelper::getCopyConstructor(TypeHelper::removeReference(expr->getType()));
 
-	CodeGen::genCopy(copy_constr, getScope()->get_valloc()->getAddressForLocal(), expr->getType());
+//	CodeGen::genCopy(copy_constr, getScope()->get_valloc()->getAddressForLocal(), expr->getType());
+
+	CodeGen::genCallCode(copy_constr, {expr}, template_sym, _expr,
+			[&]() { CodeGen::emit("lea rax, [" + copy_constr->getScopedTypedName() + "]"); },
+			[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
+	);
 
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");

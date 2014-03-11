@@ -21,7 +21,7 @@ class CodeGen
 		static void emit(string text);
 
 		template <class T, class U>
-		static void genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr, T genFunc, U genThis = [](){})
+		static void genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr, T genFunc, U genThis)
 		{
 			int params_size = 0;
 

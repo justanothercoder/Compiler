@@ -8,10 +8,7 @@ void CodeGen::genConversion(FunctionSymbol *conv)
 
 	auto par_type = conv->getTypeInfo().params_types[0];
 
-	if ( par_type->isReference() )
-		CodeGen::emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
-	else
-		pushOnStack(par_type->getSize(), GlobalConfig::int_size);
+	pushOnStack(par_type->getSize(), GlobalConfig::int_size);
 
 	current_address += par_type->getSize();
 
@@ -28,7 +25,12 @@ void CodeGen::genCopy(FunctionSymbol *copy_constructor, int stack_offset, Type *
 {
 	int current_address = 0;
 
-	pushOnStack(type->getSize(), GlobalConfig::int_size);
+	auto par_type = copy_constructor->getTypeInfo().params_types[0];
+	
+	if ( par_type->isReference() )
+		CodeGen::emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
+	else
+		pushOnStack(type->getSize(), GlobalConfig::int_size);
 
 	current_address += type->getSize();
 
