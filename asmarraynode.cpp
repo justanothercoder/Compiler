@@ -19,13 +19,13 @@ void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<
 		auto replace = template_sym->getReplacement("T", expr);
 
 		type = static_cast<ClassVariableSymbol*>(TypeHelper::removeReference(replace->getType()))->sym;
-		ref_type = TypeHelper::getReferenceType(type);
+		ref_type = TypeHelper::addReference(type);
 		size_of_type = type->getSize();
 	}
 	else throw SemanticError("");
 
 	auto arr = dynamic_cast<StructSymbol*>(getScope());
-	auto ref_arr = TypeHelper::getReferenceType(arr);
+	auto ref_arr = TypeHelper::addReference(arr);
 
 	auto array_constructor = new FunctionSymbol(
 			"array",			

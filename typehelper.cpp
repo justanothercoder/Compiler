@@ -3,7 +3,7 @@
 
 map<Type*, ReferenceType*> TypeHelper::references = map<Type*, ReferenceType*>();
 
-ReferenceType* TypeHelper::getReferenceType(Type *target)
+ReferenceType* TypeHelper::addReference(Type *target)
 {
 	if ( target->isReference() )
 		return static_cast<ReferenceType*>(target);
@@ -48,7 +48,7 @@ FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
 	auto conversion = CallHelper::getOverloadedMethod(rhs_name, struc);
 
 //	return FunctionHelper::getViableOverload(conversion, {getReferenceType(rhs), lhs});	
-	return conversion->getTypeInfo().symbols[FunctionTypeInfo(getReferenceType(rhs), {getReferenceType(rhs), lhs})];
+	return conversion->getTypeInfo().symbols[FunctionTypeInfo(addReference(rhs), {addReference(rhs), lhs})];
 }
 
 FunctionSymbol* TypeHelper::getCopyConstructor(Type *type)
@@ -62,7 +62,7 @@ FunctionSymbol* TypeHelper::getCopyConstructor(Type *type)
 
 	auto constructor = CallHelper::getOverloadedMethod(type_name, struc);
 
-	return FunctionHelper::getViableOverload(constructor, {getReferenceType(type), getReferenceType(type)});
+	return FunctionHelper::getViableOverload(constructor, {addReference(type), addReference(type)});
 }
 
 Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym, vector<ExprNode*> expr)
@@ -86,7 +86,7 @@ Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateS
 	}
 
 	if ( type_info.is_ref )
-		type = TypeHelper::getReferenceType(type);
+		type = TypeHelper::addReference(type);
 
 	return type;
 }

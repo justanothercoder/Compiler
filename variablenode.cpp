@@ -38,7 +38,7 @@ Type* VariableNode::getType() const
 		return replace->getType();
 	}
 
-	return TypeHelper::getReferenceType(variable->getType());
+	return TypeHelper::addReference(variable->getType());
 }
 
 bool VariableNode::isTemplateParam() const { return template_sym != nullptr; }
@@ -60,9 +60,9 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 	{
 		if ( variable->isField() )
 		{
-			VariableSymbol *sym = static_cast<VariableSymbol*>(getScope()->resolve("this"));
+			auto sym = static_cast<VariableSymbol*>(getScope()->resolve("this"));
 
-			Scope *struc_scope = static_cast<StructSymbol*>(sym->getType());
+			auto struc_scope = static_cast<StructSymbol*>(sym->getType());
 
 			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
 			CodeGen::emit("mov rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");
@@ -78,7 +78,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 
 		if ( ov_func_type_info.overloads.size() > 1 )
 		{
-			FunctionSymbol *hint_type = static_cast<FunctionSymbol*>(GlobalHelper::getTypeHint(this));
+			auto hint_type = static_cast<FunctionSymbol*>(GlobalHelper::getTypeHint(this));
 			if ( hint_type == nullptr )
 				throw SemanticError("multiple overloads of " + name);
 

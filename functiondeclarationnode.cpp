@@ -39,7 +39,7 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 
 	if ( traits.is_method )
 	{
-		Type *_this_type = TypeHelper::getReferenceType(static_cast<StructSymbol*>(getScope()));
+		auto _this_type = TypeHelper::addReference(static_cast<StructSymbol*>(getScope()));
 		params_types.push_back(_this_type);
 
 		definedSymbol->accept(new VariableSymbolDefine(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM)));
@@ -52,7 +52,7 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 		{			
 			param_type = static_cast<StructSymbol*>(getScope());
 			if ( i.second.is_ref )
-				param_type = TypeHelper::getReferenceType(param_type);
+				param_type = TypeHelper::addReference(param_type);
 		}
 		else
 			param_type = TypeHelper::fromTypeInfo(i.second, getScope());

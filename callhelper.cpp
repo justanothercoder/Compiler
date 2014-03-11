@@ -55,7 +55,7 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 		auto pt = params_types;
 
 		if ( ov_func->isMethod() )
-			pt.insert(std::begin(pt), TypeHelper::getReferenceType(ov_func->getBaseType()));
+			pt.insert(std::begin(pt), TypeHelper::addReference(ov_func->getBaseType()));
 
 		auto func_sym = FunctionHelper::getViableOverload(ov_func, pt);
 

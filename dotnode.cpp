@@ -21,7 +21,7 @@ void DotNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNo
 		throw SemanticError(member_name + " is not member of " + base_type->getName());
 }
 
-Type* DotNode::getType() const { return TypeHelper::getReferenceType(member->getType()); }
+Type* DotNode::getType() const { return TypeHelper::addReference(member->getType()); }
 
 void DotNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
 

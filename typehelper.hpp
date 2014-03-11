@@ -26,11 +26,11 @@ public:
     static bool isConvertable(Type *lhs, Type *rhs);
     
 	static FunctionSymbol* getCopyConstructor(Type *type);
-    static ReferenceType* getReferenceType(Type *target);
 
 	static OverloadedFunctionSymbol* getOperatorCall(StructSymbol *sym);
 
 	static Type* removeReference(Type *t);
+    static ReferenceType* addReference(Type *target);
 
 	static Type* resolveType(string name, Scope *sc);
 
