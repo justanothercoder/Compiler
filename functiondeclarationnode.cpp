@@ -21,14 +21,8 @@ Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol
 void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	if ( template_sym != nullptr && return_type_info.type_name == template_sym->getName() )
-	{
-		return_type_info = TypeInfo(
-				static_cast<StructSymbol*>(getScope())->getName(),
-				return_type_info.is_ref,
-				return_type_info.template_params
-				);
-	}
-	
+		return_type_info.type_name = static_cast<StructSymbol*>(getScope())->getName();
+
 	Type *return_type = nullptr;
    	if ( definedSymbol->isMethod() && return_type_info.type_name == static_cast<StructSymbol*>(getScope())->getName() )
 		return_type = static_cast<StructSymbol*>(getScope());

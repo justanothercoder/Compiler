@@ -73,7 +73,8 @@ Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateS
 		type_name = static_cast<ClassVariableSymbol*>(TypeHelper::removeReference(template_sym->getReplacement(type_name, expr)->getType()))->sym->getName();
 
 //	Symbol *sym = scope->resolve(type_info.getTypeName());
-	auto type = TypeHelper::resolveType(type_info.type_name, scope);
+//	auto type = TypeHelper::resolveType(type_info.type_name, scope);
+	auto type = TypeHelper::resolveType(type_name, scope);
 
 	if ( type == nullptr )
 		throw SemanticError(type_info.type_name + " is not a type");
@@ -102,7 +103,7 @@ Type* TypeHelper::resolveType(string name, Scope *sc)
 {
 	auto scope = sc;
 
-	Symbol* _ = nullptr;
+	Symbol *_ = nullptr;
 
 	while ( true )
 	{

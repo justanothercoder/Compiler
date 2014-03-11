@@ -105,7 +105,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 
 			auto sym = static_cast<VariableSymbol*>(_this);
 
-			Scope *struc_scope = static_cast<StructSymbol*>(TypeHelper::removeReference(sym->getType()));
+			auto struc_scope = static_cast<StructSymbol*>(TypeHelper::removeReference(sym->getType()));
 
 			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
 			CodeGen::emit("lea rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");
