@@ -236,6 +236,7 @@ string Parser::operator_name()
 		match(TokenType::RBRACKET);
 		return "operator[]";
 	}
+	case TokenType::ID: return "operator " + id();
 	default:
 		throw SemanticError("No such operator " + getToken(1).text);
 	}

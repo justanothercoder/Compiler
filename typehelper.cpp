@@ -45,9 +45,16 @@ FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
 	string lhs_name = lhs->getName();    
 	string rhs_name = rhs->getName();
 
+	auto cast_op = CallHelper::getOverloadedMethod("operator " + rhs_name, static_cast<StructSymbol*>(lhs));
+
 	auto conversion = CallHelper::getOverloadedMethod(rhs_name, struc);
 
-//	return FunctionHelper::getViableOverload(conversion, {getReferenceType(rhs), lhs});	
+	if ( cast_op == nullptr && conversion == nullptr )
+		throw SemanticError("No conversion from '" + lhs_name + "' to '" + rhs_name + "'.");
+
+	if ( cast_op != nullptr )
+		return cast_op->getTypeInfo().symbols[FunctionTypeInfo(rhs, {addReference(lhs)})];
+
 	return conversion->getTypeInfo().symbols[FunctionTypeInfo(addReference(rhs), {addReference(rhs), lhs})];
 }
 
