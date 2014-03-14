@@ -13,6 +13,7 @@ using std::string;
 #include "typehelper.hpp"
 #include "templatestructsymbol.hpp"
 #include "builtins.hpp"
+#include "callinfo.hpp"
 
 class CodeGen
 {
@@ -21,8 +22,10 @@ class CodeGen
 		static void emit(string text);
 
 		template <class T, class U>
-		static void genCallCode(FunctionSymbol *func, const vector<ExprNode*>& params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr, T genFunc, U genThis)
+		static void genCallCode(CallInfo call_info, const vector<ExprNode*>& params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr, T genFunc, U genThis)
 		{
+			auto func = call_info.callee;
+
 			int params_size = 0;
 
 			bool is_method = func->isMethod();

@@ -1,6 +1,6 @@
 #include "newexpressionnode.hpp"
 
-NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params) : type_info(type_info), params(params), resolved_constructor(nullptr) { }
+NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params) : type_info(type_info), params(params), call_info(nullptr, { }, { }) { }
 
 NewExpressionNode::~NewExpressionNode()
 {
@@ -16,20 +16,20 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 
 	getScope()->get_valloc()->addLocal(type->getSize());
 
-	resolved_constructor = CallHelper::callCheck(name, type, params, template_sym, expr); 
+	call_info = CallHelper::callCheck(name, type, params, template_sym, expr); 
 }
 
 void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	CodeGen::genCallCode(resolved_constructor, params, template_sym, expr, 
-			[&]() {  CodeGen::emit("lea rax, [" + resolved_constructor->getScopedTypedName() + "]"); },
+	CodeGen::genCallCode(call_info, params, template_sym, expr, 
+			[&]() {  CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
 			[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
 	);
 
 //	CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]");
 }
 
-Type* NewExpressionNode::getType() const { return resolved_constructor->getTypeInfo().return_type; }
+Type* NewExpressionNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
 
 AST* NewExpressionNode::copyTree() const 
 {

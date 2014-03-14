@@ -5,6 +5,7 @@
 #include "functionsymbol.hpp"
 #include "globalconfig.hpp"
 #include "codegen.hpp"
+#include "callinfo.hpp"
 
 class ReturnNode : public AST
 {

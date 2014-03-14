@@ -36,4 +36,5 @@ std::string GlobalHelper::getCodeOperatorName(std::string op)
 	else if ( op == "operator-"  ) return "operatorminus";
 	else if ( op == "operator="  ) return "operatorassign";
 	else if ( op == "operator*"  ) return "operatormul";
+	else if ( op.substr(0, 8) == "operator" ) { op[8] = '~'; return op; }
 }

@@ -29,7 +29,7 @@ private:
 
 	ExprNode *base, *expr;
 
-	FunctionSymbol *resolved_operator;
+	CallInfo call_info;
 };
 
 #endif

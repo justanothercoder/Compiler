@@ -6,10 +6,10 @@ ReturnNode::~ReturnNode() { delete expr; }
 
 void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> _expr)
 {
-	auto copy_constr = TypeHelper::getCopyConstructor(TypeHelper::removeReference(expr->getType()));
+	auto call_info = CallInfo(TypeHelper::getCopyConstructor(TypeHelper::removeReference(expr->getType())), {expr->getType()}, { });
 
-	CodeGen::genCallCode(copy_constr, {expr}, template_sym, _expr,
-			[&]() { CodeGen::emit("lea rax, [" + copy_constr->getScopedTypedName() + "]"); },
+	CodeGen::genCallCode(call_info, {expr}, template_sym, _expr,
+			[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
 			[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
 	);
 

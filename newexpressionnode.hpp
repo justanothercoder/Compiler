@@ -35,7 +35,7 @@ private:
 
     TypeInfo type_info;
     vector<ExprNode*> params;
-    FunctionSymbol *resolved_constructor;
+    CallInfo call_info;
 };
 
 #endif
