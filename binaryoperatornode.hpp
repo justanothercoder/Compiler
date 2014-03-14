@@ -35,7 +35,7 @@ protected:
 
     ExprNode *lhs, *rhs;
     BinaryOp op_type;
-    FunctionSymbol *resolved_operator_symbol;
+    CallInfo call_info;
 };
 
 #endif

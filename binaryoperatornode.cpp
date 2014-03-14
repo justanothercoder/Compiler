@@ -1,18 +1,18 @@
 #include "binaryoperatornode.hpp"
 
-BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type), resolved_operator_symbol(nullptr) { }
+BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type), call_info(nullptr, { }, { }) { }
 
 BinaryOperatorNode::~BinaryOperatorNode() { delete lhs; delete rhs; }
 
-Type* BinaryOperatorNode::getType() const { return resolved_operator_symbol->getTypeInfo().return_type; }
+Type* BinaryOperatorNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
 
 void BinaryOperatorNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	lhs->check(template_sym, expr);
-	resolved_operator_symbol = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(TypeHelper::removeReference(lhs->getType())), {rhs}, template_sym, expr);
+	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(TypeHelper::removeReference(lhs->getType())), {rhs}, template_sym, expr);
 	
-	if ( resolved_operator_symbol == nullptr )	
-		resolved_operator_symbol = CallHelper::callCheck(getOperatorName(), getScope(), {lhs, rhs}, template_sym, expr);
+	if ( call_info.callee == nullptr )	
+		call_info = CallHelper::callCheck(getOperatorName(), getScope(), {lhs, rhs}, template_sym, expr);
 }
 
 string BinaryOperatorNode::getOperatorName()
@@ -39,16 +39,14 @@ string BinaryOperatorNode::getCodeOperatorName()
 
 void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	if ( resolved_operator_symbol->isMethod() )
-	{
-		CodeGen::genCallCode(resolved_operator_symbol, {rhs}, template_sym, expr,
-				[&]() { CodeGen::emit("lea rax, [" + resolved_operator_symbol->getScopedTypedName() + "]"); },
+	if ( call_info.callee->isMethod() )
+		CodeGen::genCallCode(call_info, {rhs}, template_sym, expr,
+				[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
 				[&]() { lhs->gen(template_sym, expr); }
 		);
-	}
 	else
-		CodeGen::genCallCode(resolved_operator_symbol, {lhs, rhs}, template_sym, expr,
-				[&]() { CodeGen::emit("lea rax, [" + resolved_operator_symbol->getScopedTypedName() + "]"); },
+		CodeGen::genCallCode(call_info, {lhs, rhs}, template_sym, expr,
+				[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
 				[](){}
 		);
 }

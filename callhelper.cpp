@@ -1,26 +1,43 @@
 #include "callhelper.hpp"
 
-FunctionSymbol* CallHelper::callCheck(string name, Scope *sc, const std::vector<ExprNode*>& params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*>& expr)
+CallInfo CallHelper::callCheck(string name, Scope *sc, const std::vector<ExprNode*>& params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*>& expr)
 {
     for ( auto i : params )
 		i->check(template_sym, expr);
-    
-	auto resolved_function_symbol = CallHelper::resolveOverload(name, sc, params);
+
+	vector<Type*> params_types(params.size());
+	std::transform(std::begin(params), std::end(params), std::begin(params_types), [](ExprNode *t) { return t->getType(); });
+
+	auto resolved_function_symbol = CallHelper::resolveOverload(name, sc, params_types);
 
     if ( resolved_function_symbol == nullptr )
 		throw SemanticError("No viable overload of '" + name + "'.");	
 
-    auto resolved_function_type_info = resolved_function_symbol->getTypeInfo();
-    
+    auto function_info = resolved_function_symbol->getTypeInfo();
+   
+	vector<ConversionInfo> conversions;
+
+	for ( int i = 0; i < static_cast<int>(params.size()); ++i )
+	{
+		auto actual_type = params_types[i];
+		auto desired_type = function_info.params_types[i];
+		
+		auto _actual = TypeHelper::removeReference(actual_type);
+		auto _desired = TypeHelper::removeReference(desired_type);
+
+		auto conv = (_actual == _desired) ? nullptr : TypeHelper::getConversion(_actual, _desired);
+		conversions.push_back(ConversionInfo(conv, actual_type->isReference(), desired_type->isReference()));
+	}
+
     int is_meth = (resolved_function_symbol->isMethod() ? 1 : 0);
-    
-    for ( int i = resolved_function_type_info.params_types.size() - 1; i >= is_meth; --i )
+   
+    for ( int i = function_info.params_types.size() - 1; i >= is_meth; --i )
     {
-		if ( resolved_function_type_info.params_types[i]->isReference() && !params[i - is_meth]->isLeftValue() )
+		if ( function_info.params_types[i]->isReference() && !params[i - is_meth]->isLeftValue() )
 			throw SemanticError("parameter is not an lvalue.");
     }   
 	
-	return resolved_function_symbol; 
+	return CallInfo(resolved_function_symbol, params_types, conversions); 
 }
 
 OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(string name, Scope *scope)
@@ -72,12 +89,4 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 		
 		return func_sym; 
 	}
-}
-
-FunctionSymbol* CallHelper::resolveOverload(string name, Scope *sc, std::vector<ExprNode*> params)
-{
-    vector<Type*> params_types(params.size());
-	std::transform(std::begin(params), std::end(params), std::begin(params_types), [](ExprNode *t) { return t->getType(); });
-
-	return resolveOverload(name, sc, params_types);
 }

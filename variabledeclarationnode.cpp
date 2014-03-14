@@ -4,10 +4,11 @@
 VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info, bool is_field, const vector<ExprNode*>& constructor_call_params) : name(name),
 																		     type_info(type_info),
 																		     is_field(is_field),
-																		     constructor_call_params(constructor_call_params)
+																		     constructor_call_params(constructor_call_params),
+																			 call_info(nullptr, { }, { }) 
 {
     definedSymbol = new VariableSymbol(name, nullptr, (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE));
-    resolved_constructor = nullptr;
+//    resolved_constructor = nullptr;
 }
 
 VariableDeclarationNode::~VariableDeclarationNode() 
@@ -42,7 +43,8 @@ void VariableDeclarationNode::check(const TemplateStructSymbol *template_sym, st
 			throw SemanticError("No such struct " + type_name);
 
 		auto type = static_cast<StructSymbol*>(_);
-		resolved_constructor = CallHelper::callCheck(type_name, type, constructor_call_params, template_sym, expr);
+//		resolved_constructor = CallHelper::callCheck(type_name, type, constructor_call_params, template_sym, expr);
+		call_info = CallHelper::callCheck(type_name, type, constructor_call_params, template_sym, expr);
 	}
 }
 
@@ -50,8 +52,8 @@ void VariableDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 {
 	if ( !is_field )
 	{   
-		CodeGen::genCallCode(resolved_constructor, constructor_call_params, template_sym, expr, 
-				[&]() {  CodeGen::emit("lea rax, [" + resolved_constructor->getScopedTypedName() + "]"); },
+		CodeGen::genCallCode(call_info, constructor_call_params, template_sym, expr, 
+				[&]() {  CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
 				[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]"); }
 		);
 	}

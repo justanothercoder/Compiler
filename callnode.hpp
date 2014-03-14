@@ -12,6 +12,7 @@
 #include "functionsymbol.hpp"
 #include "codegen.hpp"
 #include "callhelper.hpp"
+#include "callinfo.hpp"
 
 using std::vector;
 
@@ -37,7 +38,7 @@ private:
     ExprNode *caller;
     vector<ExprNode*> params;
 
-    FunctionSymbol *resolved_function_symbol;    
+    CallInfo call_info;
 };
 
 #endif
