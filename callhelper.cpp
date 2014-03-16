@@ -22,12 +22,14 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 			throw SemanticError("parameter is not an lvalue.");
     }   
 
-	return getCallInfo(function_sym, params_types);
+	return getCallInfo(function_sym, params);
 }
 
-CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<Type*> params_types)
+CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<ExprNode*> params)
 {
     auto function_info = function_sym->getTypeInfo();
+	
+	auto params_types = CallHelper::extractTypes(params);
    
 	vector<ConversionInfo> conversions;
 	vector<FunctionSymbol*> copy_constructors;
@@ -38,8 +40,10 @@ CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<Type*
 	{
 		auto actual_type = params_types.at(i - is_meth);
 		auto desired_type = function_info.params_types.at(i);
-	
-		conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type));	
+
+		bool is_left_value = params.at(i - is_meth)->isLeftValue();
+
+		conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type, is_left_value));
 		
 		auto copy_constr = desired_type->isReference() ? nullptr : TypeHelper::getCopyConstructor(TypeHelper::removeReference(desired_type));
 		copy_constructors.push_back(copy_constr);
@@ -108,7 +112,7 @@ std::vector<Type*> CallHelper::extractTypes(std::vector<ExprNode*> params)
 	return params_types;
 }
 
-ConversionInfo CallHelper::getConversionInfo(Type *lhs, Type *rhs)
+ConversionInfo CallHelper::getConversionInfo(Type *lhs, Type *rhs, bool is_lhs_left_value)
 {
 	auto _lhs = TypeHelper::removeReference(lhs);
 	auto _rhs = TypeHelper::removeReference(rhs);
@@ -123,6 +127,6 @@ ConversionInfo CallHelper::getConversionInfo(Type *lhs, Type *rhs)
 	else
 	{
 		auto conv = (_lhs == _rhs) ? nullptr : TypeHelper::getConversion(_lhs, _rhs);
-		return ConversionInfo(conv, lhs->isReference(), false);
+		return ConversionInfo(conv, lhs->isReference() && !is_lhs_left_value, false);
 	}
 }

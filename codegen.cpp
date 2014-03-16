@@ -11,7 +11,7 @@ void CodeGen::genConversion(FunctionSymbol *conv)
 	if ( conv->getName().substr(0, 8) == "operator" )
 	{
 		genCallCode(CallHelper::getCallInfo(conv, { }), { }, nullptr, { },
-				[&] () { emit("call " + conv->getScopedTypedName()); },
+				[&] () { emit("lea rax, [" + conv->getScopedTypedName() + "]"); },
 				[&] () {  }
 				);
 	}

@@ -15,7 +15,7 @@ class CallHelper
 public:
 
 	static CallInfo callCheck(string name, Scope *sc, std::vector<ExprNode*> params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
-	static CallInfo getCallInfo(FunctionSymbol *function_sym, std::vector<Type*> params_types);
+	static CallInfo getCallInfo(FunctionSymbol *function_sym, std::vector<ExprNode*> params_types);
 
 	static OverloadedFunctionSymbol* getOverloadedFunc(string name, Scope *scope);
 	static OverloadedFunctionSymbol* getOverloadedMethod(string name, StructSymbol *scope);
@@ -24,7 +24,7 @@ public:
 
 private:
 	
-	static ConversionInfo getConversionInfo(Type *lhs, Type *rhs);
+	static ConversionInfo getConversionInfo(Type *lhs, Type *rhs, bool is_lhs_left_value);
 	static std::vector<Type*> extractTypes(std::vector<ExprNode*> params);
 };
 
