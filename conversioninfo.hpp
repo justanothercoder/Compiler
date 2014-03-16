@@ -5,10 +5,10 @@ class FunctionSymbol;
 
 struct ConversionInfo 
 {
-	ConversionInfo(FunctionSymbol *conversion, bool pre_deref, bool post_ref);
+	ConversionInfo(FunctionSymbol *conversion, bool deref, bool ref);
 
 	FunctionSymbol *conversion;
-	bool pre_deref, post_ref;
+	bool deref, ref;
 };
 
 #endif

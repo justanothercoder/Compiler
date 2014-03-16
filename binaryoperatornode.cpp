@@ -1,6 +1,6 @@
 #include "binaryoperatornode.hpp"
 
-BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type), call_info(nullptr, { }, { }) { }
+BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type), call_info() { }
 
 BinaryOperatorNode::~BinaryOperatorNode() { delete lhs; delete rhs; }
 

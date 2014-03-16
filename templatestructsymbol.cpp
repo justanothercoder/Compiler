@@ -21,7 +21,7 @@ bool TemplateStructSymbol::isIn(string name) const
 
 ExprNode* TemplateStructSymbol::getReplacement(string name, const vector<ExprNode*>& expr) const
 {
-	for ( unsigned int i = 0; i < template_symbols.size(); ++i )
+	for ( size_t i = 0; i < template_symbols.size(); ++i )
 	{
 		if ( template_symbols[i].first == name )
 			return expr[i];
@@ -39,7 +39,7 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 	{
 		long long P = 31, pow = 1, ans = 0;
 
-		for ( int i = 0; i < static_cast<int>(vec.size()); ++i )
+		for ( size_t i = 0; i < vec.size(); ++i )
 		{
 			ans += ((long long)vec[i]) * pow;
 			pow *= P;		

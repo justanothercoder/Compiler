@@ -1,6 +1,6 @@
 #include "callnode.hpp"
 
-CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), call_info(nullptr, { }, { }) { }
+CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), call_info() { }
 
 CallNode::~CallNode() { delete caller; }
     

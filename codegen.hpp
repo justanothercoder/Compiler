@@ -32,19 +32,45 @@ class CodeGen
 
 			int is_meth = (is_method ? 1 : 0);
 
-			auto resolved_function_type_info = func->getTypeInfo();
-
-			auto& pt = resolved_function_type_info.params_types;
-
-			params_size = std::accumulate(std::begin(pt) + is_meth, std::end(pt), 0, [](int x, Type *type) { return x += type->getSize(); });
+			auto function_info = func->getTypeInfo();
+			
+			params_size = std::accumulate(std::begin(function_info.params_types) + is_meth, std::end(function_info.params_types), 0, [](int x, Type *type) { return x += type->getSize(); });
 
 			if ( is_method )
 				params_size += GlobalConfig::int_size;
 
-			for ( int i = static_cast<int>(resolved_function_type_info.params_types.size()) - 1; i >= is_meth; --i )
+			for ( int i = static_cast<int>(function_info.params_types.size()) - 1; i >= is_meth; --i )
 			{
 				params[i - is_meth]->gen(template_sym, template_expr);
 
+				auto conv_info = call_info.conversions[i - is_meth];
+
+				if ( conv_info.deref )
+					emit("mov rax, [rax]");
+
+				if ( conv_info.conversion )
+					genConversion(conv_info.conversion);
+
+				auto copy_constr = call_info.copy_constructors[i - is_meth];	
+
+				if ( copy_constr == BuiltIns::int_copy_constructor )
+				{
+					emit("mov rbx, [rax]");
+					emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");
+					emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+				}
+				else
+				{
+					genCopy(copy_constr, 0, function_info.params_types[i]);
+					emit("sub rsp, " + std::to_string(function_info.params_types[i]->getSize())); 
+				}
+
+				if ( conv_info.ref )
+				{
+					emit("mov [rsp - 800], rax");
+					emit("lea rax, [rsp - 800]");
+				}
+/*
 				auto param_type = resolved_function_type_info.params_types[i];
 
 				if ( param_type->isReference() )
@@ -81,6 +107,7 @@ class CodeGen
 						emit("sub rsp, " + std::to_string(param_type->getSize())); 
 					}
 				}
+*/
 			}
 
 			if ( is_method )
@@ -95,7 +122,7 @@ class CodeGen
 			emit("add rsp, " + std::to_string(params_size));
 		}
 
-		static void pushOnStack(unsigned int size, int offset);
+		static void pushOnStack(size_t size, int offset);
 		static void genConversion(FunctionSymbol *conv);
 		static void genCopy(FunctionSymbol *copy_constructor, int stack_offset, Type *type);
 };

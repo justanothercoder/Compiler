@@ -43,9 +43,9 @@ void CodeGen::genCopy(FunctionSymbol *copy_constructor, int stack_offset, Type *
 	CodeGen::emit("add rsp, " + std::to_string(current_address));
 }
 
-void CodeGen::pushOnStack(unsigned int size, int offset)
+void CodeGen::pushOnStack(size_t size, int offset)
 {
-	for ( unsigned int i = 0; i < size; i += GlobalConfig::int_size )
+	for ( size_t i = 0; i < size; i += GlobalConfig::int_size )
 	{
 		CodeGen::emit("mov rbx, [rax - " + std::to_string(i) + "]");
 		CodeGen::emit("mov [rsp - " + std::to_string(offset + i) + "], rbx");

@@ -35,7 +35,6 @@ public:
     virtual Symbol* resolve(string name) const;
 
     virtual string getScopeName() const;
-    virtual int getScopeSize() const;
 
 	virtual VarAllocator* get_valloc() const;
 

@@ -40,14 +40,30 @@ FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
 	if ( rhs->getTypeKind() != TypeKind::STRUCT )
 		return nullptr;
 
-	StructSymbol *struc = static_cast<StructSymbol*>(rhs);
+	auto struc = static_cast<StructSymbol*>(rhs);
 
 	string lhs_name = lhs->getName();    
 	string rhs_name = rhs->getName();
 
-	auto cast_op = CallHelper::getOverloadedMethod("operator " + rhs_name, static_cast<StructSymbol*>(lhs));
+	OverloadedFunctionSymbol *cast_op = nullptr, *conversion = nullptr;
 
-	auto conversion = CallHelper::getOverloadedMethod(rhs_name, struc);
+	try
+	{
+		cast_op = CallHelper::getOverloadedMethod("operator " + rhs_name, static_cast<StructSymbol*>(lhs));
+	}
+	catch ( ... )
+	{
+
+	}
+	
+	try 
+	{
+		conversion = CallHelper::getOverloadedMethod(rhs_name, struc);
+	}
+	catch ( ... )
+	{
+
+	}
 
 	if ( cast_op == nullptr && conversion == nullptr )
 		throw SemanticError("No conversion from '" + lhs_name + "' to '" + rhs_name + "'.");

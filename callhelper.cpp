@@ -16,28 +16,45 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, const std::vector<ExprNod
     auto function_info = resolved_function_symbol->getTypeInfo();
    
 	vector<ConversionInfo> conversions;
+	vector<FunctionSymbol*> copy_constructors;
 
-	for ( int i = 0; i < static_cast<int>(params.size()); ++i )
+    int is_meth = (resolved_function_symbol->isMethod() ? 1 : 0);
+   
+	for ( size_t i = is_meth; i < function_info.params_types.size(); ++i )
 	{
-		auto actual_type = params_types[i];
-		auto desired_type = function_info.params_types[i];
+		auto actual_type = params_types.at(i - is_meth);
+		auto desired_type = function_info.params_types.at(i);
 		
 		auto _actual = TypeHelper::removeReference(actual_type);
 		auto _desired = TypeHelper::removeReference(desired_type);
 
-		auto conv = (_actual == _desired) ? nullptr : TypeHelper::getConversion(_actual, _desired);
-		conversions.push_back(ConversionInfo(conv, actual_type->isReference(), desired_type->isReference()));
-	}
+		if ( desired_type->isReference() )
+		{
+			if ( _actual != _desired )
+				throw SemanticError("Invalid initialization of '" + desired_type->getName() + "' with type '" + actual_type->getName() + "'");
 
-    int is_meth = (resolved_function_symbol->isMethod() ? 1 : 0);
-   
+			conversions.push_back(ConversionInfo(nullptr, false, !actual_type->isReference()));
+
+			auto copy_constr = desired_type->isReference() ? nullptr : TypeHelper::getCopyConstructor(_desired);
+			copy_constructors.push_back(copy_constr);
+		}
+		else
+		{
+			auto conv = (_actual == _desired) ? nullptr : TypeHelper::getConversion(_actual, _desired);
+			conversions.push_back(ConversionInfo(conv, actual_type->isReference(), false));
+
+			auto copy_constr = desired_type->isReference() ? nullptr : TypeHelper::getCopyConstructor(_desired);
+			copy_constructors.push_back(copy_constr);
+		}
+	}
+	
     for ( int i = function_info.params_types.size() - 1; i >= is_meth; --i )
     {
-		if ( function_info.params_types[i]->isReference() && !params[i - is_meth]->isLeftValue() )
+		if ( function_info.params_types.at(i)->isReference() && !params.at(i - is_meth)->isLeftValue() )
 			throw SemanticError("parameter is not an lvalue.");
     }   
 	
-	return CallInfo(resolved_function_symbol, params_types, conversions); 
+	return CallInfo(resolved_function_symbol, params_types, conversions, copy_constructors); 
 }
 
 OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(string name, Scope *scope)

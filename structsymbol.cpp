@@ -31,7 +31,6 @@ Symbol* StructSymbol::resolveMember(string name) const
 
 int StructSymbol::getSize() const { return type_size; }
 string StructSymbol::getName() const { return name; }
-int StructSymbol::getScopeSize() const { return 0; }
 string StructSymbol::getScopeName() const { return scope_name; }
 
 SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }

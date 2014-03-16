@@ -1,15 +1,13 @@
 #include "returnnode.hpp"
 
-ReturnNode::ReturnNode(ExprNode *expr) : expr(expr) { }
+ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), copy_call_info() { }
 
 ReturnNode::~ReturnNode() { delete expr; }
 
 void ReturnNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> _expr)
 {
-	auto call_info = CallInfo(TypeHelper::getCopyConstructor(TypeHelper::removeReference(expr->getType())), {expr->getType()}, { });
-
-	CodeGen::genCallCode(call_info, {expr}, template_sym, _expr,
-			[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
+	CodeGen::genCallCode(copy_call_info, {expr}, template_sym, _expr,
+			[&]() { CodeGen::emit("lea rax, [" + copy_call_info.callee->getScopedTypedName() + "]"); },
 			[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
 	);
 
@@ -28,6 +26,10 @@ void ReturnNode::check(const TemplateStructSymbol *template_sym, std::vector<Exp
 		throw SemanticError("return is not a in a function");
 
     expr->check(template_sym, _expr);
+
+	auto expr_type = TypeHelper::removeReference(expr->getType());
+
+	copy_call_info = CallHelper::callCheck(expr_type->getName(), static_cast<StructSymbol*>(expr_type), {expr}, template_sym, _expr);
 }
 
 void ReturnNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> _expr) { expr->define(template_sym, _expr); }

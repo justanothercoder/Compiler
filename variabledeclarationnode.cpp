@@ -5,7 +5,7 @@ VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info
 																		     type_info(type_info),
 																		     is_field(is_field),
 																		     constructor_call_params(constructor_call_params),
-																			 call_info(nullptr, { }, { }) 
+																			 call_info() 
 {
     definedSymbol = new VariableSymbol(name, nullptr, (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE));
 //    resolved_constructor = nullptr;

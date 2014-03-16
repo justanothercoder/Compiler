@@ -26,7 +26,8 @@ public:
 private:
 
     ExprNode *expr;
-    
+
+	CallInfo copy_call_info;
 };
 
 #endif
