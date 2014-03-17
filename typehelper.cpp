@@ -25,23 +25,6 @@ bool TypeHelper::isConvertable(Type *lhs, Type *rhs)
 		return _lhs == _rhs;
 	else
 		return (_lhs == _rhs) ? true : (TypeHelper::getConversion(lhs, rhs) != nullptr);
-/*
-	if ( lhs == rhs )
-		return true;
-
-	return existsConversion(TypeHelper::removeReference(lhs), rhs);
-*/
-}
-
-bool TypeHelper::existsConversion(Type *lhs, Type *rhs)
-{
-	if ( lhs == rhs )
-		return true;
-
-	if ( dynamic_cast<StructSymbol*>(rhs) )
-		return getConversion(lhs, rhs) == nullptr ? lhs == rhs : true;
-
-	return false;
 }
 
 FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
@@ -104,8 +87,6 @@ Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateS
 	if ( template_sym && template_sym->isIn(type_name) )
 		type_name = static_cast<ClassVariableSymbol*>(TypeHelper::removeReference(template_sym->getReplacement(type_name, expr)->getType()))->sym->getName();
 
-//	Symbol *sym = scope->resolve(type_info.getTypeName());
-//	auto type = TypeHelper::resolveType(type_info.type_name, scope);
 	auto type = TypeHelper::resolveType(type_name, scope);
 
 	if ( type == nullptr )

@@ -25,8 +25,6 @@ void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vecto
 			[&]() {  CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
 			[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
 	);
-
-//	CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]");
 }
 
 Type* NewExpressionNode::getType() const { return call_info.callee->getTypeInfo().return_type; }

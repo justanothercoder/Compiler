@@ -78,44 +78,6 @@ class CodeGen
 					emit("mov [rsp - 800], rax");
 					emit("lea rax, [rsp - 800]");
 				}
-/*
-				auto param_type = resolved_function_type_info.params_types[i];
-
-				if ( param_type->isReference() )
-				{
-					emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
-					emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
-				}
-				else
-				{
-					if ( params[i - is_meth]->getType() != param_type )
-					{
-						auto par_type = params[i - is_meth]->getType();
-						
-						if ( par_type->isReference() && TypeHelper::removeReference(par_type) == param_type )
-							par_type = TypeHelper::removeReference(par_type);
-						else
-						{
-							auto conv = TypeHelper::getConversion(par_type, param_type);
-
-							genConversion(conv);
-						}
-					}
-
-					auto copy_constr = TypeHelper::getCopyConstructor(param_type);	
-					if ( copy_constr == BuiltIns::int_copy_constructor )
-					{
-						emit("mov rbx, [rax]");
-						emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");
-						emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
-					}
-					else
-					{
-						genCopy(copy_constr, 0, param_type);
-						emit("sub rsp, " + std::to_string(param_type->getSize())); 
-					}
-				}
-*/
 			}
 
 			if ( is_method )

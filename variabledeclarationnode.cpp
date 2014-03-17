@@ -42,7 +42,6 @@ void VariableDeclarationNode::check(const TemplateStructSymbol *template_sym, st
 			throw SemanticError("No such struct " + type_name);
 
 		auto type = static_cast<StructSymbol*>(_);
-//		resolved_constructor = CallHelper::callCheck(type_name, type, constructor_call_params, template_sym, expr);
 		call_info = CallHelper::callCheck(type_name, type, constructor_call_params, template_sym, expr);
 	}
 }
