@@ -8,11 +8,11 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 	auto params_types = CallHelper::extractTypes(params);
 
 	auto function_sym = CallHelper::resolveOverload(name, sc, params_types);
+	
+	if ( function_sym == nullptr )
+		throw SemanticError("No viable overload of '" + name + "'.");  
 
     auto function_info = function_sym->getTypeInfo();
-    
-	if ( function_sym == nullptr )
-		throw SemanticError("No viable overload of '" + name + "'.");
     
     int is_meth = (function_sym->isMethod() ? 1 : 0);
 	

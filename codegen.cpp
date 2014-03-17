@@ -4,8 +4,6 @@ void CodeGen::emit(string text) { std::cout << text << '\n'; }
 
 void CodeGen::genConversion(FunctionSymbol *conv)
 {
-	int current_address = 0;
-
 	auto par_type = conv->getTypeInfo().params_types[0];
 
 	if ( conv->getName().substr(0, 8) == "operator" )
@@ -17,6 +15,8 @@ void CodeGen::genConversion(FunctionSymbol *conv)
 	}
 	else
 	{
+		int current_address = 0;
+
 		pushOnStack(par_type->getSize(), GlobalConfig::int_size);
 
 		current_address += par_type->getSize();

@@ -18,10 +18,19 @@ ReferenceType* TypeHelper::addReference(Type *target)
 
 bool TypeHelper::isConvertable(Type *lhs, Type *rhs)
 {
+	auto _lhs = TypeHelper::removeReference(lhs);
+	auto _rhs = TypeHelper::removeReference(rhs);
+
+	if ( rhs->isReference() )
+		return _lhs == _rhs;
+	else
+		return (_lhs == _rhs) ? true : (TypeHelper::getConversion(lhs, rhs) != nullptr);
+/*
 	if ( lhs == rhs )
 		return true;
 
 	return existsConversion(TypeHelper::removeReference(lhs), rhs);
+*/
 }
 
 bool TypeHelper::existsConversion(Type *lhs, Type *rhs)
@@ -32,7 +41,7 @@ bool TypeHelper::existsConversion(Type *lhs, Type *rhs)
 	if ( dynamic_cast<StructSymbol*>(rhs) )
 		return getConversion(lhs, rhs) == nullptr ? lhs == rhs : true;
 
-	return lhs == rhs;
+	return false;
 }
 
 FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)

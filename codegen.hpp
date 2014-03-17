@@ -53,16 +53,24 @@ class CodeGen
 
 				auto copy_constr = call_info.copy_constructors[i - is_meth];	
 
-				if ( copy_constr == BuiltIns::int_copy_constructor )
+				if ( copy_constr == nullptr )
 				{
-					emit("mov rbx, [rax]");
-					emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");
+					emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 					emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 				}
 				else
 				{
-					genCopy(copy_constr, 0, function_info.params_types[i]);
-					emit("sub rsp, " + std::to_string(function_info.params_types[i]->getSize())); 
+					if ( copy_constr == BuiltIns::int_copy_constructor )
+					{
+						emit("mov rbx, [rax]");
+						emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");
+						emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+					}
+					else
+					{
+						genCopy(copy_constr, 0, function_info.params_types[i]);
+						emit("sub rsp, " + std::to_string(function_info.params_types[i]->getSize())); 
+					}
 				}
 
 				if ( conv_info.ref )
