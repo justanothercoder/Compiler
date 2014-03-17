@@ -24,7 +24,7 @@ bool TypeHelper::isConvertable(Type *lhs, Type *rhs)
 	if ( rhs->isReference() )
 		return _lhs == _rhs;
 	else
-		return (_lhs == _rhs) ? true : (TypeHelper::getConversion(lhs, rhs) != nullptr);
+		return (_lhs == _rhs) ? true : (TypeHelper::getConversion(_lhs, rhs) != nullptr);
 }
 
 FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
