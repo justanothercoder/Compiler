@@ -72,11 +72,11 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 	}    
 	else if ( var_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
-		auto ov_func = static_cast<OverloadedFunctionSymbol*>(var_type);
+		auto function = static_cast<OverloadedFunctionSymbol*>(var_type);
 
-		auto ov_func_type_info = ov_func->getTypeInfo();
+		auto function_info = function->getTypeInfo();
 
-		if ( ov_func_type_info.overloads.size() > 1 )
+		if ( function_info.overloads.size() > 1 )
 		{
 			auto hint_type = static_cast<FunctionSymbol*>(GlobalHelper::getTypeHint(this));
 			if ( hint_type == nullptr )
@@ -84,16 +84,16 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 
 			auto type_info = hint_type->getTypeInfo();
 
-			if ( ov_func_type_info.symbols.find(type_info) == std::end(ov_func_type_info.symbols) )
+			if ( function_info.symbols.find(type_info) == std::end(function_info.symbols) )
 			{
-				auto sym = FunctionHelper::getViableOverload(ov_func, type_info.params_types);
-				variable = new VariableSymbol(ov_func->getName(), sym);
+				auto sym = FunctionHelper::getViableOverload(function, type_info.params_types);
+				variable = new VariableSymbol(function->getName(), sym);
 			}
 			else
-				variable = new VariableSymbol(ov_func->getName(), ov_func_type_info.symbols[type_info]);
+				variable = new VariableSymbol(function->getName(), function_info.symbols[type_info]);
 		}
 		else
-			variable = new VariableSymbol(ov_func->getName(), std::begin(ov_func_type_info.symbols)->second);
+			variable = new VariableSymbol(function->getName(), std::begin(function_info.symbols)->second);
 
 		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(variable->getType())->getScopedTypedName() + "]");
 	}
