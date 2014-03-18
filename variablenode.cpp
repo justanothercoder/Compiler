@@ -18,7 +18,7 @@ void VariableNode::check(const TemplateStructSymbol *template_sym, std::vector<E
 
 	if ( sym->getSymbolType() == SymbolType::STRUCT )
 	{
-		variable = new VariableSymbol(name, new ClassVariableSymbol(static_cast<StructSymbol*>(sym)));
+		variable = new ClassVariableSymbol(static_cast<StructSymbol*>(sym));
 		return;
 	}
 	else

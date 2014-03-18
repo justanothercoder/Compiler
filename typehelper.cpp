@@ -85,7 +85,7 @@ Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateS
 	auto type_name = type_info.type_name;
 
 	if ( template_sym && template_sym->isIn(type_name) )
-		type_name = static_cast<ClassVariableSymbol*>(TypeHelper::removeReference(template_sym->getReplacement(type_name, expr)->getType()))->sym->getName();
+		type_name = TypeHelper::removeReference(template_sym->getReplacement(type_name, expr)->getType())->getName();
 
 	auto type = TypeHelper::resolveType(type_name, scope);
 

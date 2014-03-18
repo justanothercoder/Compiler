@@ -1,20 +1,16 @@
 #ifndef _CLASSVARIABLESYMBOL_HPP_
 #define _CLASSVARIABLESYMBOL_HPP_
 
+#include "variablesymbol.hpp"
 #include "structsymbol.hpp"
 
-class ClassVariableSymbol : public Type
+class ClassVariableSymbol : public VariableSymbol
 {
 public:
 
-    ClassVariableSymbol(StructSymbol *sym);
+    ClassVariableSymbol(StructSymbol *type);
 
-    virtual string getName() const;
-    virtual int getSize() const;
-
-    virtual TypeKind getTypeKind() const;
-
-    StructSymbol *sym;
+	StructSymbol *type;
 };
 
 #endif

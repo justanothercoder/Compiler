@@ -65,7 +65,7 @@ void VariableDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 
 		auto sym = TypeHelper::removeReference(replace->getType());
 		
-		type_info = TypeInfo(static_cast<ClassVariableSymbol*>(sym)->sym->getName(), type_info.is_ref, type_info.template_params);
+		type_info.type_name = sym->getName();
     }
     
     auto var_type = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);

@@ -18,7 +18,7 @@ void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<
 	{
 		auto replace = template_sym->getReplacement("T", expr);
 
-		type = static_cast<ClassVariableSymbol*>(TypeHelper::removeReference(replace->getType()))->sym;
+		type = TypeHelper::removeReference(replace->getType());
 		ref_type = TypeHelper::addReference(type);
 		size_of_type = type->getSize();
 	}
