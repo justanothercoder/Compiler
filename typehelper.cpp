@@ -24,23 +24,11 @@ FunctionSymbol* TypeHelper::getConversion(VariableType lhs, VariableType rhs)
 
 	OverloadedFunctionSymbol *cast_op = nullptr, *conversion = nullptr;
 
-	try
-	{
-		cast_op = CallHelper::getOverloadedMethod("operator " + rhs_name, static_cast<StructSymbol*>(lhs.type));
-	}
-	catch ( ... )
-	{
-
-	}
+	try { cast_op = CallHelper::getOverloadedMethod("operator " + rhs_name, static_cast<StructSymbol*>(lhs.type)); }
+	catch ( ... ) { }
 	
-	try 
-	{
-		conversion = CallHelper::getOverloadedMethod(rhs_name, struc);
-	}
-	catch ( ... )
-	{
-
-	}
+	try { conversion = CallHelper::getOverloadedMethod(rhs_name, struc); }
+	catch ( ... ) { }
 
 	if ( cast_op == nullptr && conversion == nullptr )
 		throw SemanticError("No conversion from '" + lhs_name + "' to '" + rhs_name + "'.");
@@ -85,12 +73,10 @@ VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const Te
 	if ( template_sym && template_sym->isIn(type_name) )
 		type_name = template_sym->getReplacement(type_name, expr)->getType().type->getName();
 
-	auto _type = TypeHelper::resolveType(type_name, scope);
+	auto type = VariableType(TypeHelper::resolveType(type_name, scope), false, false);
 	
-	if ( _type == nullptr )
+	if ( type.type == nullptr )
 		throw SemanticError(type_name + " is not a type");
-
-	auto type = VariableType(_type, false, false);
 
 	if ( type_info.template_params.size() > 0 )
 	{

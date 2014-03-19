@@ -5,7 +5,7 @@
 
 using std::string;
 
-enum class TypeKind { BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE, CLASSTYPE };
+enum class TypeKind { BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION };
 
 class Type
 {
@@ -15,8 +15,6 @@ public:
     virtual int getSize() const = 0;
     
     virtual TypeKind getTypeKind() const = 0;
-
-    bool isReference() const;
 };
 
 #endif

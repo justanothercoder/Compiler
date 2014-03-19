@@ -12,7 +12,7 @@ class VariableType
 {
 public:
 	VariableType();
-	VariableType(Type *type, bool is_ref, bool is_const);
+	VariableType(Type *type, bool is_ref = false, bool is_const = false);
 
 	VariableType& operator =(const VariableType& vt) = default;
 	VariableType(const VariableType&);

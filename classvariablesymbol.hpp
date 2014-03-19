@@ -7,10 +7,7 @@
 class ClassVariableSymbol : public VariableSymbol
 {
 public:
-
     ClassVariableSymbol(StructSymbol *type);
-
-	StructSymbol *type;
 };
 
 #endif

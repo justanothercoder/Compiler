@@ -3,7 +3,6 @@
 
 #include "exprnode.hpp"
 #include "structsymbol.hpp"
-#include "referencetype.hpp"
 #include "typehelper.hpp"
 #include "globalhelper.hpp"
 #include "codegen.hpp"

@@ -4,7 +4,6 @@
 #include <map>
 
 #include "typeinfo.hpp"
-#include "referencetype.hpp"
 #include "scope.hpp"
 #include "structsymbol.hpp"
 #include "functionhelper.hpp"

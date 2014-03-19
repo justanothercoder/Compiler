@@ -9,7 +9,6 @@ using std::string;
 
 #include "type.hpp"
 #include "functionsymbol.hpp"
-#include "referencetype.hpp"
 #include "typehelper.hpp"
 #include "templatestructsymbol.hpp"
 #include "builtins.hpp"

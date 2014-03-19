@@ -3,7 +3,6 @@
 
 #include "exprnode.hpp"
 #include "functionsymbol.hpp"
-#include "referencetype.hpp"
 #include "functionhelper.hpp"
 #include "codegen.hpp"
 #include "callhelper.hpp"
