@@ -8,20 +8,20 @@ NewExpressionNode::~NewExpressionNode()
 		delete i;
 }
 
-void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void NewExpressionNode::check(const TemplateInfo& template_info)
 {
 	string name = type_info.type_name;
 
-	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope()).type);
+	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope(), template_info).type);
 
 	getScope()->get_valloc()->addLocal(type->getSize());
 
-	call_info = CallHelper::callCheck(name, type, params, template_sym, expr); 
+	call_info = CallHelper::callCheck(name, type, params, template_info); 
 }
 
-void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void NewExpressionNode::gen(const TemplateInfo& template_info)
 {
-	CodeGen::genCallCode(call_info, params, template_sym, expr, 
+	CodeGen::genCallCode(call_info, params, template_info,
 			[&]() {  CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
 			[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
 	);

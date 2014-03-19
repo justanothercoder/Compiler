@@ -19,8 +19,6 @@ public:
 
     bool isIn(string name) const;
     
-    ExprNode* getReplacement(string name, const vector<ExprNode*>& expr) const;
-
     virtual Symbol* getSpec(vector<ExprNode*> symbols) const;
     
 public:

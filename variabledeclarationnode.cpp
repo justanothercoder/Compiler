@@ -30,45 +30,45 @@ void VariableDeclarationNode::build_scope()
 }
 
 
-void VariableDeclarationNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void VariableDeclarationNode::check(const TemplateInfo& template_info)
 {
 	if ( !is_field )
 	{
 		string type_name = type_info.type_name;
 
-		auto _ = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);
+		auto _ = TypeHelper::fromTypeInfo(type_info, getScope(), template_info);
 
 		if ( _.type->getTypeKind() != TypeKind::STRUCT )
 			throw SemanticError("No such struct " + type_name);
 
 		auto type = static_cast<StructSymbol*>(_.type);
-		call_info = CallHelper::callCheck(type_name, type, constructor_call_params, template_sym, expr);
+		call_info = CallHelper::callCheck(type_name, type, constructor_call_params, template_info);
 	}
 }
 
-void VariableDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void VariableDeclarationNode::gen(const TemplateInfo& template_info)
 {
 	if ( !is_field )
 	{   
-		CodeGen::genCallCode(call_info, constructor_call_params, template_sym, expr, 
+		CodeGen::genCallCode(call_info, constructor_call_params, template_info, 
 				[&]() {  CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
 				[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]"); }
 		);
 	}
 }
 
-void VariableDeclarationNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void VariableDeclarationNode::define(const TemplateInfo& template_info)
 {
-    if ( template_sym && template_sym->isIn(type_info.type_name) )
+    if ( template_info.sym && template_info.sym->isIn(type_info.type_name) )
     {
-		auto replace = template_sym->getReplacement(type_info.type_name, expr);
+		auto replace = template_info.getReplacement(type_info.type_name);
 
 		auto sym = replace->getType();
 		
 		type_info.type_name = sym.getTypeName();
     }
     
-    auto var_type = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);
+    auto var_type = TypeHelper::fromTypeInfo(type_info, getScope(), template_info);
     
     if ( var_type.type == BuiltIns::void_type )
 		throw SemanticError("can't declare a variable of 'void' type.");

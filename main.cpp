@@ -62,8 +62,8 @@ int main()
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::array_struct));
 
 		root->build_scope();
-		root->define(nullptr, { });
-		root->check (nullptr, { });
+		root->define(TemplateInfo());
+		root->check (TemplateInfo());
 		
 		CodeGen::emit("section .text");
 
@@ -85,7 +85,7 @@ int main()
 		if ( root->getScope()->get_valloc()->getSpace() > 0 )		
 			CodeGen::emit("sub rsp, " + std::to_string(root->getScope()->get_valloc()->getSpace()));
 
-		root->gen(nullptr, { });
+		root->gen(TemplateInfo());
 
 		CodeGen::emit("mov rsp, rbp");
 		CodeGen::emit("pop rbp");

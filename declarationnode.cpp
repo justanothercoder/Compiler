@@ -2,4 +2,4 @@
 
 DeclarationNode::~DeclarationNode() { }
 
-void DeclarationNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr) { GlobalHelper::setDefined(getDefinedSymbol()); }
+void DeclarationNode::check(const TemplateInfo&) { GlobalHelper::setDefined(getDefinedSymbol()); }

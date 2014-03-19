@@ -21,33 +21,33 @@ void ForNode::build_scope()
 	}
 }
 
-void ForNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void ForNode::define(const TemplateInfo& template_info)
 {
 	for ( auto child : getChildren() )
-		child->define(template_sym, expr);
+		child->define(template_info);
 }
 
-void ForNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void ForNode::check(const TemplateInfo& template_info)
 {
 	for ( auto child : getChildren() )
-		child->check(template_sym, expr);
+		child->check(template_info);
 }
 
-void ForNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void ForNode::gen(const TemplateInfo& template_info)
 {
 	auto label1 = ForNode::getNewLabel();	
 	auto label2 = ForNode::getNewLabel();
 
-	init->gen(template_sym, expr);
+	init->gen(template_info);
 	CodeGen::emit(label1 + ":");
 
-	cond->gen(template_sym, expr);
+	cond->gen(template_info);
 
     CodeGen::emit("cmp qword [rax], 0");
     CodeGen::emit("jz " + label2);
 
-	stats->gen(template_sym, expr);
-	step->gen(template_sym, expr);
+	stats->gen(template_info);
+	step->gen(template_info);
 
 	CodeGen::emit("jmp " + label1);
 	CodeGen::emit(label2 + ":");

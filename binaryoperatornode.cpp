@@ -6,13 +6,13 @@ BinaryOperatorNode::~BinaryOperatorNode() { delete lhs; delete rhs; }
 
 VariableType BinaryOperatorNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
 
-void BinaryOperatorNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void BinaryOperatorNode::check(const TemplateInfo& template_info)
 {
-	lhs->check(template_sym, expr);
-	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(lhs->getType().type), {rhs}, template_sym, expr);
+	lhs->check(template_info);
+	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(lhs->getType().type), {rhs}, template_info);
 	
 	if ( call_info.callee == nullptr )	
-		call_info = CallHelper::callCheck(getOperatorName(), getScope(), {lhs, rhs}, template_sym, expr);
+		call_info = CallHelper::callCheck(getOperatorName(), getScope(), {lhs, rhs}, template_info);
 }
 
 string BinaryOperatorNode::getOperatorName()
@@ -37,15 +37,15 @@ string BinaryOperatorNode::getCodeOperatorName()
     }    
 }
 
-void BinaryOperatorNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void BinaryOperatorNode::gen(const TemplateInfo& template_info)
 {
 	if ( call_info.callee->isMethod() )
-		CodeGen::genCallCode(call_info, {rhs}, template_sym, expr,
+		CodeGen::genCallCode(call_info, {rhs}, template_info,
 				[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
-				[&]() { lhs->gen(template_sym, expr); }
+				[&]() { lhs->gen(template_info); }
 		);
 	else
-		CodeGen::genCallCode(call_info, {lhs, rhs}, template_sym, expr,
+		CodeGen::genCallCode(call_info, {lhs, rhs}, template_info,
 				[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
 				[](){}
 		);

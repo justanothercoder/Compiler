@@ -11,6 +11,7 @@
 #include "codegen.hpp"
 #include "templatestructsymbol.hpp"
 #include "classvariablesymbol.hpp"
+#include "templateinfo.hpp"
 
 class VariableNode : public ExprNode
 {
@@ -22,8 +23,8 @@ public:
 
     virtual VariableType getType() const;
 
-    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
-    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void check(const TemplateInfo& template_info);
+    virtual void gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
 
@@ -35,8 +36,7 @@ private:
     
     VariableSymbol *variable;
 
-    TemplateStructSymbol *template_sym;
-    vector<ExprNode*> template_expr;
+	TemplateInfo template_info;
 };
 
 #endif

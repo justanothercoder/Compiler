@@ -8,7 +8,7 @@ void CodeGen::genConversion(FunctionSymbol *conv)
 
 	if ( conv->getName().substr(0, 8) == "operator" )
 	{
-		genCallCode(CallHelper::getCallInfo(conv, { }), { }, nullptr, { },
+		genCallCode(CallHelper::getCallInfo(conv, { }), { }, TemplateInfo(),
 				[&] () { emit("lea rax, [" + conv->getScopedTypedName() + "]"); },
 				[&] () {  }
 				);

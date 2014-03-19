@@ -19,6 +19,7 @@ std::string GlobalHelper::getCodeOperatorName(std::string op)
 	else if ( op == "operator="  ) return "operatorassign";
 	else if ( op == "operator*"  ) return "operatormul";
 	else if ( op.substr(0, 8) == "operator" ) return "operator~" + op.substr(9);
+	else return "";
 }
     
 int GlobalHelper::isAlreadyDefined(Symbol *sym) { return is_defined.find(sym) != std::end(is_defined); }

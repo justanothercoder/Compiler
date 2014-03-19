@@ -20,23 +20,23 @@ void WhileNode::build_scope()
     stats->build_scope();
 }
 
-void WhileNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { stats->define(template_sym, expr); }
+void WhileNode::define(const TemplateInfo& template_info) { stats->define(template_info); }
 
-void WhileNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void WhileNode::check(const TemplateInfo& template_info)
 {
-    cond->check(template_sym, expr);
-    stats->check(template_sym, expr);
+    cond->check(template_info);
+    stats->check(template_info);
 }
 
-void WhileNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void WhileNode::gen(const TemplateInfo& template_info)
 {
     string exit_label = WhileNode::getNewLabel(), cycle_label = WhileNode::getNewLabel();
     
     CodeGen::emit(cycle_label + ":");
-    cond->gen(template_sym, expr);
+    cond->gen(template_info);
     CodeGen::emit("cmp qword [rax], 0");
     CodeGen::emit("jz " + exit_label);
-    stats->gen(template_sym, expr);
+    stats->gen(template_info);
     CodeGen::emit("jmp " + cycle_label);
     CodeGen::emit(exit_label + ":");
 }

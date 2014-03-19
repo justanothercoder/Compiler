@@ -10,9 +10,10 @@ using std::string;
 #include "type.hpp"
 #include "functionsymbol.hpp"
 #include "typehelper.hpp"
-#include "templatestructsymbol.hpp"
+#include "templateinfo.hpp"
 #include "builtins.hpp"
 #include "callinfo.hpp"
+
 
 class CodeGen
 {
@@ -21,7 +22,7 @@ class CodeGen
 		static void emit(string text);
 
 		template <class T, class U>
-		static void genCallCode(CallInfo call_info, const vector<ExprNode*>& params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr, T genFunc, U genThis)
+		static void genCallCode(CallInfo call_info, vector<ExprNode*> params, const TemplateInfo& template_info, T genFunc, U genThis)
 		{
 			auto func = call_info.callee;
 
@@ -40,7 +41,7 @@ class CodeGen
 
 			for ( int i = static_cast<int>(function_info.params_types.size()) - 1; i >= is_meth; --i )
 			{
-				params[i - is_meth]->gen(template_sym, template_expr);
+				params[i - is_meth]->gen(template_info);
 
 				auto conv_info = call_info.conversions[i - is_meth];
 

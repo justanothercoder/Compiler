@@ -10,14 +10,12 @@ using namespace std;
 
 class ExprNode;
 
-class TemplateInfo
+struct TemplateInfo
 {
-public:
+	TemplateInfo();
 	TemplateInfo(TemplateStructSymbol *sym, std::vector<ExprNode*> expr);
 
-	ExprNode* getReplacement(string name);
-
-private:
+	ExprNode* getReplacement(string name) const;
 
 	TemplateStructSymbol *sym;
 	std::vector<ExprNode*> expr;

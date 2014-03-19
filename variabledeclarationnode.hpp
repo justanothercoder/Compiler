@@ -14,6 +14,7 @@
 #include "structsymbol.hpp"
 #include "builtins.hpp"
 #include "callhelper.hpp"
+#include "templateinfo.hpp"
 
 #include "variablesymboldefine.hpp"
 
@@ -31,9 +32,9 @@ public:
     
     virtual void build_scope();    
 
-    virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
-    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
-    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
+    virtual void define(const TemplateInfo& template_info);
+    virtual void check(const TemplateInfo& template_info);
+    virtual void gen(const TemplateInfo& template_info);
     
     virtual Symbol* getDefinedSymbol() const;
 

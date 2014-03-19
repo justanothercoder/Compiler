@@ -4,19 +4,19 @@ BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr
 
 BracketNode::~BracketNode() { delete expr; }
 
-void BracketNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void BracketNode::check(const TemplateInfo& template_info)
 {
-	base->check(template_sym, expr);
+	base->check(template_info);
 
 	auto base_type = dynamic_cast<StructSymbol*>(base->getType().type);
-	call_info = CallHelper::callCheck("operator[]", base_type, {this->expr}, template_sym, expr);
+	call_info = CallHelper::callCheck("operator[]", base_type, {this->expr}, template_info);
 }
 
-void BracketNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void BracketNode::gen(const TemplateInfo& template_info)
 {
-    CodeGen::genCallCode(call_info, {this->expr}, template_sym, expr,
+    CodeGen::genCallCode(call_info, {this->expr}, template_info,
 			[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
-			[&]() { base->gen(template_sym, expr); }
+			[&]() { base->gen(template_info); }
 	);
 }
 

@@ -1,13 +1,12 @@
 #include "variablenode.hpp"
 
-VariableNode::VariableNode(string name) : name(name), variable(nullptr), template_sym(nullptr) { }
+VariableNode::VariableNode(string name) : name(name), variable(nullptr) { }
 
-void VariableNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void VariableNode::check(const TemplateInfo& template_info)
 {
-	if ( template_sym && template_sym->isIn(name) )
+	if ( template_info.sym && template_info.sym->isIn(name) )
 	{
-		this->template_sym = const_cast<TemplateStructSymbol*>(template_sym);
-		this->template_expr = expr;
+		this->template_info = template_info;
 		return;
 	}
 
@@ -34,7 +33,7 @@ VariableType VariableNode::getType() const
 {
 	if ( isTemplateParam() )
 	{
-		auto replace = template_sym->getReplacement(name, template_expr);
+		auto replace = template_info.getReplacement(name);
 		return replace->getType();
 	}
 
@@ -44,16 +43,16 @@ VariableType VariableNode::getType() const
 	return type;
 }
 
-bool VariableNode::isTemplateParam() const { return template_sym != nullptr; }
+bool VariableNode::isTemplateParam() const { return template_info.sym != nullptr; }
 
 AST* VariableNode::copyTree() const { return new VariableNode(name); }
 
-void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void VariableNode::gen(const TemplateInfo& template_info)
 {
-	if ( template_sym && template_sym->isIn(name) )
+	if ( template_info.sym && template_info.sym->isIn(name) )
 	{
-		auto replace = template_sym->getReplacement(name, expr);
-		replace->gen(template_sym, expr);	
+		auto replace = template_info.getReplacement(name);
+		replace->gen(template_info);	
 		return;
 	}
 

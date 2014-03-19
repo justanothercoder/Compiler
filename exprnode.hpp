@@ -8,7 +8,7 @@ class ExprNode : public AST
 {
 public:
 
-    virtual void define(const TemplateStructSymbol *sym, std::vector<ExprNode*> expr);
+    virtual void define(const TemplateInfo& template_info);
     
     virtual VariableType getType() const = 0;
     

@@ -6,9 +6,9 @@ CallNode::~CallNode() { delete caller; }
     
 VariableType CallNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
     
-void CallNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void CallNode::check(const TemplateInfo& template_info)
 {
-    caller->check(template_sym, expr);
+    caller->check(template_info);
 
     auto caller_type = caller->getType().type;
 
@@ -17,29 +17,29 @@ void CallNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprN
 		if ( caller_type->getTypeKind() != TypeKind::STRUCT )
 			throw SemanticError("caller is not a function.");
 
-		call_info = CallHelper::callCheck("operator()", static_cast<StructSymbol*>(caller_type), params, template_sym, expr);
+		call_info = CallHelper::callCheck("operator()", static_cast<StructSymbol*>(caller_type), params, template_info);
 		GlobalHelper::setTypeHint(caller, call_info.callee);
 	}
 	else
 	{
 		auto ov_func = static_cast<OverloadedFunctionSymbol*>(caller_type);
 		auto scope = ov_func->isMethod() ? static_cast<StructSymbol*>(ov_func->getBaseType().type) : getScope();
-		call_info = CallHelper::callCheck(ov_func->getName(), scope, params, template_sym, expr);
+		call_info = CallHelper::callCheck(ov_func->getName(), scope, params, template_info);
 	    GlobalHelper::setTypeHint(caller, call_info.callee);
 	}
 }
 
-void CallNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void CallNode::gen(const TemplateInfo& template_info)
 {    
-    CodeGen::genCallCode(call_info, params, template_sym, expr,
+    CodeGen::genCallCode(call_info, params, template_info,
 			[&]()
 			{
-				caller->gen(template_sym, expr);
+				caller->gen(template_info);
 
 				if ( call_info.callee->getName() == "operator()" )
 					CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]");
 			},
-			[&]() { caller->gen(template_sym, expr); }
+			[&]() { caller->gen(template_info); }
 	);
 }
 

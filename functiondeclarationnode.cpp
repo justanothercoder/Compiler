@@ -18,16 +18,16 @@ void FunctionDeclarationNode::build_scope()
 
 Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 
-void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 {
-	if ( template_sym != nullptr && return_type_info.type_name == template_sym->getName() )
+	if ( template_info.sym != nullptr && return_type_info.type_name == template_info.sym->getName() )
 		return_type_info.type_name = static_cast<StructSymbol*>(getScope())->getName();
 
 	VariableType return_type;
    	if ( definedSymbol->isMethod() && return_type_info.type_name == static_cast<StructSymbol*>(getScope())->getName() )
 		return_type.type = static_cast<StructSymbol*>(getScope());
 	else
-		return_type = TypeHelper::fromTypeInfo(return_type_info, getScope());
+		return_type = TypeHelper::fromTypeInfo(return_type_info, getScope(), template_info);
 
 	vector<VariableType> params_types;
 
@@ -50,7 +50,7 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 			param_type.is_const = i.second.is_const;
 		}
 		else
-			param_type = TypeHelper::fromTypeInfo(i.second, getScope());
+			param_type = TypeHelper::fromTypeInfo(i.second, getScope(), template_info);
 
 		params_types.push_back(param_type);
 
@@ -63,10 +63,10 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 
 	getScope()->accept(new FunctionSymbolDefine(definedSymbol));
 
-	statements->define(template_sym, expr);
+	statements->define(template_info);
 }
 
-void FunctionDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void FunctionDeclarationNode::gen(const TemplateInfo& template_info)
 {    
 	string scoped_typed_name = definedSymbol->getScopedTypedName();
 
@@ -78,7 +78,7 @@ void FunctionDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 	if ( definedSymbol->get_valloc()->getSpace() > 0 )
 		CodeGen::emit("sub rsp, " + std::to_string(definedSymbol->get_valloc()->getSpace()));
 
-	statements->gen(template_sym, expr);
+	statements->gen(template_info);
 
 	if ( definedSymbol->isConstructor() )
 		CodeGen::emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
@@ -89,10 +89,7 @@ void FunctionDeclarationNode::gen(const TemplateStructSymbol *template_sym, std:
 	CodeGen::emit("_~" + scoped_typed_name + ":");
 }
 
-void FunctionDeclarationNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
-{
-	statements->check(template_sym, expr);
-}
+void FunctionDeclarationNode::check(const TemplateInfo& template_info) { statements->check(template_info); }
 
 AST* FunctionDeclarationNode::copyTree() const { return new FunctionDeclarationNode(name, params, return_type_info, statements->copyTree(), traits); }
 

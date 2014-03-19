@@ -19,23 +19,13 @@ bool TemplateStructSymbol::isIn(string name) const
 			) != std::end(template_symbols);
 }
 
-ExprNode* TemplateStructSymbol::getReplacement(string name, const vector<ExprNode*>& expr) const
-{
-	for ( size_t i = 0; i < template_symbols.size(); ++i )
-	{
-		if ( template_symbols[i].first == name )
-			return expr[i];
-	}
-	return nullptr;
-}
-
 Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 {
 	auto it = specs.find(symbols);
 	if ( it != std::end(specs) )
 		return it->second;
 
-	auto hash_func = [](const vector<ExprNode*>& vec)
+	auto hash_func = [](vector<ExprNode*> vec)
 	{
 		long long P = 31, pow = 1, ans = 0;
 
@@ -64,14 +54,14 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 	}
 
 	for ( auto i : symbols )
-		i->check(nullptr, { });	
+		i->check(TemplateInfo());	
 
 	decl->setScope(holder->getScope());
 	decl->build_scope();
 
-	decl->define(this, symbols);
-	decl->check(this, symbols);    
-	decl->gen(this, symbols);
+	decl->define(TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols));
+	decl->check(TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols));
+	decl->gen(TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols));
 
 	return (specs[symbols] = static_cast<StructSymbol*>(decl->getDefinedSymbol()));
 }

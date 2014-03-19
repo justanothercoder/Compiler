@@ -6,8 +6,7 @@
 #include "globalhelper.hpp"
 
 class Scope;
-class TemplateStructSymbol;
-class ExprNode;
+struct TemplateInfo;
 
 class AST
 {
@@ -22,9 +21,9 @@ public:
 	
     virtual void build_scope(); 
 
-    virtual void define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) = 0;
-    virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) = 0;
-    virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) = 0;
+    virtual void define(const TemplateInfo& template_info) = 0;
+    virtual void check(const TemplateInfo& template_info) = 0;
+    virtual void gen(const TemplateInfo& template_info) = 0;
 
 	virtual std::vector<AST*> getChildren() const = 0;
 };

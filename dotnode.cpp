@@ -4,9 +4,9 @@ DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(m
 
 DotNode::~DotNode() { delete base; }
 
-void DotNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void DotNode::check(const TemplateInfo& template_info)
 {
-	base->check(template_sym, expr);
+	base->check(template_info);
 
 	auto _base_type = base->getType();
 
@@ -29,13 +29,11 @@ VariableType DotNode::getType() const
 	return type; 
 }
 
-void DotNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
-
 AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base->copyTree()), member_name); }
 
-void DotNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void DotNode::gen(const TemplateInfo& template_info)
 {    
-	base->gen(template_sym, expr);
+	base->gen(template_info);
 
 	auto member_type = member->getType();
 

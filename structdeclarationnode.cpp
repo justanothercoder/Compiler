@@ -23,22 +23,22 @@ void StructDeclarationNode::build_scope()
     }
 }
 
-void StructDeclarationNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void StructDeclarationNode::define(const TemplateInfo& template_info)
 {
     for ( auto decl : inner )
-		decl->define(template_sym, expr);
+		decl->define(template_info);
 }
 
-void StructDeclarationNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void StructDeclarationNode::check(const TemplateInfo& template_info)
 {
     for ( auto decl : inner )
-		decl->check(template_sym, expr);	
+		decl->check(template_info);	
 }
 
-void StructDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void StructDeclarationNode::gen(const TemplateInfo& template_info)
 {
     for ( auto decl : inner )
-		decl->gen(template_sym, expr);
+		decl->gen(template_info);
 }
 
 AST* StructDeclarationNode::copyTree() const 

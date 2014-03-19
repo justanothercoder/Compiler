@@ -66,12 +66,12 @@ FunctionSymbol* TypeHelper::getCopyConstructor(VariableType type)
 	return FunctionHelper::getViableOverload(constructor, {vt, vt});
 }
 
-VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym, vector<ExprNode*> expr)
+VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateInfo& template_info)
 {    
 	auto type_name = type_info.type_name;
 
-	if ( template_sym && template_sym->isIn(type_name) )
-		type_name = template_sym->getReplacement(type_name, expr)->getType().type->getName();
+	if ( template_info.sym && template_info.sym->isIn(type_name) )
+		type_name = template_info.getReplacement(type_name)->getType().type->getName();
 
 	auto type = VariableType(TypeHelper::resolveType(type_name, scope));
 	

@@ -11,7 +11,7 @@ public:
 
     virtual ~DeclarationNode();    
 
-	virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr);
+	virtual void check(const TemplateInfo& template_info);
 
     virtual Symbol* getDefinedSymbol() const = 0;
 };

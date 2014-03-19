@@ -7,7 +7,7 @@
 #include "scope.hpp"
 #include "structsymbol.hpp"
 #include "functionhelper.hpp"
-#include "templatestructsymbol.hpp"
+#include "templateinfo.hpp"
 #include "callhelper.hpp"
 
 using std::map;
@@ -18,7 +18,7 @@ public:
 
     static FunctionSymbol* getConversion(VariableType lhs, VariableType rhs);
 
-    static VariableType fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym = nullptr, vector<ExprNode*> expr = { });
+    static VariableType fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateInfo& template_info);
     
     static bool isConvertable(VariableType lhs, VariableType rhs);
     

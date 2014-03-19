@@ -2,21 +2,21 @@
 
 AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) { setScope(BuiltIns::global_scope); }
 
-void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) 
+void AsmArrayNode::define(const TemplateInfo& template_info) 
 {
 	VariableType type, ref_type;
 
-	if ( template_sym->isIn("size") )
+	if ( template_info.sym->isIn("size") )
 	{
-		auto replace = template_sym->getReplacement("size", expr);
+		auto replace = template_info.getReplacement("size");
 		
 		array_size = std::stoi(dynamic_cast<NumberNode*>(replace)->getNum());
 	}
 	else throw SemanticError("");
 
-	if ( template_sym->isIn("T") )
+	if ( template_info.sym->isIn("T") )
 	{
-		auto replace = template_sym->getReplacement("T", expr);
+		auto replace = template_info.getReplacement("T");
 
 		type = replace->getType();
 		type.is_ref = false;
@@ -67,9 +67,9 @@ void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<
 			);
 }
 
-void AsmArrayNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
+void AsmArrayNode::check(const TemplateInfo&) { }
 
-void AsmArrayNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void AsmArrayNode::gen(const TemplateInfo&)
 {
 	auto arr = dynamic_cast<StructSymbol*>(getScope());
 

@@ -1,6 +1,6 @@
 #include "statementnode.hpp"
 
-StatementNode::StatementNode(const vector<AST*>& statements) : statements(statements) { }
+StatementNode::StatementNode(vector<AST*> statements) : statements(statements) { }
 
 StatementNode::~StatementNode()
 {
@@ -8,16 +8,16 @@ StatementNode::~StatementNode()
 		delete i;
 }
 
-void StatementNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void StatementNode::define(const TemplateInfo& template_info)
 {
 	for ( auto i : statements )
-		i->define(template_sym, expr);
+		i->define(template_info);
 }
 
-void StatementNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void StatementNode::check(const TemplateInfo& template_info)
 {
 	for ( auto i : statements )
-		i->check(template_sym, expr);
+		i->check(template_info);
 }
 
 AST* StatementNode::copyTree() const
@@ -29,10 +29,10 @@ AST* StatementNode::copyTree() const
 	return new StatementNode(stats);
 }
 
-void StatementNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void StatementNode::gen(const TemplateInfo& template_info)
 {
 	for ( auto i : statements )
-		i->gen(template_sym, expr);
+		i->gen(template_info);
 }
 
 vector<AST*> StatementNode::getChildren() const { return statements; }

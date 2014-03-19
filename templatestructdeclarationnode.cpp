@@ -13,7 +13,7 @@ void TemplateStructDeclarationNode::build_scope()
     }
 }
 
-void TemplateStructDeclarationNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { getScope()->accept(new SymbolDefine(definedSymbol)); }
+void TemplateStructDeclarationNode::define(const TemplateInfo&) { getScope()->accept(new SymbolDefine(definedSymbol)); }
 
-void TemplateStructDeclarationNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
-void TemplateStructDeclarationNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
+void TemplateStructDeclarationNode::gen(const TemplateInfo&) { }
+void TemplateStructDeclarationNode::check(const TemplateInfo&) { }

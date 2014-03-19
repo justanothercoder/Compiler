@@ -1,9 +1,9 @@
 #include "callhelper.hpp"
 
-CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> params, const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> params, const TemplateInfo& template_info)
 {
     for ( auto i : params )
-		i->check(template_sym, expr);
+		i->check(template_info);
 
 	auto params_types = CallHelper::extractTypes(params);
 

@@ -26,33 +26,33 @@ void IfNode::build_scope()
     stats_false->build_scope();
 }
 
-void IfNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void IfNode::define(const TemplateInfo& template_info)
 {
 	for ( auto child : getChildren() )
-		child->define(template_sym, expr);
+		child->define(template_info);
 }
     
-void IfNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void IfNode::check(const TemplateInfo& template_info)
 {
 	for ( auto child : getChildren() )
-		child->check(template_sym, expr);
+		child->check(template_info);
 }
     
-void IfNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
+void IfNode::gen(const TemplateInfo& template_info)
 {
-    cond->gen(template_sym, expr);
+    cond->gen(template_info);
 
     string false_label = IfNode::getNewLabel(), exit_label = IfNode::getNewLabel();
 
     CodeGen::emit("cmp qword [rax], 0");
     CodeGen::emit("jz " + false_label);
     
-	stats_true->gen(template_sym, expr);
+	stats_true->gen(template_info);
     
 	CodeGen::emit("jmp " + exit_label);
     CodeGen::emit(false_label + ":");
     
-	stats_false->gen(template_sym, expr);
+	stats_false->gen(template_info);
  
  	CodeGen::emit(exit_label + ":");
 }

@@ -1,5 +1,5 @@
 #include "exprnode.hpp"
 
-void ExprNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) { }
+void ExprNode::define(const TemplateInfo&) { }
 
 bool ExprNode::isLeftValue() const { return getType().is_ref; }
