@@ -15,9 +15,6 @@ class OverloadedFunctionTypeInfo
 {
 public:
 
-    string getName() const;
-    int getSize() const;
-    
     OverloadedFunctionTypeInfo(const set<FunctionTypeInfo>& overloads);
     
     set<FunctionTypeInfo> overloads;

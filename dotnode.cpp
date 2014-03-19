@@ -13,7 +13,7 @@ void DotNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNo
 	base_type = dynamic_cast<StructSymbol*>(_base_type.type);
 
 	if ( base_type == nullptr )
-		throw SemanticError("left side of '.' is not a struct instance.");
+		throw SemanticError("left side of '.' is not an instance of struct.");
 
 	member = dynamic_cast<VariableSymbol*>(base_type->resolveMember(member_name));
 

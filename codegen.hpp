@@ -25,7 +25,7 @@ class CodeGen
 		{
 			auto func = call_info.callee;
 
-			int params_size = 0;
+			size_t params_size = 0;
 
 			bool is_method = func->isMethod();
 
@@ -33,7 +33,7 @@ class CodeGen
 
 			auto function_info = func->getTypeInfo();
 			
-			params_size = std::accumulate(std::begin(function_info.params_types) + is_meth, std::end(function_info.params_types), 0, [](int x, VariableType type) { return x += type.getSize(); });
+			params_size = std::accumulate(std::begin(function_info.params_types) + is_meth, std::end(function_info.params_types), 0, [](size_t x, VariableType type) { return x += type.getSize(); });
 
 			if ( is_method )
 				params_size += GlobalConfig::int_size;
