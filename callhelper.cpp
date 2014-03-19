@@ -18,7 +18,8 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 	
 	for ( int i = function_info.params_types.size() - 1; i >= is_meth; --i )
     {
-		if ( function_info.params_types.at(i).is_ref && !params.at(i - is_meth)->isLeftValue() )
+		auto t = function_info.params_types.at(i);
+		if ( t.is_ref && !params.at(i - is_meth)->isLeftValue() && !t.is_const )
 			throw SemanticError("parameter is not an lvalue.");
     }   
 

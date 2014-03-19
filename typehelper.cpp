@@ -100,6 +100,7 @@ VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const Te
 	}
 
 	type.is_ref = type_info.is_ref; 
+	type.is_const = type_info.is_const;
 
 	return type;
 }

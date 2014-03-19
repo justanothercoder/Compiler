@@ -198,10 +198,10 @@ DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
 			return_type = typeInfo();
 		}
 		else
-			return_type = TypeInfo("void", false);
+			return_type = TypeInfo("void", false, false);
 	}
 	else
-		return_type = TypeInfo(*struct_name, true);
+		return_type = TypeInfo(*struct_name, true, false);
 
 	AST *statements = block();
 
@@ -460,6 +460,14 @@ AST* Parser::for_stat()
 
 TypeInfo Parser::typeInfo()
 {
+	bool is_const = false;
+
+	if ( getTokenType(1) == TokenType::CONST )
+	{
+		is_const = true;
+		match(TokenType::CONST);
+	}
+
 	string type_name = id();
 
 	bool is_ref = false;
@@ -489,7 +497,7 @@ TypeInfo Parser::typeInfo()
 		match(TokenType::REF);
 	}
 
-	return TypeInfo(type_name, is_ref, template_params);
+	return TypeInfo(type_name, is_ref, is_const, template_params);
 }
 
 vector<ExprNode*> Parser::call_params_list()
