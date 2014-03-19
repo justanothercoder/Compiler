@@ -10,6 +10,9 @@ class DeclarationNode : public AST
 public:
 
     virtual ~DeclarationNode();    
+
+	virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> template_expr);
+
     virtual Symbol* getDefinedSymbol() const = 0;
 };
 

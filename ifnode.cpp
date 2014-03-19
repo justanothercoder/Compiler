@@ -6,9 +6,9 @@ IfNode::~IfNode()
 {
 	delete if_scope;
 	delete else_scope;
-	delete cond;
-	delete stats_true;
-	delete stats_false;
+	
+	for ( auto child : getChildren() )
+		delete child;
 }
 
 void IfNode::build_scope()
@@ -28,15 +28,14 @@ void IfNode::build_scope()
 
 void IfNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    stats_true->define(template_sym, expr);
-    stats_false->define(template_sym, expr);
+	for ( auto child : getChildren() )
+		child->define(template_sym, expr);
 }
     
 void IfNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-    cond->check(template_sym, expr);
-    stats_true->check(template_sym, expr);
-    stats_false->check(template_sym, expr);
+	for ( auto child : getChildren() )
+		child->check(template_sym, expr);
 }
     
 void IfNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)

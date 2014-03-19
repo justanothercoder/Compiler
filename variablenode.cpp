@@ -13,8 +13,8 @@ void VariableNode::check(const TemplateStructSymbol *template_sym, std::vector<E
 
 	auto sym = getScope()->resolve(name);
 
-	if ( sym == nullptr )
-		throw SemanticError("No such symbol " + name);
+	if ( sym == nullptr || !GlobalHelper::isAlreadyDefined(sym) )
+		throw SemanticError("No such symbol '" + name + "'.");
 
 	if ( sym->getSymbolType() == SymbolType::STRUCT )
 	{
@@ -83,7 +83,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 		{
 			auto hint_type = static_cast<FunctionSymbol*>(GlobalHelper::getTypeHint(this));
 			if ( hint_type == nullptr )
-				throw SemanticError("multiple overloads of " + name);
+				throw SemanticError("multiple overloads of '" + name + "'.");
 
 			auto type_info = hint_type->getTypeInfo();
 

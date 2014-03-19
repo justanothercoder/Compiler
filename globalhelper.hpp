@@ -19,10 +19,10 @@ public:
     static Type* getTypeHint(ExprNode *expr);
     static void setTypeHint(ExprNode *expr, Type *type);
 
-    static int getDefinitionTime(Symbol *sym);
-    static int setDefinitionTime(Symbol *sym);
+    static int isAlreadyDefined(Symbol *sym);
+    static void setDefined(Symbol *sym);
 
-    static Scope* getASTScope(const AST *t);
+    static Scope* getASTScope(AST *t);
     static void setASTScope(AST *t, Scope *sc);
 
 	static std::string getCodeOperatorName(std::string op);
@@ -32,7 +32,7 @@ private:
     GlobalHelper();
 
     static map<ExprNode*, Type*> type_hints;
-    static map<Symbol*, int> definition_time;
+    static map<Symbol*, bool> is_defined;
     static map<AST*, Scope*> ast_scopes;
 };
 

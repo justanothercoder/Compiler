@@ -4,10 +4,8 @@ ForNode::ForNode(AST *init, ExprNode *cond, AST *step, AST *stats) : init(init),
 
 ForNode::~ForNode() 
 {
-	delete init;
-	delete cond;
-	delete step;
-	delete stats;
+	for ( auto child : getChildren() )
+		delete child;
 
 	delete for_scope;
 }
@@ -16,33 +14,23 @@ void ForNode::build_scope()
 {
 	for_scope = new LocalScope(getScope());
 
-	init->setScope(for_scope);
-	init->build_scope();
-
-	cond->setScope(for_scope);
-	cond->build_scope();
-
-	step->setScope(for_scope);
-	step->build_scope();
-
-	stats->setScope(for_scope);
-	stats->build_scope();
+	for ( auto child : getChildren() )
+	{
+		child->setScope(for_scope);
+		child->build_scope();
+	}
 }
 
 void ForNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	init->define(template_sym, expr);
-	cond->define(template_sym, expr);
-	step->define(template_sym, expr);
-	stats->define(template_sym, expr);
+	for ( auto child : getChildren() )
+		child->define(template_sym, expr);
 }
 
 void ForNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
-	init->check(template_sym, expr);
-	cond->check(template_sym, expr);
-	step->check(template_sym, expr);
-	stats->check(template_sym, expr);
+	for ( auto child : getChildren() )
+		child->check(template_sym, expr);
 }
 
 void ForNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
