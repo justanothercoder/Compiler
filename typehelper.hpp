@@ -17,24 +17,17 @@ class TypeHelper
 {
 public:
 
-    static FunctionSymbol* getConversion(Type *lhs, Type *rhs);
+    static FunctionSymbol* getConversion(VariableType lhs, VariableType rhs);
 
-    static bool existsConversion(Type *lhs, Type *rhs);
-
-    static Type* fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym = nullptr, vector<ExprNode*> expr = { });
+    static VariableType fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym = nullptr, vector<ExprNode*> expr = { });
     
-    static bool isConvertable(Type *lhs, Type *rhs);
+    static bool isConvertable(VariableType lhs, VariableType rhs);
     
-	static FunctionSymbol* getCopyConstructor(Type *type);
+	static FunctionSymbol* getCopyConstructor(VariableType type);
 
 	static OverloadedFunctionSymbol* getOperatorCall(StructSymbol *sym);
 
-	static Type* removeReference(Type *t);
-    static ReferenceType* addReference(Type *target);
-
 	static Type* resolveType(string name, Scope *sc);
-
-    static map<Type*, ReferenceType*> references;
 };
 
 #endif

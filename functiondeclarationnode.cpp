@@ -10,7 +10,7 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 
 void FunctionDeclarationNode::build_scope()
 {
-	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(nullptr, { }), getScope(), traits);
+	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(VariableType(), { }), getScope(), traits);
 
 	statements->setScope(definedSymbol);
 	statements->build_scope();
@@ -23,17 +23,17 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 	if ( template_sym != nullptr && return_type_info.type_name == template_sym->getName() )
 		return_type_info.type_name = static_cast<StructSymbol*>(getScope())->getName();
 
-	Type *return_type = nullptr;
+	VariableType return_type;
    	if ( definedSymbol->isMethod() && return_type_info.type_name == static_cast<StructSymbol*>(getScope())->getName() )
-		return_type = static_cast<StructSymbol*>(getScope());
+		return_type.type = static_cast<StructSymbol*>(getScope());
 	else
 		return_type = TypeHelper::fromTypeInfo(return_type_info, getScope());
 
-	vector<Type*> params_types;
+	vector<VariableType> params_types;
 
 	if ( traits.is_method )
 	{
-		auto _this_type = TypeHelper::addReference(static_cast<StructSymbol*>(getScope()));
+		auto _this_type = VariableType(static_cast<StructSymbol*>(getScope()), true, false);
 		params_types.push_back(_this_type);
 
 		definedSymbol->accept(new VariableSymbolDefine(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM)));
@@ -41,12 +41,12 @@ void FunctionDeclarationNode::define(const TemplateStructSymbol *template_sym, s
 
 	for ( auto i : params )
 	{
-		Type *param_type = nullptr;
+		VariableType param_type;
    		if ( definedSymbol->isMethod() && i.second.type_name == static_cast<StructSymbol*>(getScope())->getName() )
 		{			
-			param_type = static_cast<StructSymbol*>(getScope());
+			param_type.type = static_cast<StructSymbol*>(getScope());
 			if ( i.second.is_ref )
-				param_type = TypeHelper::addReference(param_type);
+				param_type.is_ref = true;
 		}
 		else
 			param_type = TypeHelper::fromTypeInfo(i.second, getScope());

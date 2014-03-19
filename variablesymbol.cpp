@@ -1,9 +1,9 @@
 #include "variablesymbol.hpp"
 
-VariableSymbol::VariableSymbol(string name, Type *type, VariableSymbolType sym_type) : name(name), type(type), sym_type(sym_type) { }
+VariableSymbol::VariableSymbol(string name, VariableType type, VariableSymbolType sym_type) : name(name), type(type), sym_type(sym_type) { }
 
-Type* VariableSymbol::getType() const { return type; }
-void VariableSymbol::setType(Type *t) { type = t; }
+VariableType VariableSymbol::getType() const { return type; }
+void VariableSymbol::setType(VariableType t) { type = t; }
 
 string VariableSymbol::getName() const { return name; }
 

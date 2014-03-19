@@ -10,7 +10,7 @@ string FunctionSymbol::getTypedName() const
 	string res = (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
 
 	for ( auto type : function_type_info.params_types )
-		res += "_" + type->getName();
+		res += "_" + type.getName();
 
 	return res;
 }
@@ -22,7 +22,7 @@ string FunctionSymbol::getScopedTypedName() const
 	auto& pt = function_type_info.params_types;
 
 	for ( auto type : pt )
-		res += "_" + type->getName();
+		res += "_" + type.getName();
 
 	return res;
 }

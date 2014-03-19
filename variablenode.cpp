@@ -30,7 +30,7 @@ void VariableNode::check(const TemplateStructSymbol *template_sym, std::vector<E
 	variable = static_cast<VariableSymbol*>(sym);
 }
 
-Type* VariableNode::getType() const
+VariableType VariableNode::getType() const
 {
 	if ( isTemplateParam() )
 	{
@@ -38,7 +38,10 @@ Type* VariableNode::getType() const
 		return replace->getType();
 	}
 
-	return TypeHelper::addReference(variable->getType());
+	auto type = variable->getType();
+	type.is_ref = true;
+
+	return type;
 }
 
 bool VariableNode::isTemplateParam() const { return template_sym != nullptr; }
@@ -56,13 +59,13 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 
 	auto var_type = variable->getType();
 
-	if ( var_type->isReference() )
+	if ( var_type.is_ref )
 	{
 		if ( variable->isField() )
 		{
 			auto sym = static_cast<VariableSymbol*>(getScope()->resolve("this"));
 
-			auto struc_scope = static_cast<StructSymbol*>(sym->getType());
+			auto struc_scope = static_cast<StructSymbol*>(sym->getType().type);
 
 			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
 			CodeGen::emit("mov rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");
@@ -70,9 +73,9 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 		else
 			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(variable)) + "]");
 	}    
-	else if ( var_type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
+	else if ( var_type.type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
-		auto function = static_cast<OverloadedFunctionSymbol*>(var_type);
+		auto function = static_cast<OverloadedFunctionSymbol*>(var_type.type);
 
 		auto function_info = function->getTypeInfo();
 
@@ -87,15 +90,15 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 			if ( function_info.symbols.find(type_info) == std::end(function_info.symbols) )
 			{
 				auto sym = FunctionHelper::getViableOverload(function, type_info.params_types);
-				variable = new VariableSymbol(function->getName(), sym);
+				variable = new VariableSymbol(function->getName(), VariableType(sym, false, false));
 			}
 			else
-				variable = new VariableSymbol(function->getName(), function_info.symbols[type_info]);
+				variable = new VariableSymbol(function->getName(), VariableType(function_info.symbols[type_info], false, false));
 		}
 		else
-			variable = new VariableSymbol(function->getName(), std::begin(function_info.symbols)->second);
+			variable = new VariableSymbol(function->getName(), VariableType(std::begin(function_info.symbols)->second, false, false));
 
-		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(variable->getType())->getScopedTypedName() + "]");
+		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(variable->getType().type)->getScopedTypedName() + "]");
 	}
 	else
 	{
@@ -105,7 +108,7 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 
 			auto sym = static_cast<VariableSymbol*>(_this);
 
-			auto struc_scope = static_cast<StructSymbol*>(TypeHelper::removeReference(sym->getType()));
+			auto struc_scope = static_cast<StructSymbol*>(sym->getType().type);
 
 			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
 			CodeGen::emit("lea rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");

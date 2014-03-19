@@ -7,7 +7,7 @@ VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info
 																		     constructor_call_params(constructor_call_params),
 																			 call_info() 
 {
-    definedSymbol = new VariableSymbol(name, nullptr, (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE));
+    definedSymbol = new VariableSymbol(name, VariableType(nullptr, false, false), (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE));
 }
 
 VariableDeclarationNode::~VariableDeclarationNode() 
@@ -38,10 +38,10 @@ void VariableDeclarationNode::check(const TemplateStructSymbol *template_sym, st
 
 		auto _ = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);
 
-		if ( _->getTypeKind() != TypeKind::STRUCT )
+		if ( _.type->getTypeKind() != TypeKind::STRUCT )
 			throw SemanticError("No such struct " + type_name);
 
-		auto type = static_cast<StructSymbol*>(_);
+		auto type = static_cast<StructSymbol*>(_.type);
 		call_info = CallHelper::callCheck(type_name, type, constructor_call_params, template_sym, expr);
 	}
 }
@@ -63,14 +63,14 @@ void VariableDeclarationNode::define(const TemplateStructSymbol *template_sym, s
     {
 		auto replace = template_sym->getReplacement(type_info.type_name, expr);
 
-		auto sym = TypeHelper::removeReference(replace->getType());
+		auto sym = replace->getType();
 		
-		type_info.type_name = sym->getName();
+		type_info.type_name = sym.getTypeName();
     }
     
     auto var_type = TypeHelper::fromTypeInfo(type_info, getScope(), template_sym, expr);
     
-    if ( var_type == BuiltIns::void_type )
+    if ( var_type.type == BuiltIns::void_type )
 		throw SemanticError("can't declare a variable of 'void' type.");
     
     definedSymbol->setType(var_type);

@@ -4,12 +4,12 @@ BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op
 
 BinaryOperatorNode::~BinaryOperatorNode() { delete lhs; delete rhs; }
 
-Type* BinaryOperatorNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+VariableType BinaryOperatorNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
 
 void BinaryOperatorNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
 	lhs->check(template_sym, expr);
-	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(TypeHelper::removeReference(lhs->getType())), {rhs}, template_sym, expr);
+	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(lhs->getType().type), {rhs}, template_sym, expr);
 	
 	if ( call_info.callee == nullptr )	
 		call_info = CallHelper::callCheck(getOperatorName(), getScope(), {lhs, rhs}, template_sym, expr);

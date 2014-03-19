@@ -23,7 +23,7 @@ public:
     bool isConstructor() const;
     bool isOperator() const;
 
-    Type *getBaseType() const;
+    VariableType getBaseType() const;
 
     virtual SymbolType getSymbolType() const;
     virtual TypeKind getTypeKind() const;

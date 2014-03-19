@@ -1,6 +1,6 @@
 #include "functiontypeinfo.hpp"
 
-FunctionTypeInfo::FunctionTypeInfo(Type *return_type, const vector<Type*>& params_types) : return_type(return_type), params_types(params_types) { }
+FunctionTypeInfo::FunctionTypeInfo(VariableType return_type, vector<VariableType> params_types) : return_type(return_type), params_types(params_types) { }
 
 bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
 {
@@ -10,10 +10,10 @@ bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
 
 	    std::hash<std::string> hash_fn;
 	    
-	    res += hash_fn(fti.return_type->getName());
+	    res += hash_fn(fti.return_type.getName());
 	    
 	    for ( auto type : fti.params_types )
-			res += hash_fn(type->getName());
+			res += hash_fn(type.getName());
 	    
 	    return res;
 	};
@@ -23,7 +23,7 @@ bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
 
 string FunctionTypeInfo::toString() const
 {
-	string res = return_type->getName();
+	string res = return_type.getName();
 
 	res += "(";
 
@@ -31,9 +31,9 @@ string FunctionTypeInfo::toString() const
 	{
 		auto it = std::begin(params_types);
 
-		res += (*it)->getName();
+		res += (*it).getName();
 		for ( ++it; it != std::end(params_types); ++it )
-			res += ", " + (*it)->getName();
+			res += ", " + (*it).getName();
 	}
 
 	res += ")";

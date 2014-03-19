@@ -27,9 +27,7 @@ void ReturnNode::check(const TemplateStructSymbol *template_sym, std::vector<Exp
 
     expr->check(template_sym, _expr);
 
-	auto expr_type = TypeHelper::removeReference(expr->getType());
-
-	copy_call_info = CallHelper::callCheck(expr_type->getName(), static_cast<StructSymbol*>(expr_type), {expr}, template_sym, _expr);
+	copy_call_info = CallHelper::callCheck(expr->getType().getTypeName(), static_cast<StructSymbol*>(expr->getType().type), {expr}, template_sym, _expr);
 }
 
 void ReturnNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> _expr) { expr->define(template_sym, _expr); }

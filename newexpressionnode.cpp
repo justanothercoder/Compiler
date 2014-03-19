@@ -12,7 +12,7 @@ void NewExpressionNode::check(const TemplateStructSymbol *template_sym, std::vec
 {
 	string name = type_info.type_name;
 
-	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope()));
+	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope()).type);
 
 	getScope()->get_valloc()->addLocal(type->getSize());
 
@@ -27,7 +27,7 @@ void NewExpressionNode::gen(const TemplateStructSymbol *template_sym, std::vecto
 	);
 }
 
-Type* NewExpressionNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+VariableType NewExpressionNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
 
 AST* NewExpressionNode::copyTree() const 
 {

@@ -18,7 +18,7 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 	
 	for ( int i = function_info.params_types.size() - 1; i >= is_meth; --i )
     {
-		if ( function_info.params_types.at(i)->isReference() && !params.at(i - is_meth)->isLeftValue() )
+		if ( function_info.params_types.at(i).is_ref && !params.at(i - is_meth)->isLeftValue() )
 			throw SemanticError("parameter is not an lvalue.");
     }   
 
@@ -45,7 +45,7 @@ CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<ExprN
 
 		conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type, is_left_value));
 		
-		auto copy_constr = desired_type->isReference() ? nullptr : TypeHelper::getCopyConstructor(TypeHelper::removeReference(desired_type));
+		auto copy_constr = desired_type.is_ref ? nullptr : TypeHelper::getCopyConstructor(desired_type);
 		copy_constructors.push_back(copy_constr);
 	}
 	
@@ -59,7 +59,7 @@ OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(string name, Scope *scop
 	if ( _ == nullptr || _->getSymbolType() != SymbolType::VARIABLE )
 		throw SemanticError("No such symbol " + name + ".");	
 
-	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_)->getType());
+	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_)->getType().type);
 }
 
 OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(string name, StructSymbol *scope)
@@ -69,10 +69,10 @@ OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(string name, StructSym
 	if ( _ == nullptr || _->getSymbolType() != SymbolType::VARIABLE )
 		throw SemanticError("No such symbol " + name + ".");	
 
-	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_)->getType());
+	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_)->getType().type);
 }
 	
-FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vector<Type*> params_types)
+FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vector<VariableType> params_types)
 {
 	while ( scope != nullptr )
 	{
@@ -82,9 +82,14 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 		catch ( SemanticError& e ) { return nullptr; }
 
 		auto pt = params_types;
-
+		
 		if ( ov_func->isMethod() )
-			pt.insert(std::begin(pt), TypeHelper::addReference(ov_func->getBaseType()));
+		{
+			auto t = ov_func->getBaseType();
+			t.is_ref = true;
+
+			pt.insert(std::begin(pt), t);
+		}
 
 		auto func_sym = FunctionHelper::getViableOverload(ov_func, pt);
 
@@ -104,29 +109,29 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 	return nullptr;
 }
 	
-std::vector<Type*> CallHelper::extractTypes(std::vector<ExprNode*> params)
+std::vector<VariableType> CallHelper::extractTypes(std::vector<ExprNode*> params)
 {
-	vector<Type*> params_types(params.size());
+	vector<VariableType> params_types(params.size());
 	std::transform(std::begin(params), std::end(params), std::begin(params_types), [](ExprNode *t) { return t->getType(); });
 
 	return params_types;
 }
 
-ConversionInfo CallHelper::getConversionInfo(Type *lhs, Type *rhs, bool is_lhs_left_value)
+ConversionInfo CallHelper::getConversionInfo(VariableType lhs, VariableType rhs, bool is_lhs_left_value)
 {
-	auto _lhs = TypeHelper::removeReference(lhs);
-	auto _rhs = TypeHelper::removeReference(rhs);
+	auto _lhs = VariableType(lhs.type, false, false);
+	auto _rhs = VariableType(rhs.type, false, false);
 
-	if ( rhs->isReference() )
+	if ( rhs.is_ref )
 	{
 		if ( _lhs != _rhs )
-			throw SemanticError("Invalid initialization of '" + rhs->getName() + "' with type '" + lhs->getName() + "'");
+			throw SemanticError("Invalid initialization of '" + rhs.getName() + "' with type '" + lhs.getName() + "'");
 
-		return ConversionInfo(nullptr, false, !lhs->isReference());
+		return ConversionInfo(nullptr, false, !lhs.is_ref);
 	}
 	else
 	{
 		auto conv = (_lhs == _rhs) ? nullptr : TypeHelper::getConversion(_lhs, _rhs);
-		return ConversionInfo(conv, lhs->isReference() && !is_lhs_left_value, false);
+		return ConversionInfo(conv, lhs.is_ref && !is_lhs_left_value, false);
 	}
 }

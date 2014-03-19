@@ -8,7 +8,7 @@ void BracketNode::check(const TemplateStructSymbol *template_sym, std::vector<Ex
 {
 	base->check(template_sym, expr);
 
-	auto base_type = dynamic_cast<StructSymbol*>(TypeHelper::removeReference(base->getType()));
+	auto base_type = dynamic_cast<StructSymbol*>(base->getType().type);
 	call_info = CallHelper::callCheck("operator[]", base_type, {this->expr}, template_sym, expr);
 }
 
@@ -20,7 +20,7 @@ void BracketNode::gen(const TemplateStructSymbol *template_sym, std::vector<Expr
 	);
 }
 
-Type* BracketNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+VariableType BracketNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
 
 AST* BracketNode::copyTree() const { return new BracketNode(static_cast<ExprNode*>(base->copyTree()), static_cast<ExprNode*>(expr->copyTree())); }
 	

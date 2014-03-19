@@ -4,13 +4,13 @@ CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(c
 
 CallNode::~CallNode() { delete caller; }
     
-Type* CallNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+VariableType CallNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
     
 void CallNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr)
 {
     caller->check(template_sym, expr);
 
-    auto caller_type = TypeHelper::removeReference(caller->getType());
+    auto caller_type = caller->getType().type;
 
     if ( caller_type->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	{
@@ -23,7 +23,7 @@ void CallNode::check(const TemplateStructSymbol *template_sym, std::vector<ExprN
 	else
 	{
 		auto ov_func = static_cast<OverloadedFunctionSymbol*>(caller_type);
-		auto scope = ov_func->isMethod() ? static_cast<StructSymbol*>(TypeHelper::removeReference(ov_func->getBaseType())) : getScope();
+		auto scope = ov_func->isMethod() ? static_cast<StructSymbol*>(ov_func->getBaseType().type) : getScope();
 		call_info = CallHelper::callCheck(ov_func->getName(), scope, params, template_sym, expr);
 	    GlobalHelper::setTypeHint(caller, call_info.callee);
 	}

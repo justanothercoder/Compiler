@@ -4,7 +4,7 @@ AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) { setScope(BuiltIn
 
 void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr) 
 {
-	Type *type = nullptr, *ref_type = nullptr;
+	VariableType type, ref_type;
 
 	if ( template_sym->isIn("size") )
 	{
@@ -18,14 +18,20 @@ void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<
 	{
 		auto replace = template_sym->getReplacement("T", expr);
 
-		type = TypeHelper::removeReference(replace->getType());
-		ref_type = TypeHelper::addReference(type);
-		size_of_type = type->getSize();
+		type = replace->getType();
+		type.is_ref = false;
+
+		ref_type = type;
+		ref_type.is_ref = true;
+
+		size_of_type = type.getSize();
 	}
 	else throw SemanticError("");
 
-	auto arr = dynamic_cast<StructSymbol*>(getScope());
-	auto ref_arr = TypeHelper::addReference(arr);
+	auto arr = VariableType(dynamic_cast<StructSymbol*>(getScope()), false, false);
+
+	auto ref_arr = arr;
+	ref_arr.is_ref = true;
 
 	auto array_constructor = new FunctionSymbol(
 			"array",			
@@ -36,14 +42,14 @@ void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<
 
 	auto array_elem_operator = new FunctionSymbol(
 			"operator[]",
-			FunctionTypeInfo(ref_type, {ref_arr, BuiltIns::int_struct}),
+			FunctionTypeInfo(ref_type, {ref_arr, VariableType(BuiltIns::int_struct, false, false)}),
 			getScope(),
 			{true, false, true}
 			);
 
 	auto array_size_func = new FunctionSymbol(
 			"size",
-			FunctionTypeInfo(BuiltIns::int_struct, {ref_arr}),
+			FunctionTypeInfo(VariableType(BuiltIns::int_struct, false, false), {ref_arr}),
 			getScope(),
 			{true, false, false}
 			);
@@ -55,7 +61,7 @@ void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<
 	getScope()->accept(new VariableSymbolDefine(
 								new VariableSymbol(
 									"~~impl",
-									new BuiltInTypeSymbol("~~array_impl", array_size * size_of_type)
+									VariableType(new BuiltInTypeSymbol("~~array_impl", array_size * size_of_type), false, false)
 									)
 				)
 			);

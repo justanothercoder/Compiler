@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "type.hpp"
+#include "variabletype.hpp"
 
 using std::vector;
 
@@ -11,12 +11,12 @@ struct FunctionTypeInfo
 {
 public:
 
-    FunctionTypeInfo(Type *return_type, const vector<Type*>& params_types);
+    FunctionTypeInfo(VariableType return_type, vector<VariableType> params_types);
 
 	string toString() const;
 
-    Type *return_type;
-    vector<Type*> params_types;
+    VariableType return_type;
+    vector<VariableType> params_types;
 };
 
 bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs);

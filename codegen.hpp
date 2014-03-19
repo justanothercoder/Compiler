@@ -34,7 +34,7 @@ class CodeGen
 
 			auto function_info = func->getTypeInfo();
 			
-			params_size = std::accumulate(std::begin(function_info.params_types) + is_meth, std::end(function_info.params_types), 0, [](int x, Type *type) { return x += type->getSize(); });
+			params_size = std::accumulate(std::begin(function_info.params_types) + is_meth, std::end(function_info.params_types), 0, [](int x, VariableType type) { return x += type.getSize(); });
 
 			if ( is_method )
 				params_size += GlobalConfig::int_size;
@@ -69,7 +69,7 @@ class CodeGen
 					else
 					{
 						genCopy(copy_constr, 0, function_info.params_types[i]);
-						emit("sub rsp, " + std::to_string(function_info.params_types[i]->getSize())); 
+						emit("sub rsp, " + std::to_string(function_info.params_types[i].getSize())); 
 					}
 				}
 
@@ -94,7 +94,7 @@ class CodeGen
 
 		static void pushOnStack(size_t size, int offset);
 		static void genConversion(FunctionSymbol *conv);
-		static void genCopy(FunctionSymbol *copy_constructor, int stack_offset, Type *type);
+		static void genCopy(FunctionSymbol *copy_constructor, int stack_offset, VariableType type);
 };
 
 #endif

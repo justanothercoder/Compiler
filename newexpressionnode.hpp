@@ -24,7 +24,7 @@ public:
 
     virtual AST* copyTree() const;
 
-    virtual Type* getType() const;
+    virtual VariableType getType() const;
 
     virtual void check(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);
     virtual void gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode*> expr);

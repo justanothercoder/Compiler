@@ -1,47 +1,32 @@
 #include "typehelper.hpp"
 #include "classvariablesymbol.hpp"
 
-map<Type*, ReferenceType*> TypeHelper::references = map<Type*, ReferenceType*>();
-
-ReferenceType* TypeHelper::addReference(Type *target)
+bool TypeHelper::isConvertable(VariableType lhs, VariableType rhs)
 {
-	if ( target->isReference() )
-		return static_cast<ReferenceType*>(target);
+	auto _lhs = VariableType(lhs.type, false, false);
+	auto _rhs = VariableType(rhs.type, false, false);
 
-	auto it = references.find(target);
-
-	if ( it == std::end(references) )
-		references[target] = new ReferenceType(target);
-
-	return references[target];
-}
-
-bool TypeHelper::isConvertable(Type *lhs, Type *rhs)
-{
-	auto _lhs = TypeHelper::removeReference(lhs);
-	auto _rhs = TypeHelper::removeReference(rhs);
-
-	if ( rhs->isReference() )
+	if ( rhs.is_ref )
 		return _lhs == _rhs;
 	else
-		return (_lhs == _rhs) ? true : (TypeHelper::getConversion(_lhs, rhs) != nullptr);
+		return (_lhs == _rhs) ? true : (getConversion(_lhs, rhs) != nullptr);
 }
 
-FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
+FunctionSymbol* TypeHelper::getConversion(VariableType lhs, VariableType rhs)
 {
-	if ( rhs->getTypeKind() != TypeKind::STRUCT )
+	if ( rhs.type->getTypeKind() != TypeKind::STRUCT )
 		return nullptr;
 
-	auto struc = static_cast<StructSymbol*>(rhs);
+	auto struc = static_cast<StructSymbol*>(rhs.type);
 
-	string lhs_name = lhs->getName();    
-	string rhs_name = rhs->getName();
+	string lhs_name = lhs.getTypeName();    
+	string rhs_name = rhs.getTypeName();
 
 	OverloadedFunctionSymbol *cast_op = nullptr, *conversion = nullptr;
 
 	try
 	{
-		cast_op = CallHelper::getOverloadedMethod("operator " + rhs_name, static_cast<StructSymbol*>(lhs));
+		cast_op = CallHelper::getOverloadedMethod("operator " + rhs_name, static_cast<StructSymbol*>(lhs.type));
 	}
 	catch ( ... )
 	{
@@ -61,55 +46,62 @@ FunctionSymbol* TypeHelper::getConversion(Type *lhs, Type *rhs)
 		throw SemanticError("No conversion from '" + lhs_name + "' to '" + rhs_name + "'.");
 
 	if ( cast_op != nullptr )
-		return cast_op->getTypeInfo().symbols[FunctionTypeInfo(rhs, {addReference(lhs)})];
+	{
+		auto ref_lhs = lhs;
+		ref_lhs.is_ref = true;
 
-	return conversion->getTypeInfo().symbols[FunctionTypeInfo(addReference(rhs), {addReference(rhs), lhs})];
+		return cast_op->getTypeInfo().symbols[FunctionTypeInfo(rhs, {ref_lhs})];
+	}
+	else
+	{
+		auto ref_rhs = rhs;
+		ref_rhs.is_ref = true;
+
+		return conversion->getTypeInfo().symbols[FunctionTypeInfo(ref_rhs, {ref_rhs, lhs})];
+	}
 }
 
-FunctionSymbol* TypeHelper::getCopyConstructor(Type *type)
+FunctionSymbol* TypeHelper::getCopyConstructor(VariableType type)
 {
-	if ( type->getTypeKind() != TypeKind::STRUCT )
+	if ( type.type->getTypeKind() != TypeKind::STRUCT )
 		return nullptr;
 
-	StructSymbol *struc = static_cast<StructSymbol*>(type);
+	StructSymbol *struc = static_cast<StructSymbol*>(type.type);
 
 	auto type_name = struc->getName();
 
 	auto constructor = CallHelper::getOverloadedMethod(type_name, struc);
 
-	return FunctionHelper::getViableOverload(constructor, {addReference(type), addReference(type)});
+	auto vt = type;
+	vt.is_ref = true;	
+
+	return FunctionHelper::getViableOverload(constructor, {vt, vt});
 }
 
-Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym, vector<ExprNode*> expr)
+VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateStructSymbol *template_sym, vector<ExprNode*> expr)
 {    
 	auto type_name = type_info.type_name;
 
 	if ( template_sym && template_sym->isIn(type_name) )
-		type_name = TypeHelper::removeReference(template_sym->getReplacement(type_name, expr)->getType())->getName();
+		type_name = template_sym->getReplacement(type_name, expr)->getType().type->getName();
 
-	auto type = TypeHelper::resolveType(type_name, scope);
+	auto _type = TypeHelper::resolveType(type_name, scope);
+	
+	if ( _type == nullptr )
+		throw SemanticError(type_name + " is not a type");
 
-	if ( type == nullptr )
-		throw SemanticError(type_info.type_name + " is not a type");
+	auto type = VariableType(_type, false, false);
 
 	if ( type_info.template_params.size() > 0 )
 	{
-		auto tmpl = dynamic_cast<TemplateStructSymbol*>(type);
+		auto tmpl = dynamic_cast<TemplateStructSymbol*>(type.type);
 		auto sym = tmpl->getSpec(type_info.template_params);	
-		type = dynamic_cast<Type*>(sym);
+		type.type = dynamic_cast<Type*>(sym);
 	}
 
-	if ( type_info.is_ref )
-		type = TypeHelper::addReference(type);
+	type.is_ref = type_info.is_ref; 
 
 	return type;
-}
-	
-Type* TypeHelper::removeReference(Type *t)
-{
-	if ( t->isReference() )
-		t = static_cast<ReferenceType*>(t)->getReferredType();
-	return t;
 }
 	
 Type* TypeHelper::resolveType(string name, Scope *sc)

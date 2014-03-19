@@ -21,7 +21,7 @@ public:
 
     virtual AST* copyTree() const;
 
-    virtual Type *getType() const;
+    virtual VariableType getType() const;
 
     string getOperatorName();
     string getCodeOperatorName();

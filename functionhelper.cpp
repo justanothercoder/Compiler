@@ -1,6 +1,6 @@
 #include "functionhelper.hpp"
 
-bool FunctionHelper::isCompatible(FunctionTypeInfo ft, const vector<Type*>& params_type)
+bool FunctionHelper::isCompatible(FunctionTypeInfo ft, vector<VariableType> params_type)
 {
 	if ( ft.params_types.size() != params_type.size() )
 		return false;	
@@ -14,7 +14,7 @@ bool FunctionHelper::isCompatible(FunctionTypeInfo ft, const vector<Type*>& para
 	return true;
 }
 
-set<FunctionTypeInfo> FunctionHelper::getBestOverload(const set<FunctionTypeInfo>& selection, const vector<Type*>& params_type)
+set<FunctionTypeInfo> FunctionHelper::getBestOverload(set<FunctionTypeInfo> selection, vector<VariableType> params_type)
 {
 	auto possible = selection;
 
@@ -35,7 +35,7 @@ set<FunctionTypeInfo> FunctionHelper::getBestOverload(const set<FunctionTypeInfo
 	return possible;
 }
 
-FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol *overloaded_func, const vector<Type*>& params_type)
+FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol *overloaded_func, vector<VariableType> params_type)
 {
 	auto overloads = FunctionHelper::getBestOverload(overloaded_func->getTypeInfo().overloads, params_type);
 

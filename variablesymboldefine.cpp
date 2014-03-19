@@ -18,7 +18,7 @@ void VariableSymbolDefine::visit(StructSymbol *sc)
 {
 	sc->table[sym->getName()] = sym;
 	sc->get_valloc()->addVariable(sym);
-	sc->type_size += sym->getType()->getSize();
+	sc->type_size += sym->getType().getSize();
 }
 
 void VariableSymbolDefine::visit(FunctionSymbol *sc)

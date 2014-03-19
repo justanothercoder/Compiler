@@ -1,3 +1,3 @@
 #include "classvariablesymbol.hpp"
 
-ClassVariableSymbol::ClassVariableSymbol(StructSymbol *type) : VariableSymbol(type->getName(), type) { }
+ClassVariableSymbol::ClassVariableSymbol(StructSymbol *type) : VariableSymbol(type->getName(), VariableType(type, false, false)) { }
