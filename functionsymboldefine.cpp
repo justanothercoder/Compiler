@@ -14,7 +14,7 @@ void FunctionSymbolDefine::visit(BaseScope *sc)
 	auto it = sc->table.find(sym_name);
 
 	if ( it == std::end(sc->table) )
-		sc->table[sym_name] = new VariableSymbol(sym_name, VariableType(new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym->getTraits()), false, false));
+		sc->table[sym_name] = new VariableSymbol(sym_name, VariableType(new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym->getTraits())));
 
 	auto _sym = sc->table[sym_name];
 

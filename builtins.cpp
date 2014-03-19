@@ -9,48 +9,48 @@ BuiltInTypeSymbol *BuiltIns::int_type = new BuiltInTypeSymbol("~~int", GlobalCon
 StructSymbol *BuiltIns::int_struct = new StructSymbol("int", BuiltIns::global_scope);
 
 FunctionSymbol *BuiltIns::int_assign = new FunctionSymbol("operator=",
-							  FunctionTypeInfo(VariableType(BuiltIns::int_struct, true, false), 
-								  			  {VariableType(BuiltIns::int_struct, true, false), 
-											   VariableType(BuiltIns::int_struct, false, false)}),
+							  FunctionTypeInfo(VariableType(BuiltIns::int_struct, true), 
+								  			  {VariableType(BuiltIns::int_struct, true), 
+											   VariableType(BuiltIns::int_struct)}),
 							  BuiltIns::int_struct,
 							  {true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_plus = new FunctionSymbol("operator+",
-							FunctionTypeInfo(VariableType(BuiltIns::int_struct, true, false), 
-											{VariableType(BuiltIns::int_struct, true, false), 
-											 VariableType(BuiltIns::int_struct, false, false)}),
+							FunctionTypeInfo(VariableType(BuiltIns::int_struct, true), 
+											{VariableType(BuiltIns::int_struct, true), 
+											 VariableType(BuiltIns::int_struct)}),
 							BuiltIns::int_struct,
 							{true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_minus = new FunctionSymbol("operator-",
-							 FunctionTypeInfo(VariableType(BuiltIns::int_struct, false, false), 
-								 			 {VariableType(BuiltIns::int_struct, true, false), 
-											  VariableType(BuiltIns::int_struct, false, false)}),
+							 FunctionTypeInfo(VariableType(BuiltIns::int_struct), 
+								 			 {VariableType(BuiltIns::int_struct, true), 
+											  VariableType(BuiltIns::int_struct)}),
 							 BuiltIns::int_struct,
 							 {true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_mul = new FunctionSymbol("operator*",
-						       FunctionTypeInfo(VariableType(BuiltIns::int_struct, false, false), 
-								   			   {VariableType(BuiltIns::int_struct, true, false), 
-											    VariableType(BuiltIns::int_struct, false, false)}),
+						       FunctionTypeInfo(VariableType(BuiltIns::int_struct), 
+								   			   {VariableType(BuiltIns::int_struct, true), 
+											    VariableType(BuiltIns::int_struct)}),
 						       BuiltIns::int_struct,
 						       {true, false, true}
     );
 
 FunctionSymbol *BuiltIns::int_default_constructor = new FunctionSymbol("int",
-								       FunctionTypeInfo(VariableType(BuiltIns::int_struct, true, false), 
-										               {VariableType(BuiltIns::int_struct, true, false)}),
+								       FunctionTypeInfo(VariableType(BuiltIns::int_struct, true), 
+										               {VariableType(BuiltIns::int_struct, true)}),
 								       BuiltIns::int_struct,
 								       {true, true, false}
     );
 
 FunctionSymbol *BuiltIns::int_copy_constructor = new FunctionSymbol("int",
-									   FunctionTypeInfo(VariableType(BuiltIns::int_struct, true, false), 
-										   			   {VariableType(BuiltIns::int_struct, true, false), 
-													    VariableType(BuiltIns::int_struct, false, false)}),
+									   FunctionTypeInfo(VariableType(BuiltIns::int_struct, true), 
+										   			   {VariableType(BuiltIns::int_struct, true), 
+													    VariableType(BuiltIns::int_struct)}),
 									   BuiltIns::int_struct,
 									   {true, true, false}
 		);
@@ -58,14 +58,14 @@ FunctionSymbol *BuiltIns::int_copy_constructor = new FunctionSymbol("int",
 BuiltInTypeSymbol *BuiltIns::void_type = new BuiltInTypeSymbol("void", 0);
 
 FunctionSymbol *BuiltIns::putchar_func = new FunctionSymbol("putchar",
-							    FunctionTypeInfo(VariableType(BuiltIns::void_type, false, false), 
-												{VariableType(BuiltIns::int_struct, false, false)}),
+							    FunctionTypeInfo(VariableType(BuiltIns::void_type), 
+												{VariableType(BuiltIns::int_struct)}),
 							    BuiltIns::global_scope,
 							    {false, false, false}
     );
 
 FunctionSymbol *BuiltIns::getchar_func = new FunctionSymbol("getchar",
-							    FunctionTypeInfo(VariableType(BuiltIns::int_struct, false, false), { }),
+							    FunctionTypeInfo(VariableType(BuiltIns::int_struct), { }),
 							    BuiltIns::global_scope,
 							    {false, false, false}
     );

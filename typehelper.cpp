@@ -3,8 +3,8 @@
 
 bool TypeHelper::isConvertable(VariableType lhs, VariableType rhs)
 {
-	auto _lhs = VariableType(lhs.type, false, false);
-	auto _rhs = VariableType(rhs.type, false, false);
+	auto _lhs = VariableType(lhs.type);
+	auto _rhs = VariableType(rhs.type);
 
 	if ( rhs.is_ref )
 		return _lhs == _rhs;
@@ -73,7 +73,7 @@ VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const Te
 	if ( template_sym && template_sym->isIn(type_name) )
 		type_name = template_sym->getReplacement(type_name, expr)->getType().type->getName();
 
-	auto type = VariableType(TypeHelper::resolveType(type_name, scope), false, false);
+	auto type = VariableType(TypeHelper::resolveType(type_name, scope));
 	
 	if ( type.type == nullptr )
 		throw SemanticError(type_name + " is not a type");

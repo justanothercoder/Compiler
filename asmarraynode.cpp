@@ -28,7 +28,7 @@ void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<
 	}
 	else throw SemanticError("");
 
-	auto arr = VariableType(dynamic_cast<StructSymbol*>(getScope()), false, false);
+	auto arr = VariableType(dynamic_cast<StructSymbol*>(getScope()));
 
 	auto ref_arr = arr;
 	ref_arr.is_ref = true;
@@ -42,14 +42,14 @@ void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<
 
 	auto array_elem_operator = new FunctionSymbol(
 			"operator[]",
-			FunctionTypeInfo(ref_type, {ref_arr, VariableType(BuiltIns::int_struct, false, false)}),
+			FunctionTypeInfo(ref_type, {ref_arr, VariableType(BuiltIns::int_struct)}),
 			getScope(),
 			{true, false, true}
 			);
 
 	auto array_size_func = new FunctionSymbol(
 			"size",
-			FunctionTypeInfo(VariableType(BuiltIns::int_struct, false, false), {ref_arr}),
+			FunctionTypeInfo(VariableType(BuiltIns::int_struct), {ref_arr}),
 			getScope(),
 			{true, false, false}
 			);
@@ -61,7 +61,7 @@ void AsmArrayNode::define(const TemplateStructSymbol *template_sym, std::vector<
 	getScope()->accept(new VariableSymbolDefine(
 								new VariableSymbol(
 									"~~impl",
-									VariableType(new BuiltInTypeSymbol("~~array_impl", array_size * size_of_type), false, false)
+									VariableType(new BuiltInTypeSymbol("~~array_impl", array_size * size_of_type))
 									)
 				)
 			);

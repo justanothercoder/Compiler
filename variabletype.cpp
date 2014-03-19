@@ -1,6 +1,6 @@
 #include "variabletype.hpp"
 
-VariableType::VariableType() : VariableType(nullptr, false, false) { }
+VariableType::VariableType() : VariableType(nullptr) { }
 VariableType::VariableType(Type *type, bool is_ref, bool is_const) : type(type), is_ref(is_ref), is_const(is_const) { }
 	
 VariableType::VariableType(const VariableType& vt) : type(vt.type), is_ref(vt.is_ref), is_const(vt.is_const) { }

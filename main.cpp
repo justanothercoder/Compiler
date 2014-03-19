@@ -44,7 +44,7 @@ int main()
 
 		BuiltIns::int_struct->accept(new SymbolDefine(BuiltIns::int_type));
 
-		BuiltIns::int_struct->accept(new VariableSymbolDefine(new VariableSymbol("~~impl", VariableType(BuiltIns::int_type, false, false), VariableSymbolType::FIELD)));
+		BuiltIns::int_struct->accept(new VariableSymbolDefine(new VariableSymbol("~~impl", VariableType(BuiltIns::int_type), VariableSymbolType::FIELD)));
 
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_default_constructor));
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_copy_constructor));

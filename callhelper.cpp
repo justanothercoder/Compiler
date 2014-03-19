@@ -120,8 +120,8 @@ std::vector<VariableType> CallHelper::extractTypes(std::vector<ExprNode*> params
 
 ConversionInfo CallHelper::getConversionInfo(VariableType lhs, VariableType rhs, bool is_lhs_left_value)
 {
-	auto _lhs = VariableType(lhs.type, false, false);
-	auto _rhs = VariableType(rhs.type, false, false);
+	auto _lhs = VariableType(lhs.type);
+	auto _rhs = VariableType(rhs.type);
 
 	if ( rhs.is_ref )
 	{

@@ -90,13 +90,13 @@ void VariableNode::gen(const TemplateStructSymbol *template_sym, std::vector<Exp
 			if ( function_info.symbols.find(type_info) == std::end(function_info.symbols) )
 			{
 				auto sym = FunctionHelper::getViableOverload(function, type_info.params_types);
-				variable = new VariableSymbol(function->getName(), VariableType(sym, false, false));
+				variable = new VariableSymbol(function->getName(), VariableType(sym));
 			}
 			else
-				variable = new VariableSymbol(function->getName(), VariableType(function_info.symbols[type_info], false, false));
+				variable = new VariableSymbol(function->getName(), VariableType(function_info.symbols[type_info]));
 		}
 		else
-			variable = new VariableSymbol(function->getName(), VariableType(std::begin(function_info.symbols)->second, false, false));
+			variable = new VariableSymbol(function->getName(), VariableType(std::begin(function_info.symbols)->second));
 
 		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(variable->getType().type)->getScopedTypedName() + "]");
 	}

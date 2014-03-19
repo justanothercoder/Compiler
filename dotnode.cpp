@@ -53,10 +53,10 @@ void DotNode::gen(const TemplateStructSymbol *template_sym, std::vector<ExprNode
 			if ( hint_type == nullptr )
 				throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
 
-			member = new VariableSymbol(member_name, VariableType(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()], false, false));
+			member = new VariableSymbol(member_name, VariableType(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]));
 		}
 		else
-			member = new VariableSymbol(ov_func->getName(), VariableType(std::begin(ov_func_type_info.symbols)->second, false, false));
+			member = new VariableSymbol(ov_func->getName(), VariableType(std::begin(ov_func_type_info.symbols)->second));
 
 		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(member->getType().type)->getScopedTypedName() + "]");
 	}
