@@ -40,7 +40,7 @@ private:
 	string operator_name();
     TypeInfo typeInfo();
     vector<ExprNode*> call_params_list();
-    
+  
     DeclarationNode* declaration(std::shared_ptr<string> struct_name = nullptr);
     DeclarationNode* templateStructDecl();
     DeclarationNode* structDecl();
