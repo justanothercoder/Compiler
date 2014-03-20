@@ -41,6 +41,8 @@ class CodeGen
 
 			for ( int i = static_cast<int>(function_info.params_types.size()) - 1; i >= is_meth; --i )
 			{
+				genParam(params[i - is_meth], call_info.conversions[i - is_meth], call_info.copy_constructors[i - is_meth], template_info);
+/*
 				params[i - is_meth]->gen(template_info);
 
 				auto conv_info = call_info.conversions[i - is_meth];
@@ -78,6 +80,7 @@ class CodeGen
 					emit("mov [rsp - 800], rax");
 					emit("lea rax, [rsp - 800]");
 				}
+				*/
 			}
 
 			if ( is_method )
@@ -90,6 +93,43 @@ class CodeGen
 			genFunc();
 			emit("call rax");
 			emit("add rsp, " + std::to_string(params_size));
+		}
+
+		static void genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr, const TemplateInfo& template_info)
+		{
+			param->gen(template_info);
+
+			if ( conv_info.deref )
+				emit("mov eax, [eax]");
+			
+			if ( conv_info.conversion )
+				genConversion(conv_info.conversion);
+
+			if ( copy_constr == nullptr )
+			{
+				emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
+				emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+			}
+			else
+			{
+				if ( copy_constr == BuiltIns::int_copy_constructor )
+				{
+					emit("mov rbx, [rax]");
+					emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");
+					emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+				}
+				else
+				{
+					genCopy(copy_constr, 0, function_info.params_types[i]);
+					emit("sub rsp, " + std::to_string(function_info.params_types[i].getSize())); 
+				}
+			}
+
+			if ( conv_info.ref )
+			{
+				emit("mov [rsp - 800], rax");
+				emit("lea rax, [rsp - 800]");
+			}
 		}
 
 		static void pushOnStack(size_t size, int offset);

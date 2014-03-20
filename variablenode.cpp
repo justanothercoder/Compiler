@@ -52,7 +52,7 @@ void VariableNode::gen(const TemplateInfo& template_info)
 	if ( template_info.sym && template_info.sym->isIn(name) )
 	{
 		auto replace = template_info.getReplacement(name);
-		replace->gen(template_info);	
+		replace->gen(template_info);
 		return;
 	}
 
