@@ -26,61 +26,20 @@ class CodeGen
 		{
 			auto func = call_info.callee;
 
-			size_t params_size = 0;
-
 			bool is_method = func->isMethod();
 
 			int is_meth = (is_method ? 1 : 0);
 
 			auto function_info = func->getTypeInfo();
 			
-			params_size = std::accumulate(std::begin(function_info.params_types) + is_meth, std::end(function_info.params_types), 0, [](size_t x, VariableType type) { return x += type.getSize(); });
+			size_t params_size = std::accumulate(std::begin(function_info.params_types) + is_meth, std::end(function_info.params_types), 0, [](size_t x, VariableType type) { return x += type.getSize(); });
 
 			if ( is_method )
 				params_size += GlobalConfig::int_size;
 
 			for ( int i = static_cast<int>(function_info.params_types.size()) - 1; i >= is_meth; --i )
 			{
-				genParam(params[i - is_meth], call_info.conversions[i - is_meth], call_info.copy_constructors[i - is_meth], template_info);
-/*
-				params[i - is_meth]->gen(template_info);
-
-				auto conv_info = call_info.conversions[i - is_meth];
-
-				if ( conv_info.deref )
-					emit("mov rax, [rax]");
-
-				if ( conv_info.conversion )
-					genConversion(conv_info.conversion);
-
-				auto copy_constr = call_info.copy_constructors[i - is_meth];	
-
-				if ( copy_constr == nullptr )
-				{
-					emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
-					emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
-				}
-				else
-				{
-					if ( copy_constr == BuiltIns::int_copy_constructor )
-					{
-						emit("mov rbx, [rax]");
-						emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");
-						emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
-					}
-					else
-					{
-						genCopy(copy_constr, 0, function_info.params_types[i]);
-						emit("sub rsp, " + std::to_string(function_info.params_types[i].getSize())); 
-					}
-				}
-
-				if ( conv_info.ref )
-				{
-					emit("mov [rsp - 800], rax");
-					emit("lea rax, [rsp - 800]");
-				}
-				*/
+				genParam(params[i - is_meth], function_info.params_types[i], call_info.conversions[i - is_meth], call_info.copy_constructors[i - is_meth], template_info);
 			}
 
 			if ( is_method )
@@ -95,7 +54,7 @@ class CodeGen
 			emit("add rsp, " + std::to_string(params_size));
 		}
 
-		static void genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr, const TemplateInfo& template_info)
+		static void genParam(ExprNode *param, VariableType desired_type, ConversionInfo conv_info, FunctionSymbol *copy_constr, const TemplateInfo& template_info)
 		{
 			param->gen(template_info);
 
@@ -120,8 +79,8 @@ class CodeGen
 				}
 				else
 				{
-					genCopy(copy_constr, 0, function_info.params_types[i]);
-					emit("sub rsp, " + std::to_string(function_info.params_types[i].getSize())); 
+					genCopy(copy_constr, 0, desired_type);
+					emit("sub rsp, " + std::to_string(desired_type.getSize())); 
 				}
 			}
 
