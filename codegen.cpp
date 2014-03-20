@@ -31,20 +31,20 @@ void CodeGen::genConversion(FunctionSymbol *conv)
 	}
 }
 
-void CodeGen::genCopy(FunctionSymbol *copy_constructor, int stack_offset, VariableType type)
+void CodeGen::genCopy(FunctionSymbol *copy_constructor)
 {
 	int current_address = 0;
 
-	auto par_type = copy_constructor->getTypeInfo().params_types[0];
+	auto type = copy_constructor->getTypeInfo().params_types[0];
 	
-	if ( par_type.is_ref )
+	if ( type.is_ref )
 		CodeGen::emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 	else
 		pushOnStack(type.getSize(), GlobalConfig::int_size);
 
 	current_address += type.getSize();
 
-	emit("lea rbx, [rsp - " + std::to_string(stack_offset + GlobalConfig::int_size) + "]");
+	emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 	emit("mov [rsp - " + std::to_string(current_address + GlobalConfig::int_size) + "], rbx");
 	current_address += GlobalConfig::int_size;
 
