@@ -52,43 +52,7 @@ class CodeGen
 			emit("add rsp, " + std::to_string(params_size));
 		}
 
-		static void genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr, const TemplateInfo& template_info)
-		{
-			param->gen(template_info);
-
-			if ( conv_info.deref )
-				emit("mov eax, [eax]");
-			
-			if ( conv_info.conversion )
-				genConversion(conv_info.conversion);
-
-			if ( copy_constr == nullptr )
-			{
-				emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
-				emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
-			}
-			else
-			{
-				if ( copy_constr == BuiltIns::int_copy_constructor )
-				{
-					emit("mov rbx, [rax]");
-					emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");
-					emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
-				}
-				else
-				{
-					genCopy(copy_constr);
-					auto desired_type = copy_constr->getTypeInfo().params_types[0];
-					emit("sub rsp, " + std::to_string(desired_type.getSize())); 
-				}
-			}
-
-			if ( conv_info.ref )
-			{
-				emit("mov [rsp - 800], rax");
-				emit("lea rax, [rsp - 800]");
-			}
-		}
+		static void genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr, const TemplateInfo& template_info);
 
 		static void pushOnStack(size_t size, int offset);
 		static void genConversion(FunctionSymbol *conv);
