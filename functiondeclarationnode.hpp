@@ -48,6 +48,8 @@ private:
     FunctionTraits traits;
 
     FunctionSymbol *definedSymbol;
+
+	vector<VariableSymbol*> params_symbols;
 };
 
 #endif

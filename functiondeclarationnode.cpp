@@ -54,7 +54,11 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 
 		params_types.push_back(param_type);
 
-		definedSymbol->accept(new VariableSymbolDefine(new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM)));
+		auto param_sym = new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM);
+
+		definedSymbol->accept(new VariableSymbolDefine(param_sym));
+
+		params_symbols.push_back(param_sym);
 	}
 
 	FunctionTypeInfo function_type_info(return_type, params_types);
@@ -89,7 +93,15 @@ void FunctionDeclarationNode::gen(const TemplateInfo& template_info)
 	CodeGen::emit("_~" + scoped_typed_name + ":");
 }
 
-void FunctionDeclarationNode::check(const TemplateInfo& template_info) { statements->check(template_info); }
+void FunctionDeclarationNode::check(const TemplateInfo& template_info) 
+{ 
+	GlobalHelper::setDefined(getScope()->resolve(name));
+
+	for ( auto param : params_symbols )
+		GlobalHelper::setDefined(param);
+
+	statements->check(template_info); 
+}
 
 AST* FunctionDeclarationNode::copyTree() const { return new FunctionDeclarationNode(name, params, return_type_info, statements->copyTree(), traits); }
 

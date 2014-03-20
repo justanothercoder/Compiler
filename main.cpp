@@ -62,6 +62,11 @@ int main()
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::array_struct));
 
 		root->build_scope();
+
+		GlobalHelper::setDefined(BuiltIns::int_struct);
+		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("putchar"));
+		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("getchar"));
+
 		root->define(TemplateInfo());
 		root->check (TemplateInfo());
 		

@@ -10,9 +10,6 @@ class DeclarationNode : public AST
 public:
 
     virtual ~DeclarationNode();    
-
-	virtual void check(const TemplateInfo& template_info);
-
     virtual Symbol* getDefinedSymbol() const = 0;
 };
 

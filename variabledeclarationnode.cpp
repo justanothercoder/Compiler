@@ -44,6 +44,8 @@ void VariableDeclarationNode::check(const TemplateInfo& template_info)
 		auto type = static_cast<StructSymbol*>(_.type);
 		call_info = CallHelper::callCheck(type_name, type, constructor_call_params, template_info);
 	}
+	
+	GlobalHelper::setDefined(getDefinedSymbol());
 }
 
 void VariableDeclarationNode::gen(const TemplateInfo& template_info)

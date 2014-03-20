@@ -31,7 +31,9 @@ void StructDeclarationNode::define(const TemplateInfo& template_info)
 
 void StructDeclarationNode::check(const TemplateInfo& template_info)
 {
-    for ( auto decl : inner )
+	GlobalHelper::setDefined(getDefinedSymbol());
+    
+	for ( auto decl : inner )
 		decl->check(template_info);	
 }
 
