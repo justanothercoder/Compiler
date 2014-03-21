@@ -99,9 +99,10 @@ int main()
 		CodeGen::emit("mov rdi, 0");
 		CodeGen::emit("syscall");
 	}
-	catch ( int t )
+	catch ( SemanticError& e )
 	{
-		//	std::cerr << e.what() << '\n';
+		std::cerr << e.what() << '\n';
+		return 1;
 	}
 
 	in.close();
