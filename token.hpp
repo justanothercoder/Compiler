@@ -13,7 +13,7 @@ enum class TokenType { EOF_TYPE,
 	ELSE, WHILE, DOT, MINUS, MUL,
 	NEW, TEMPLATE, LESS, GREATER,
 	LBRACKET, RBRACKET, OPERATOR,
-	FOR, CONST
+	FOR, CONST, STRING
 	};
 
 string to_string(TokenType tt);

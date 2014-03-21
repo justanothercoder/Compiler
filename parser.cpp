@@ -244,10 +244,20 @@ string Parser::operator_name()
 
 ExprNode* Parser::literal()
 {
-	return number();
+	if ( getTokenType(1) == TokenType::STRING )
+		return get_string();
+	else
+		return number();
 }
 
 ExprNode* Parser::variable() { return new VariableNode(id()); }
+
+ExprNode* Parser::get_string()
+{
+	string str = getToken(1).text;
+	match(TokenType::STRING);
+	return new StringNode(str);
+}
 
 ExprNode* Parser::number()
 {
@@ -258,7 +268,7 @@ ExprNode* Parser::number()
 
 ExprNode* Parser::primary()
 {
-	if ( getTokenType(1) == TokenType::NUMBER )
+	if ( getTokenType(1) == TokenType::NUMBER || getTokenType(1) == TokenType::STRING )
 		return literal();
 	else if ( getTokenType(1) == TokenType::LPAREN )
 	{

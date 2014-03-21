@@ -25,6 +25,7 @@
 #include "numbernode.hpp"
 #include "newexpressionnode.hpp"
 #include "bracketnode.hpp"
+#include "stringnode.hpp"
 
 class Parser : public AbstractParser
 {
@@ -65,7 +66,8 @@ private:
     ExprNode* new_expr();
     ExprNode* variable();
     ExprNode* number();
-    
+   	ExprNode* get_string();
+
     bool tryAssignment();
     bool tryVarDecl();
 };

@@ -25,6 +25,22 @@ Token Lexer::getToken()
 		else if ( cur == '>' ) { consume(); return Token(TokenType::GREATER, ">", l, s); }
 		else if ( cur == '[' ) { consume(); return Token(TokenType::LBRACKET, "[", l, s); }
 		else if ( cur == ']' ) { consume(); return Token(TokenType::RBRACKET, "]", l, s); }
+		else if ( cur == '"' ) 
+		{
+			consume();
+
+			string buf = "";			
+
+			while ( cur != '"' )
+			{
+				buf += cur;
+				consume();				
+			}
+
+			consume();
+
+			return Token(TokenType::STRING, buf, l, s);
+		}
 		else if ( cur == '/' )
 		{
 			consume();

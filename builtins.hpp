@@ -32,6 +32,13 @@ public:
     static FunctionSymbol *getchar_func;
 
 	static TemplateStructSymbol *array_struct; 
+
+	static StructSymbol *string_struct;
+	
+	static FunctionSymbol *string_default_constructor;
+	static FunctionSymbol *string_copy_constructor;
+
+	static FunctionSymbol *print_func;
 };
 
 #endif

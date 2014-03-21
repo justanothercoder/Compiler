@@ -61,11 +61,22 @@ int main()
 		BuiltIns::array_struct->holder->setScope(BuiltIns::global_scope);
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::array_struct));
 
+		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::string_struct));
+		
+		GlobalHelper::setDefined(BuiltIns::int_struct);
+
+		BuiltIns::string_struct->accept(new VariableSymbolDefine(new VariableSymbol("~~impl", VariableType(static_cast<StructSymbol*>(BuiltIns::array_struct->getSpec({new VariableNode("int"), new NumberNode("256")}))), VariableSymbolType::FIELD)));
+		BuiltIns::string_struct->accept(new FunctionSymbolDefine(BuiltIns::string_default_constructor));
+		BuiltIns::string_struct->accept(new FunctionSymbolDefine(BuiltIns::string_copy_constructor));
+
+		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::print_func));
+
 		root->build_scope();
 
-		GlobalHelper::setDefined(BuiltIns::int_struct);
+		GlobalHelper::setDefined(BuiltIns::string_struct);
 		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("putchar"));
 		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("getchar"));
+		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("print"));
 
 		root->define(TemplateInfo());
 		root->check (TemplateInfo());
@@ -80,6 +91,9 @@ int main()
 		CodeGen::emit("extern _int_int_int~ref_int");
 		CodeGen::emit("extern _putchar_int");
 		CodeGen::emit("extern _getchar");
+		CodeGen::emit("extern _string_string_string~ref");
+		CodeGen::emit("extern _string_string_string~ref_string");
+		CodeGen::emit("extern _print_string");
 
 		CodeGen::emit("global _start");
 		CodeGen::emit("_start:");
