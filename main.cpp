@@ -104,6 +104,11 @@ int main()
 		std::cerr << e.what() << '\n';
 		return 1;
 	}
+	catch ( RecognitionError& e )
+	{
+		std::cerr << e.what() << '\n';
+		return 2;
+	}
 
 	in.close();
 
