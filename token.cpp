@@ -39,5 +39,8 @@ string to_string(TokenType tt)
     case TokenType::DOT:       return ".";
     case TokenType::LESS:      return "<";
     case TokenType::GREATER:   return ">";
+	case TokenType::NOT:       return "!";
+	case TokenType::EQUALS:    return "==";
+	case TokenType::NEQUALS:   return "!=";
     }
 }

@@ -83,26 +83,3 @@ TemplateStructSymbol *BuiltIns::array_struct = new TemplateStructSymbol("array",
 																			}
 																		)
 		);
-
-StructSymbol *BuiltIns::string_struct = new StructSymbol("string", BuiltIns::global_scope);
-	
-FunctionSymbol *BuiltIns::string_default_constructor = new FunctionSymbol("string",
-											FunctionTypeInfo(VariableType(BuiltIns::string_struct, true),
-															{VariableType(BuiltIns::string_struct, true)}),
-											BuiltIns::string_struct,
-											{true, true, false}
-		);
-FunctionSymbol *BuiltIns::string_copy_constructor = new FunctionSymbol("string",
-											FunctionTypeInfo(VariableType(BuiltIns::string_struct, true),
-															{VariableType(BuiltIns::string_struct, true),
-															 VariableType(BuiltIns::string_struct)}),
-											BuiltIns::string_struct,
-											{true, true, false}
-		);
-
-FunctionSymbol *BuiltIns::print_func = new FunctionSymbol("print",
-								FunctionTypeInfo(VariableType(BuiltIns::void_type),
-												{VariableType(BuiltIns::string_struct)}),
-								BuiltIns::global_scope,
-								{false, false, false}
-		);

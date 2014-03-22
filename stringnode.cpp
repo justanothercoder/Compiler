@@ -2,7 +2,12 @@
 
 StringNode::StringNode(string str) : str(str) { }
 
-VariableType StringNode::getType() const { return VariableType(BuiltIns::string_struct, false, true); }
+VariableType StringNode::getType() const 
+{
+	static Type *type = TypeHelper::resolveType("string", BuiltIns::global_scope);
+
+	return VariableType(type, false, true); 
+}
 
 void StringNode::check(const TemplateInfo&) { }
 

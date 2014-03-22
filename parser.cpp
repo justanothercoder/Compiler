@@ -311,9 +311,26 @@ ExprNode* Parser::unary_right()
 	return res;
 }
 
+ExprNode* Parser::unary_left()
+{
+	UnaryOp op;
+
+	switch ( getTokenType(1) )
+	{
+	case TokenType::PLUS: op = UnaryOp::PLUS; break;
+	case TokenType::MINUS: op = UnaryOp::MINUS; break;
+	case TokenType::NOT: op = UnaryOp::NOT; break;
+	default: return unary_right();
+	}
+
+	match(getTokenType(1));
+
+	return new UnaryNode(unary_left(), op);	
+}
+
 ExprNode* Parser::factor()
 {
-	return unary_right();
+	return unary_left();
 }
 
 ExprNode* Parser::term()

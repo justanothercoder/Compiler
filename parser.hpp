@@ -14,6 +14,7 @@
 
 #include "statementnode.hpp"
 #include "binaryoperatornode.hpp"
+#include "unarynode.hpp"
 #include "returnnode.hpp"
 #include "ifnode.hpp"
 #include "whilenode.hpp"
@@ -61,6 +62,7 @@ private:
     ExprNode* sum_expr();
     ExprNode* term();
     ExprNode* factor();
+	ExprNode* unary_left();
     ExprNode* unary_right();    
     ExprNode* primary();
     ExprNode* new_expr();
