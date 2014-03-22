@@ -57,8 +57,8 @@ private:
     AST* assignment();
 	AST* block();
 
-    ExprNode* literal();
     ExprNode* expression();
+	ExprNode* bool_expr();
     ExprNode* sum_expr();
     ExprNode* term();
     ExprNode* factor();
@@ -67,6 +67,7 @@ private:
     ExprNode* primary();
     ExprNode* new_expr();
     ExprNode* variable();
+    ExprNode* literal();
     ExprNode* number();
    	ExprNode* get_string();
 

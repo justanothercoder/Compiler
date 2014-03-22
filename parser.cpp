@@ -355,16 +355,38 @@ ExprNode* Parser::sum_expr()
 
 	while ( getTokenType(1) == TokenType::PLUS || getTokenType(1) == TokenType::MINUS )
 	{
-		if ( getTokenType(1) == TokenType::PLUS )
+		BinaryOp op;
+
+		switch ( getTokenType(1) )
 		{
-			match(TokenType::PLUS);
-			res = new BinaryOperatorNode(res, term(), BinaryOp::PLUS);
+		case TokenType::PLUS : op = BinaryOp::PLUS; break;
+		case TokenType::MINUS: op = BinaryOp::MINUS; break;
+		default: throw;
 		}
-		else if ( getTokenType(1) == TokenType::MINUS )
+		
+		match(getTokenType(1));
+		res = new BinaryOperatorNode(res, term(), op);
+	}
+
+	return res;
+}
+
+ExprNode* Parser::bool_expr()
+{
+	ExprNode *res = sum_expr();
+
+	while ( getTokenType(1) == TokenType::EQUALS || getTokenType(1) == TokenType::NEQUALS )
+	{
+		BinaryOp op;
+
+		switch ( getTokenType(1) )
 		{
-			match(TokenType::MINUS);
-			res = new BinaryOperatorNode(res, term(), BinaryOp::MINUS);
+		case TokenType::EQUALS : op = BinaryOp::EQUALS; break;
+		case TokenType::NEQUALS: op = BinaryOp::NEQUALS; break;
+		default: throw;
 		}
+		match(getTokenType(1));
+		res = new BinaryOperatorNode(res, term(), op);
 	}
 
 	return res;
@@ -372,7 +394,7 @@ ExprNode* Parser::sum_expr()
 
 ExprNode* Parser::expression()
 {
-	return sum_expr();
+	return bool_expr();
 }
 
 AST* Parser::assignment()
