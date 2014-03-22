@@ -42,5 +42,7 @@ string to_string(TokenType tt)
 	case TokenType::NOT:       return "!";
 	case TokenType::EQUALS:    return "==";
 	case TokenType::NEQUALS:   return "!=";
+	case TokenType::AND:       return "&&";
+	case TokenType::OR:        return "||";
     }
 }

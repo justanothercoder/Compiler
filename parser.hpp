@@ -59,6 +59,7 @@ private:
 
     ExprNode* expression();
 	ExprNode* bool_expr();
+	ExprNode* relation();
     ExprNode* sum_expr();
     ExprNode* term();
     ExprNode* factor();

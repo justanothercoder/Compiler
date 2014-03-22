@@ -16,7 +16,6 @@ Token Lexer::getToken()
 		else if ( cur == ':' ) { consume(); return Token(TokenType::COLON, ":", l, s); }
 		else if ( cur == ';' ) { consume(); return Token(TokenType::SEMICOLON, ";", l, s); }
 		else if ( cur == '+' ) { consume(); return Token(TokenType::PLUS, "+", l, s); }
-		else if ( cur == '&' ) { consume(); return Token(TokenType::REF, "&", l, s); }
 		else if ( cur == '.' ) { consume(); return Token(TokenType::DOT, ".", l, s); }
 		else if ( cur == '-' ) { consume(); return Token(TokenType::MINUS, "-", l, s); }
 		else if ( cur == '*' ) { consume(); return Token(TokenType::MUL, "*", l, s); }
@@ -24,6 +23,23 @@ Token Lexer::getToken()
 		else if ( cur == '>' ) { consume(); return Token(TokenType::GREATER, ">", l, s); }
 		else if ( cur == '[' ) { consume(); return Token(TokenType::LBRACKET, "[", l, s); }
 		else if ( cur == ']' ) { consume(); return Token(TokenType::RBRACKET, "]", l, s); }
+		else if ( cur == '|' ) 
+		{
+			consume();
+			match('|');			
+			return Token(TokenType::OR, "||", l, s);
+		}
+		else if ( cur == '&' ) 
+		{ 
+			consume(); 
+			if ( cur == '&' )
+			{
+				consume();
+				return Token(TokenType::AND, "&&", l, s);
+			}
+			else
+				return Token(TokenType::REF, "&", l, s); 
+		}
 		else if ( cur == '!' )
 		{
 			consume();

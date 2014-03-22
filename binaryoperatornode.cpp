@@ -25,6 +25,8 @@ string BinaryOperatorNode::getOperatorName()
     case BinaryOp::MUL    : return "operator*" ;
 	case BinaryOp::EQUALS : return "operator==";
 	case BinaryOp::NEQUALS: return "operator!=";
+	case BinaryOp::AND    : return "operator&&";
+	case BinaryOp::OR     : return "operator||";
     }    
 }
 
@@ -38,6 +40,8 @@ string BinaryOperatorNode::getCodeOperatorName()
     case BinaryOp::MUL    : return "operatormul"   ;
 	case BinaryOp::EQUALS : return "operatoreq"    ;
 	case BinaryOp::NEQUALS: return "operatorneq"   ;
+	case BinaryOp::AND    : return "operatorand"   ;
+	case BinaryOp::OR     : return "operatoror"    ;
     }    
 }
 

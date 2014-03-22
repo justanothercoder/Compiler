@@ -371,7 +371,7 @@ ExprNode* Parser::sum_expr()
 	return res;
 }
 
-ExprNode* Parser::bool_expr()
+ExprNode* Parser::relation()
 {
 	ExprNode *res = sum_expr();
 
@@ -383,6 +383,27 @@ ExprNode* Parser::bool_expr()
 		{
 		case TokenType::EQUALS : op = BinaryOp::EQUALS; break;
 		case TokenType::NEQUALS: op = BinaryOp::NEQUALS; break;
+		default: throw;
+		}
+		match(getTokenType(1));
+		res = new BinaryOperatorNode(res, term(), op);
+	}
+
+	return res;
+}
+
+ExprNode* Parser::bool_expr()
+{
+	ExprNode *res = relation();
+
+	while ( getTokenType(1) == TokenType::AND || getTokenType(1) == TokenType::OR )
+	{
+		BinaryOp op;
+
+		switch ( getTokenType(1) )
+		{
+		case TokenType::AND : op = BinaryOp::AND; break;
+		case TokenType::OR: op = BinaryOp::OR; break;
 		default: throw;
 		}
 		match(getTokenType(1));

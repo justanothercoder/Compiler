@@ -8,7 +8,7 @@
 #include "callhelper.hpp"
 #include "builtins.hpp"
 
-enum class BinaryOp { ASSIGN, PLUS, MINUS, MUL, EQUALS, NEQUALS };
+enum class BinaryOp { ASSIGN, PLUS, MINUS, MUL, EQUALS, NEQUALS, AND, OR };
 
 class BinaryOperatorNode : public ExprNode
 {
