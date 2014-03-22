@@ -53,6 +53,8 @@ int main()
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_plus));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_minus));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_mul));
+		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_eq));
+		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_neq));
 
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::void_type));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::putchar_func));
@@ -78,13 +80,12 @@ int main()
 		CodeGen::emit("extern _int_operatorplus_int~ref_int");
 		CodeGen::emit("extern _int_operatorminus_int~ref_int");
 		CodeGen::emit("extern _int_operatormul_int~ref_int");	
+		CodeGen::emit("extern _int_operatoreq_int~ref_int");
+		CodeGen::emit("extern _int_operatorneq_int~ref_int");	
 		CodeGen::emit("extern _int_int_int~ref");
 		CodeGen::emit("extern _int_int_int~ref_int");
 		CodeGen::emit("extern _putchar_int");
 		CodeGen::emit("extern _getchar");
-		CodeGen::emit("extern _string_string_string~ref");
-		CodeGen::emit("extern _string_string_string~ref_string");
-		CodeGen::emit("extern _print_string");
 
 		CodeGen::emit("global _start");
 		CodeGen::emit("_start:");

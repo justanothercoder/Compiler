@@ -18,7 +18,12 @@ void StringNode::gen(const TemplateInfo&)
 	string str_label = StringNode::getNewLabel();
 
 	CodeGen::emit("section .data");
-	CodeGen::emit(str_label + ": db \"" + str + "\",0");
+
+	string s = str;
+	reverse(std::begin(s), std::end(s));
+
+	CodeGen::emit("@" + str_label + ": dq 0,\"" + s.substr(0, s.length() - 1) + '"');
+	CodeGen::emit(str_label + ": dq \"" + s.back() + "\"");
 	CodeGen::emit("section .text");
 	CodeGen::emit("lea rax, [" + str_label + "]");
 }

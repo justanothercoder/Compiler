@@ -17,7 +17,7 @@ FunctionSymbol *BuiltIns::int_assign = new FunctionSymbol("operator=",
     );
 
 FunctionSymbol *BuiltIns::int_plus = new FunctionSymbol("operator+",
-							FunctionTypeInfo(VariableType(BuiltIns::int_struct, true), 
+							FunctionTypeInfo(VariableType(BuiltIns::int_struct), 
 											{VariableType(BuiltIns::int_struct, true), 
 											 VariableType(BuiltIns::int_struct)}),
 							BuiltIns::int_struct,
@@ -33,6 +33,22 @@ FunctionSymbol *BuiltIns::int_minus = new FunctionSymbol("operator-",
     );
 
 FunctionSymbol *BuiltIns::int_mul = new FunctionSymbol("operator*",
+						       FunctionTypeInfo(VariableType(BuiltIns::int_struct), 
+								   			   {VariableType(BuiltIns::int_struct, true), 
+											    VariableType(BuiltIns::int_struct)}),
+						       BuiltIns::int_struct,
+						       {true, false, true}
+    );
+    
+FunctionSymbol *BuiltIns::int_eq = new FunctionSymbol("operator==",
+						       FunctionTypeInfo(VariableType(BuiltIns::int_struct), 
+								   			   {VariableType(BuiltIns::int_struct, true), 
+											    VariableType(BuiltIns::int_struct)}),
+						       BuiltIns::int_struct,
+						       {true, false, true}
+    );
+
+FunctionSymbol *BuiltIns::int_neq = new FunctionSymbol("operator!=",
 						       FunctionTypeInfo(VariableType(BuiltIns::int_struct), 
 								   			   {VariableType(BuiltIns::int_struct, true), 
 											    VariableType(BuiltIns::int_struct)}),

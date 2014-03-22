@@ -22,8 +22,13 @@ std::string GlobalHelper::getCodeOperatorName(std::string op)
 	else if ( op == "operator-"  ) return "operatorminus";
 	else if ( op == "operator="  ) return "operatorassign";
 	else if ( op == "operator*"  ) return "operatormul";
+	else if ( op == "operator!"  ) return "operatornot";
+	else if ( op == "operator==" ) return "operatoreq";
+	else if ( op == "operator!=" ) return "operatorneq";
+	else if ( op == "operator&&" ) return "operatorand";
+	else if ( op == "operator||" ) return "operatoror";
 	else if ( op.substr(0, 8) == "operator" ) return "operator~" + op.substr(9);
-	else return "";
+	else throw;
 }
     
 int GlobalHelper::isAlreadyDefined(Symbol *sym) { return is_defined.find(sym) != std::end(is_defined) && is_defined[sym] == true; }
