@@ -8,6 +8,8 @@ class ClassVariableSymbol : public VariableSymbol
 {
 public:
     ClassVariableSymbol(StructSymbol *type);
+
+	virtual SymbolType getSymbolType() const;
 };
 
 #endif
