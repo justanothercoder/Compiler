@@ -19,11 +19,19 @@ void StringNode::gen(const TemplateInfo&)
 
 	CodeGen::emit("section .data");
 
-	string s = str;
-	reverse(std::begin(s), std::end(s));
+//	string s = str;
+//	reverse(std::begin(s), std::end(s));
 
-	CodeGen::emit("@" + str_label + ": dq 0,\"" + s.substr(0, s.length() - 1) + '"');
-	CodeGen::emit(str_label + ": dq \"" + s.back() + "\"");
+//	CodeGen::emit("@" + str_label + ": dq 0,\"" + s.substr(0, s.length() - 1) + '"');
+//	CodeGen::emit(str_label + ": dq \"" + s.back() + "\"");
+
+	string res = "0";
+
+	for ( int i = str.length() - 1; i >= 1; --i )
+		res += ", " + std::to_string(static_cast<int>(str[i]));
+
+	CodeGen::emit("@" + str_label + ": dq " + res);
+	CodeGen::emit(str_label + ": dq " + std::to_string(static_cast<int>(str[0])));
 	CodeGen::emit("section .text");
 	CodeGen::emit("lea rax, [" + str_label + "]");
 }
