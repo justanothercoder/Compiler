@@ -7,7 +7,7 @@ void AbstractParser::consume()
 {
 	++pos;
 
-	if ( pos == (int)lookahead.size() && !isSpeculating() )
+	if ( pos == static_cast<int>(lookahead.size()) && !isSpeculating() )
 	{
 		pos = 0;
 		lookahead.clear();
@@ -21,7 +21,7 @@ void AbstractParser::match(TokenType token_type)
 	if ( getTokenType(1) == token_type )
 		consume();
 	else
-		throw RecognitionError(to_string(token_type) + " was expected, but token '" + getToken(1).text + "' was found.");
+		throw RecognitionError("'" + to_string(token_type) + "' was expected, but token '" + getToken(1).text + "' was found.");
 }
 
 Token AbstractParser::getToken(int i)
@@ -34,13 +34,13 @@ TokenType AbstractParser::getTokenType(int i) { return getToken(i).type; }
 
 void AbstractParser::sync(int i)
 {
-	if ( pos + i - 1 >= (int)lookahead.size() )
+	if ( pos + i - 1 >= static_cast<int>(lookahead.size()) )
 		fill((pos + i - 1) - (lookahead.size() - 1));
 }
 
-void AbstractParser::fill(int n)
+void AbstractParser::fill(size_t n)
 {
-	for ( int i = 0; i < n; ++i )
+	for ( size_t i = 0; i < n; ++i )
 		lookahead.push_back(input->getToken());
 }
 

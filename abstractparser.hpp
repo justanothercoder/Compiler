@@ -24,7 +24,7 @@ protected:
     void consume();
     void match(TokenType token_type);
 
-    void fill(int n);
+    void fill(size_t n);
     void seek(int i);
     void sync(int i);
     bool isSpeculating();
