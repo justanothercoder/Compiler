@@ -17,26 +17,9 @@ int main()
 {
 	std::string filename = "input.txt";
 
-	std::ifstream in(filename.c_str());
-
-	if ( !in )
-	{
-		std::cerr << "No such file '" << filename << "'\n";
-		return 0;
-	}
-
-	std::string buf = "";
-
-	char c;
-	while ( (c = in.get()) != -1 )
-		buf += c;    
-
 	try
 	{    
-		shared_ptr<AbstractLexer> lexer(new Lexer(buf));
-		shared_ptr<AbstractParser> parser(new Parser(lexer.get()));
-
-		shared_ptr<AST> root(parser->parse());
+		shared_ptr<AST> root(FileHelper::parse(filename));
 
 		root->setScope(BuiltIns::global_scope);
 
@@ -115,8 +98,6 @@ int main()
 		std::cerr << e.what() << '\n';
 		return 2;
 	}
-
-	in.close();
 
 	return 0;
 }

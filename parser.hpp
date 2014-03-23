@@ -2,6 +2,7 @@
 #define _PARSER_HPP_
 
 #include <memory>
+#include <fstream>
 
 #include "abstractparser.hpp"
 
@@ -33,7 +34,7 @@ class Parser : public AbstractParser
 {
 public:
 
-    Parser(AbstractLexer *lexer); 
+    Parser(AbstractLexer *lexer);
 
     virtual AST* parse();
 

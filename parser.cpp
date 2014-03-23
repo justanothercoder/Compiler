@@ -27,6 +27,7 @@ AST* Parser::statement()
 	else if ( getTokenType(1) == TokenType::FOR    ) return for_stat();
 	else if ( tryAssignment() )                      return assignment();
 	else if ( getTokenType(1) == TokenType::LBRACE ) return block();
+	else if ( getTokenType(1) == TokenType::IMPORT ) return import_stat(); 
 	else                                             return expression();
 }
 
