@@ -19,10 +19,14 @@ string BinaryOperatorNode::getOperatorName()
 {
     switch ( op_type )
     {
-    case BinaryOp::ASSIGN: return "operator=";
-    case BinaryOp::PLUS  : return "operator+";
-    case BinaryOp::MINUS : return "operator-";
-    case BinaryOp::MUL   : return "operator*";
+    case BinaryOp::ASSIGN : return "operator=" ;
+    case BinaryOp::PLUS   : return "operator+" ;
+    case BinaryOp::MINUS  : return "operator-" ;
+    case BinaryOp::MUL    : return "operator*" ;
+	case BinaryOp::EQUALS : return "operator==";
+	case BinaryOp::NEQUALS: return "operator!=";
+	case BinaryOp::AND    : return "operator&&";
+	case BinaryOp::OR     : return "operator||";
     }    
 }
 
@@ -30,10 +34,14 @@ string BinaryOperatorNode::getCodeOperatorName()
 {
     switch ( op_type )
     {
-    case BinaryOp::ASSIGN: return "operatorassign";
-    case BinaryOp::PLUS  : return "operatorplus";
-    case BinaryOp::MINUS : return "operatorminus";
-    case BinaryOp::MUL   : return "operatormul";
+    case BinaryOp::ASSIGN : return "operatorassign";
+    case BinaryOp::PLUS   : return "operatorplus"  ;
+    case BinaryOp::MINUS  : return "operatorminus" ;
+    case BinaryOp::MUL    : return "operatormul"   ;
+	case BinaryOp::EQUALS : return "operatoreq"    ;
+	case BinaryOp::NEQUALS: return "operatorneq"   ;
+	case BinaryOp::AND    : return "operatorand"   ;
+	case BinaryOp::OR     : return "operatoror"    ;
     }    
 }
 

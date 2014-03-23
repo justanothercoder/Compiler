@@ -51,7 +51,6 @@ private:
 
     vector<ExprNode*> constructor_call_params;
 
-//    FunctionSymbol *resolved_constructor;
 	CallInfo call_info;
 };
 

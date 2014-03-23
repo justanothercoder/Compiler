@@ -34,7 +34,7 @@ AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base-
 void DotNode::gen(const TemplateInfo& template_info)
 {    
 	base->gen(template_info);
-
+	
 	auto member_type = member->getType();
 
 	if ( member_type.is_ref )
@@ -55,11 +55,7 @@ void DotNode::gen(const TemplateInfo& template_info)
 		}
 		else
 			member = new VariableSymbol(ov_func->getName(), VariableType(std::begin(ov_func_type_info.symbols)->second));
-
-		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(member->getType().type)->getScopedTypedName() + "]");
 	}
-	else if ( member_type.type->getTypeKind() == TypeKind::FUNCTION ) 
-		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(member->getType().type)->getScopedTypedName() + "]");
 	else
 		CodeGen::emit("lea rax, [rax - " + std::to_string(base_type->get_valloc()->getAddress(member)) + "]");
 }

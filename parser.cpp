@@ -244,10 +244,20 @@ string Parser::operator_name()
 
 ExprNode* Parser::literal()
 {
-	return number();
+	if ( getTokenType(1) == TokenType::STRING )
+		return get_string();
+	else
+		return number();
 }
 
 ExprNode* Parser::variable() { return new VariableNode(id()); }
+
+ExprNode* Parser::get_string()
+{
+	string str = getToken(1).text;
+	match(TokenType::STRING);
+	return new StringNode(str);
+}
 
 ExprNode* Parser::number()
 {
@@ -258,7 +268,7 @@ ExprNode* Parser::number()
 
 ExprNode* Parser::primary()
 {
-	if ( getTokenType(1) == TokenType::NUMBER )
+	if ( getTokenType(1) == TokenType::NUMBER || getTokenType(1) == TokenType::STRING )
 		return literal();
 	else if ( getTokenType(1) == TokenType::LPAREN )
 	{
@@ -301,9 +311,26 @@ ExprNode* Parser::unary_right()
 	return res;
 }
 
+ExprNode* Parser::unary_left()
+{
+	UnaryOp op;
+
+	switch ( getTokenType(1) )
+	{
+	case TokenType::PLUS: op = UnaryOp::PLUS; break;
+	case TokenType::MINUS: op = UnaryOp::MINUS; break;
+	case TokenType::NOT: op = UnaryOp::NOT; break;
+	default: return unary_right();
+	}
+
+	match(getTokenType(1));
+
+	return new UnaryNode(unary_left(), op);	
+}
+
 ExprNode* Parser::factor()
 {
-	return unary_right();
+	return unary_left();
 }
 
 ExprNode* Parser::term()
@@ -328,16 +355,59 @@ ExprNode* Parser::sum_expr()
 
 	while ( getTokenType(1) == TokenType::PLUS || getTokenType(1) == TokenType::MINUS )
 	{
-		if ( getTokenType(1) == TokenType::PLUS )
+		BinaryOp op;
+
+		switch ( getTokenType(1) )
 		{
-			match(TokenType::PLUS);
-			res = new BinaryOperatorNode(res, term(), BinaryOp::PLUS);
+		case TokenType::PLUS : op = BinaryOp::PLUS; break;
+		case TokenType::MINUS: op = BinaryOp::MINUS; break;
+		default: throw;
 		}
-		else if ( getTokenType(1) == TokenType::MINUS )
+		
+		match(getTokenType(1));
+		res = new BinaryOperatorNode(res, term(), op);
+	}
+
+	return res;
+}
+
+ExprNode* Parser::relation()
+{
+	ExprNode *res = sum_expr();
+
+	while ( getTokenType(1) == TokenType::EQUALS || getTokenType(1) == TokenType::NEQUALS )
+	{
+		BinaryOp op;
+
+		switch ( getTokenType(1) )
 		{
-			match(TokenType::MINUS);
-			res = new BinaryOperatorNode(res, term(), BinaryOp::MINUS);
+		case TokenType::EQUALS : op = BinaryOp::EQUALS; break;
+		case TokenType::NEQUALS: op = BinaryOp::NEQUALS; break;
+		default: throw;
 		}
+		match(getTokenType(1));
+		res = new BinaryOperatorNode(res, term(), op);
+	}
+
+	return res;
+}
+
+ExprNode* Parser::bool_expr()
+{
+	ExprNode *res = relation();
+
+	while ( getTokenType(1) == TokenType::AND || getTokenType(1) == TokenType::OR )
+	{
+		BinaryOp op;
+
+		switch ( getTokenType(1) )
+		{
+		case TokenType::AND : op = BinaryOp::AND; break;
+		case TokenType::OR: op = BinaryOp::OR; break;
+		default: throw;
+		}
+		match(getTokenType(1));
+		res = new BinaryOperatorNode(res, term(), op);
 	}
 
 	return res;
@@ -345,7 +415,7 @@ ExprNode* Parser::sum_expr()
 
 ExprNode* Parser::expression()
 {
-	return sum_expr();
+	return bool_expr();
 }
 
 AST* Parser::assignment()

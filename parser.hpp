@@ -14,6 +14,7 @@
 
 #include "statementnode.hpp"
 #include "binaryoperatornode.hpp"
+#include "unarynode.hpp"
 #include "returnnode.hpp"
 #include "ifnode.hpp"
 #include "whilenode.hpp"
@@ -25,6 +26,7 @@
 #include "numbernode.hpp"
 #include "newexpressionnode.hpp"
 #include "bracketnode.hpp"
+#include "stringnode.hpp"
 
 class Parser : public AbstractParser
 {
@@ -55,17 +57,21 @@ private:
     AST* assignment();
 	AST* block();
 
-    ExprNode* literal();
     ExprNode* expression();
+	ExprNode* bool_expr();
+	ExprNode* relation();
     ExprNode* sum_expr();
     ExprNode* term();
     ExprNode* factor();
+	ExprNode* unary_left();
     ExprNode* unary_right();    
     ExprNode* primary();
     ExprNode* new_expr();
     ExprNode* variable();
+    ExprNode* literal();
     ExprNode* number();
-    
+   	ExprNode* get_string();
+
     bool tryAssignment();
     bool tryVarDecl();
 };
