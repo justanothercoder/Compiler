@@ -19,6 +19,7 @@
 #include "ifnode.hpp"
 #include "whilenode.hpp"
 #include "fornode.hpp"
+#include "importnode.hpp"
 
 #include "dotnode.hpp"
 #include "callnode.hpp"
@@ -49,6 +50,8 @@ private:
     DeclarationNode* variableDecl(std::shared_ptr<string> struct_name = nullptr);
     DeclarationNode* functionDecl(std::shared_ptr<string> struct_name = nullptr);
 
+	AST* import_stat();
+	
 	AST* for_stat();
     AST* while_stat();
     AST* if_stat();
