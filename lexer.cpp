@@ -133,6 +133,7 @@ Token Lexer::getToken()
 			else if ( buf == "operator" ) token_type = TokenType::OPERATOR;
 			else if ( buf == "for"      ) token_type = TokenType::FOR;
 			else if ( buf == "const"    ) token_type = TokenType::CONST;
+			else if ( buf == "import"   ) token_type = TokenType::IMPORT;
 			else                          token_type = TokenType::ID;
 
 			return Token(token_type, buf, l, s);
