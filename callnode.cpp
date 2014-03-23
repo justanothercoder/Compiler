@@ -30,17 +30,33 @@ void CallNode::check(const TemplateInfo& template_info)
 }
 
 void CallNode::gen(const TemplateInfo& template_info)
-{    
-    CodeGen::genCallCode(call_info, params, template_info,
+{  
+  	if ( call_info.callee->isMethod() )
+	{
+		CodeGen::genCallCode(call_info, params, template_info,
+				[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
+				[&]() { caller->gen(template_info); }
+		);
+	}
+	else
+	{
+		CodeGen::genCallCode(call_info, params, template_info,
+				[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
+				[&]() { }
+		);
+	}
+	/*
+	CodeGen::genCallCode(call_info, params, template_info,
 			[&]()
 			{
 				caller->gen(template_info);
 
 				if ( call_info.callee->getName() == "operator()" )
-					CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]");
+				CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]");
 			},
 			[&]() { caller->gen(template_info); }
 	);
+	*/
 }
 
 AST* CallNode::copyTree() const
