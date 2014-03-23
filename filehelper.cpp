@@ -16,8 +16,7 @@ string FileHelper::extractContents(string filename)
 	std::ifstream in(filename.c_str());
 
 	if ( !in )
-		throw exception();
-//		throw FileNotFoundException("No such file '" + filename + "'\n");
+		throw FileNotFoundException("No such file '" + filename + "'\n");
 
 	std::string buf = "";
 

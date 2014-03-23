@@ -8,6 +8,7 @@ void ImportNode::define(const TemplateInfo&)
 {
 	auto root = FileHelper::parse((lib + ".txt").c_str());
 
+	root->setScope(getScope());
 	root->build_scope();
 
 	root->define(TemplateInfo());
