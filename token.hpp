@@ -14,7 +14,8 @@ enum class TokenType { EOF_TYPE,
 	NEW, TEMPLATE, LESS, GREATER,
 	LBRACKET, RBRACKET, OPERATOR,
 	FOR, CONST, STRING, EQUALS,
-	NEQUALS, NOT, AND, OR, IMPORT
+	NEQUALS, NOT, AND, OR, IMPORT,
+	MOD
 	};
 
 string to_string(TokenType tt);

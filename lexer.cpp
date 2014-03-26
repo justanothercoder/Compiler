@@ -23,6 +23,7 @@ Token Lexer::getToken()
 		else if ( cur == '>' ) { consume(); return Token(TokenType::GREATER, ">", l, s); }
 		else if ( cur == '[' ) { consume(); return Token(TokenType::LBRACKET, "[", l, s); }
 		else if ( cur == ']' ) { consume(); return Token(TokenType::RBRACKET, "]", l, s); }
+		else if ( cur == '%' ) { consume(); return Token(TokenType::MOD, "%", l, s); }
 		else if ( cur == '|' ) 
 		{
 			consume();

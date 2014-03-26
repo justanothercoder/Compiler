@@ -225,6 +225,8 @@ string Parser::operator_name()
 	case TokenType::PLUS : match(TokenType::PLUS);  return "operator+";
 	case TokenType::MINUS: match(TokenType::MINUS); return "operator-";
 	case TokenType::MUL  : match(TokenType::MUL);   return "operator*";
+	case TokenType::DIV  : match(TokenType::DIV);   return "operator/";
+	case TokenType::MOD  : match(TokenType::MOD);   return "operator%";
 	case TokenType::LPAREN: 
 	{
 		match(TokenType::LPAREN); 
@@ -338,13 +340,19 @@ ExprNode* Parser::term()
 {
 	ExprNode *res = factor();
 
-	while ( getTokenType(1) == TokenType::MUL )
+	while ( getTokenType(1) == TokenType::MUL || getTokenType(1) == TokenType::DIV || getTokenType(1) == TokenType::MOD )
 	{
-		if ( getTokenType(1) == TokenType::MUL )
+		BinaryOp op;
+		switch ( getTokenType(1) )
 		{
-			match(TokenType::MUL);
-			res = new BinaryOperatorNode(res, factor(), BinaryOp::MUL);
+		case TokenType::MUL: op = BinaryOp::MUL; break;
+		case TokenType::DIV: op = BinaryOp::DIV; break;
+		case TokenType::MOD: op = BinaryOp::MOD; break;
+		default: throw;
 		}
+		
+		match(getTokenType(1));
+		res = new BinaryOperatorNode(res, factor(), op);
 	}
 
 	return res;

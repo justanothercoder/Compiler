@@ -41,6 +41,7 @@ string to_string(TokenType tt)
     case TokenType::LESS:      return "<";
     case TokenType::GREATER:   return ">";
 	case TokenType::NOT:       return "!";
+	case TokenType::MOD:       return "%";
 	case TokenType::EQUALS:    return "==";
 	case TokenType::NEQUALS:   return "!=";
 	case TokenType::AND:       return "&&";
