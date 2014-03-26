@@ -38,6 +38,8 @@ int main()
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_mul));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_eq));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_neq));
+		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_div));
+		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_mod));
 
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::void_type));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::putchar_func));
@@ -65,6 +67,8 @@ int main()
 		CodeGen::emit("extern _int_operatormul_int~ref_int");	
 		CodeGen::emit("extern _int_operatoreq_int~ref_int");
 		CodeGen::emit("extern _int_operatorneq_int~ref_int");	
+		CodeGen::emit("extern _int_operatordiv_int~ref_int");
+		CodeGen::emit("extern _int_operatormod_int~ref_int");	
 		CodeGen::emit("extern _int_int_int~ref");
 		CodeGen::emit("extern _int_int_int~ref_int");
 		CodeGen::emit("extern _putchar_int");

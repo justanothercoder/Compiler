@@ -56,6 +56,22 @@ FunctionSymbol *BuiltIns::int_neq = new FunctionSymbol("operator!=",
 						       {true, false, true}
     );
 
+FunctionSymbol *BuiltIns::int_div = new FunctionSymbol("operator/",
+						       FunctionTypeInfo(VariableType(BuiltIns::int_struct), 
+								   			   {VariableType(BuiltIns::int_struct, true), 
+											    VariableType(BuiltIns::int_struct)}),
+						       BuiltIns::int_struct,
+						       {true, false, true}
+    );
+
+FunctionSymbol *BuiltIns::int_mod = new FunctionSymbol("operator%",
+						       FunctionTypeInfo(VariableType(BuiltIns::int_struct), 
+								   			   {VariableType(BuiltIns::int_struct, true), 
+											    VariableType(BuiltIns::int_struct)}),
+						       BuiltIns::int_struct,
+						       {true, false, true}
+    );
+
 FunctionSymbol *BuiltIns::int_default_constructor = new FunctionSymbol("int",
 								       FunctionTypeInfo(VariableType(BuiltIns::int_struct, true), 
 										               {VariableType(BuiltIns::int_struct, true)}),
