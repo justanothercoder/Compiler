@@ -6,10 +6,20 @@ ReturnNode::~ReturnNode() { delete expr; }
 
 void ReturnNode::gen(const TemplateInfo& template_info)
 {
-	CodeGen::genCallCode(copy_call_info, {expr}, template_info,
-			[&]() { CodeGen::emit("lea rax, [" + copy_call_info.callee->getScopedTypedName() + "]"); },
-			[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
-	);
+	if ( copy_call_info.callee->getTypeInfo().return_type.is_ref )
+	{
+		if ( !expr->isLeftValue() )
+			throw SemanticError("cannot initialize " + copy_call_info.callee->getTypeInfo().return_type.getName() + " with value of type " + expr->getType().getName());
+
+		expr->gen(template_info);
+	}
+	else
+	{
+		CodeGen::genCallCode(copy_call_info, {expr}, template_info,
+				[&]() { CodeGen::emit("lea rax, [" + copy_call_info.callee->getScopedTypedName() + "]"); },
+				[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
+		);
+	}
 
     CodeGen::emit("mov rsp, rbp");
     CodeGen::emit("pop rbp");
@@ -28,6 +38,8 @@ void ReturnNode::check(const TemplateInfo& template_info)
     expr->check(template_info);
 
 	copy_call_info = CallHelper::callCheck(expr->getType().getTypeName(), static_cast<StructSymbol*>(expr->getType().type), {expr}, template_info);
+
+	getScope()->get_valloc()->addLocal(expr->getType().getSize());
 }
 	
 void ReturnNode::define(const TemplateInfo& template_info) { expr->define(template_info); }
