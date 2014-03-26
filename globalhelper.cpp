@@ -22,6 +22,8 @@ std::string GlobalHelper::getCodeOperatorName(std::string op)
 	else if ( op == "operator-"  ) return "operatorminus";
 	else if ( op == "operator="  ) return "operatorassign";
 	else if ( op == "operator*"  ) return "operatormul";
+	else if ( op == "operator/"  ) return "operatordiv";
+	else if ( op == "operator%"  ) return "operatormod";
 	else if ( op == "operator!"  ) return "operatornot";
 	else if ( op == "operator==" ) return "operatoreq";
 	else if ( op == "operator!=" ) return "operatorneq";
