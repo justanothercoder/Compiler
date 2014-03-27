@@ -1,15 +1,15 @@
 #include "returnnode.hpp"
 
-ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), copy_call_info() { }
+ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), copy_call_info(), enclosing_func(nullptr) { }
 
 ReturnNode::~ReturnNode() { delete expr; }
 
 void ReturnNode::gen(const TemplateInfo& template_info)
 {
-	if ( copy_call_info.callee->getTypeInfo().return_type.is_ref )
+	if ( enclosing_func->getTypeInfo().return_type.is_ref )
 	{
 		if ( !expr->isLeftValue() )
-			throw SemanticError("cannot initialize " + copy_call_info.callee->getTypeInfo().return_type.getName() + " with value of type " + expr->getType().getName());
+			throw SemanticError("cannot initialize " + enclosing_func->getTypeInfo().return_type.getName() + " with value of type " + expr->getType().getName());
 
 		expr->gen(template_info);
 	}
@@ -34,6 +34,8 @@ void ReturnNode::check(const TemplateInfo& template_info)
 
 	if ( scope == nullptr )
 		throw SemanticError("return is not a in a function");
+
+	enclosing_func = dynamic_cast<FunctionSymbol*>(scope);
 
     expr->check(template_info);
 

@@ -31,7 +31,7 @@ int main()
 
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_default_constructor));
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_copy_constructor));
-
+/*
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_assign));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_plus));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_minus));
@@ -40,6 +40,15 @@ int main()
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_neq));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_div));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_mod));
+*/
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_assign));
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_plus));
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_minus));
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_mul));
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_eq));
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_neq));
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_div));
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_mod));
 
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::void_type));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::putchar_func));
@@ -92,11 +101,11 @@ int main()
 		CodeGen::emit("mov rdi, 0");
 		CodeGen::emit("syscall");
 	}
-	catch ( SemanticError& e )
-	{
-		std::cerr << e.what() << '\n';
-		return 1;
-	}
+//	catch ( SemanticError& e )
+//	{
+//		std::cerr << e.what() << '\n';
+//		return 1;
+//	}
 	catch ( RecognitionError& e )
 	{
 		std::cerr << e.what() << '\n';

@@ -9,10 +9,14 @@ VariableType BinaryOperatorNode::getType() const { return call_info.callee->getT
 void BinaryOperatorNode::check(const TemplateInfo& template_info)
 {
 	lhs->check(template_info);
-	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(lhs->getType().type), {rhs}, template_info);
-	
-	if ( call_info.callee == nullptr )	
+	try
+	{
+		call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(lhs->getType().type), {rhs}, template_info);
+	}
+	catch ( SemanticError& e )
+	{
 		call_info = CallHelper::callCheck(getOperatorName(), getScope(), {lhs, rhs}, template_info);
+	}
 }
 
 string BinaryOperatorNode::getOperatorName()

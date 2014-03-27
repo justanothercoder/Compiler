@@ -56,7 +56,6 @@ class CodeGen
 
 		static void pushOnStack(size_t size, int offset);
 		static void genConversion(FunctionSymbol *conv);
-		static void genCopy(FunctionSymbol *copy_constructor);
 };
 
 #endif

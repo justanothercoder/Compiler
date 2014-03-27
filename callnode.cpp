@@ -45,18 +45,6 @@ void CallNode::gen(const TemplateInfo& template_info)
 				[&]() { }
 		);
 	}
-	/*
-	CodeGen::genCallCode(call_info, params, template_info,
-			[&]()
-			{
-				caller->gen(template_info);
-
-				if ( call_info.callee->getName() == "operator()" )
-				CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]");
-			},
-			[&]() { caller->gen(template_info); }
-	);
-	*/
 }
 
 AST* CallNode::copyTree() const

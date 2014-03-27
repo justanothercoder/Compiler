@@ -25,7 +25,11 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 
 	VariableType return_type;
    	if ( definedSymbol->isMethod() && return_type_info.type_name == static_cast<StructSymbol*>(getScope())->getName() )
-		return_type.type = static_cast<StructSymbol*>(getScope());
+	{
+		return_type.type     = static_cast<StructSymbol*>(getScope());
+		return_type.is_ref   = return_type_info.is_ref;
+		return_type.is_const = return_type_info.is_const;
+	}
 	else
 		return_type = TypeHelper::fromTypeInfo(return_type_info, getScope(), template_info);
 
@@ -35,8 +39,11 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 	{
 		auto _this_type = VariableType(static_cast<StructSymbol*>(getScope()), true, false);
 		params_types.push_back(_this_type);
+		
+		auto _this_sym = new VariableSymbol("this", _this_type, VariableSymbolType::PARAM);
 
-		definedSymbol->accept(new VariableSymbolDefine(new VariableSymbol("this", _this_type, VariableSymbolType::PARAM)));
+		params_symbols.push_back(_this_sym);
+		definedSymbol->accept(new VariableSymbolDefine(_this_sym));
 	}
 
 	for ( auto i : params )
@@ -44,9 +51,8 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 		VariableType param_type;
    		if ( definedSymbol->isMethod() && i.second.type_name == static_cast<StructSymbol*>(getScope())->getName() )
 		{			
-			param_type.type = static_cast<StructSymbol*>(getScope());
-
-			param_type.is_ref = i.second.is_ref;
+			param_type.type     = static_cast<StructSymbol*>(getScope());
+			param_type.is_ref   = i.second.is_ref;
 			param_type.is_const = i.second.is_const;
 		}
 		else
@@ -56,9 +62,8 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 
 		auto param_sym = new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM);
 
-		definedSymbol->accept(new VariableSymbolDefine(param_sym));
-
 		params_symbols.push_back(param_sym);
+		definedSymbol->accept(new VariableSymbolDefine(param_sym));
 	}
 
 	FunctionTypeInfo function_type_info(return_type, params_types);

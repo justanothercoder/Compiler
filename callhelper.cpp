@@ -10,7 +10,7 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 	auto function_sym = CallHelper::resolveOverload(name, sc, params_types);
 	
 	if ( function_sym == nullptr )
-		throw SemanticError("No viable overload of '" + name + "'.");  
+		throw SemanticError("No viable overload of '" + name + "'.");
 
     auto function_info = function_sym->getTypeInfo();
     
@@ -21,7 +21,7 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 		auto t = function_info.params_types.at(i);
 		if ( t.is_ref && !params.at(i - is_meth)->isLeftValue() && !t.is_const )
 			throw SemanticError("parameter is not an lvalue.");
-    }   
+    }
 
 	return getCallInfo(function_sym, params);
 }

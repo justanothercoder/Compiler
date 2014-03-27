@@ -28,6 +28,8 @@ private:
     ExprNode *expr;
 
 	CallInfo copy_call_info;
+
+	FunctionSymbol *enclosing_func;
 };
 
 #endif
