@@ -16,7 +16,6 @@ void ReturnNode::gen(const TemplateInfo& template_info)
 	else
 	{
 		CodeGen::genCallCode(copy_call_info, {expr}, template_info,
-				[&]() { CodeGen::emit("lea rax, [" + copy_call_info.callee->getScopedTypedName() + "]"); },
 				[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
 		);
 	}
