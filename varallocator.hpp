@@ -1,6 +1,7 @@
 #ifndef _VARALLOCATOR_HPP_
 #define _VARALLOCATOR_HPP_
 
+#include <iostream>
 #include <map>
 
 #include "variablesymbol.hpp"

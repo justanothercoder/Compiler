@@ -22,7 +22,7 @@ class FunctionDeclarationNode : public DeclarationNode
 {
 public:
 
-    FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, AST *statements, FunctionTraits traits);
+    FunctionDeclarationNode(string name, vector< pair<string, TypeInfo> > params, TypeInfo return_type_info, AST *statements, FunctionTraits traits);
 
     virtual ~FunctionDeclarationNode();
     

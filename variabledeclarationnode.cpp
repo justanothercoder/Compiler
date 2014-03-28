@@ -74,9 +74,9 @@ void VariableDeclarationNode::define(const TemplateInfo& template_info)
     
     if ( var_type.type == BuiltIns::void_type )
 		throw SemanticError("can't declare a variable of 'void' type.");
-    
+   
     definedSymbol->setType(var_type);
-    getScope()->accept(new VariableSymbolDefine(definedSymbol));
+	getScope()->accept(new VariableSymbolDefine(definedSymbol));
 }
 
 AST* VariableDeclarationNode::copyTree() const

@@ -1,6 +1,6 @@
 #include "functiondeclarationnode.hpp"
 
-FunctionDeclarationNode::FunctionDeclarationNode(string name, const vector< pair<string, TypeInfo> >& params, TypeInfo return_type_info, AST* statements, FunctionTraits traits) : name(name), params(params), return_type_info(return_type_info), statements(statements), traits(traits), definedSymbol(nullptr) { }
+FunctionDeclarationNode::FunctionDeclarationNode(string name, vector< pair<string, TypeInfo> > params, TypeInfo return_type_info, AST* statements, FunctionTraits traits) : name(name), params(params), return_type_info(return_type_info), statements(statements), traits(traits), definedSymbol(nullptr) { }
 
 FunctionDeclarationNode::~FunctionDeclarationNode() 
 { 
@@ -23,15 +23,14 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 	if ( template_info.sym != nullptr && return_type_info.type_name == template_info.sym->getName() )
 		return_type_info.type_name = static_cast<StructSymbol*>(getScope())->getName();
 
-	VariableType return_type;
-   	if ( definedSymbol->isMethod() && return_type_info.type_name == static_cast<StructSymbol*>(getScope())->getName() )
+	auto fromTypeInfo = [&] (TypeInfo type_info) 
 	{
-		return_type.type     = static_cast<StructSymbol*>(getScope());
-		return_type.is_ref   = return_type_info.is_ref;
-		return_type.is_const = return_type_info.is_const;
-	}
-	else
-		return_type = TypeHelper::fromTypeInfo(return_type_info, getScope(), template_info);
+		if ( definedSymbol->isMethod() && type_info.type_name == static_cast<StructSymbol*>(getScope())->getName() )
+			return VariableType(static_cast<StructSymbol*>(getScope()), type_info.is_ref, type_info.is_const);
+		return TypeHelper::fromTypeInfo(type_info, getScope(), template_info);
+	};
+
+	VariableType return_type = fromTypeInfo(return_type_info);
 
 	vector<VariableType> params_types;
 
@@ -48,15 +47,7 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 
 	for ( auto i : params )
 	{
-		VariableType param_type;
-   		if ( definedSymbol->isMethod() && i.second.type_name == static_cast<StructSymbol*>(getScope())->getName() )
-		{			
-			param_type.type     = static_cast<StructSymbol*>(getScope());
-			param_type.is_ref   = i.second.is_ref;
-			param_type.is_const = i.second.is_const;
-		}
-		else
-			param_type = TypeHelper::fromTypeInfo(i.second, getScope(), template_info);
+		VariableType param_type = fromTypeInfo(i.second);
 
 		params_types.push_back(param_type);
 
