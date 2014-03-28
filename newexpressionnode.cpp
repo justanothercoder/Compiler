@@ -22,7 +22,6 @@ void NewExpressionNode::check(const TemplateInfo& template_info)
 void NewExpressionNode::gen(const TemplateInfo& template_info)
 {
 	CodeGen::genCallCode(call_info, params, template_info,
-			[&]() {  CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
 			[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
 	);
 }

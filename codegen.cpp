@@ -8,10 +8,7 @@ void CodeGen::genConversion(FunctionSymbol *conv)
 
 	if ( conv->getName().substr(0, 8) == "operator" )
 	{
-		genCallCode(CallHelper::getCallInfo(conv, { }), { }, TemplateInfo(),
-				[&] () { emit("lea rax, [" + conv->getScopedTypedName() + "]"); },
-				[&] () {  }
-				);
+		genCallCode(CallHelper::getCallInfo(conv, { }), { }, TemplateInfo(), [&] () {  });
 	}
 	else
 	{
@@ -69,9 +66,7 @@ void CodeGen::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol
 		{
 			emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 			emit("sub rsp, " + std::to_string(param->getType().getSize()));
-			genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, template_info,
-					[&](){ emit("lea rax, [" + copy_constr->getScopedTypedName() + "]"); },
-					[&](){ emit("lea rax, [rbx]"); });
+			genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, template_info, [&](){ emit("lea rax, [rbx]"); });
 			emit("add rsp, " + std::to_string(param->getType().getSize()));
 			auto desired_type = copy_constr->getTypeInfo().params_types[0];
 			emit("sub rsp, " + std::to_string(desired_type.type->getSize())); 

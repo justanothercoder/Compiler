@@ -53,7 +53,6 @@ void VariableDeclarationNode::gen(const TemplateInfo& template_info)
 	if ( !is_field )
 	{   
 		CodeGen::genCallCode(call_info, constructor_call_params, template_info, 
-				[&]() {  CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
 				[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]"); }
 		);
 	}
