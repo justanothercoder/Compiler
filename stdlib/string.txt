@@ -19,6 +19,23 @@ struct string
 		return __impl[x];
 	}
 
+	def operator+(string s) : string {
+		int p = 0;
+		string tmp = "";
+
+		for ( int i = 0; i != this.length(); i = i + 1 ) {
+			tmp[p] = __impl[i];
+			p = p + 1;
+		}
+		
+		for ( int i = 0; i != s.length(); i = i + 1 ) {
+			tmp[p] = s[i];
+			p = p + 1;
+		}
+
+		return tmp;
+	}
+
 	array<int, 256> __impl;
 }
 

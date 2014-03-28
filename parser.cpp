@@ -95,16 +95,26 @@ DeclarationNode* Parser::structDecl()
 	vector<AST*> struct_in;
 	match(TokenType::LBRACE);
 
+	vector<AST*> functions;
+
 	while ( getTokenType(1) != TokenType::RBRACE )
 	{
 		while ( getTokenType(1) == TokenType::SEMICOLON )
 			match(TokenType::SEMICOLON);
 
 		if ( getTokenType(1) != TokenType::RBRACE )
-			struct_in.push_back(declaration(std::make_shared<string>(string(struct_name))));
+		{
+			if ( getTokenType(1) == TokenType::DEF )
+				functions.push_back(functionDecl(std::make_shared<string>(string(struct_name))));
+			else		
+				struct_in.push_back(declaration(std::make_shared<string>(string(struct_name))));
+		}
 	}
 
 	match(TokenType::RBRACE);
+
+	for ( auto i : functions )
+		struct_in.push_back(i);
 
 	return new StructDeclarationNode(struct_name, struct_in);
 }

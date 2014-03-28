@@ -49,13 +49,14 @@ AST* VariableNode::copyTree() const { return new VariableNode(name); }
 
 void VariableNode::gen(const TemplateInfo& template_info)
 {
-	if ( variable->getSymbolType() == SymbolType::CLASSVARIABLE )
-		throw SemanticError(name + " is typename");
-//		return;
-
 	if ( template_info.sym && template_info.sym->isIn(name) )
 	{
 		auto replace = template_info.getReplacement(name);
+	
+		if ( dynamic_cast<VariableNode*>(replace) != nullptr )
+			if ( dynamic_cast<VariableNode*>(replace)->variable->getSymbolType() == SymbolType::CLASSVARIABLE )
+				throw SemanticError(name + " is typename");
+
 		replace->gen(template_info);
 		return;
 	}
