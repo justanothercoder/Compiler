@@ -56,15 +56,9 @@ string BinaryOperatorNode::getCodeOperatorName()
 void BinaryOperatorNode::gen(const TemplateInfo& template_info)
 {
 	if ( call_info.callee->isMethod() )
-		CodeGen::genCallCode(call_info, {rhs}, template_info,
-				[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
-				[&]() { lhs->gen(template_info); }
-		);
+		CodeGen::genCallCode(call_info, {rhs}, template_info, [&]() { lhs->gen(template_info); });
 	else
-		CodeGen::genCallCode(call_info, {lhs, rhs}, template_info,
-				[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
-				[](){}
-		);
+		CodeGen::genCallCode(call_info, {lhs, rhs}, template_info, [](){});
 }
 
 AST* BinaryOperatorNode::copyTree() const

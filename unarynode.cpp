@@ -36,10 +36,7 @@ void UnaryNode::check(const TemplateInfo& template_info)
 
 void UnaryNode::gen(const TemplateInfo& template_info)
 {
-	CodeGen::genCallCode(call_info, { }, template_info,
-			[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
-			[&]() { exp->gen(template_info); }
-	);	
+	CodeGen::genCallCode(call_info, { }, template_info, [&]() { exp->gen(template_info); });	
 }
 
 std::vector<AST*> UnaryNode::getChildren() const { return {exp}; }

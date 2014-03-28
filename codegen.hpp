@@ -21,8 +21,8 @@ class CodeGen
 
 		static void emit(string text);
 
-		template <class T, class U>
-		static void genCallCode(CallInfo call_info, vector<ExprNode*> params, const TemplateInfo& template_info, T genFunc, U genThis)
+		template <class T>
+		static void genCallCode(CallInfo call_info, vector<ExprNode*> params, const TemplateInfo& template_info, T genThis)
 		{
 			auto func = call_info.callee;
 
@@ -47,8 +47,7 @@ class CodeGen
 				emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 			}
 
-			genFunc();
-			emit("call rax");
+			emit("call " + func->getScopedTypedName());
 			emit("add rsp, " + std::to_string(params_size));
 		}
 

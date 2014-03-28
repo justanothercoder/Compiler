@@ -14,10 +14,7 @@ void BracketNode::check(const TemplateInfo& template_info)
 
 void BracketNode::gen(const TemplateInfo& template_info)
 {
-    CodeGen::genCallCode(call_info, {this->expr}, template_info,
-			[&]() { CodeGen::emit("lea rax, [" + call_info.callee->getScopedTypedName() + "]"); },
-			[&]() { base->gen(template_info); }
-	);
+    CodeGen::genCallCode(call_info, {this->expr}, template_info, [&]() { base->gen(template_info); });
 }
 
 VariableType BracketNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
