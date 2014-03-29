@@ -29,6 +29,8 @@ public:
 	static FunctionSymbol *int_mod;
     static FunctionSymbol *int_default_constructor;
 	static FunctionSymbol *int_copy_constructor;
+	
+	static FunctionSymbol *int_ref_constructor;
 
     static BuiltInTypeSymbol *void_type;
 

@@ -10,8 +10,8 @@ AST* NumberNode::copyTree() const { return new NumberNode(num); }
 
 void NumberNode::gen(const TemplateInfo&)
 {
-    CodeGen::emit("mov qword [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal() + getType().getSize()) + "], " + num);
-	CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal() + getType().getSize()) + "]");
+    CodeGen::emit("mov qword [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "], " + num);
+	CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]");
 }
 	
 vector<AST*> NumberNode::getChildren() const { return { }; }

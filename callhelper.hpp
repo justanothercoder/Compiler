@@ -22,8 +22,6 @@ public:
 
 	static FunctionSymbol* resolveOverload(string name, Scope *sc, std::vector<VariableType> params_types);
 
-private:
-	
 	static ConversionInfo getConversionInfo(VariableType lhs, VariableType rhs, bool is_lhs_left_value);
 	static std::vector<VariableType> extractTypes(std::vector<ExprNode*> params);
 };
