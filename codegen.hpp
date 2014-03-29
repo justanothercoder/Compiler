@@ -54,7 +54,6 @@ class CodeGen
 		static void genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr, const TemplateInfo& template_info);
 
 		static void pushOnStack(size_t size, int offset);
-		static void genConversion(FunctionSymbol *conv);
 };
 
 #endif

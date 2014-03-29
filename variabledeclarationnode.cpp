@@ -34,15 +34,23 @@ void VariableDeclarationNode::check(const TemplateInfo& template_info)
 {
 	if ( !is_field )
 	{
-		string type_name = type_info.type_name;
+		if ( !type_info.is_ref )
+		{
+			string type_name = type_info.type_name;
 
-		auto _ = TypeHelper::fromTypeInfo(type_info, getScope(), template_info);
+			auto _ = TypeHelper::fromTypeInfo(type_info, getScope(), template_info);
 
-		if ( _.type->getTypeKind() != TypeKind::STRUCT )
-			throw SemanticError("No such struct " + type_name);
+			if ( _.type->getTypeKind() != TypeKind::STRUCT )
+				throw SemanticError("No such struct " + type_name);
 
-		auto type = static_cast<StructSymbol*>(_.type);
-		call_info = CallHelper::callCheck(type_name, type, constructor_call_params, template_info);
+			auto type = static_cast<StructSymbol*>(_.type);
+			call_info = CallHelper::callCheck(type_name, type, constructor_call_params, template_info);
+		}
+		else
+		{
+			for ( auto i : constructor_call_params )
+				i->check(template_info);
+		}
 	}
 	
 	GlobalHelper::setDefined(getDefinedSymbol());
@@ -51,10 +59,20 @@ void VariableDeclarationNode::check(const TemplateInfo& template_info)
 void VariableDeclarationNode::gen(const TemplateInfo& template_info)
 {
 	if ( !is_field )
-	{   
-		CodeGen::genCallCode(call_info, constructor_call_params, template_info, 
-				[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]"); }
-		);
+	{  
+		if ( type_info.is_ref )
+		{
+			for ( auto i : constructor_call_params )
+				i->gen(template_info);
+
+			CodeGen::emit("mov [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "], rax");
+		}
+		else
+		{
+			CodeGen::genCallCode(call_info, constructor_call_params, template_info, 
+					[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]"); }
+					);
+		}
 	}
 }
 

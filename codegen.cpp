@@ -18,9 +18,6 @@ void CodeGen::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol
 //	if ( conv_info.deref )
 //		emit("mov rax, [rax]");
 
-//	if ( conv_info.conversion )
-//		genConversion(conv_info.conversion);
-
 	if ( copy_constr == nullptr ) 
 	{
 		param->gen(template_info);
