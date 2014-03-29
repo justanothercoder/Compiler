@@ -33,6 +33,8 @@ struct string
 			p = p + 1;
 		}
 
+		tmp[p] = 0;
+
 		return tmp;
 	}
 

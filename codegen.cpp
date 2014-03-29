@@ -13,11 +13,6 @@ void CodeGen::pushOnStack(size_t size, int offset)
 		
 void CodeGen::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr, const TemplateInfo& template_info)
 {
-//	param->gen(template_info);
-
-//	if ( conv_info.deref )
-//		emit("mov rax, [rax]");
-
 	if ( copy_constr == nullptr ) 
 	{
 		param->gen(template_info);
@@ -49,10 +44,10 @@ void CodeGen::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol
 		{
 			auto desired_type = copy_constr->getTypeInfo().params_types[0];
 			
-			emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
+			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 			emit("sub rsp, " + std::to_string(param->getType().getSize()));
 			if ( conv == nullptr )
-				genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, template_info, [&](){ emit("lea rax, [rbx]"); });
+				genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, template_info, [&](){ emit("lea rax, [r8]"); });
 			else
 			{
 				pushOnStack(desired_type.type->getSize(), GlobalConfig::int_size);
