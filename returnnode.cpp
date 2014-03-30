@@ -16,7 +16,6 @@ void ReturnNode::gen(const TemplateInfo& template_info)
 	else
 	{
 		CodeGen::genCallCode(copy_call_info, {expr}, template_info,
-//				[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
 				[&]() { CodeGen::emit("mov r9, [rbp]"); CodeGen::emit("lea rax, [r9 - " + std::to_string(GlobalConfig::int_size) + "]"); }
 		);
 	}
@@ -40,8 +39,6 @@ void ReturnNode::check(const TemplateInfo& template_info)
     expr->check(template_info);
 
 	copy_call_info = CallHelper::callCheck(expr->getType().getTypeName(), static_cast<StructSymbol*>(expr->getType().type), {expr}, template_info);
-
-	getScope()->get_valloc()->addLocal(expr->getType().getSize());
 }
 	
 void ReturnNode::define(const TemplateInfo& template_info) { expr->define(template_info); }
