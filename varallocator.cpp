@@ -12,7 +12,9 @@ void VarAllocator::addVariable(VariableSymbol *var)
 
 void VarAllocator::addLocal(int type_size) { space_for_locals += type_size; }
 
-int VarAllocator::getAddress(VariableSymbol *var) const { return var_addresses.at(var); }
-int VarAllocator::getAddressForLocal() const { return space_for_variables + GlobalConfig::int_size; }
+//int VarAllocator::getAddress(VariableSymbol *var) const { return var_addresses.at(var); }
+int VarAllocator::getAddress(VariableSymbol *var) const { return var_addresses.at(var) + (!var->isParam() ? space_for_locals : 0);  }
+//int VarAllocator::getAddressForLocal() const { return space_for_variables + GlobalConfig::int_size; }
+int VarAllocator::getAddressForLocal() const { return GlobalConfig::int_size; }
 	
 int VarAllocator::getSpace() const { return space_for_variables + space_for_locals; }

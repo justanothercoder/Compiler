@@ -13,8 +13,6 @@ void CodeGen::pushOnStack(size_t size, int offset)
 		
 void CodeGen::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr, const TemplateInfo& template_info)
 {
-	emit("lea r9, [rbp - " + std::to_string(param->getScope()->get_valloc()->getAddressForLocal()) + "]");
-
 	if ( copy_constr == nullptr ) 
 	{
 		param->gen(template_info);
@@ -60,6 +58,4 @@ void CodeGen::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol
 			emit("sub rsp, " + std::to_string(desired_type.type->getSize())); 
 		}
 	}
-
-	emit("lea rax, [r9]");
 }
