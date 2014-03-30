@@ -18,15 +18,17 @@ void CallNode::check(const TemplateInfo& template_info)
 			throw SemanticError("caller is not a function.");
 
 		call_info = CallHelper::callCheck("operator()", static_cast<StructSymbol*>(caller_type), params, template_info);
-		GlobalHelper::setTypeHint(caller, call_info.callee);
 	}
 	else
 	{
 		auto ov_func = static_cast<OverloadedFunctionSymbol*>(caller_type);
 		auto scope = ov_func->isMethod() ? static_cast<StructSymbol*>(ov_func->getBaseType().type) : getScope();
 		call_info = CallHelper::callCheck(ov_func->getName(), scope, params, template_info);
-	    GlobalHelper::setTypeHint(caller, call_info.callee);
 	}
+
+	GlobalHelper::setTypeHint(caller, call_info.callee);
+	
+	getScope()->get_valloc()->addLocal(call_info.callee->getTypeInfo().return_type.getSize());
 }
 
 void CallNode::gen(const TemplateInfo& template_info)
