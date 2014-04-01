@@ -133,5 +133,4 @@ Reference:
 
 * http://en.cppreference.com/
 
-Inspired by:
-  C++ and Python
+Inspired by C++ and Python
