@@ -27,20 +27,11 @@ int main()
 
 		BuiltIns::int_struct->accept(new SymbolDefine(BuiltIns::int_type));
 
-		BuiltIns::int_struct->accept(new VariableSymbolDefine(new VariableSymbol("~~impl", VariableType(BuiltIns::int_type), VariableSymbolType::FIELD)));
+		BuiltIns::int_struct->accept(new VariableSymbolDefine(
+					new VariableSymbol("~~impl", VariableType(BuiltIns::int_type), VariableSymbolType::FIELD)));
 
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_default_constructor));
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_copy_constructor));
-/*
-		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_assign));
-		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_plus));
-		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_minus));
-		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_mul));
-		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_eq));
-		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_neq));
-		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_div));
-		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::int_mod));
-*/
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_assign));
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_plus));
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_minus));
