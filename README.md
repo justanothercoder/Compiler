@@ -33,46 +33,73 @@ $ [executable_name] [program_name]
 
 The language is quite simple, there are several examples.
 
+* Comments
+
+```
+// This is one-line commnet
+
+/*
+  This is multi-line comment
+*/
+```
+
 * Function definition
 
 ```
 def f(int x, int y) : int {
-  return x + y * 2;
+  //code
 }
 ```
 
 * Struct definition
 
 ```
-struct A {
-  def A(int _x) {
-    x = _x;
-  }
-  
-  def operator()() : int {
-    return x + x;
-  }
-  
-  int x;
-}
-```
-* Templates
-
-```
+//possibly templated like in C++. 
+//Unfortunately, template functions are not supported yet.
 template <class T>
 struct A {
-  T x;
-  
-  def A(T _x) { x = _x; }
-  
-  def operator()(int k) {
-    x(k);
-  }
+  //functions' and variables' definitions
 }
 ```
 
-Unfortunately, template functions like in _C++_ are not supported yet.
+* Control structures
 
+```
+if ( cond ) {
+  //code if cond
+}
+else { //optional
+  //code if not cond
+}
+
+while ( cond ) { 
+  //code
+}
+
+for ( init; cond; step ) { //all three are optional, but here semicolons are mandatory
+  //code;
+}
+```
+
+* Import
+
+```
+import libname
+```
+
+* New
+
+```
+struct A 
+{
+  def A() {
+  
+  }
+}
+
+new A() //Like in Java and C#
+
+```
 
 Well, you can see that it's some sort of mixed _C++_ and _Python_, where all _C_ compatibility is cut off. As the time goes, new syntax constructs will appear to reach the _Python_ simplicity and _C++_ power.
 
