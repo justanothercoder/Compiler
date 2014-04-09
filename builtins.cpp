@@ -132,9 +132,41 @@ FunctionSymbol *BuiltIns::ASCII_string_elem_operator = new FunctionSymbol("opera
 										{true, false, true}
 		);
 	
+FunctionSymbol *BuiltIns::ASCII_string_length_func = new FunctionSymbol("length",
+										FunctionTypeInfo(VariableType(BuiltIns::int_struct),
+														{VariableType(BuiltIns::ASCII_string, true)}),
+										BuiltIns::ASCII_string,
+										{true, false, false}
+		);
+	
 FunctionSymbol *BuiltIns::print_ASCII_string_func = new FunctionSymbol("print",
 										FunctionTypeInfo(VariableType(BuiltIns::void_type),
 														{VariableType(BuiltIns::ASCII_string, true, true)}),
 										BuiltIns::global_scope,
 										{false, false, false}
 		);										
+	
+FunctionSymbol *BuiltIns::__fopen_func = new FunctionSymbol("__fopen",
+	   									FunctionTypeInfo(VariableType(BuiltIns::int_struct),
+														{VariableType(BuiltIns::ASCII_string, true, true),
+														 VariableType(BuiltIns::int_struct),
+														 VariableType(BuiltIns::int_struct)}),
+										BuiltIns::global_scope,
+										{false, false, false}
+		);
+
+FunctionSymbol *BuiltIns::__fclose_func = new FunctionSymbol("__fclose",
+	   									FunctionTypeInfo(VariableType(BuiltIns::void_type),
+														{VariableType(BuiltIns::int_struct)}),
+										BuiltIns::global_scope,
+										{false, false, false}
+		);
+
+FunctionSymbol *BuiltIns::__fwrite_func = new FunctionSymbol("__fwrite",
+	   									FunctionTypeInfo(VariableType(BuiltIns::int_struct),
+														{VariableType(BuiltIns::int_struct),
+														 VariableType(BuiltIns::ASCII_string, true, true),
+														 VariableType(BuiltIns::int_struct)}),
+										BuiltIns::global_scope,
+										{false, false, false}
+		); 

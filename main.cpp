@@ -56,8 +56,13 @@ int main()
 
 		BuiltIns::ASCII_string->accept(new FunctionSymbolDefine(BuiltIns::ASCII_string_copy_constructor));
 		BuiltIns::ASCII_string->accept(new FunctionSymbolDefine(BuiltIns::ASCII_string_elem_operator));
+		BuiltIns::ASCII_string->accept(new FunctionSymbolDefine(BuiltIns::ASCII_string_length_func));
 		
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::print_ASCII_string_func));
+
+		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::__fopen_func));
+		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::__fclose_func));
+		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::__fwrite_func));
 		
 		GlobalHelper::setDefined(BuiltIns::int_struct);
 		GlobalHelper::setDefined(BuiltIns::ASCII_string);
@@ -68,28 +73,37 @@ int main()
 		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("getchar"));
 		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("print"));
 
+		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("__fopen"));
+		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("__fclose"));
+		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("__fwrite"));
+		
 		root->define(TemplateInfo());
 		root->check (TemplateInfo());
 		
 		CodeGen::emit("section .text");
 
-		CodeGen::emit("extern _int_operatorassign_int~ref_int");
-		CodeGen::emit("extern _int_operatorplus_int~ref_int");
-		CodeGen::emit("extern _int_operatorminus_int~ref_int");
-		CodeGen::emit("extern _int_operatormul_int~ref_int");	
-		CodeGen::emit("extern _int_operatoreq_int~ref_int");
-		CodeGen::emit("extern _int_operatorneq_int~ref_int");	
-		CodeGen::emit("extern _int_operatordiv_int~ref_int");
-		CodeGen::emit("extern _int_operatormod_int~ref_int");	
-		CodeGen::emit("extern _int_int_int~ref");
-		CodeGen::emit("extern _int_int_int~ref_const~int~ref");
-		CodeGen::emit("extern _putchar_int");
-		CodeGen::emit("extern _getchar");
+		CodeGen::emit("extern " + BuiltIns::int_assign->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::int_plus->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::int_minus->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::int_mul->getScopedTypedName());	
+		CodeGen::emit("extern " + BuiltIns::int_eq->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::int_neq->getScopedTypedName());	
+		CodeGen::emit("extern " + BuiltIns::int_div->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::int_mod->getScopedTypedName());	
+		CodeGen::emit("extern " + BuiltIns::int_default_constructor->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::int_copy_constructor->getScopedTypedName());
+
+		CodeGen::emit("extern " + BuiltIns::putchar_func->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::getchar_func->getScopedTypedName());
 		
-		CodeGen::emit("extern _string_string_string~ref_const~string~ref");
-		CodeGen::emit("extern _string_operatorelem_string~ref_int");
+		CodeGen::emit("extern " + BuiltIns::ASCII_string_copy_constructor->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::ASCII_string_elem_operator->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::ASCII_string_length_func->getScopedTypedName());
 		
-		CodeGen::emit("extern _print_const~string~ref");
+		CodeGen::emit("extern " + BuiltIns::print_ASCII_string_func->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::__fopen_func->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::__fclose_func->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::__fwrite_func->getScopedTypedName());
 
 		CodeGen::emit("global _start");
 		CodeGen::emit("_start:");

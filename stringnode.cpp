@@ -24,8 +24,10 @@ void StringNode::gen(const TemplateInfo&)
 	for ( int i = str.length() - 1; i >= 1; --i )
 		res += ", " + std::to_string(static_cast<int>(str[i]));
 
-	CodeGen::emit("@" + str_label + ": dq " + res);
-	CodeGen::emit(str_label + ": dq " + std::to_string(static_cast<int>(str[0])));
+//	CodeGen::emit("@" + str_label + ": dq " + res);
+//	CodeGen::emit(str_label + ": dq " + std::to_string(static_cast<int>(str[0])));
+	CodeGen::emit("@" + str_label + ": db " + res);
+	CodeGen::emit(str_label + ": db " + std::to_string(static_cast<int>(str[0])));
 	CodeGen::emit("section .text");
 	CodeGen::emit("lea rax, [" + str_label + "]");
 }

@@ -40,8 +40,13 @@ public:
 	static StructSymbol *ASCII_string; 
 	static FunctionSymbol *ASCII_string_copy_constructor; 
 	static FunctionSymbol *ASCII_string_elem_operator; 
+	static FunctionSymbol *ASCII_string_length_func; 
 	
 	static FunctionSymbol *print_ASCII_string_func; 
+
+	static FunctionSymbol *__fopen_func; 
+	static FunctionSymbol *__fclose_func; 
+	static FunctionSymbol *__fwrite_func; 
 };
 
 #endif
