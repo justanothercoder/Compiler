@@ -58,6 +58,7 @@ int main()
 		BuiltIns::ASCII_string->accept(new FunctionSymbolDefine(BuiltIns::ASCII_string_elem_operator));
 		BuiltIns::ASCII_string->accept(new FunctionSymbolDefine(BuiltIns::ASCII_string_length_func));
 		BuiltIns::ASCII_string->accept(new FunctionSymbolDefine(BuiltIns::ASCII_string_plus_operator));
+		BuiltIns::ASCII_string->accept(new FunctionSymbolDefine(BuiltIns::ASCII_string_assign_operator));
 		
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::print_ASCII_string_func));
 
@@ -103,6 +104,7 @@ int main()
 		CodeGen::emit("extern " + BuiltIns::ASCII_string_elem_operator->getScopedTypedName());
 		CodeGen::emit("extern " + BuiltIns::ASCII_string_length_func->getScopedTypedName());
 		CodeGen::emit("extern " + BuiltIns::ASCII_string_plus_operator->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::ASCII_string_assign_operator->getScopedTypedName());
 		
 		CodeGen::emit("extern " + BuiltIns::print_ASCII_string_func->getScopedTypedName());
 		CodeGen::emit("extern " + BuiltIns::__fopen_func->getScopedTypedName());

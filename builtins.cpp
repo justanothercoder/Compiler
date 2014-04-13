@@ -147,6 +147,14 @@ FunctionSymbol *BuiltIns::ASCII_string_plus_operator = new FunctionSymbol("opera
 										{true, false, true}
 		);
 
+FunctionSymbol *BuiltIns::ASCII_string_assign_operator = new FunctionSymbol("operator=",
+										FunctionTypeInfo(VariableType(BuiltIns::ASCII_string, true),
+														{VariableType(BuiltIns::ASCII_string, true),
+														 VariableType(BuiltIns::ASCII_string, true, true)}),
+										BuiltIns::ASCII_string,
+										{true, false, true}
+		);
+		
 	
 FunctionSymbol *BuiltIns::print_ASCII_string_func = new FunctionSymbol("print",
 										FunctionTypeInfo(VariableType(BuiltIns::void_type),

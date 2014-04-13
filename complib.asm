@@ -30,6 +30,7 @@
 	global _string_operatorelem_string~ref_int:function
 	global _string_length_string~ref:function
 	global _string_operatorplus_string~ref_const~string~ref:function
+	global _string_operatorassign_string~ref_const~string~ref:function
 		
 	global _print_const~string~ref:function
 
@@ -601,6 +602,34 @@ _string_operatorplus_string~ref_const~string~ref:
 	jmp .sloop
 
 .send:
+
+	mov byte [rdi], 0
+
+	mov rsp, rbp
+	pop rbp
+	ret
+	
+_string_operatorassign_string~ref_const~string~ref:
+	push rbp
+	mov rbp, rsp
+
+	mov rdi, [rbp + 16]
+	mov rsi, [rbp + 24]
+
+.loop:
+
+	cmp byte [rsi], 0
+	jz .end
+
+	mov bl, byte [rsi]
+	mov byte [rdi], bl
+
+	dec rsi
+	dec rdi
+
+	jmp .loop
+
+.end:
 
 	mov byte [rdi], 0
 
