@@ -139,6 +139,15 @@ FunctionSymbol *BuiltIns::ASCII_string_length_func = new FunctionSymbol("length"
 										{true, false, false}
 		);
 	
+FunctionSymbol *BuiltIns::ASCII_string_plus_operator = new FunctionSymbol("operator+",
+										FunctionTypeInfo(VariableType(BuiltIns::ASCII_string),
+														{VariableType(BuiltIns::ASCII_string, true),
+														 VariableType(BuiltIns::ASCII_string, true, true)}),
+										BuiltIns::ASCII_string,
+										{true, false, true}
+		);
+
+	
 FunctionSymbol *BuiltIns::print_ASCII_string_func = new FunctionSymbol("print",
 										FunctionTypeInfo(VariableType(BuiltIns::void_type),
 														{VariableType(BuiltIns::ASCII_string, true, true)}),

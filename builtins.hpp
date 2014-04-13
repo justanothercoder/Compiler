@@ -41,7 +41,8 @@ public:
 	static FunctionSymbol *ASCII_string_copy_constructor; 
 	static FunctionSymbol *ASCII_string_elem_operator; 
 	static FunctionSymbol *ASCII_string_length_func; 
-	
+	static FunctionSymbol *ASCII_string_plus_operator;
+
 	static FunctionSymbol *print_ASCII_string_func; 
 
 	static FunctionSymbol *__fopen_func; 

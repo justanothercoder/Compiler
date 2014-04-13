@@ -29,6 +29,7 @@
 	global _string_string_string~ref_const~string~ref:function
 	global _string_operatorelem_string~ref_int:function
 	global _string_length_string~ref:function
+	global _string_operatorplus_string~ref_const~string~ref:function
 		
 	global _print_const~string~ref:function
 
@@ -553,6 +554,55 @@ _print_const~string~ref:
 	jmp .loop
 
 .end:
+
+	mov rsp, rbp
+	pop rbp
+	ret
+	
+_string_operatorplus_string~ref_const~string~ref:
+	push rbp
+	mov rbp, rsp
+
+	mov r9, [rbp]
+	lea rax, [r9 - 8]
+
+	lea rdi, [r9 - 8]
+	
+	mov rsi, [rbp + 16]
+
+.floop:
+	
+	cmp byte [rsi], 0
+	jz .fend
+
+	mov bl, byte [rsi]
+	mov byte [rdi], bl
+
+	dec rsi
+	dec rdi
+
+	jmp .floop
+
+.fend:
+
+	mov rsi, [rbp + 24]
+
+.sloop:
+
+	cmp byte [rsi], 0
+	jz .send
+
+	mov bl, byte [rsi]
+	mov byte [rdi], bl
+
+	dec rsi
+	dec rdi
+
+	jmp .sloop
+
+.send:
+
+	mov byte [rdi], 0
 
 	mov rsp, rbp
 	pop rbp
