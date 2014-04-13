@@ -1,6 +1,6 @@
 #include "ifnode.hpp"
 
-IfNode::IfNode(ExprNode *cond, AST *stats_true, AST *stats_false) : cond(cond), stats_true(stats_true), stats_false(stats_false), if_scope(nullptr), else_scope(nullptr) { } 
+IfNode::IfNode(ExprNode *cond, AST *stats_true, AST *stats_false) : cond(cond), stats_true(stats_true), stats_false(stats_false), if_scope(nullptr), else_scope(nullptr), code_obj() { } 
 
 IfNode::~IfNode()
 {
@@ -38,23 +38,25 @@ void IfNode::check(const TemplateInfo& template_info)
 		child->check(template_info);
 }
     
-void IfNode::gen(const TemplateInfo& template_info)
+CodeObject& IfNode::gen(const TemplateInfo& template_info)
 {
-    cond->gen(template_info);
+    code_obj.emit(cond->gen(template_info).getCode());
 
     string false_label = IfNode::getNewLabel(), exit_label = IfNode::getNewLabel();
 
-    CodeGen::emit("cmp qword [rax], 0");
-    CodeGen::emit("jz " + false_label);
+    code_obj.emit("cmp qword [rax], 0");
+    code_obj.emit("jz " + false_label);
     
-	stats_true->gen(template_info);
+	code_obj.emit(stats_true->gen(template_info).getCode());
     
-	CodeGen::emit("jmp " + exit_label);
-    CodeGen::emit(false_label + ":");
+	code_obj.emit("jmp " + exit_label);
+    code_obj.emit(false_label + ":");
     
-	stats_false->gen(template_info);
+	code_obj.emit(stats_false->gen(template_info).getCode());
  
- 	CodeGen::emit(exit_label + ":");
+ 	code_obj.emit(exit_label + ":");
+
+	return code_obj;
 }
 
 string IfNode::getNewLabel() 

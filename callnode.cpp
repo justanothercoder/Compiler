@@ -1,6 +1,6 @@
 #include "callnode.hpp"
 
-CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), call_info() { }
+CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), call_info(), code_obj() { }
 
 CallNode::~CallNode() { delete caller; }
     
@@ -31,12 +31,17 @@ void CallNode::check(const TemplateInfo& template_info)
 	getScope()->get_valloc()->addLocal(call_info.callee->getTypeInfo().return_type.getSize());
 }
 
-void CallNode::gen(const TemplateInfo& template_info)
+CodeObject& CallNode::gen(const TemplateInfo& template_info)
 {  
   	if ( call_info.callee->isMethod() )
-		CodeGen::genCallCode(call_info, params, template_info, [&]() { caller->gen(template_info); });
+		code_obj.genCallCode(call_info, params, template_info, caller->gen(template_info));
 	else
-		CodeGen::genCallCode(call_info, params, template_info, [&]() { });
+	{
+		CodeObject empty;
+		code_obj.genCallCode(call_info, params, template_info, empty);
+	}
+
+	return code_obj;
 }
 
 AST* CallNode::copyTree() const

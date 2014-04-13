@@ -69,52 +69,54 @@ void AsmArrayNode::define(const TemplateInfo& template_info)
 
 void AsmArrayNode::check(const TemplateInfo&) { }
 
-void AsmArrayNode::gen(const TemplateInfo&)
+CodeObject& AsmArrayNode::gen(const TemplateInfo&)
 {
 	auto arr = dynamic_cast<StructSymbol*>(getScope());
 
-	CodeGen::emit("jmp _~_"+arr->getName()+"_array_"+arr->getName()+"~ref");
-	CodeGen::emit("_"+arr->getName()+"_array_"+arr->getName()+"~ref:");
-	CodeGen::emit("ret");
-	CodeGen::emit("_~_"+arr->getName()+"_array_"+arr->getName()+"~ref:");
+	code_obj.emit("jmp _~_"+arr->getName()+"_array_"+arr->getName()+"~ref");
+	code_obj.emit("_"+arr->getName()+"_array_"+arr->getName()+"~ref:");
+	code_obj.emit("ret");
+	code_obj.emit("_~_"+arr->getName()+"_array_"+arr->getName()+"~ref:");
 
 
 /////////////////////////////////////////////////////////////////////////////
-	CodeGen::emit("jmp _~_"+arr->getName()+"_size_"+arr->getName()+"~ref");
-	CodeGen::emit("_"+arr->getName()+"_size_"+arr->getName()+"~ref:");
+	code_obj.emit("jmp _~_"+arr->getName()+"_size_"+arr->getName()+"~ref");
+	code_obj.emit("_"+arr->getName()+"_size_"+arr->getName()+"~ref:");
 
-	CodeGen::emit("push rbp");
-	CodeGen::emit("mov rbp, rsp");
+	code_obj.emit("push rbp");
+	code_obj.emit("mov rbp, rsp");
 
-	CodeGen::emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
-	CodeGen::emit("mov rax, [rax]");
-	CodeGen::emit("mov qword [rbp - " + std::to_string(array_size * size_of_type + GlobalConfig::int_size) + "], " + std::to_string(array_size));
-	CodeGen::emit("lea rax, [rbp - " + std::to_string(array_size * size_of_type + GlobalConfig::int_size) + "]");
+	code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
+	code_obj.emit("mov rax, [rax]");
+	code_obj.emit("mov qword [rbp - " + std::to_string(array_size * size_of_type + GlobalConfig::int_size) + "], " + std::to_string(array_size));
+	code_obj.emit("lea rax, [rbp - " + std::to_string(array_size * size_of_type + GlobalConfig::int_size) + "]");
 
-	CodeGen::emit("mov rsp, rbp");
-	CodeGen::emit("pop rbp");
-	CodeGen::emit("ret");
+	code_obj.emit("mov rsp, rbp");
+	code_obj.emit("pop rbp");
+	code_obj.emit("ret");
 
-	CodeGen::emit("_~_"+arr->getName()+"_size_"+arr->getName()+"~ref:");
+	code_obj.emit("_~_"+arr->getName()+"_size_"+arr->getName()+"~ref:");
 ///////////////////////////////////////////////////////////////////////////////
 
 
-	CodeGen::emit("jmp _~_"+arr->getName()+"_operatorelem_"+arr->getName()+"~ref_int");
-	CodeGen::emit("_"+arr->getName()+"_operatorelem_"+arr->getName()+"~ref_int:");
-	CodeGen::emit("push rbp");
-	CodeGen::emit("mov rbp, rsp");
-	CodeGen::emit("mov rbx, [rbp + " + std::to_string(3 * GlobalConfig::int_size) + "]");
-	CodeGen::emit("imul rbx, " + std::to_string(size_of_type));
+	code_obj.emit("jmp _~_"+arr->getName()+"_operatorelem_"+arr->getName()+"~ref_int");
+	code_obj.emit("_"+arr->getName()+"_operatorelem_"+arr->getName()+"~ref_int:");
+	code_obj.emit("push rbp");
+	code_obj.emit("mov rbp, rsp");
+	code_obj.emit("mov rbx, [rbp + " + std::to_string(3 * GlobalConfig::int_size) + "]");
+	code_obj.emit("imul rbx, " + std::to_string(size_of_type));
 
-	CodeGen::emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
+	code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
 
-	CodeGen::emit("sub rax, rbx");
+	code_obj.emit("sub rax, rbx");
 
-	CodeGen::emit("mov rsp, rbp");
-	CodeGen::emit("pop rbp");
-	CodeGen::emit("ret");
+	code_obj.emit("mov rsp, rbp");
+	code_obj.emit("pop rbp");
+	code_obj.emit("ret");
 
-	CodeGen::emit("_~_"+arr->getName()+"_operatorelem_"+arr->getName()+"~ref_int:");
+	code_obj.emit("_~_"+arr->getName()+"_operatorelem_"+arr->getName()+"~ref_int:");
+
+	return code_obj;
 }
 	
 AST* AsmArrayNode::copyTree() const { return new AsmArrayNode(*this); }

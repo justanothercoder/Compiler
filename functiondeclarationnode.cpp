@@ -66,27 +66,29 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 	statements->define(template_info);
 }
 
-void FunctionDeclarationNode::gen(const TemplateInfo& template_info)
+CodeObject& FunctionDeclarationNode::gen(const TemplateInfo& template_info)
 {    
 	string scoped_typed_name = definedSymbol->getScopedTypedName();
 
-	CodeGen::emit("jmp _~" + scoped_typed_name);
-	CodeGen::emit(scoped_typed_name + ":");
-	CodeGen::emit("push rbp");
-	CodeGen::emit("mov rbp, rsp");
+	code_obj.emit("jmp _~" + scoped_typed_name);
+	code_obj.emit(scoped_typed_name + ":");
+	code_obj.emit("push rbp");
+	code_obj.emit("mov rbp, rsp");
 
 	if ( definedSymbol->get_valloc()->getSpace() > 0 )
-		CodeGen::emit("sub rsp, " + std::to_string(definedSymbol->get_valloc()->getSpace()));
+		code_obj.emit("sub rsp, " + std::to_string(definedSymbol->get_valloc()->getSpace()));
 
-	statements->gen(template_info);
+	code_obj.emit(statements->gen(template_info).getCode());
 
 	if ( definedSymbol->isConstructor() )
-		CodeGen::emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
+		code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
 
-	CodeGen::emit("mov rsp, rbp");
-	CodeGen::emit("pop rbp");
-	CodeGen::emit("ret");
-	CodeGen::emit("_~" + scoped_typed_name + ":");
+	code_obj.emit("mov rsp, rbp");
+	code_obj.emit("pop rbp");
+	code_obj.emit("ret");
+	code_obj.emit("_~" + scoped_typed_name + ":");
+
+	return code_obj;
 }
 
 void FunctionDeclarationNode::check(const TemplateInfo& template_info) 

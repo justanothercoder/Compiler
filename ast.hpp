@@ -7,6 +7,7 @@
 
 class Scope;
 struct TemplateInfo;
+class CodeObject;
 
 class AST
 {
@@ -23,7 +24,7 @@ public:
 
     virtual void define(const TemplateInfo& template_info) = 0;
     virtual void check(const TemplateInfo& template_info) = 0;
-    virtual void gen(const TemplateInfo& template_info) = 0;
+    virtual CodeObject& gen(const TemplateInfo& template_info) = 0;
 
 	virtual std::vector<AST*> getChildren() const = 0;
 };

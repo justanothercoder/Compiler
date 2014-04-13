@@ -5,7 +5,7 @@
 #include "callinfo.hpp"
 #include "functionsymbol.hpp"
 #include "callhelper.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 
 enum class UnaryOp { PLUS, MINUS, NOT };
 
@@ -23,7 +23,7 @@ public:
 	string getCodeOperatorName();
     
 	virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
 
@@ -32,6 +32,7 @@ private:
 	ExprNode *exp;
 	UnaryOp op_type;
 	CallInfo call_info;
+	CodeObject code_obj;
 };
 
 #endif

@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "exprnode.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 #include "localscope.hpp"
 
 using std::vector;
@@ -20,7 +20,7 @@ public:
 	virtual void build_scope();
 	virtual void define(const TemplateInfo& template_info);
 	virtual void check(const TemplateInfo& template_info);
-	virtual void gen(const TemplateInfo& template_info);
+	virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual AST* copyTree() const;
 	virtual vector<AST*> getChildren() const;
@@ -35,6 +35,7 @@ private:
     AST	*stats;
 
 	LocalScope *for_scope;
+	CodeObject code_obj;
 };
 
 #endif

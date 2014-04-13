@@ -3,7 +3,7 @@
 
 #include "exprnode.hpp"
 #include "localscope.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 
 class IfNode : public AST
 {
@@ -19,7 +19,7 @@ public:
 
     virtual void define(const TemplateInfo& template_info);
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 	
 	virtual vector<AST*> getChildren() const;
 		
@@ -29,7 +29,9 @@ private:
     AST *stats_true, *stats_false;
 
     LocalScope *if_scope, *else_scope;
-    
+
+	CodeObject code_obj;
+
     static string getNewLabel();
 };
 

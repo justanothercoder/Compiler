@@ -33,24 +33,26 @@ void ForNode::check(const TemplateInfo& template_info)
 		child->check(template_info);
 }
 
-void ForNode::gen(const TemplateInfo& template_info)
+CodeObject& ForNode::gen(const TemplateInfo& template_info)
 {
 	auto label1 = ForNode::getNewLabel();	
 	auto label2 = ForNode::getNewLabel();
 
-	init->gen(template_info);
-	CodeGen::emit(label1 + ":");
+	code_obj.emit(init->gen(template_info).getCode());
+	code_obj.emit(label1 + ":");
 
-	cond->gen(template_info);
+	code_obj.emit(cond->gen(template_info).getCode());
 
-    CodeGen::emit("cmp qword [rax], 0");
-    CodeGen::emit("jz " + label2);
+    code_obj.emit("cmp qword [rax], 0");
+    code_obj.emit("jz " + label2);
 
-	stats->gen(template_info);
-	step->gen(template_info);
+	code_obj.emit(stats->gen(template_info).getCode());
+	code_obj.emit(step->gen(template_info).getCode());
 
-	CodeGen::emit("jmp " + label1);
-	CodeGen::emit(label2 + ":");
+	code_obj.emit("jmp " + label1);
+	code_obj.emit(label2 + ":");
+
+	return code_obj;
 }
 
 AST* ForNode::copyTree() const { return new ForNode(init->copyTree(), static_cast<ExprNode*>(cond->copyTree()), step->copyTree(), stats->copyTree()); }

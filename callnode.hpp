@@ -10,7 +10,7 @@
 #include "overloadedfunctionsymbol.hpp"
 #include "globalhelper.hpp"
 #include "functionsymbol.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 #include "callhelper.hpp"
 #include "callinfo.hpp"
 
@@ -29,7 +29,7 @@ public:
     virtual VariableType getType() const;
     
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
     
@@ -39,6 +39,7 @@ private:
     vector<ExprNode*> params;
 
     CallInfo call_info;
+	CodeObject code_obj;
 };
 
 #endif

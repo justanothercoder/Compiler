@@ -85,54 +85,58 @@ int main()
 		
 		root->define(TemplateInfo());
 		root->check (TemplateInfo());
+	
+		CodeObject main_code;
 		
-		CodeGen::emit("section .text");
+		main_code.emit("section .text");
 
-		CodeGen::emit("extern " + BuiltIns::int_assign->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::int_plus->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::int_minus->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::int_mul->getScopedTypedName());	
-		CodeGen::emit("extern " + BuiltIns::int_eq->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::int_neq->getScopedTypedName());	
-		CodeGen::emit("extern " + BuiltIns::int_div->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::int_mod->getScopedTypedName());	
-		CodeGen::emit("extern " + BuiltIns::int_and->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::int_or->getScopedTypedName());	
-		CodeGen::emit("extern " + BuiltIns::int_default_constructor->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::int_copy_constructor->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::int_assign->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::int_plus->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::int_minus->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::int_mul->getScopedTypedName());	
+		main_code.emit("extern " + BuiltIns::int_eq->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::int_neq->getScopedTypedName());	
+		main_code.emit("extern " + BuiltIns::int_div->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::int_mod->getScopedTypedName());	
+		main_code.emit("extern " + BuiltIns::int_and->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::int_or->getScopedTypedName());	
+		main_code.emit("extern " + BuiltIns::int_default_constructor->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::int_copy_constructor->getScopedTypedName());
 
-		CodeGen::emit("extern " + BuiltIns::putchar_func->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::getchar_func->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::putchar_func->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::getchar_func->getScopedTypedName());
 		
-		CodeGen::emit("extern " + BuiltIns::ASCII_string_copy_constructor->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::ASCII_string_elem_operator->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::ASCII_string_length_func->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::ASCII_string_plus_operator->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::ASCII_string_assign_operator->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::ASCII_string_copy_constructor->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::ASCII_string_elem_operator->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::ASCII_string_length_func->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::ASCII_string_plus_operator->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::ASCII_string_assign_operator->getScopedTypedName());
 		
-		CodeGen::emit("extern " + BuiltIns::print_ASCII_string_func->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::__fopen_func->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::__fclose_func->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::__fwrite_func->getScopedTypedName());
-		CodeGen::emit("extern " + BuiltIns::__fread_func->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::print_ASCII_string_func->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::__fopen_func->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::__fclose_func->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::__fwrite_func->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::__fread_func->getScopedTypedName());
 
-		CodeGen::emit("global _start");
-		CodeGen::emit("_start:");
+		main_code.emit("global _start");
+		main_code.emit("_start:");
 
-		CodeGen::emit("push rbp");
-		CodeGen::emit("mov rbp, rsp");	
+		main_code.emit("push rbp");
+		main_code.emit("mov rbp, rsp");	
 
 		if ( root->getScope()->get_valloc()->getSpace() > 0 )		
-			CodeGen::emit("sub rsp, " + std::to_string(root->getScope()->get_valloc()->getSpace()));
+			main_code.emit("sub rsp, " + std::to_string(root->getScope()->get_valloc()->getSpace()));
 
-		root->gen(TemplateInfo());
+		main_code.emit(root->gen(TemplateInfo()).getCode());
 
-		CodeGen::emit("mov rsp, rbp");
-		CodeGen::emit("pop rbp");
+		main_code.emit("mov rsp, rbp");
+		main_code.emit("pop rbp");
 
-		CodeGen::emit("mov rax, 60");
-		CodeGen::emit("mov rdi, 0");
-		CodeGen::emit("syscall");
+		main_code.emit("mov rax, 60");
+		main_code.emit("mov rdi, 0");
+		main_code.emit("syscall");
+
+		main_code.gen();
 	}
 //	catch ( SemanticError& e )
 //	{

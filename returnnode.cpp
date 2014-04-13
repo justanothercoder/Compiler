@@ -1,28 +1,33 @@
 #include "returnnode.hpp"
 
-ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), copy_call_info(), enclosing_func(nullptr) { }
+ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), copy_call_info(), enclosing_func(nullptr), code_obj() { }
 
 ReturnNode::~ReturnNode() { delete expr; }
 
-void ReturnNode::gen(const TemplateInfo& template_info)
+CodeObject& ReturnNode::gen(const TemplateInfo& template_info)
 {
 	if ( enclosing_func->getTypeInfo().return_type.is_ref )
 	{
 		if ( !expr->isLeftValue() )
 			throw SemanticError("cannot initialize " + enclosing_func->getTypeInfo().return_type.getName() + " with value of type " + expr->getType().getName());
 
-		expr->gen(template_info);
+		code_obj.emit(expr->gen(template_info).getCode());
 	}
 	else
 	{
-		CodeGen::genCallCode(copy_call_info, {expr}, template_info,
-				[&]() { CodeGen::emit("mov r9, [rbp]"); CodeGen::emit("lea rax, [r9 - " + std::to_string(GlobalConfig::int_size) + "]"); }
-		);
+		CodeObject return_place;
+
+		return_place.emit("mov r9, [rbp]");
+	   	return_place.emit("lea rax, [r9 - " + std::to_string(GlobalConfig::int_size) + "]");
+
+		code_obj.genCallCode(copy_call_info, {expr}, template_info, return_place);
 	}
 
-    CodeGen::emit("mov rsp, rbp");
-    CodeGen::emit("pop rbp");
-    CodeGen::emit("ret");
+    code_obj.emit("mov rsp, rbp");
+    code_obj.emit("pop rbp");
+    code_obj.emit("ret");
+
+	return code_obj;
 }
 
 void ReturnNode::check(const TemplateInfo& template_info)

@@ -41,3 +41,18 @@ FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol *over
 
 	return overloads.empty() ? nullptr : overloaded_func->getTypeInfo().symbols[*std::begin(overloads)];   
 }
+	
+FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
+{
+	CodeObject func_code;
+	for ( auto member : struc->table )
+	{
+		if ( dynamic_cast<VariableSymbol*>(member.second) )
+		{		
+			if ( dynamic_cast<StructSymbol*>(dynamic_cast<VariableSymbol*>(member.second)->getType().type) )
+			{
+//				func_code.genCallCode(call_info, params, template_info, genThis)
+			}
+		}
+	}
+}

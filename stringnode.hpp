@@ -3,7 +3,7 @@
 
 #include "exprnode.hpp"
 #include "builtins.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 
 class StringNode : public ExprNode
 {
@@ -15,7 +15,7 @@ public:
 	virtual VariableType getType() const;
 
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual std::vector<AST*> getChildren() const;
 
@@ -26,6 +26,7 @@ public:
 private:
 	
 	string str;
+	CodeObject code_obj;
 };
 
 #endif

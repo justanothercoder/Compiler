@@ -5,8 +5,9 @@
 #include "structsymbol.hpp"
 #include "typehelper.hpp"
 #include "globalhelper.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 #include "templatestructsymbol.hpp"
+#include "codeobject.hpp"
 
 class DotNode : public ExprNode
 {
@@ -21,7 +22,7 @@ public:
     virtual VariableType getType() const;
 
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);    
+    virtual CodeObject& gen(const TemplateInfo& template_info);    
 
 	virtual vector<AST*> getChildren() const;
     
@@ -33,6 +34,7 @@ private:
 
     StructSymbol *base_type;
     VariableSymbol *member;
+	CodeObject* code_obj;
 };
 
 #endif

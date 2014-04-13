@@ -34,9 +34,10 @@ void UnaryNode::check(const TemplateInfo& template_info)
 	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(exp->getType().type), { }, template_info);
 }
 
-void UnaryNode::gen(const TemplateInfo& template_info)
+CodeObject& UnaryNode::gen(const TemplateInfo& template_info)
 {
-	CodeGen::genCallCode(call_info, { }, template_info, [&]() { exp->gen(template_info); });	
+	code_obj.genCallCode(call_info, { }, template_info, exp->gen(template_info));
+	return code_obj;
 }
 
 std::vector<AST*> UnaryNode::getChildren() const { return {exp}; }

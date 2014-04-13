@@ -1,6 +1,6 @@
 #include "newexpressionnode.hpp"
 
-NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params) : type_info(type_info), params(params), call_info() { }
+NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params) : type_info(type_info), params(params), call_info(), code_obj() { }
 
 NewExpressionNode::~NewExpressionNode()
 {
@@ -19,11 +19,14 @@ void NewExpressionNode::check(const TemplateInfo& template_info)
 	call_info = CallHelper::callCheck(name, type, params, template_info); 
 }
 
-void NewExpressionNode::gen(const TemplateInfo& template_info)
+CodeObject& NewExpressionNode::gen(const TemplateInfo& template_info)
 {
-	CodeGen::genCallCode(call_info, params, template_info,
-			[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]"); }
-	);
+	CodeObject new_place;
+	new_place.emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]");
+
+	code_obj.genCallCode(call_info, params, template_info, new_place);
+
+	return code_obj;
 }
 
 VariableType NewExpressionNode::getType() const { return call_info.callee->getTypeInfo().return_type; }

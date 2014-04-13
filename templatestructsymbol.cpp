@@ -61,7 +61,7 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 
 	decl->define(TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols));
 	decl->check(TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols));
-	decl->gen(TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols));
+	decl->gen(TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)).gen();
 
 	return (specs[symbols] = static_cast<StructSymbol*>(decl->getDefinedSymbol()));
 }

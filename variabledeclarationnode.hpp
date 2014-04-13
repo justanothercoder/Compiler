@@ -5,7 +5,7 @@
 
 #include "declarationnode.hpp"
 #include "variablesymbol.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 #include "typeinfo.hpp"
 #include "typehelper.hpp"
 #include "functionsymbol.hpp"
@@ -34,7 +34,7 @@ public:
 
     virtual void define(const TemplateInfo& template_info);
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
     
     virtual Symbol* getDefinedSymbol() const;
 
@@ -52,6 +52,8 @@ private:
     vector<ExprNode*> constructor_call_params;
 
 	CallInfo call_info;
+
+	CodeObject code_obj;
 };
 
 #endif

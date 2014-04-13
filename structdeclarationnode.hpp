@@ -6,6 +6,7 @@
 #include "declarationnode.hpp"
 #include "structsymbol.hpp"
 #include "symboldefine.hpp"
+#include "codeobject.hpp"
 
 using std::vector;
 
@@ -25,7 +26,7 @@ public:
 
 	virtual void define(const TemplateInfo& template_info);
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
     
@@ -35,6 +36,7 @@ protected:
     vector<AST*> inner;
 
     StructSymbol *definedSymbol;
+	CodeObject code_obj;
 };
 
 #endif

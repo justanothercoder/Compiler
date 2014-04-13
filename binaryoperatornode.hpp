@@ -4,7 +4,7 @@
 #include "exprnode.hpp"
 #include "functionsymbol.hpp"
 #include "functionhelper.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 #include "callhelper.hpp"
 #include "builtins.hpp"
 
@@ -26,7 +26,7 @@ public:
     string getCodeOperatorName();
 
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
 
@@ -35,6 +35,7 @@ protected:
     ExprNode *lhs, *rhs;
     BinaryOp op_type;
     CallInfo call_info;
+	CodeObject code_obj;
 };
 
 #endif

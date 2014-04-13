@@ -1,6 +1,6 @@
 #include "whilenode.hpp"
 
-WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats), while_scope(nullptr) { }
+WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats), while_scope(nullptr), code_obj() { }
 
 WhileNode::~WhileNode() 
 { 
@@ -28,17 +28,19 @@ void WhileNode::check(const TemplateInfo& template_info)
     stats->check(template_info);
 }
 
-void WhileNode::gen(const TemplateInfo& template_info)
+CodeObject& WhileNode::gen(const TemplateInfo& template_info)
 {
     string exit_label = WhileNode::getNewLabel(), cycle_label = WhileNode::getNewLabel();
     
-    CodeGen::emit(cycle_label + ":");
-    cond->gen(template_info);
-    CodeGen::emit("cmp qword [rax], 0");
-    CodeGen::emit("jz " + exit_label);
-    stats->gen(template_info);
-    CodeGen::emit("jmp " + cycle_label);
-    CodeGen::emit(exit_label + ":");
+    code_obj.emit(cycle_label + ":");
+    code_obj.emit(cond->gen(template_info).getCode());
+    code_obj.emit("cmp qword [rax], 0");
+    code_obj.emit("jz " + exit_label);
+    code_obj.emit(stats->gen(template_info).getCode());
+    code_obj.emit("jmp " + cycle_label);
+    code_obj.emit(exit_label + ":");
+
+	return code_obj;
 }
 
 string WhileNode::getNewLabel() 

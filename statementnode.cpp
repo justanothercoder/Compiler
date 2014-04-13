@@ -1,6 +1,6 @@
 #include "statementnode.hpp"
 
-StatementNode::StatementNode(vector<AST*> statements) : statements(statements) { }
+StatementNode::StatementNode(vector<AST*> statements) : statements(statements), code_obj() { }
 
 StatementNode::~StatementNode()
 {
@@ -29,10 +29,11 @@ AST* StatementNode::copyTree() const
 	return new StatementNode(stats);
 }
 
-void StatementNode::gen(const TemplateInfo& template_info)
+CodeObject& StatementNode::gen(const TemplateInfo& template_info)
 {
 	for ( auto i : statements )
-		i->gen(template_info);
+		code_obj.emit(i->gen(template_info).getCode());
+	return code_obj;
 }
 
 vector<AST*> StatementNode::getChildren() const { return statements; }

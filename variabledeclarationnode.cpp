@@ -56,7 +56,7 @@ void VariableDeclarationNode::check(const TemplateInfo& template_info)
 	GlobalHelper::setDefined(getDefinedSymbol());
 }
 
-void VariableDeclarationNode::gen(const TemplateInfo& template_info)
+CodeObject& VariableDeclarationNode::gen(const TemplateInfo& template_info)
 {
 	if ( !is_field )
 	{  
@@ -65,15 +65,18 @@ void VariableDeclarationNode::gen(const TemplateInfo& template_info)
 			for ( auto i : constructor_call_params )
 				i->gen(template_info);
 
-			CodeGen::emit("mov [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "], rax");
+			code_obj.emit("mov [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "], rax");
 		}
 		else
 		{
-			CodeGen::genCallCode(call_info, constructor_call_params, template_info, 
-					[&]() { CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]"); }
-					);
+			CodeObject var_code;
+			var_code.emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]");
+
+			code_obj.genCallCode(call_info, constructor_call_params, template_info, var_code);
 		}
 	}
+
+	return code_obj;
 }
 
 void VariableDeclarationNode::define(const TemplateInfo& template_info)

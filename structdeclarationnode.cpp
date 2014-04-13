@@ -43,10 +43,11 @@ void StructDeclarationNode::check(const TemplateInfo& template_info)
 		decl->check(template_info);	
 }
 
-void StructDeclarationNode::gen(const TemplateInfo& template_info)
-{
+CodeObject& StructDeclarationNode::gen(const TemplateInfo& template_info)
+{	
     for ( auto decl : inner )
-		decl->gen(template_info);
+		code_obj.emit(decl->gen(template_info).getCode());
+	return code_obj;
 }
 
 AST* StructDeclarationNode::copyTree() const 

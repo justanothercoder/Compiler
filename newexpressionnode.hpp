@@ -9,7 +9,7 @@
 #include "scope.hpp"
 #include "structsymbol.hpp"
 #include "typehelper.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 #include "callhelper.hpp"
 
 using std::vector;
@@ -27,7 +27,7 @@ public:
     virtual VariableType getType() const;
 
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
     
@@ -36,6 +36,7 @@ private:
     TypeInfo type_info;
     vector<ExprNode*> params;
     CallInfo call_info;
+	CodeObject code_obj;
 };
 
 #endif

@@ -12,13 +12,14 @@ public:
 	
     virtual void define(const TemplateInfo& template_info);
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual std::vector<AST*> getChildren() const;
 
 private:
 
 	string lib;
+	CodeObject code_obj;
 };
 
 #endif

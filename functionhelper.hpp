@@ -7,6 +7,8 @@
 #include "typehelper.hpp"
 #include "functiontypeinfo.hpp"
 
+#include "codeobject.hpp"
+
 using std::set;
 
 class FunctionHelper
@@ -16,6 +18,8 @@ public:
     static bool isCompatible(FunctionTypeInfo ft, vector<VariableType> params_type);
     static set<FunctionTypeInfo> getBestOverload(set<FunctionTypeInfo> selection, vector<VariableType> params_type);
     static FunctionSymbol* getViableOverload(OverloadedFunctionSymbol* overloaded_func, vector<VariableType> params_type);
+
+	static FunctionSymbol* makeDefaultCopyConstructor(StructSymbol *struc);
 };   
 
 #endif

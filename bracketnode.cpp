@@ -1,6 +1,6 @@
 #include "bracketnode.hpp"
 
-BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr), call_info() { }
+BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr), call_info(), code_obj() { }
 
 BracketNode::~BracketNode() { delete expr; }
 
@@ -12,9 +12,10 @@ void BracketNode::check(const TemplateInfo& template_info)
 	call_info = CallHelper::callCheck("operator[]", base_type, {this->expr}, template_info);
 }
 
-void BracketNode::gen(const TemplateInfo& template_info)
+CodeObject& BracketNode::gen(const TemplateInfo& template_info)
 {
-    CodeGen::genCallCode(call_info, {this->expr}, template_info, [&]() { base->gen(template_info); });
+    code_obj.genCallCode(call_info, {this->expr}, template_info, base->gen(template_info));
+	return code_obj;
 }
 
 VariableType BracketNode::getType() const { return call_info.callee->getTypeInfo().return_type; }

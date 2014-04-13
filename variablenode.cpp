@@ -1,6 +1,6 @@
 #include "variablenode.hpp"
 
-VariableNode::VariableNode(string name) : name(name), variable(nullptr) { }
+VariableNode::VariableNode(string name) : name(name), variable(nullptr), code_obj(new CodeObject()) { }
 
 void VariableNode::check(const TemplateInfo& template_info)
 {
@@ -47,7 +47,7 @@ bool VariableNode::isTemplateParam() const { return template_info.sym != nullptr
 
 AST* VariableNode::copyTree() const { return new VariableNode(name); }
 
-void VariableNode::gen(const TemplateInfo& template_info)
+CodeObject& VariableNode::gen(const TemplateInfo& template_info)
 {
 	if ( template_info.sym && template_info.sym->isIn(name) )
 	{
@@ -57,8 +57,7 @@ void VariableNode::gen(const TemplateInfo& template_info)
 			if ( dynamic_cast<VariableNode*>(replace)->variable->getSymbolType() == SymbolType::CLASSVARIABLE )
 				throw SemanticError(name + " is typename");
 
-		replace->gen(template_info);
-		return;
+		return replace->gen(template_info);
 	}
 
 	auto var_type = variable->getType();
@@ -71,11 +70,11 @@ void VariableNode::gen(const TemplateInfo& template_info)
 
 			auto struc_scope = static_cast<StructSymbol*>(sym->getType().type);
 
-			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
-			CodeGen::emit("mov rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");
+			code_obj->emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
+			code_obj->emit("mov rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");
 		}
 		else
-			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(variable)) + "]");
+			code_obj->emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(variable)) + "]");
 	}    
 	else if ( var_type.type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
@@ -102,7 +101,7 @@ void VariableNode::gen(const TemplateInfo& template_info)
 		else
 			variable = new VariableSymbol(function->getName(), VariableType(std::begin(function_info.symbols)->second));
 
-		CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(variable->getType().type)->getScopedTypedName() + "]");
+		code_obj->emit("lea rax, [" + static_cast<FunctionSymbol*>(variable->getType().type)->getScopedTypedName() + "]");
 	}
 	else
 	{
@@ -114,18 +113,20 @@ void VariableNode::gen(const TemplateInfo& template_info)
 
 			auto struc_scope = static_cast<StructSymbol*>(sym->getType().type);
 
-			CodeGen::emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
-			CodeGen::emit("lea rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");
+			code_obj->emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
+			code_obj->emit("lea rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");
 		}
 		else
 		{
 			auto hint = GlobalHelper::getTypeHint(this);
 			if ( hint != nullptr )
-				CodeGen::emit("lea rax, [" + static_cast<FunctionSymbol*>(hint)->getScopedTypedName() + "]");
+				code_obj->emit("lea rax, [" + static_cast<FunctionSymbol*>(hint)->getScopedTypedName() + "]");
 			else
-				CodeGen::emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(variable)) + "]");
+				code_obj->emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(variable)) + "]");
 		}
 	}
+
+	return *code_obj;
 }
 	
 vector<AST*> VariableNode::getChildren() const { return { }; }

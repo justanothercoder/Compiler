@@ -13,11 +13,11 @@ void StringNode::check(const TemplateInfo&) { getScope()->get_valloc()->addLocal
 
 AST* StringNode::copyTree() const { return new StringNode(str); }
 
-void StringNode::gen(const TemplateInfo&)
+CodeObject& StringNode::gen(const TemplateInfo&)
 {
 	string str_label = StringNode::getNewLabel();
 
-	CodeGen::emit("section .data");
+	code_obj.emit("section .data");
 
 	string res = "0";
 
@@ -32,11 +32,13 @@ void StringNode::gen(const TemplateInfo&)
 			res += ", " + std::to_string(static_cast<int>(str[i]));
 	}
 
-	CodeGen::emit("@" + str_label + ": db " + res);
-	CodeGen::emit(str_label + " equ $ - 1");
+	code_obj.emit("@" + str_label + ": db " + res);
+	code_obj.emit(str_label + " equ $ - 1");
 
-	CodeGen::emit("section .text");
-	CodeGen::emit("lea rax, [" + str_label + "]");
+	code_obj.emit("section .text");
+	code_obj.emit("lea rax, [" + str_label + "]");
+
+	return code_obj;
 }
 	
 vector<AST*> StringNode::getChildren() const { return { }; }

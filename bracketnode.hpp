@@ -5,7 +5,7 @@
 #include "functionsymbol.hpp"
 #include "structsymbol.hpp"
 #include "functionhelper.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 #include "callhelper.hpp"
 
 class BracketNode : public ExprNode
@@ -17,7 +17,7 @@ public:
 	virtual ~BracketNode();
 
 	virtual void check(const TemplateInfo& template_info);
-	virtual void gen(const TemplateInfo& template_info);	
+	virtual CodeObject& gen(const TemplateInfo& template_info);	
 
 	virtual VariableType getType() const;
 
@@ -30,6 +30,7 @@ private:
 	ExprNode *base, *expr;
 
 	CallInfo call_info;
+	CodeObject code_obj;
 };
 
 #endif

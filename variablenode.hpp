@@ -8,7 +8,7 @@
 #include "typehelper.hpp"
 #include "structsymbol.hpp"
 #include "globalhelper.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 #include "templatestructsymbol.hpp"
 #include "classvariablesymbol.hpp"
 #include "templateinfo.hpp"
@@ -24,7 +24,7 @@ public:
     virtual VariableType getType() const;
 
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
 
@@ -37,6 +37,7 @@ private:
     VariableSymbol *variable;
 
 	TemplateInfo template_info;
+	CodeObject *code_obj;
 };
 
 #endif

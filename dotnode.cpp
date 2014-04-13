@@ -1,6 +1,6 @@
 #include "dotnode.hpp"
 
-DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(member_name), base_type(nullptr), member(nullptr) { }
+DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(member_name), base_type(nullptr), member(nullptr), code_obj(new CodeObject()) { }
 
 DotNode::~DotNode() { delete base; }
 
@@ -31,14 +31,14 @@ VariableType DotNode::getType() const
 
 AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base->copyTree()), member_name); }
 
-void DotNode::gen(const TemplateInfo& template_info)
+CodeObject& DotNode::gen(const TemplateInfo& template_info)
 {    
-	base->gen(template_info);
+	code_obj->emit(base->gen(template_info).getCode());
 	
 	auto member_type = member->getType();
 
 	if ( member_type.is_ref )
-		CodeGen::emit("mov rax, [rax - " + std::to_string(base_type->get_valloc()->getAddress(member)) + "]");
+		code_obj->emit("mov rax, [rax - " + std::to_string(base_type->get_valloc()->getAddress(member)) + "]");
 	else if ( member_type.type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
 		auto ov_func = static_cast<OverloadedFunctionSymbol*>(member_type.type);
@@ -57,7 +57,9 @@ void DotNode::gen(const TemplateInfo& template_info)
 			member = new VariableSymbol(ov_func->getName(), VariableType(std::begin(ov_func_type_info.symbols)->second));
 	}
 	else
-		CodeGen::emit("lea rax, [rax - " + std::to_string(base_type->get_valloc()->getAddress(member)) + "]");
+		code_obj->emit("lea rax, [rax - " + std::to_string(base_type->get_valloc()->getAddress(member)) + "]");
+
+	return *code_obj;
 }
 	
 vector<AST*> DotNode::getChildren() const { return {base}; }

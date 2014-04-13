@@ -1,6 +1,6 @@
 #include "importnode.hpp"
 
-ImportNode::ImportNode(string lib) : lib(lib) { }
+ImportNode::ImportNode(string lib) : lib(lib), code_obj() { }
 
 AST* ImportNode::copyTree() const { return new ImportNode(lib); }
 
@@ -13,10 +13,10 @@ void ImportNode::define(const TemplateInfo&)
 
 	root->define(TemplateInfo());
 	root->check(TemplateInfo());
-	root->gen(TemplateInfo());
+	code_obj.emit(root->gen(TemplateInfo()).getCode());
 }
 
 void ImportNode::check(const TemplateInfo&) { }
-void ImportNode::gen(const TemplateInfo&) { }
+CodeObject& ImportNode::gen(const TemplateInfo&) { return code_obj; }
 
 vector<AST*> ImportNode::getChildren() const { return { }; }

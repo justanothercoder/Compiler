@@ -13,7 +13,7 @@
 #include "variablesymboldefine.hpp"
 #include "functionsymboldefine.hpp"
 
-#include "codegen.hpp"
+#include "codeobject.hpp"
 
 using std::vector;
 using std::pair;
@@ -34,7 +34,7 @@ public:
 
     virtual void define(const TemplateInfo& template_info);
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
     
@@ -50,6 +50,8 @@ private:
     FunctionSymbol *definedSymbol;
 
 	vector<VariableSymbol*> params_symbols;
+
+	CodeObject code_obj;
 };
 
 #endif

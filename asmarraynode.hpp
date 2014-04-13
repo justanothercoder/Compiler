@@ -1,7 +1,7 @@
 #ifndef _ASMARRAYNODE_HPP_
 #define _ASMARRAYNODE_HPP_
 
-#include "codegen.hpp"
+#include "codeobject.hpp"
 #include "classvariablesymbol.hpp"
 #include "templatesymbol.hpp"
 #include "numbernode.hpp"
@@ -16,7 +16,7 @@ public:
 
 	virtual void define(const TemplateInfo& template_info);
 	virtual void check(const TemplateInfo& template_info);
-	virtual void gen(const TemplateInfo& template_info);
+	virtual CodeObject& gen(const TemplateInfo& template_info);
 	
 	virtual AST* copyTree() const;
 	virtual std::vector<AST*> getChildren() const;
@@ -25,6 +25,7 @@ private:
 	
 	int size_of_type;
 	int array_size;
+	CodeObject code_obj;
 };
 
 #endif

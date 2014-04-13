@@ -1,6 +1,6 @@
 #include "binaryoperatornode.hpp"
 
-BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type), call_info() { }
+BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type), call_info(), code_obj() { }
 
 BinaryOperatorNode::~BinaryOperatorNode() { delete lhs; delete rhs; }
 
@@ -53,12 +53,17 @@ string BinaryOperatorNode::getCodeOperatorName()
     }    
 }
 
-void BinaryOperatorNode::gen(const TemplateInfo& template_info)
+CodeObject& BinaryOperatorNode::gen(const TemplateInfo& template_info)
 {
 	if ( call_info.callee->isMethod() )
-		CodeGen::genCallCode(call_info, {rhs}, template_info, [&]() { lhs->gen(template_info); });
+		code_obj.genCallCode(call_info, {rhs}, template_info, lhs->gen(template_info));
 	else
-		CodeGen::genCallCode(call_info, {lhs, rhs}, template_info, [](){});
+	{
+		CodeObject empty;
+		code_obj.genCallCode(call_info, {lhs, rhs}, template_info, empty);
+	}
+
+	return code_obj;
 }
 
 AST* BinaryOperatorNode::copyTree() const

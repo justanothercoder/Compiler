@@ -4,7 +4,7 @@
 #include "exprnode.hpp"
 #include "functionsymbol.hpp"
 #include "globalconfig.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 #include "callinfo.hpp"
 
 class ReturnNode : public AST
@@ -19,7 +19,7 @@ public:
 
 	virtual void define(const TemplateInfo& template_info);
 	virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
 
@@ -30,6 +30,7 @@ private:
 	CallInfo copy_call_info;
 
 	FunctionSymbol *enclosing_func;
+	CodeObject code_obj;
 };
 
 #endif

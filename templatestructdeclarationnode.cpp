@@ -15,5 +15,5 @@ void TemplateStructDeclarationNode::build_scope()
 
 void TemplateStructDeclarationNode::define(const TemplateInfo&) { getScope()->accept(new SymbolDefine(definedSymbol)); }
 
-void TemplateStructDeclarationNode::gen(const TemplateInfo&) { }
 void TemplateStructDeclarationNode::check(const TemplateInfo&) { }
+CodeObject& TemplateStructDeclarationNode::gen(const TemplateInfo&) { return code_obj; }

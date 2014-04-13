@@ -4,7 +4,7 @@
 #include "exprnode.hpp"
 #include "globalconfig.hpp"
 #include "builtins.hpp"
-#include "codegen.hpp"
+#include "codeobject.hpp"
 
 class NumberNode : public ExprNode
 {
@@ -17,7 +17,7 @@ public:
     virtual VariableType getType() const;
 
     virtual void check(const TemplateInfo& template_info);
-    virtual void gen(const TemplateInfo& template_info);
+    virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
 
@@ -26,7 +26,7 @@ public:
 private:
 
     string num;
-    
+	CodeObject code_obj;    
 };
     
 #endif
