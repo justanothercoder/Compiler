@@ -2,6 +2,8 @@
 
 VariableNode::VariableNode(string name) : name(name), variable(nullptr), code_obj(new CodeObject()) { }
 
+VariableNode::~VariableNode() { delete code_obj; }
+
 void VariableNode::check(const TemplateInfo& template_info)
 {
 	if ( template_info.sym && template_info.sym->isIn(name) )

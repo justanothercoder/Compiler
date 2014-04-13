@@ -19,6 +19,8 @@ public:
 
     VariableNode(string name);
 
+	~VariableNode();
+
     virtual AST* copyTree() const;
 
     virtual VariableType getType() const;

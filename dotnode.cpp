@@ -2,7 +2,7 @@
 
 DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(member_name), base_type(nullptr), member(nullptr), code_obj(new CodeObject()) { }
 
-DotNode::~DotNode() { delete base; }
+DotNode::~DotNode() { delete base; delete code_obj; }
 
 void DotNode::check(const TemplateInfo& template_info)
 {
