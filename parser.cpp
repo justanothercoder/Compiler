@@ -629,3 +629,17 @@ AST* Parser::import_stat()
 	match(TokenType::IMPORT);
 	return new ImportNode(id());
 }
+    
+bool Parser::tryTypeInfo()
+{
+	bool success = true;
+
+	mark();
+
+	try { typeInfo(); }
+	catch ( RecognitionError& e ) { success = false; }
+
+	release();
+
+	return success;
+}

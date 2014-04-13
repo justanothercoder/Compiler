@@ -78,6 +78,7 @@ private:
 
     bool tryAssignment();
     bool tryVarDecl();
+    bool tryTypeInfo();
 };
 
 #endif
