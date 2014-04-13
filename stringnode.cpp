@@ -9,7 +9,6 @@ VariableType StringNode::getType() const
 	return VariableType(type, false, true); 
 }
 
-//void StringNode::check(const TemplateInfo&) { getScope()->get_valloc()->addLocal(256 * 8); }
 void StringNode::check(const TemplateInfo&) { getScope()->get_valloc()->addLocal(256); }
 
 AST* StringNode::copyTree() const { return new StringNode(str); }
@@ -22,13 +21,20 @@ void StringNode::gen(const TemplateInfo&)
 
 	string res = "0";
 
-	for ( int i = str.length() - 1; i >= 1; --i )
-		res += ", " + std::to_string(static_cast<int>(str[i]));
+	for ( int i = str.length() - 1; i >= 0; --i )
+	{
+		if ( i >= 1 && str[i - 1] == '\\' && str[i] == 'n' )
+		{
+			res += ", 10";
+			--i;
+		}
+		else
+			res += ", " + std::to_string(static_cast<int>(str[i]));
+	}
 
-//	CodeGen::emit("@" + str_label + ": dq " + res);
-//	CodeGen::emit(str_label + ": dq " + std::to_string(static_cast<int>(str[0])));
 	CodeGen::emit("@" + str_label + ": db " + res);
-	CodeGen::emit(str_label + ": db " + std::to_string(static_cast<int>(str[0])));
+	CodeGen::emit(str_label + " equ $ - 1");
+
 	CodeGen::emit("section .text");
 	CodeGen::emit("lea rax, [" + str_label + "]");
 }
