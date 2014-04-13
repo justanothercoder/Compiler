@@ -1,0 +1,72 @@
+struct InputStream
+{
+	def InputStream() {
+		fd = 0;
+	}
+
+	def open(string filename) {
+		fd = __fopen(filename, 438, 0);
+	}
+
+	def read(int len) : string  {
+		string tmp = ""
+		__fread(fd, tmp, len)
+		return tmp
+	}
+
+	def close() {
+		__fclose(fd);
+	}
+
+	int fd;
+}
+
+struct OutputStream
+{
+	def OutputStream() {
+		fd = 1;
+	}
+
+	def open(string filename) {
+		fd = __fopen(filename, 438, 1);
+	}
+
+	def write(string text) {
+		__fwrite(fd, text, text.length())
+	}
+
+	def close() {
+		__fclose(fd);
+	}
+
+	int fd;
+}
+
+struct BufferedInputStream
+{
+	InputStream istream;
+
+	def BufferedInputStream() {
+		istream.fd = 0
+	}
+
+	def open(string filename) {
+		istream.open(filename)
+	}
+
+	def readLine() : string {
+		__fread(istream.fd, buffer, 256)
+		
+		string tmp = ""
+
+		tmp = buffer
+
+		return tmp
+	}
+
+	def close() {
+		istream.close()
+	}
+
+	string buffer;
+}
