@@ -37,7 +37,11 @@ void CodeGen::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol
 		if ( copy_constr == BuiltIns::int_copy_constructor )
 		{
 			if ( conv == nullptr )
+			{
 				param->gen(template_info);
+				if ( param->getType().is_ref && !(dynamic_cast<VariableNode*>(param) != nullptr) )
+					CodeGen::emit("mov rax, [rax]");
+			}
 			
 			emit("mov rbx, [rax]");
 			emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");

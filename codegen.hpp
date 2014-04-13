@@ -14,6 +14,7 @@ using std::string;
 #include "builtins.hpp"
 #include "callinfo.hpp"
 
+#include "variablenode.hpp"
 
 class CodeGen
 {
