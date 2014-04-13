@@ -405,7 +405,7 @@ ExprNode* Parser::relation()
 		default: throw;
 		}
 		match(getTokenType(1));
-		res = new BinaryOperatorNode(res, term(), op);
+		res = new BinaryOperatorNode(res, sum_expr(), op);
 	}
 
 	return res;
@@ -426,7 +426,7 @@ ExprNode* Parser::bool_expr()
 		default: throw;
 		}
 		match(getTokenType(1));
-		res = new BinaryOperatorNode(res, term(), op);
+		res = new BinaryOperatorNode(res, relation(), op);
 	}
 
 	return res;

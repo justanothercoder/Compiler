@@ -125,7 +125,7 @@ FunctionSymbol *BuiltIns::ASCII_string_copy_constructor = new FunctionSymbol("st
 		);
 
 FunctionSymbol *BuiltIns::ASCII_string_elem_operator = new FunctionSymbol("operator[]",
-										FunctionTypeInfo(VariableType(BuiltIns::ASCII_string, true),
+										FunctionTypeInfo(VariableType(BuiltIns::int_struct, true),
 														{VariableType(BuiltIns::ASCII_string, true),
 														 VariableType(BuiltIns::int_struct)}),
 										BuiltIns::ASCII_string,
