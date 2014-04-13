@@ -4,8 +4,6 @@
 
 Scope *BuiltIns::global_scope = new GlobalScope();
 
-BuiltInTypeSymbol *BuiltIns::int_type = new BuiltInTypeSymbol("~~int", GlobalConfig::int_size);
-
 StructSymbol *BuiltIns::int_struct = new StructSymbol("int", BuiltIns::global_scope);
 
 FunctionSymbol *BuiltIns::int_assign = new FunctionSymbol("operator=",
@@ -82,7 +80,7 @@ FunctionSymbol *BuiltIns::int_default_constructor = new FunctionSymbol("int",
 FunctionSymbol *BuiltIns::int_copy_constructor = new FunctionSymbol("int",
 									   FunctionTypeInfo(VariableType(BuiltIns::int_struct, true), 
 										   			   {VariableType(BuiltIns::int_struct, true), 
-													    VariableType(BuiltIns::int_struct)}),
+													    VariableType(BuiltIns::int_struct, true, true)}),
 									   BuiltIns::int_struct,
 									   {true, true, false}
 		);
@@ -115,3 +113,78 @@ TemplateStructSymbol *BuiltIns::array_struct = new TemplateStructSymbol("array",
 																			}
 																		)
 		);
+	
+StructSymbol *BuiltIns::ASCII_string = new StructSymbol("string", BuiltIns::global_scope);
+
+FunctionSymbol *BuiltIns::ASCII_string_copy_constructor = new FunctionSymbol("string",
+										FunctionTypeInfo(VariableType(BuiltIns::ASCII_string, true),
+														{VariableType(BuiltIns::ASCII_string, true),
+														 VariableType(BuiltIns::ASCII_string, true, true)}),
+										BuiltIns::ASCII_string,
+										{true, true, false}
+		);
+
+FunctionSymbol *BuiltIns::ASCII_string_elem_operator = new FunctionSymbol("operator[]",
+										FunctionTypeInfo(VariableType(BuiltIns::ASCII_string, true),
+														{VariableType(BuiltIns::ASCII_string, true),
+														 VariableType(BuiltIns::int_struct)}),
+										BuiltIns::ASCII_string,
+										{true, false, true}
+		);
+	
+FunctionSymbol *BuiltIns::ASCII_string_length_func = new FunctionSymbol("length",
+										FunctionTypeInfo(VariableType(BuiltIns::int_struct),
+														{VariableType(BuiltIns::ASCII_string, true)}),
+										BuiltIns::ASCII_string,
+										{true, false, false}
+		);
+	
+FunctionSymbol *BuiltIns::ASCII_string_plus_operator = new FunctionSymbol("operator+",
+										FunctionTypeInfo(VariableType(BuiltIns::ASCII_string),
+														{VariableType(BuiltIns::ASCII_string, true),
+														 VariableType(BuiltIns::ASCII_string, true, true)}),
+										BuiltIns::ASCII_string,
+										{true, false, true}
+		);
+
+	
+FunctionSymbol *BuiltIns::print_ASCII_string_func = new FunctionSymbol("print",
+										FunctionTypeInfo(VariableType(BuiltIns::void_type),
+														{VariableType(BuiltIns::ASCII_string, true, true)}),
+										BuiltIns::global_scope,
+										{false, false, false}
+		);										
+	
+FunctionSymbol *BuiltIns::__fopen_func = new FunctionSymbol("__fopen",
+	   									FunctionTypeInfo(VariableType(BuiltIns::int_struct),
+														{VariableType(BuiltIns::ASCII_string, true, true),
+														 VariableType(BuiltIns::int_struct),
+														 VariableType(BuiltIns::int_struct)}),
+										BuiltIns::global_scope,
+										{false, false, false}
+		);
+
+FunctionSymbol *BuiltIns::__fclose_func = new FunctionSymbol("__fclose",
+	   									FunctionTypeInfo(VariableType(BuiltIns::void_type),
+														{VariableType(BuiltIns::int_struct)}),
+										BuiltIns::global_scope,
+										{false, false, false}
+		);
+
+FunctionSymbol *BuiltIns::__fwrite_func = new FunctionSymbol("__fwrite",
+	   									FunctionTypeInfo(VariableType(BuiltIns::int_struct),
+														{VariableType(BuiltIns::int_struct),
+														 VariableType(BuiltIns::ASCII_string, true, true),
+														 VariableType(BuiltIns::int_struct)}),
+										BuiltIns::global_scope,
+										{false, false, false}
+		); 
+
+FunctionSymbol *BuiltIns::__fread_func = new FunctionSymbol("__fread",
+	   									FunctionTypeInfo(VariableType(BuiltIns::int_struct),
+														{VariableType(BuiltIns::int_struct),
+														 VariableType(BuiltIns::ASCII_string, true),
+														 VariableType(BuiltIns::int_struct)}),
+										BuiltIns::global_scope,
+										{false, false, false}
+		); 
