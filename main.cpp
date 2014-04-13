@@ -63,6 +63,7 @@ int main()
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::__fopen_func));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::__fclose_func));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::__fwrite_func));
+		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::__fread_func));
 		
 		GlobalHelper::setDefined(BuiltIns::int_struct);
 		GlobalHelper::setDefined(BuiltIns::ASCII_string);
@@ -76,6 +77,7 @@ int main()
 		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("__fopen"));
 		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("__fclose"));
 		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("__fwrite"));
+		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("__fread"));
 		
 		root->define(TemplateInfo());
 		root->check (TemplateInfo());
@@ -104,6 +106,7 @@ int main()
 		CodeGen::emit("extern " + BuiltIns::__fopen_func->getScopedTypedName());
 		CodeGen::emit("extern " + BuiltIns::__fclose_func->getScopedTypedName());
 		CodeGen::emit("extern " + BuiltIns::__fwrite_func->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::__fread_func->getScopedTypedName());
 
 		CodeGen::emit("global _start");
 		CodeGen::emit("_start:");

@@ -9,7 +9,8 @@ VariableType StringNode::getType() const
 	return VariableType(type, false, true); 
 }
 
-void StringNode::check(const TemplateInfo&) { getScope()->get_valloc()->addLocal(256 * 8); }
+//void StringNode::check(const TemplateInfo&) { getScope()->get_valloc()->addLocal(256 * 8); }
+void StringNode::check(const TemplateInfo&) { getScope()->get_valloc()->addLocal(256); }
 
 AST* StringNode::copyTree() const { return new StringNode(str); }
 

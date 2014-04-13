@@ -47,6 +47,7 @@ public:
 	static FunctionSymbol *__fopen_func; 
 	static FunctionSymbol *__fclose_func; 
 	static FunctionSymbol *__fwrite_func; 
+	static FunctionSymbol *__fread_func; 
 };
 
 #endif

@@ -170,3 +170,12 @@ FunctionSymbol *BuiltIns::__fwrite_func = new FunctionSymbol("__fwrite",
 										BuiltIns::global_scope,
 										{false, false, false}
 		); 
+
+FunctionSymbol *BuiltIns::__fread_func = new FunctionSymbol("__fread",
+	   									FunctionTypeInfo(VariableType(BuiltIns::int_struct),
+														{VariableType(BuiltIns::int_struct),
+														 VariableType(BuiltIns::ASCII_string, true),
+														 VariableType(BuiltIns::int_struct)}),
+										BuiltIns::global_scope,
+										{false, false, false}
+		); 
