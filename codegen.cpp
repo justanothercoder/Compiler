@@ -16,6 +16,8 @@ void CodeGen::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol
 	if ( copy_constr == nullptr ) 
 	{
 		param->gen(template_info);
+		if ( param->getType().is_ref )
+			emit("mov rax, [rax]");
 		emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 		emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 	}
@@ -36,6 +38,7 @@ void CodeGen::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol
 		{
 			if ( conv == nullptr )
 				param->gen(template_info);
+			
 			emit("mov rbx, [rax]");
 			emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rbx");
 			emit("sub rsp, " + std::to_string(GlobalConfig::int_size));

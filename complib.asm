@@ -1,4 +1,4 @@
-	global _int_operatorassign_int~ref_int:function
+	global _int_operatorassign_int~ref_const~int~ref:function
 	global _int_operatorplus_int~ref_int:function
 	global _int_operatorminus_int~ref_int:function
 	global _int_operatormul_int~ref_int:function
@@ -6,6 +6,9 @@
 	global _int_operatorneq_int~ref_int:function
 	global _int_operatordiv_int~ref_int:function
 	global _int_operatormod_int~ref_int:function
+	
+	global _int_operatorand_int~ref_int:function
+	global _int_operatoror_int~ref_int:function
 
 	global _int_int_int~ref_const~int~ref:function
 	global _int_int_int~ref:function
@@ -18,7 +21,7 @@
 	global _char_char_char~ref_const~int~ref:function
 	global _char_char_char~ref:function
 
-	global _putchar_char:function
+	global _putchar_int:function
 	global _getchar:function
 	
 	global ___fopen_const~string~ref_int_int:function
@@ -34,12 +37,13 @@
 		
 	global _print_const~string~ref:function
 
-_int_operatorassign_int~ref_int:
+_int_operatorassign_int~ref_const~int~ref:
 	push rbp
 	mov rbp, rsp
 
 	mov rax, [rbp + 16]
 	mov rbx, [rbp + 24]
+	mov rbx, [rbx]
 
 	mov [rax], rbx
 
@@ -116,7 +120,7 @@ _int_int_int~ref_const~int~ref:
 	pop rbp
 	ret 
 
-_putchar_char:
+_putchar_int:
 	push rbp
 	mov rbp, rsp
 
@@ -125,7 +129,7 @@ _putchar_char:
 	push rdi
 	push rdx
 
-	lea rsi, [rbp + 17]
+	lea rsi, [rbp + 16]
 	mov rax, 1
 	mov rdi, 1
 	mov rdx, 1
@@ -231,6 +235,40 @@ _int_operatormod_int~ref_int:
 
 	mov [rsp - 8], rdx
 	lea rax, [rsp - 8]
+
+	mov rsp, rbp
+	pop rbp
+	ret
+	
+_int_operatorand_int~ref_int:
+	push rbp
+	mov rbp, rsp
+
+	mov rax, [rbp + 16]
+	mov rax, [rax]
+	mov rbx, [rbp + 24]
+	and rax, rbx
+
+	mov r9, [rbp]
+	mov [r9 - 8], rax
+	lea rax, [r9 - 8]
+
+	mov rsp, rbp
+	pop rbp
+	ret
+
+_int_operatoror_int~ref_int:
+	push rbp
+	mov rbp, rsp
+
+	mov rax, [rbp + 16]
+	mov rax, [rax]
+	mov rbx, [rbp + 24]
+	or rax, rbx
+
+	mov r9, [rbp]
+	mov [r9 - 8], rax
+	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp

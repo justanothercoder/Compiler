@@ -9,7 +9,7 @@ StructSymbol *BuiltIns::int_struct = new StructSymbol("int", BuiltIns::global_sc
 FunctionSymbol *BuiltIns::int_assign = new FunctionSymbol("operator=",
 							  FunctionTypeInfo(VariableType(BuiltIns::int_struct, true), 
 								  			  {VariableType(BuiltIns::int_struct, true), 
-											   VariableType(BuiltIns::int_struct)}),
+											   VariableType(BuiltIns::int_struct, true, true)}),
 							  BuiltIns::int_struct,
 							  {true, false, true}
     );
@@ -69,6 +69,22 @@ FunctionSymbol *BuiltIns::int_mod = new FunctionSymbol("operator%",
 						       BuiltIns::int_struct,
 						       {true, false, true}
     );
+	
+FunctionSymbol *BuiltIns::int_and = new FunctionSymbol("operator&&",
+							   FunctionTypeInfo(VariableType(BuiltIns::int_struct),
+								   			   {VariableType(BuiltIns::int_struct, true),
+											    VariableType(BuiltIns::int_struct)}),
+							   BuiltIns::int_struct,
+							   {true, false, true}
+		);
+
+FunctionSymbol *BuiltIns::int_or = new FunctionSymbol("operator||",
+							   FunctionTypeInfo(VariableType(BuiltIns::int_struct),
+								   			   {VariableType(BuiltIns::int_struct, true),
+											    VariableType(BuiltIns::int_struct)}),
+							   BuiltIns::int_struct,
+							   {true, false, true}
+		);
 
 FunctionSymbol *BuiltIns::int_default_constructor = new FunctionSymbol("int",
 								       FunctionTypeInfo(VariableType(BuiltIns::int_struct, true), 

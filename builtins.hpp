@@ -25,6 +25,10 @@ public:
 	static FunctionSymbol *int_neq;
 	static FunctionSymbol *int_div;
 	static FunctionSymbol *int_mod;
+
+	static FunctionSymbol *int_and;
+	static FunctionSymbol *int_or;
+
     static FunctionSymbol *int_default_constructor;
 	static FunctionSymbol *int_copy_constructor;
 	

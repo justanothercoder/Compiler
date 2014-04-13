@@ -41,6 +41,8 @@ int main()
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_neq));
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_div));
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_mod));
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_and));
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_or));
 
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::void_type));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::putchar_func));
@@ -94,6 +96,8 @@ int main()
 		CodeGen::emit("extern " + BuiltIns::int_neq->getScopedTypedName());	
 		CodeGen::emit("extern " + BuiltIns::int_div->getScopedTypedName());
 		CodeGen::emit("extern " + BuiltIns::int_mod->getScopedTypedName());	
+		CodeGen::emit("extern " + BuiltIns::int_and->getScopedTypedName());
+		CodeGen::emit("extern " + BuiltIns::int_or->getScopedTypedName());	
 		CodeGen::emit("extern " + BuiltIns::int_default_constructor->getScopedTypedName());
 		CodeGen::emit("extern " + BuiltIns::int_copy_constructor->getScopedTypedName());
 
