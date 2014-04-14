@@ -41,7 +41,7 @@ CodeObject& DotNode::gen(const TemplateInfo& template_info)
 			if ( hint_type == nullptr )
 				throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
 
-			member = new VariableSymbol(member_name, VariableType(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]));
+			member = new VariableSymbol(member_name, VariableType(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->function_type_info]));
 		} else
 			member = new VariableSymbol(ov_func->getName(), VariableType(std::begin(ov_func_type_info.symbols)->second));
 	}

@@ -38,5 +38,5 @@ string UnaryNode::getCodeOperatorName()
 std::vector<AST*> UnaryNode::getChildren() const { return {exp}; }
 AST* UnaryNode::copyTree() const { return new UnaryNode(static_cast<ExprNode*>(exp->copyTree()), op_type); }
 
-VariableType UnaryNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+VariableType UnaryNode::getType() const { return call_info.callee->function_type_info.return_type; }
 bool UnaryNode::isLeftValue() const { return false; }

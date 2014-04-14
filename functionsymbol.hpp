@@ -23,8 +23,6 @@ public:
 
     FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, CodeObject *code_obj = nullptr);
 
-    void setTypeInfo(FunctionTypeInfo function_type_info);
-
     string getTypedName() const;
     string getScopedTypedName() const;
     
@@ -39,7 +37,6 @@ public:
     virtual string getName() const;
     virtual SymbolType getSymbolType() const;
     
-    FunctionTypeInfo getTypeInfo() const;
     FunctionTraits getTraits() const;
     
     virtual TypeKind getTypeKind() const;
@@ -48,12 +45,12 @@ public:
 
 	CodeObject *code_obj;
 
+    FunctionTypeInfo function_type_info;
+
 private:
 
     string name;
     
-    FunctionTypeInfo function_type_info;
-
     Scope *enclosing_scope;
 
     string scope_name;

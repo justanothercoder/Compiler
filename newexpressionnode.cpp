@@ -39,5 +39,5 @@ AST* NewExpressionNode::copyTree() const
 
 vector<AST*> NewExpressionNode::getChildren() const { return vector<AST*>(std::begin(params), std::end(params)); }
 
-VariableType NewExpressionNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+VariableType NewExpressionNode::getType() const { return call_info.callee->function_type_info.return_type; }
 bool NewExpressionNode::isLeftValue() const { return false; }

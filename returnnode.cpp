@@ -6,10 +6,10 @@ ReturnNode::~ReturnNode() { delete expr; }
 
 CodeObject& ReturnNode::gen(const TemplateInfo& template_info)
 {
-	if ( enclosing_func->getTypeInfo().return_type.is_ref )
+	if ( enclosing_func->function_type_info.return_type.is_ref )
 	{
 		if ( !expr->isLeftValue() )
-			throw SemanticError("cannot initialize " + enclosing_func->getTypeInfo().return_type.getName() + " with value of type " + expr->getType().getName());
+			throw SemanticError("cannot initialize " + enclosing_func->function_type_info.return_type.getName() + " with value of type " + expr->getType().getName());
 
 		code_obj.emit(expr->gen(template_info).getCode());
 	}

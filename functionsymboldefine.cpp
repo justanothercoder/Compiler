@@ -24,7 +24,7 @@ void FunctionSymbolDefine::visit(BaseScope *sc)
 	if ( static_cast<VariableSymbol*>(_sym)->getType().type->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 		throw SemanticError(sym_name + " is already defined as not function");
 
-	auto func_type_info = sym->getTypeInfo();
+	auto func_type_info = sym->function_type_info;
 
 	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym)->getType().type);
 	ofs->addOverload(func_type_info, sym);

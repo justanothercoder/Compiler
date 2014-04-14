@@ -26,7 +26,7 @@ void CallNode::check(const TemplateInfo& template_info)
 
 	GlobalHelper::setTypeHint(caller, call_info.callee);
 	
-	getScope()->get_valloc()->addLocal(call_info.callee->getTypeInfo().return_type.getSize());
+	getScope()->get_valloc()->addLocal(call_info.callee->function_type_info.return_type.getSize());
 }
 
 CodeObject& CallNode::gen(const TemplateInfo& template_info)
@@ -56,5 +56,5 @@ vector<AST*> CallNode::getChildren() const
 	return vec;
 }
 
-VariableType CallNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+VariableType CallNode::getType() const { return call_info.callee->function_type_info.return_type; }
 bool CallNode::isLeftValue() const { return false; }

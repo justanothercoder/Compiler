@@ -72,7 +72,7 @@ CodeObject& VariableNode::gen(const TemplateInfo& template_info)
 			if ( hint_type == nullptr )
 				throw SemanticError("multiple overloads of '" + name + "'.");
 
-			auto type_info = hint_type->getTypeInfo();
+			auto type_info = hint_type->function_type_info;
 
 			if ( function_info.symbols.find(type_info) == std::end(function_info.symbols) )
 			{

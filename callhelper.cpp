@@ -12,7 +12,7 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 	if ( function_sym == nullptr )
 		throw SemanticError("No viable overload of '" + name + "'.");
 
-    auto function_info = function_sym->getTypeInfo();
+    auto function_info = function_sym->function_type_info;
     
     int is_meth = (function_sym->isMethod() ? 1 : 0);
 	
@@ -28,7 +28,7 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 
 CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<ExprNode*> params)
 {
-    auto function_info = function_sym->getTypeInfo();
+    auto function_info = function_sym->function_type_info;
 	
 	auto params_types = CallHelper::extractTypes(params);
    

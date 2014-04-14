@@ -5,8 +5,8 @@ FunctionSymbol::FunctionSymbol(string name,
 							   Scope *enclosing_scope, 
 							   FunctionTraits traits,
 							   CodeObject *code_obj) : code_obj(code_obj),
-												 	   name(name),
 													   function_type_info(function_type_info), 
+												 	   name(name),
 												 	   enclosing_scope(enclosing_scope), 
 													   traits(traits), 
 													   valloc()
@@ -45,9 +45,6 @@ bool FunctionSymbol::isConstructor() const { return traits.is_constructor; }
 
 string FunctionSymbol::getName() const { return name; }
 int FunctionSymbol::getSize() const { return GlobalConfig::int_size; }
-
-FunctionTypeInfo FunctionSymbol::getTypeInfo() const { return function_type_info; }
-void FunctionSymbol::setTypeInfo(FunctionTypeInfo function_type_info) { this->function_type_info = function_type_info; }
 
 FunctionTraits FunctionSymbol::getTraits() const { return traits; }
 

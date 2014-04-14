@@ -21,6 +21,6 @@ CodeObject& BracketNode::gen(const TemplateInfo& template_info)
 AST* BracketNode::copyTree() const { return new BracketNode(static_cast<ExprNode*>(base->copyTree()), static_cast<ExprNode*>(expr->copyTree())); }
 vector<AST*> BracketNode::getChildren() const { return {base, expr}; }
 
-VariableType BracketNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+VariableType BracketNode::getType() const { return call_info.callee->function_type_info.return_type; }
 bool BracketNode::isLeftValue() const { return false; }
 

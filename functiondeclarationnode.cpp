@@ -59,7 +59,7 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 
 	FunctionTypeInfo function_type_info(return_type, params_types);
 
-	definedSymbol->setTypeInfo(function_type_info);
+	definedSymbol->function_type_info = function_type_info;
 
 	getScope()->accept(new FunctionSymbolDefine(definedSymbol));
 

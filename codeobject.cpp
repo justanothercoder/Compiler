@@ -56,7 +56,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		}
 		else
 		{
-			auto desired_type = copy_constr->getTypeInfo().params_types[0];
+			auto desired_type = copy_constr->function_type_info.params_types[0];
 			
 			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 			emit("sub rsp, " + std::to_string(param->getType().getSize()));
@@ -87,7 +87,7 @@ void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, const
 
 	int is_meth = (is_method ? 1 : 0);
 
-	auto function_info = func->getTypeInfo();
+	auto function_info = func->function_type_info;
 
 	size_t params_size = std::accumulate(std::begin(function_info.params_types) + is_meth, std::end(function_info.params_types), 0, [](size_t x, VariableType type) { return x += type.getSize(); });
 
