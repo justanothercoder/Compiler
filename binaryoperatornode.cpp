@@ -4,8 +4,6 @@ BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op
 
 BinaryOperatorNode::~BinaryOperatorNode() { delete lhs; delete rhs; }
 
-VariableType BinaryOperatorNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
-
 void BinaryOperatorNode::check(const TemplateInfo& template_info)
 {
 	lhs->check(template_info);
@@ -17,6 +15,19 @@ void BinaryOperatorNode::check(const TemplateInfo& template_info)
 	{
 		call_info = CallHelper::callCheck(getOperatorName(), getScope(), {lhs, rhs}, template_info);
 	}
+}
+
+CodeObject& BinaryOperatorNode::gen(const TemplateInfo& template_info)
+{
+	if ( call_info.callee->isMethod() )
+		code_obj.genCallCode(call_info, {rhs}, template_info, lhs->gen(template_info));
+	else
+	{
+		CodeObject empty;
+		code_obj.genCallCode(call_info, {lhs, rhs}, template_info, empty);
+	}
+
+	return code_obj;
 }
 
 string BinaryOperatorNode::getOperatorName()
@@ -53,19 +64,6 @@ string BinaryOperatorNode::getCodeOperatorName()
     }    
 }
 
-CodeObject& BinaryOperatorNode::gen(const TemplateInfo& template_info)
-{
-	if ( call_info.callee->isMethod() )
-		code_obj.genCallCode(call_info, {rhs}, template_info, lhs->gen(template_info));
-	else
-	{
-		CodeObject empty;
-		code_obj.genCallCode(call_info, {lhs, rhs}, template_info, empty);
-	}
-
-	return code_obj;
-}
-
 AST* BinaryOperatorNode::copyTree() const
 {
 	auto lhs_copy = static_cast<ExprNode*>(lhs->copyTree()), 
@@ -75,3 +73,6 @@ AST* BinaryOperatorNode::copyTree() const
 }
 
 vector<AST*> BinaryOperatorNode::getChildren() const { return {lhs, rhs}; }
+
+VariableType BinaryOperatorNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+bool BinaryOperatorNode::isLeftValue() const { return false; }

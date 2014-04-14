@@ -18,20 +18,19 @@ class VariableNode : public ExprNode
 public:
 
     VariableNode(string name);
-
 	~VariableNode();
-
-    virtual AST* copyTree() const;
-
-    virtual VariableType getType() const;
 
     virtual void check(const TemplateInfo& template_info);
     virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
+    virtual AST* copyTree() const;
 
     bool isTemplateParam() const;
     
+    virtual VariableType getType() const;
+	virtual bool isLeftValue() const;
+
 private:
 
     string name;

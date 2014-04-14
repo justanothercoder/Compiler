@@ -19,7 +19,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 	if ( copy_constr == nullptr ) 
 	{
 		emit(param->gen(template_info).getCode());
-		if ( param->getType().is_ref && !(dynamic_cast<VariableNode*>(param) != nullptr || dynamic_cast<DotNode*>(param) != nullptr) )
+		if ( conv_info.deref )
 			emit("mov rax, [rax]");
 		emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 		emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
@@ -46,7 +46,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 			if ( conv == nullptr )
 			{
 				emit(param->gen(template_info).getCode());
-				if ( param->getType().is_ref && !(dynamic_cast<VariableNode*>(param) != nullptr || dynamic_cast<DotNode*>(param) != nullptr) )
+				if ( conv_info.deref )
 					emit("mov rax, [rax]");
 			}
 			

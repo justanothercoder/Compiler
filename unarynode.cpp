@@ -1,12 +1,19 @@
 #include "unarynode.hpp"
 
 UnaryNode::UnaryNode(ExprNode *exp, UnaryOp op_type) : exp(exp), op_type(op_type) { }
-
 UnaryNode::~UnaryNode() { delete exp; } 
 
-AST* UnaryNode::copyTree() const { return new UnaryNode(static_cast<ExprNode*>(exp->copyTree()), op_type); }
+void UnaryNode::check(const TemplateInfo& template_info)
+{
+	exp->check(template_info);
+	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(exp->getType().type), { }, template_info);
+}
 
-VariableType UnaryNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+CodeObject& UnaryNode::gen(const TemplateInfo& template_info)
+{
+	code_obj.genCallCode(call_info, { }, template_info, exp->gen(template_info));
+	return code_obj;
+}
 
 string UnaryNode::getOperatorName()
 {
@@ -28,16 +35,8 @@ string UnaryNode::getCodeOperatorName()
 	}
 }
 
-void UnaryNode::check(const TemplateInfo& template_info)
-{
-	exp->check(template_info);
-	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(exp->getType().type), { }, template_info);
-}
-
-CodeObject& UnaryNode::gen(const TemplateInfo& template_info)
-{
-	code_obj.genCallCode(call_info, { }, template_info, exp->gen(template_info));
-	return code_obj;
-}
-
 std::vector<AST*> UnaryNode::getChildren() const { return {exp}; }
+AST* UnaryNode::copyTree() const { return new UnaryNode(static_cast<ExprNode*>(exp->copyTree()), op_type); }
+
+VariableType UnaryNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+bool UnaryNode::isLeftValue() const { return false; }

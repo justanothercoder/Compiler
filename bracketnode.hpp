@@ -13,17 +13,16 @@ class BracketNode : public ExprNode
 public:
 	
 	BracketNode(ExprNode *base, ExprNode *expr);
-
 	virtual ~BracketNode();
 
 	virtual void check(const TemplateInfo& template_info);
 	virtual CodeObject& gen(const TemplateInfo& template_info);	
 
-	virtual VariableType getType() const;
-
 	virtual AST* copyTree() const;
-
 	virtual vector<AST*> getChildren() const;
+
+	virtual VariableType getType() const;
+	virtual bool isLeftValue() const;
 
 private:
 

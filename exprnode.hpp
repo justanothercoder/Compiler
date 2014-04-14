@@ -11,8 +11,7 @@ public:
     virtual void define(const TemplateInfo& template_info);
     
     virtual VariableType getType() const = 0;
-    
-	bool isLeftValue() const;
+	virtual bool isLeftValue() const = 0;
 };
 
 #endif

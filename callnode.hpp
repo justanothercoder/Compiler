@@ -21,17 +21,16 @@ class CallNode : public ExprNode
 public:
 
     CallNode(ExprNode *caller, const vector<ExprNode*>& params);
-
 	virtual ~CallNode();
-    
-    virtual AST* copyTree() const;
-
-    virtual VariableType getType() const;
     
     virtual void check(const TemplateInfo& template_info);
     virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
+    virtual AST* copyTree() const;
+
+    virtual VariableType getType() const;
+	virtual bool isLeftValue() const;
     
 private:
 

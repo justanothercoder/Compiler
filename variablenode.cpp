@@ -31,24 +31,6 @@ void VariableNode::check(const TemplateInfo& template_info)
 	variable = static_cast<VariableSymbol*>(sym);
 }
 
-VariableType VariableNode::getType() const
-{
-	if ( isTemplateParam() )
-	{
-		auto replace = template_info.getReplacement(name);
-		return replace->getType();
-	}
-
-	auto type = variable->getType();
-	type.is_ref = true;
-
-	return type;
-}
-
-bool VariableNode::isTemplateParam() const { return template_info.sym != nullptr; }
-
-AST* VariableNode::copyTree() const { return new VariableNode(name); }
-
 CodeObject& VariableNode::gen(const TemplateInfo& template_info)
 {
 	if ( template_info.sym && template_info.sym->isIn(name) )
@@ -130,5 +112,22 @@ CodeObject& VariableNode::gen(const TemplateInfo& template_info)
 
 	return *code_obj;
 }
+
+bool VariableNode::isTemplateParam() const { return template_info.sym != nullptr; }
 	
 vector<AST*> VariableNode::getChildren() const { return { }; }
+
+AST* VariableNode::copyTree() const { return new VariableNode(name); }
+
+VariableType VariableNode::getType() const
+{
+	if ( isTemplateParam() )
+	{
+		auto replace = template_info.getReplacement(name);
+		return replace->getType();
+	}
+
+	return variable->getType();
+}
+
+bool VariableNode::isLeftValue() const { return true; }

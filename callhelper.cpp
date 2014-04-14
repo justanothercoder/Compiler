@@ -128,7 +128,7 @@ ConversionInfo CallHelper::getConversionInfo(VariableType lhs, VariableType rhs,
 		if ( _lhs != _rhs )
 			throw SemanticError("Invalid initialization of '" + rhs.getName() + "' with type '" + lhs.getName() + "'");
 
-		return ConversionInfo(nullptr, false, !lhs.is_ref);
+		return ConversionInfo(nullptr, lhs.is_ref && !is_lhs_left_value, !lhs.is_ref);
 	}
 	else
 	{

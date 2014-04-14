@@ -4,8 +4,6 @@ CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(c
 
 CallNode::~CallNode() { delete caller; }
     
-VariableType CallNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
-    
 void CallNode::check(const TemplateInfo& template_info)
 {
     caller->check(template_info);
@@ -57,3 +55,6 @@ vector<AST*> CallNode::getChildren() const
 	vec.insert(std::begin(vec), std::begin(params), std::end(params));
 	return vec;
 }
+
+VariableType CallNode::getType() const { return call_info.callee->getTypeInfo().return_type; }
+bool CallNode::isLeftValue() const { return false; }

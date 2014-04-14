@@ -2,11 +2,7 @@
 
 NumberNode::NumberNode(string num) : num(num), code_obj() { }
 
-VariableType NumberNode::getType() const { return VariableType(BuiltIns::int_struct, false, true); }
-
 void NumberNode::check(const TemplateInfo&) { getScope()->get_valloc()->addLocal(getType().getSize()); }
-
-AST* NumberNode::copyTree() const { return new NumberNode(num); }
 
 CodeObject& NumberNode::gen(const TemplateInfo&)
 {
@@ -17,5 +13,9 @@ CodeObject& NumberNode::gen(const TemplateInfo&)
 }
 	
 vector<AST*> NumberNode::getChildren() const { return { }; }
+AST* NumberNode::copyTree() const { return new NumberNode(num); }
 	
 string NumberNode::getNum() const { return num; }
+
+VariableType NumberNode::getType() const { return VariableType(BuiltIns::int_struct, false, true); }
+bool NumberNode::isLeftValue() const { return false; }

@@ -14,18 +14,19 @@ class UnaryNode : public ExprNode
 public:
 	
 	UnaryNode(ExprNode *exp, UnaryOp op_type);
-
 	virtual ~UnaryNode();
-	virtual AST* copyTree() const;
-	 virtual VariableType getType() const;
 
-	string getOperatorName();
-	string getCodeOperatorName();
-    
 	virtual void check(const TemplateInfo& template_info);
     virtual CodeObject& gen(const TemplateInfo& template_info);
 
 	virtual vector<AST*> getChildren() const;
+	virtual AST* copyTree() const;
+
+	string getOperatorName();
+	string getCodeOperatorName();
+    
+	virtual VariableType getType() const;
+	virtual bool isLeftValue() const;
 
 private:
 

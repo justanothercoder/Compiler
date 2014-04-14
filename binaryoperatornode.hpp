@@ -15,20 +15,19 @@ class BinaryOperatorNode : public ExprNode
 public:
 
     BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type);
-
 	virtual ~BinaryOperatorNode();
-
-    virtual AST* copyTree() const;
-
-    virtual VariableType getType() const;
-
-    string getOperatorName();
-    string getCodeOperatorName();
 
     virtual void check(const TemplateInfo& template_info);
     virtual CodeObject& gen(const TemplateInfo& template_info);
 
+    string getOperatorName();
+    string getCodeOperatorName();
+
 	virtual vector<AST*> getChildren() const;
+    virtual AST* copyTree() const;
+
+    virtual VariableType getType() const;
+	virtual bool isLeftValue() const;
 
 protected:
 

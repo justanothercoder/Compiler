@@ -21,16 +21,6 @@ void DotNode::check(const TemplateInfo& template_info)
 		throw SemanticError(member_name + " is not member of " + base_type->getName());
 }
 
-VariableType DotNode::getType() const 
-{ 
-	auto type = member->getType();
-	type.is_ref = true;
-
-	return type; 
-}
-
-AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base->copyTree()), member_name); }
-
 CodeObject& DotNode::gen(const TemplateInfo& template_info)
 {    
 	code_obj->emit(base->gen(template_info).getCode());
@@ -52,8 +42,7 @@ CodeObject& DotNode::gen(const TemplateInfo& template_info)
 				throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
 
 			member = new VariableSymbol(member_name, VariableType(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->getTypeInfo()]));
-		}
-		else
+		} else
 			member = new VariableSymbol(ov_func->getName(), VariableType(std::begin(ov_func_type_info.symbols)->second));
 	}
 	else
@@ -63,3 +52,8 @@ CodeObject& DotNode::gen(const TemplateInfo& template_info)
 }
 	
 vector<AST*> DotNode::getChildren() const { return {base}; }
+
+AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base->copyTree()), member_name); }
+
+VariableType DotNode::getType() const { return member->getType(); }
+bool DotNode::isLeftValue() const { return true; }

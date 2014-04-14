@@ -2,16 +2,7 @@
 
 StringNode::StringNode(string str) : str(str) { }
 
-VariableType StringNode::getType() const 
-{
-	static Type *type = TypeHelper::resolveType("string", BuiltIns::global_scope);
-
-	return VariableType(type, false, true); 
-}
-
 void StringNode::check(const TemplateInfo&) { getScope()->get_valloc()->addLocal(256); }
-
-AST* StringNode::copyTree() const { return new StringNode(str); }
 
 CodeObject& StringNode::gen(const TemplateInfo&)
 {
@@ -42,6 +33,8 @@ CodeObject& StringNode::gen(const TemplateInfo&)
 }
 	
 vector<AST*> StringNode::getChildren() const { return { }; }
+
+AST* StringNode::copyTree() const { return new StringNode(str); }
 	
 string StringNode::getStr() const { return str; }
 
@@ -50,3 +43,13 @@ string StringNode::getNewLabel()
 	static int label_num = 0;
 	return "@string_label" + std::to_string(++label_num);
 }
+
+
+VariableType StringNode::getType() const 
+{
+	static Type *type = TypeHelper::resolveType("string", BuiltIns::global_scope);
+
+	return VariableType(type, false, true); 
+}
+
+bool StringNode::isLeftValue() const { return false; }
