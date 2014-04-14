@@ -25,6 +25,7 @@ int main()
 
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::int_struct));
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::ASCII_string));
+		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::char_struct));
 
 		BuiltIns::int_struct->accept(new VariableSymbolDefine(
 					new VariableSymbol("~~impl", VariableType(
@@ -69,8 +70,20 @@ int main()
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::__fwrite_func));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::__fread_func));
 		
+	
+		BuiltIns::char_struct->accept(new VariableSymbolDefine(
+					new VariableSymbol("~~impl", VariableType(
+								new BuiltInTypeSymbol("~~char", GlobalConfig::int_size)
+							), VariableSymbolType::FIELD)));
+
+		BuiltIns::char_struct->accept(new FunctionSymbolDefine(BuiltIns::char_default_constructor));
+		BuiltIns::char_struct->accept(new FunctionSymbolDefine(BuiltIns::char_copy_constructor));
+		BuiltIns::char_struct->accept(new FunctionSymbolDefine(BuiltIns::char_int_constructor));
+		BuiltIns::char_struct->accept(new FunctionSymbolDefine(BuiltIns::char_assign));
+
 		GlobalHelper::setDefined(BuiltIns::int_struct);
 		GlobalHelper::setDefined(BuiltIns::ASCII_string);
+		GlobalHelper::setDefined(BuiltIns::char_struct);
 
 		root->build_scope();
 
@@ -117,6 +130,11 @@ int main()
 		main_code.emit("extern " + BuiltIns::__fclose_func->getScopedTypedName());
 		main_code.emit("extern " + BuiltIns::__fwrite_func->getScopedTypedName());
 		main_code.emit("extern " + BuiltIns::__fread_func->getScopedTypedName());
+		
+		main_code.emit("extern " + BuiltIns::char_assign->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::char_copy_constructor->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::char_default_constructor->getScopedTypedName());
+		main_code.emit("extern " + BuiltIns::char_int_constructor->getScopedTypedName());
 
 		main_code.emit("global _start");
 		main_code.emit("_start:");

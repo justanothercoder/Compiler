@@ -103,19 +103,6 @@ FunctionSymbol *BuiltIns::int_copy_constructor = new FunctionSymbol("int",
 
 BuiltInTypeSymbol *BuiltIns::void_type = new BuiltInTypeSymbol("void", 0);
 
-FunctionSymbol *BuiltIns::putchar_func = new FunctionSymbol("putchar",
-							    FunctionTypeInfo(VariableType(BuiltIns::void_type), 
-												{VariableType(BuiltIns::int_struct)}),
-							    BuiltIns::global_scope,
-							    {false, false, false}
-    );
-
-FunctionSymbol *BuiltIns::getchar_func = new FunctionSymbol("getchar",
-							    FunctionTypeInfo(VariableType(BuiltIns::int_struct), { }),
-							    BuiltIns::global_scope,
-							    {false, false, false}
-    );
-
 TemplateStructSymbol *BuiltIns::array_struct = new TemplateStructSymbol("array",
 																		BuiltIns::global_scope,
 																		{ {"T", TypeInfo("class", false, { }) }, 
@@ -212,3 +199,51 @@ FunctionSymbol *BuiltIns::__fread_func = new FunctionSymbol("__fread",
 										BuiltIns::global_scope,
 										{false, false, false}
 		); 
+
+StructSymbol *BuiltIns::char_struct = new StructSymbol("char", BuiltIns::global_scope);
+
+FunctionSymbol *BuiltIns::char_assign = new FunctionSymbol("operator=",
+														   FunctionTypeInfo(VariableType(BuiltIns::char_struct, true),
+															   			   {VariableType(BuiltIns::char_struct, true),
+																		   	VariableType(BuiltIns::char_struct, true, true)}),
+														   BuiltIns::char_struct,
+														   {true, false, true}
+		);
+
+FunctionSymbol *BuiltIns::char_default_constructor = new FunctionSymbol("char",
+																		FunctionTypeInfo(VariableType(BuiltIns::char_struct, true),
+																						{VariableType(BuiltIns::char_struct, true)}),
+																		BuiltIns::char_struct,
+																		{true, true, false}
+	   );
+
+FunctionSymbol *BuiltIns::char_copy_constructor = new FunctionSymbol("char",
+																	 FunctionTypeInfo(VariableType(BuiltIns::char_struct, true),
+																		 			 {VariableType(BuiltIns::char_struct, true),
+																					  VariableType(BuiltIns::char_struct, true, true)}),
+																	 BuiltIns::char_struct,
+																	 {true, true, false}
+	  );
+
+FunctionSymbol *BuiltIns::char_int_constructor = new FunctionSymbol("char",
+																	 FunctionTypeInfo(VariableType(BuiltIns::char_struct, true),
+																		 			 {VariableType(BuiltIns::char_struct, true),
+																					  VariableType(BuiltIns::int_struct, true, true)}),
+																	 BuiltIns::char_struct,
+																	 {true, true, false}
+	  );
+
+FunctionSymbol *BuiltIns::putchar_func = new FunctionSymbol("putchar",
+							    FunctionTypeInfo(VariableType(BuiltIns::void_type), 
+//												{VariableType(BuiltIns::int_struct)}),
+												{VariableType(BuiltIns::char_struct)}),
+							    BuiltIns::global_scope,
+							    {false, false, false}
+    );
+
+FunctionSymbol *BuiltIns::getchar_func = new FunctionSymbol("getchar",
+							    FunctionTypeInfo(VariableType(BuiltIns::int_struct), { }),
+							    BuiltIns::global_scope,
+							    {false, false, false}
+    );
+

@@ -13,7 +13,7 @@
 	global _int_int_int~ref_const~int~ref:function
 	global _int_int_int~ref:function
 
-	global _char_operatorassign_char~ref_char:function
+	global _char_operatorassign_char~ref_const~char~ref:function
 	global _char_operatoreq_char~ref_char:function
 	global _char_operatorneq_char~ref_char:function
 
@@ -21,7 +21,7 @@
 	global _char_char_char~ref_const~int~ref:function
 	global _char_char_char~ref:function
 
-	global _putchar_int:function
+	global _putchar_char:function
 	global _getchar:function
 	
 	global ___fopen_const~string~ref_int_int:function
@@ -120,7 +120,7 @@ _int_int_int~ref_const~int~ref:
 	pop rbp
 	ret 
 
-_putchar_int:
+_putchar_char:
 	push rbp
 	mov rbp, rsp
 
@@ -463,21 +463,26 @@ _char_char_char~ref_const~char~ref:
 	mov rbp, rsp
 	
 	mov rbx, [rbp + 24]
-	mov rbx, [rbx]
-;	mov bl, byte [rbp + 24]
+	mov bl, byte [rbx]
 	mov rax, [rbp + 16]
 	mov byte [rax], bl
+
+	mov r9, [rbp]
+	mov rbx, [rbp + 16]
+	mov [r9 - 8], rbx
+	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp
 	ret 
 
-_char_operatorassign_char~ref_char:
+_char_operatorassign_char~ref_const~char~ref:
 	push rbp
 	mov rbp, rsp
 
 	mov rax, [rbp + 16]
-	mov bl, byte [rbp + 24]
+	mov rbx, [rbp + 24]
+	mov bl, byte [rbx]
 
 	mov byte [rax], bl
 
@@ -490,9 +495,15 @@ _char_char_char~ref_const~int~ref:
 	mov rbp, rsp
 
 	mov rbx, [rbp + 24]
-	mov rbx, [rbx]
+	mov bl, byte [rbx]
+
 	mov rax, [rbp + 16]
 	mov byte [rax], bl
+	
+	mov r9, [rbp]
+	mov rbx, [rbp + 16]
+	mov [r9 - 8], rbx
+	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp

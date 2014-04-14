@@ -57,7 +57,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		else
 		{
 			auto desired_type = copy_constr->function_type_info.params_types[0];
-			
+
 			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 			emit("sub rsp, " + std::to_string(param->getType().getSize()));
 			if ( conv == nullptr )

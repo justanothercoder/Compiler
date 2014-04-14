@@ -53,7 +53,13 @@ public:
 	static FunctionSymbol *__fopen_func; 
 	static FunctionSymbol *__fclose_func; 
 	static FunctionSymbol *__fwrite_func; 
-	static FunctionSymbol *__fread_func; 
+	static FunctionSymbol *__fread_func;
+
+    static StructSymbol *char_struct;
+    static FunctionSymbol *char_assign;
+    static FunctionSymbol *char_default_constructor;
+	static FunctionSymbol *char_copy_constructor;
+	static FunctionSymbol *char_int_constructor;
 };
 
 #endif
