@@ -41,18 +41,42 @@ FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol *over
 
 	return overloads.empty() ? nullptr : overloaded_func->getTypeInfo().symbols[*std::begin(overloads)];   
 }
-	
-FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
+
+/*
+FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc, const TemplateInfo& template_info)
 {
-	CodeObject func_code;
+	CodeObject *func_code = new CodeObject();
+
+	func_code.emit("push rbp");
+	func_code.emit("mov rbp, rsp");
+
 	for ( auto member : struc->table )
 	{
 		if ( dynamic_cast<VariableSymbol*>(member.second) )
-		{		
-			if ( dynamic_cast<StructSymbol*>(dynamic_cast<VariableSymbol*>(member.second)->getType().type) )
+		{	
+			auto var_type = dynamic_cast<StructSymbol*>(dynamic_cast<VariableSymbol*>(member.second)->getType().type);
+			if ( var_type )
 			{
-//				func_code.genCallCode(call_info, params, template_info, genThis)
+				auto member_copy = TypeHelper::getCopyConstructor(var_type);
+
+				func_code.genCallCode(member_copy, params, template_info, genThis);
 			}
 		}
 	}
+
+	func_code.emit("mov rsp, rbp");
+	func_code.emit("pop rbp");
+	func_code.emit("ret");
+
+	auto copy_constr = new FunctionSymbol(struc->getName(),
+		 								  FunctionTypeInfo(VariableType(struc, true),
+										                  {VariableType(struc, true),
+														   VariableType(struc, true, true)}),
+										  struc,
+										  {true, true, false}, 
+										  func_code
+	);
+
+	return copy_constr;
 }
+*/

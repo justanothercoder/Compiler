@@ -61,9 +61,12 @@ FunctionSymbol* TypeHelper::getCopyConstructor(VariableType type)
 	auto constructor = CallHelper::getOverloadedMethod(type_name, struc);
 
 	auto vt = type;
-	vt.is_ref = true;	
+	vt.is_ref = true;
 
-	return FunctionHelper::getViableOverload(constructor, {vt, vt});
+	auto cvt = vt;
+	cvt.is_const = true;
+
+	return FunctionHelper::getViableOverload(constructor, {vt, cvt});
 }
 
 VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateInfo& template_info)

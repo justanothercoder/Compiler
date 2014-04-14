@@ -78,7 +78,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		}
 	}
 }
-	
+
 void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, const TemplateInfo& template_info, CodeObject& genThis)
 {
 	auto func = call_info.callee;

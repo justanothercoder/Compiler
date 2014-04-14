@@ -10,7 +10,7 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 
 void FunctionDeclarationNode::build_scope()
 {
-	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(VariableType(), { }), getScope(), traits);
+	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(VariableType(), { }), getScope(), traits, nullptr);
 
 	statements->setScope(definedSymbol);
 	statements->build_scope();
@@ -87,6 +87,8 @@ CodeObject& FunctionDeclarationNode::gen(const TemplateInfo& template_info)
 	code_obj.emit("pop rbp");
 	code_obj.emit("ret");
 	code_obj.emit("_~" + scoped_typed_name + ":");
+
+	definedSymbol->code_obj = &code_obj;
 
 	return code_obj;
 }

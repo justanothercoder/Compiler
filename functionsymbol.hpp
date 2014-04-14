@@ -21,7 +21,7 @@ class FunctionSymbol : public Symbol, public BaseScope, public Type
     friend class VariableSymbolDefine;
 public:
 
-    FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits);
+    FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, CodeObject *code_obj = nullptr);
 
     void setTypeInfo(FunctionTypeInfo function_type_info);
 
@@ -45,6 +45,8 @@ public:
     virtual TypeKind getTypeKind() const;
     virtual int getSize() const;
 	virtual VarAllocator* get_valloc() const;
+
+	CodeObject *code_obj;
 
 private:
 
