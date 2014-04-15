@@ -38,8 +38,7 @@ set<FunctionTypeInfo> FunctionHelper::getBestOverload(set<FunctionTypeInfo> sele
 FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol *overloaded_func, vector<VariableType> params_type)
 {
 	auto overloads = FunctionHelper::getBestOverload(overloaded_func->getTypeInfo().overloads, params_type);
-
-	return overloads.empty() ? nullptr : overloaded_func->getTypeInfo().symbols[*std::begin(overloads)];   
+	return overloads.empty() ? nullptr : overloaded_func->getTypeInfo().symbols.at(*std::begin(overloads)); 
 }
 
 /*

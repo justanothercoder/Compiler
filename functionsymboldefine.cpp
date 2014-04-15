@@ -16,7 +16,7 @@ void FunctionSymbolDefine::visit(BaseScope *sc)
 	if ( it == std::end(sc->table) )
 		sc->table[sym_name] = new VariableSymbol(sym_name, VariableType(new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym->getTraits())));
 
-	auto _sym = sc->table[sym_name];
+	auto _sym = sc->table.at(sym_name);
 
 	if ( _sym->getSymbolType() != SymbolType::VARIABLE )
 		throw SemanticError(sym_name + " is already defined.");

@@ -15,6 +15,8 @@ public:
 
 	string toString() const;
 
+	long long hash_func() const;
+
     VariableType return_type;
     vector<VariableType> params_types;
 };
