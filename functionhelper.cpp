@@ -94,3 +94,49 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc, 
 	return copy_constr;
 }
 
+FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc, const TemplateInfo& template_info)
+{
+	auto constr = new FunctionSymbol(struc->getName(),
+		 						     FunctionTypeInfo(VariableType(struc, true),
+									                 {VariableType(struc, true)}),
+                                     struc,
+									 {true, true, false}, 
+									 nullptr
+	);
+
+	CodeObject *func_code = new CodeObject();
+
+	func_code->emit("jmp _~" + constr->getScopedTypedName());
+	func_code->emit(constr->getScopedTypedName() + ":");
+	func_code->emit("push rbp");
+	func_code->emit("mov rbp, rsp");
+
+	for ( auto member : struc->table )
+	{
+		if ( dynamic_cast<VariableSymbol*>(member.second) )
+		{	
+			auto var = dynamic_cast<VariableSymbol*>(member.second); 
+			auto var_type = var->getType();
+
+			if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type.type) )
+				continue;
+
+			auto member_default = TypeHelper::getDefaultConstructor(var_type);
+
+			CodeObject genThis;
+			genThis.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
+			genThis.emit("lea rax, [rax - " + std::to_string(struc->get_valloc()->getAddress(var)) + "]");
+
+			func_code->genDefaultConstructorCall(member_default, genThis); 
+		}
+	}
+
+	func_code->emit("mov rsp, rbp");
+	func_code->emit("pop rbp");
+	func_code->emit("ret");
+	func_code->emit("_~" + constr->getScopedTypedName() + ":");
+
+	constr->code_obj = func_code;
+
+	return constr;
+}

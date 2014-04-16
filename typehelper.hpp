@@ -23,6 +23,7 @@ public:
     static bool isConvertable(VariableType lhs, VariableType rhs);
     
 	static FunctionSymbol* getCopyConstructor(VariableType type);
+	static FunctionSymbol* getDefaultConstructor(VariableType type);
 
 	static OverloadedFunctionSymbol* getOperatorCall(StructSymbol *sym);
 

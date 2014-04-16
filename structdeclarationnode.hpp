@@ -38,7 +38,8 @@ protected:
 
     StructSymbol *definedSymbol;
 	CodeObject code_obj;
-	CodeObject default_copy_constr;
+	CodeObject default_copy_constr_code;
+	CodeObject default_constr_code;
 };
 
 #endif

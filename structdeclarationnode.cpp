@@ -33,11 +33,22 @@ void StructDeclarationNode::check(const TemplateInfo& template_info)
 {
 	GlobalHelper::setDefined(getDefinedSymbol());
 	
+	try
+	{
+		auto constr = TypeHelper::getDefaultConstructor(definedSymbol);
+	}
+	catch ( SemanticError& e )
+	{
+		auto default_constr = FunctionHelper::makeDefaultConstructor(definedSymbol, template_info);
+		definedSymbol->accept(new FunctionSymbolDefine(default_constr));
+		default_constr_code = *default_constr->code_obj;
+	}
+
 	if ( TypeHelper::getCopyConstructor(definedSymbol) == nullptr )
 	{
 		auto copy_constr = FunctionHelper::makeDefaultCopyConstructor(definedSymbol, template_info);
 		definedSymbol->accept(new FunctionSymbolDefine(copy_constr));
-		default_copy_constr = *copy_constr->code_obj;
+		default_copy_constr_code = *copy_constr->code_obj;
 	}
 
 	for ( auto decl : inner )
@@ -52,7 +63,8 @@ void StructDeclarationNode::check(const TemplateInfo& template_info)
 
 CodeObject& StructDeclarationNode::gen(const TemplateInfo& template_info)
 {
-	code_obj.emit(default_copy_constr.getCode());	
+	code_obj.emit(default_constr_code.getCode());
+	code_obj.emit(default_copy_constr_code.getCode());
     for ( auto decl : inner )
 		code_obj.emit(decl->gen(template_info).getCode());
 	return code_obj;

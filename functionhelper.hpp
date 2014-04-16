@@ -20,6 +20,7 @@ public:
     static FunctionSymbol* getViableOverload(OverloadedFunctionSymbol* overloaded_func, vector<VariableType> params_type);
 
 	static FunctionSymbol* makeDefaultCopyConstructor(StructSymbol *struc, const TemplateInfo& template_info);
+	static FunctionSymbol* makeDefaultConstructor(StructSymbol *struc, const TemplateInfo& template_info);
 };   
 
 #endif

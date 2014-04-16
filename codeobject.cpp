@@ -125,3 +125,13 @@ void CodeObject::genCopy(FunctionSymbol *copy_constr, CodeObject& genThis, CodeO
 	emit("call " + copy_constr->getScopedTypedName()); 
 	emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
 }
+
+void CodeObject::genDefaultConstructorCall(FunctionSymbol *default_constr, CodeObject& genThis)
+{
+	emit(genThis.getCode());
+	emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
+	emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+
+	emit("call " + default_constr->getScopedTypedName()); 
+	emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
+}
