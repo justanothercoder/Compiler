@@ -7,6 +7,7 @@
 #include "structsymbol.hpp"
 #include "symboldefine.hpp"
 #include "codeobject.hpp"
+#include "functionsymboldefine.hpp"
 
 using std::vector;
 
@@ -37,6 +38,7 @@ protected:
 
     StructSymbol *definedSymbol;
 	CodeObject code_obj;
+	CodeObject default_copy_constr;
 };
 
 #endif

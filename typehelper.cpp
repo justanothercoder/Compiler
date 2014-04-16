@@ -54,6 +54,9 @@ FunctionSymbol* TypeHelper::getCopyConstructor(VariableType type)
 	if ( type.type->getTypeKind() != TypeKind::STRUCT )
 		return nullptr;
 
+	type.is_ref = false;
+	type.is_const = false;
+
 	StructSymbol *struc = static_cast<StructSymbol*>(type.type);
 
 	auto type_name = struc->getName();

@@ -111,3 +111,17 @@ void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, const
 	emit("call " + func->getScopedTypedName());
 	emit("add rsp, " + std::to_string(params_size));
 }
+
+void CodeObject::genCopy(FunctionSymbol *copy_constr, CodeObject& genThis, CodeObject& copied)
+{
+	emit(copied.getCode());
+	emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
+	emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+
+	emit(genThis.getCode());
+	emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
+	emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+
+	emit("call " + copy_constr->getScopedTypedName()); 
+	emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
+}

@@ -41,41 +41,56 @@ FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol *over
 	return overloads.empty() ? nullptr : overloaded_func->getTypeInfo().symbols.at(*std::begin(overloads)); 
 }
 
-/*
+
 FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc, const TemplateInfo& template_info)
 {
-	CodeObject *func_code = new CodeObject();
-
-	func_code.emit("push rbp");
-	func_code.emit("mov rbp, rsp");
-
-	for ( auto member : struc->table )
-	{
-		if ( dynamic_cast<VariableSymbol*>(member.second) )
-		{	
-			auto var_type = dynamic_cast<StructSymbol*>(dynamic_cast<VariableSymbol*>(member.second)->getType().type);
-			if ( var_type )
-			{
-				auto member_copy = TypeHelper::getCopyConstructor(var_type);
-
-				func_code.genCallCode(member_copy, params, template_info, genThis);
-			}
-		}
-	}
-
-	func_code.emit("mov rsp, rbp");
-	func_code.emit("pop rbp");
-	func_code.emit("ret");
-
 	auto copy_constr = new FunctionSymbol(struc->getName(),
 		 								  FunctionTypeInfo(VariableType(struc, true),
 										                  {VariableType(struc, true),
 														   VariableType(struc, true, true)}),
 										  struc,
 										  {true, true, false}, 
-										  func_code
+										  nullptr
 	);
+
+	CodeObject *func_code = new CodeObject();
+
+	func_code->emit("jmp _~" + copy_constr->getScopedTypedName());
+	func_code->emit(copy_constr->getScopedTypedName() + ":");
+	func_code->emit("push rbp");
+	func_code->emit("mov rbp, rsp");
+
+	for ( auto member : struc->table )
+	{
+		if ( dynamic_cast<VariableSymbol*>(member.second) )
+		{	
+			auto var = dynamic_cast<VariableSymbol*>(member.second); 
+			auto var_type = var->getType();
+
+			if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type.type) )
+				continue;
+
+			auto member_copy = TypeHelper::getCopyConstructor(var_type);
+
+			CodeObject param;
+			param.emit("mov rax, [rbp + " + std::to_string(3 * GlobalConfig::int_size) + "]");
+			param.emit("lea rax, [rax - " + std::to_string(struc->get_valloc()->getAddress(var)) + "]");
+
+			CodeObject genThis;
+			genThis.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
+			genThis.emit("lea rax, [rax - " + std::to_string(struc->get_valloc()->getAddress(var)) + "]");
+
+			func_code->genCopy(member_copy, genThis, param); 
+		}
+	}
+
+	func_code->emit("mov rsp, rbp");
+	func_code->emit("pop rbp");
+	func_code->emit("ret");
+	func_code->emit("_~" + copy_constr->getScopedTypedName() + ":");
+
+	copy_constr->code_obj = func_code;
 
 	return copy_constr;
 }
-*/
+

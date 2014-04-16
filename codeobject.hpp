@@ -28,6 +28,8 @@ public:
 
 	void pushOnStack(size_t size, int offset);
 
+	void genCopy(FunctionSymbol *copy_constr, CodeObject& genThis, CodeObject& copied);
+
 	void gen() const;	
 	std::string getCode() const;
 

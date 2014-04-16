@@ -19,7 +19,7 @@ public:
     static set<FunctionTypeInfo> getBestOverload(set<FunctionTypeInfo> selection, vector<VariableType> params_type);
     static FunctionSymbol* getViableOverload(OverloadedFunctionSymbol* overloaded_func, vector<VariableType> params_type);
 
-//	static FunctionSymbol* makeDefaultCopyConstructor(StructSymbol *struc);
+	static FunctionSymbol* makeDefaultCopyConstructor(StructSymbol *struc, const TemplateInfo& template_info);
 };   
 
 #endif
