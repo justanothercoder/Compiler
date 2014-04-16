@@ -23,7 +23,7 @@ public:
 
 	void emit(string text);
 
-	void genCallCode(CallInfo call_info, vector<ExprNode*> params, const TemplateInfo& template_info, CodeObject& genThis);
+	void genCallCode(CallInfo call_info, vector<ExprNode*> params, const TemplateInfo& template_info, CodeObject& genThis, bool thisIsRef);
 	void genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr, const TemplateInfo& template_info);
 
 	void pushOnStack(size_t size, int offset);

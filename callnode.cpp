@@ -26,17 +26,17 @@ void CallNode::check(const TemplateInfo& template_info)
 
 	GlobalHelper::setTypeHint(caller, call_info.callee);
 	
-	getScope()->get_valloc()->addLocal(call_info.callee->function_type_info.return_type.getSize());
+	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
 }
 
 CodeObject& CallNode::gen(const TemplateInfo& template_info)
 {  
   	if ( call_info.callee->isMethod() )
-		code_obj.genCallCode(call_info, params, template_info, caller->gen(template_info));
+		code_obj.genCallCode(call_info, params, template_info, caller->gen(template_info), caller->getType().is_ref);
 	else
 	{
 		CodeObject empty;
-		code_obj.genCallCode(call_info, params, template_info, empty);
+		code_obj.genCallCode(call_info, params, template_info, empty, false);
 	}
 
 	return code_obj;

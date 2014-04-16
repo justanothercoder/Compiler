@@ -2,7 +2,7 @@
 
 StringNode::StringNode(string str) : str(str) { }
 
-void StringNode::check(const TemplateInfo&) { getScope()->get_valloc()->addLocal(256); }
+void StringNode::check(const TemplateInfo&) { /*getScope()->get_valloc()->addLocal(256);*/ }
 
 CodeObject& StringNode::gen(const TemplateInfo&)
 {

@@ -19,8 +19,10 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 	if ( copy_constr == nullptr ) 
 	{
 		emit(param->gen(template_info).getCode());
+
 		if ( conv_info.deref )
 			emit("mov rax, [rax]");
+
 		emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 		emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 	}
@@ -31,13 +33,13 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		if ( conv )
 		{
 			if ( conv->isOperator() )
-				genCallCode(CallHelper::getCallInfo(conv, { }), { }, template_info, param->gen(template_info));
+				genCallCode(CallHelper::getCallInfo(conv, { }), { }, template_info, param->gen(template_info), param->getType().is_ref);
 			else
 			{
 				CodeObject param_code;
 				param_code.emit("lea rax, [rbp - " + std::to_string(param->getScope()->get_valloc()->getAddressForLocal()) + "]");
 
-				genCallCode(CallHelper::getCallInfo(conv, {param}), {param}, template_info, param_code); 
+				genCallCode(CallHelper::getCallInfo(conv, {param}), {param}, template_info, param_code, false); 
 			}
 		}
 
@@ -65,7 +67,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 				CodeObject code_obj;
 				code_obj.emit("lea rax, [r8]");
 
-				genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, template_info, code_obj);
+				genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, template_info, code_obj, false);
 			}
 			else
 			{
@@ -79,7 +81,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 	}
 }
 
-void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, const TemplateInfo& template_info, CodeObject& genThis)
+void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, const TemplateInfo& template_info, CodeObject& genThis, bool thisIsRef)
 {
 	auto func = call_info.callee;
 
@@ -100,6 +102,8 @@ void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, const
 	if ( is_method )
 	{
 		emit(genThis.getCode());
+		if ( thisIsRef )
+			emit("mov rax, [rax]");
 		emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 		emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 	}

@@ -14,7 +14,7 @@ void BracketNode::check(const TemplateInfo& template_info)
 
 CodeObject& BracketNode::gen(const TemplateInfo& template_info)
 {
-    code_obj.genCallCode(call_info, {this->expr}, template_info, base->gen(template_info));
+    code_obj.genCallCode(call_info, {this->expr}, template_info, base->gen(template_info), base->getType().is_ref);
 	return code_obj;
 }
 

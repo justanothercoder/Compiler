@@ -72,7 +72,7 @@ CodeObject& VariableDeclarationNode::gen(const TemplateInfo& template_info)
 			CodeObject var_code;
 			var_code.emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]");
 
-			code_obj.genCallCode(call_info, constructor_call_params, template_info, var_code);
+			code_obj.genCallCode(call_info, constructor_call_params, template_info, var_code, false);
 		}
 	}
 

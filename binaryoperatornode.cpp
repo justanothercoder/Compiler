@@ -20,11 +20,11 @@ void BinaryOperatorNode::check(const TemplateInfo& template_info)
 CodeObject& BinaryOperatorNode::gen(const TemplateInfo& template_info)
 {
 	if ( call_info.callee->isMethod() )
-		code_obj.genCallCode(call_info, {rhs}, template_info, lhs->gen(template_info));
+		code_obj.genCallCode(call_info, {rhs}, template_info, lhs->gen(template_info), lhs->getType().is_ref);
 	else
 	{
 		CodeObject empty;
-		code_obj.genCallCode(call_info, {lhs, rhs}, template_info, empty);
+		code_obj.genCallCode(call_info, {lhs, rhs}, template_info, empty, false);
 	}
 
 	return code_obj;

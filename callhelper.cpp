@@ -49,7 +49,7 @@ CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<ExprN
 		auto copy_constr = desired_type.is_ref ? nullptr : TypeHelper::getCopyConstructor(desired_type);
 		copy_constructors.push_back(copy_constr);
 	}
-	
+
 	return CallInfo(function_sym, params_types, conversions, copy_constructors); 
 }
 

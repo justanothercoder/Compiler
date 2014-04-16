@@ -11,7 +11,7 @@ void UnaryNode::check(const TemplateInfo& template_info)
 
 CodeObject& UnaryNode::gen(const TemplateInfo& template_info)
 {
-	code_obj.genCallCode(call_info, { }, template_info, exp->gen(template_info));
+	code_obj.genCallCode(call_info, { }, template_info, exp->gen(template_info), exp->getType().is_ref);
 	return code_obj;
 }
 

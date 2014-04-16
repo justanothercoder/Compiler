@@ -20,7 +20,7 @@ CodeObject& ReturnNode::gen(const TemplateInfo& template_info)
 		return_place.emit("mov r9, [rbp]");
 	   	return_place.emit("lea rax, [r9 - " + std::to_string(GlobalConfig::int_size) + "]");
 
-		code_obj.genCallCode(copy_call_info, {expr}, template_info, return_place);
+		code_obj.genCallCode(copy_call_info, {expr}, template_info, return_place, false);
 	}
 
     code_obj.emit("mov rsp, rbp");
