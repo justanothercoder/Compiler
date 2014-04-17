@@ -116,6 +116,10 @@ _int_int_int~ref_const~int~ref:
 	mov rax, [rbp + 16]	
 	mov [rax], rbx
 
+	mov r9, [rbp]
+	mov [r9 - 8], rax
+	lea rax, [r9 - 8]
+
 	mov rsp, rbp
 	pop rbp
 	ret 
@@ -501,8 +505,7 @@ _char_char_char~ref_const~int~ref:
 	mov byte [rax], bl
 	
 	mov r9, [rbp]
-	mov rbx, [rbp + 16]
-	mov [r9 - 8], rbx
+	mov [r9 - 8], rax
 	lea rax, [r9 - 8]
 
 	mov rsp, rbp
