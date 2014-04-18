@@ -15,6 +15,8 @@ void BinaryOperatorNode::check(const TemplateInfo& template_info)
 	{
 		call_info = CallHelper::callCheck(getOperatorName(), getScope(), {lhs, rhs}, template_info);
 	}
+	
+	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
 }
 
 CodeObject& BinaryOperatorNode::gen(const TemplateInfo& template_info)
