@@ -101,6 +101,10 @@ new A() //Like in Java and C#
 
 ```
 
+##Standart Library
+
+It is not very big: only _ASCII_ strings, arrays and some functions to work with them.
+
 Well, you can see that it's some sort of mixed _C++_ and _Python_, where all _C_ compatibility is cut off. As the time goes, new syntax constructs will appear to reach the _Python_ simplicity and _C++_ power.
 
 
@@ -112,7 +116,7 @@ There are several main classes that do most of the work.
 * AST (base class for all AST nodes)
 * ExprNode (base class for all expressions and child of AST)
 * CallHelper (provides functions to resolve viable overload and get _CallInfo_)
-* CodeGen (provides functions for code generation)
+* CodeObject (provides functions for code generation)
 
 If you want to add something new you should change one of this classes and possibly add a new node as a child of AST class.
 
