@@ -81,6 +81,8 @@ int main()
 		BuiltIns::char_struct->accept(new FunctionSymbolDefine(BuiltIns::char_int_constructor));
 		BuiltIns::char_struct->accept(new FunctionSymbolDefine(BuiltIns::char_assign));
 
+		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_char_constructor));
+
 		GlobalHelper::setDefined(BuiltIns::int_struct);
 		GlobalHelper::setDefined(BuiltIns::ASCII_string);
 		GlobalHelper::setDefined(BuiltIns::char_struct);
@@ -135,6 +137,8 @@ int main()
 		main_code.emit("extern " + BuiltIns::char_copy_constructor->getScopedTypedName());
 		main_code.emit("extern " + BuiltIns::char_default_constructor->getScopedTypedName());
 		main_code.emit("extern " + BuiltIns::char_int_constructor->getScopedTypedName());
+		
+		main_code.emit("extern " + BuiltIns::int_char_constructor->getScopedTypedName());
 
 		main_code.emit("global _start");
 		main_code.emit("_start:");

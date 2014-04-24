@@ -247,3 +247,10 @@ FunctionSymbol *BuiltIns::__fread_func = new FunctionSymbol("__fread",
 										{false, false, false}
 		); 
 
+FunctionSymbol *BuiltIns::int_char_constructor = new FunctionSymbol("int",
+										FunctionTypeInfo(VariableType(BuiltIns::int_struct, true),
+														{VariableType(BuiltIns::int_struct, true),
+														 VariableType(BuiltIns::char_struct)}),
+										BuiltIns::int_struct,
+										{true, true, false}
+		);

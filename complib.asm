@@ -36,6 +36,8 @@
 	global _string_operatorassign_string~ref_const~string~ref:function
 		
 	global _print_const~string~ref:function
+	
+	global _int_int_int~ref_char:function
 
 _int_operatorassign_int~ref_const~int~ref:
 	push rbp
@@ -684,6 +686,24 @@ _string_operatorassign_string~ref_const~string~ref:
 .end:
 
 	mov byte [rdi], 0
+
+	mov rsp, rbp
+	pop rbp
+	ret
+
+_int_int_int~ref_char:
+	push rbp
+	mov rbp, rsp
+
+	xor rbx, rbx
+	mov bl, byte [rbp + 24]
+
+	mov rax, [rbp + 16]
+	mov [rax], rbx
+
+	mov r9, [rbp]
+	mov [r9 - 8], rax
+	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp

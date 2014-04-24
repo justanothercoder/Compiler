@@ -60,6 +60,8 @@ public:
     static FunctionSymbol *char_default_constructor;
 	static FunctionSymbol *char_copy_constructor;
 	static FunctionSymbol *char_int_constructor;
+
+	static FunctionSymbol *int_char_constructor;
 };
 
 #endif
