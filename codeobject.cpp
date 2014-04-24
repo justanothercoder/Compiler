@@ -60,12 +60,18 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		{
 			auto desired_type = copy_constr->function_type_info.params_types[0];
 
-			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
+//			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
+				
+			emit("lea r8, [rbp - " + std::to_string(param->getScope()->get_valloc()->getSpecialAddress(param)) + "]");
+			emit("lea r10, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
+			emit("mov [r8], r10");
+
 			emit("sub rsp, " + std::to_string(param->getType().getSize()));
 			if ( conv == nullptr )
 			{
 				CodeObject code_obj;
-				code_obj.emit("lea rax, [r8]");
+//				code_obj.emit("lea rax, [r8]");
+				code_obj.emit("mov rax, [rbp - " + std::to_string(param->getScope()->get_valloc()->getSpecialAddress(param)) + "]");
 
 				genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, template_info, code_obj, false);
 			}

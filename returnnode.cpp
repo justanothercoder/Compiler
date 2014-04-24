@@ -23,6 +23,9 @@ CodeObject& ReturnNode::gen(const TemplateInfo& template_info)
 		code_obj.genCallCode(copy_call_info, {expr}, template_info, return_place, false);
 	}
 
+	if ( !enclosing_func->function_type_info.return_type.is_ref )
+		code_obj.emit("mov rax, [rax]");
+
     code_obj.emit("mov rsp, rbp");
     code_obj.emit("pop rbp");
     code_obj.emit("ret");

@@ -538,6 +538,13 @@ _string_string_string~ref_const~string~ref:
 
 	mov byte [rsi], 0
 
+	mov r9, [rbp]
+	lea r9, [r9 - 8]
+
+	mov rax, [rbp + 16]
+	mov [r9], rax
+	lea rax, [r9]
+
 	mov rsp, rbp
 	pop rbp
 	ret

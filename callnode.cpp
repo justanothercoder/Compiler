@@ -27,6 +27,9 @@ void CallNode::check(const TemplateInfo& template_info)
 	GlobalHelper::setTypeHint(caller, call_info.callee);
 	
 	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
+	
+	for ( auto param : params )
+		getScope()->get_valloc()->addSpecialSpace(param);
 }
 
 CodeObject& CallNode::gen(const TemplateInfo& template_info)

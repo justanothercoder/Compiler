@@ -17,8 +17,10 @@ void NewExpressionNode::check(const TemplateInfo& template_info)
 	call_info = CallHelper::callCheck(name, type, params, template_info); 
 
 	getScope()->get_valloc()->addLocal(this, type->getSize());
-//	getScope()->get_valloc()->addReturnValueSpace(type->getSize());
+	
 	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
+	for ( auto param : params )
+		getScope()->get_valloc()->addSpecialSpace(param);
 }
 
 CodeObject& NewExpressionNode::gen(const TemplateInfo& template_info)
