@@ -1,69 +1,36 @@
-struct string
-{
-	def string(const string& s) {
-		int i;
-		for ( i = 0; s.__impl[i] != 0; i = i + 1 ) {
-			__impl[i] = s.__impl[i]
-		}
-		__impl[i] = 0;
-	}
+def str(int x) : string {
+	string tmp = ""
 
-	def length() : int {
-		int i = 0;
-		while ( __impl[i] != 0 )
-			i = i + 1;
-		return i;
-	}
+	int pos = 0
 
-	def operator[](int x) : int& { 
-		return __impl[x];
-	}
-
-	def operator+(string s) : string {
-		int p = 0;
-		string tmp = "";
-
-		for ( int i = 0; i != this.length(); i = i + 1 ) {
-			tmp[p] = __impl[i];
-			p = p + 1;
-		}
-		
-		for ( int i = 0; i != s.length(); i = i + 1 ) {
-			tmp[p] = s[i];
-			p = p + 1;
-		}
-
-		tmp[p] = 0;
-
-		return tmp;
-	}
-
-	array<int, 256> __impl;
-}
-
-def print(const string& s) {
-	for ( int i = 0; s.__impl[i] != 0; i = i + 1 ) {
-		putchar(s.__impl[i])
-	}
-}
-
-def toString(int x) : string { 
-	string tmp1 = "";
-	string tmp2 = "";
-	
-	int i = 0;
 	while ( x != 0 ) {
-		tmp1[i] = x % 10 + 48;
-		x = x / 10;
-		i = i + 1;		
-	}
-	
-	int j = 0;
-	while ( i != 0 ) {
-		tmp2[j] = tmp1[i - 1];
-		j = j + 1;
-		i = i - 1;
+		tmp[pos] = new char(x % 10 + 48)
+		pos = pos + 1
+		x = x / 10
 	}
 
-	return tmp2;
+	int p = 0
+
+	pos = pos - 1
+
+	string ans = ""
+	while ( pos + 1 != 0 ) {
+		ans[p] = tmp[pos]
+		pos = pos - 1
+		p = p + 1
+	}
+
+	return ans
+}
+
+def toInt(string s) : int {
+	int ans = 0
+
+	int len = s.length()
+
+	for ( int i = 0; i != len; i = i + 1 ) {
+		ans = 10 * ans + (new int(s[i]) - 48)
+	}
+
+	return ans
 }
