@@ -3,6 +3,9 @@ Rainbow
 
 The aim of this project is to build a compiler for the Rainbow language and produce correct x86 Linux assembly code for it.
 
+http://github.com/justanothercoder/webcompiler
+Online editor with ability to compile code.
+
 ###Algorithms and techological side.
 
 There are several phases of compilation such as:
