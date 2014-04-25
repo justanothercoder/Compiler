@@ -108,7 +108,9 @@ new A() //Like in Java and C#
 
 It is not very big: only _ASCII_ strings, arrays and some functions to work with them.
 
-Well, you can see that it's some sort of mixed _C++_ and _Python_, where all _C_ compatibility is cut off. As the time goes, new syntax constructs will appear to reach the _Python_ simplicity and _C++_ power.
+In plans there are such things as: functions for allocation on heap, containers and buffered IO-system.
+
+As for language core, this will soon be ready: first-class functions, lambda expressions, improved import system, JIT compilation.
 
 
 ###Developer Guide
