@@ -123,6 +123,9 @@ FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc, cons
 
 			auto member_default = TypeHelper::getDefaultConstructor(var_type);
 
+			if ( member_default == nullptr )
+				throw SemanticError(var_type.getName() + " doesn't have default constructor");
+
 			CodeObject genThis;
 			genThis.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
 			genThis.emit("lea rax, [rax - " + std::to_string(struc->get_valloc()->getAddress(var)) + "]");
