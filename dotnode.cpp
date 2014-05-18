@@ -37,11 +37,10 @@ CodeObject& DotNode::gen(const TemplateInfo& template_info)
 
 		if ( ov_func_type_info.overloads.size() > 1 )
 		{
-			auto hint_type = GlobalHelper::getTypeHint(this);
-			if ( hint_type == nullptr )
+			if ( type_hint == nullptr )
 				throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
 
-			member = new VariableSymbol(member_name, VariableType(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->function_type_info]));
+			member = new VariableSymbol(member_name, VariableType(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(type_hint)->function_type_info]));
 		} else
 			member = new VariableSymbol(ov_func->getName(), VariableType(std::begin(ov_func_type_info.symbols)->second));
 	}

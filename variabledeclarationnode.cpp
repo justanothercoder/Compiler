@@ -53,7 +53,7 @@ void VariableDeclarationNode::check(const TemplateInfo& template_info)
 		}
 	}
 	
-	GlobalHelper::setDefined(getDefinedSymbol());
+	getDefinedSymbol()->is_defined = true;
 }
 
 CodeObject& VariableDeclarationNode::gen(const TemplateInfo& template_info)

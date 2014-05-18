@@ -8,10 +8,14 @@ class ExprNode : public AST
 {
 public:
 
+	ExprNode();
+
     virtual void define(const TemplateInfo& template_info);
     
     virtual VariableType getType() const = 0;
 	virtual bool isLeftValue() const = 0;
+	
+	Type *type_hint;
 };
 
 #endif

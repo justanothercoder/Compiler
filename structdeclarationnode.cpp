@@ -31,7 +31,7 @@ void StructDeclarationNode::define(const TemplateInfo& template_info)
 
 void StructDeclarationNode::check(const TemplateInfo& template_info)
 {
-	GlobalHelper::setDefined(getDefinedSymbol());
+	getDefinedSymbol()->is_defined = true;
 	
 	try
 	{
@@ -54,7 +54,7 @@ void StructDeclarationNode::check(const TemplateInfo& template_info)
 	for ( auto decl : inner )
 	{
 		if ( dynamic_cast<DeclarationNode*>(decl) )
-			GlobalHelper::setDefined(static_cast<DeclarationNode*>(decl)->getDefinedSymbol());
+			static_cast<DeclarationNode*>(decl)->getDefinedSymbol()->is_defined = true;
 	}
 
 	for ( auto decl : inner )

@@ -14,7 +14,8 @@ void VariableNode::check(const TemplateInfo& template_info)
 
 	auto sym = getScope()->resolve(name);
 
-	if ( sym == nullptr || !GlobalHelper::isAlreadyDefined(sym) )
+//	if ( sym == nullptr || !GlobalHelper::isAlreadyDefined(sym) )
+	if ( sym == nullptr || !sym->is_defined )
 		throw SemanticError("No such symbol '" + name + "'.");
 
 	if ( sym->getSymbolType() == SymbolType::STRUCT )
@@ -68,7 +69,7 @@ CodeObject& VariableNode::gen(const TemplateInfo& template_info)
 
 		if ( function_info.overloads.size() > 1 )
 		{
-			auto hint_type = static_cast<FunctionSymbol*>(GlobalHelper::getTypeHint(this));
+			auto hint_type = static_cast<FunctionSymbol*>(this->type_hint);
 			if ( hint_type == nullptr )
 				throw SemanticError("multiple overloads of '" + name + "'.");
 
@@ -102,7 +103,7 @@ CodeObject& VariableNode::gen(const TemplateInfo& template_info)
 		}
 		else
 		{
-			auto hint = GlobalHelper::getTypeHint(this);
+			auto hint = this->type_hint;
 			if ( hint != nullptr )
 				code_obj->emit("lea rax, [" + static_cast<FunctionSymbol*>(hint)->getScopedTypedName() + "]");
 			else

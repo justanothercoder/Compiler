@@ -2,8 +2,15 @@
 
 AST::~AST() { }
  
-Scope* AST::getScope() const { return GlobalHelper::getASTScope(const_cast<AST*>(this)); }
-void AST::setScope(Scope *sc) { return GlobalHelper::setASTScope(this, sc); }
+Scope* AST::getScope() const 
+{
+   	return scope; 
+}
+
+void AST::setScope(Scope *sc) 
+{
+   	scope = sc; 
+}
 
 void AST::build_scope()
 {

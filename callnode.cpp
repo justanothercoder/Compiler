@@ -24,7 +24,7 @@ void CallNode::check(const TemplateInfo& template_info)
 		call_info = CallHelper::callCheck(ov_func->getName(), scope, params, template_info);
 	}
 
-	GlobalHelper::setTypeHint(caller, call_info.callee);
+	caller->type_hint = call_info.callee;
 	
 	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
 	

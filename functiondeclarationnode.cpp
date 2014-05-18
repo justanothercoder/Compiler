@@ -95,10 +95,10 @@ CodeObject& FunctionDeclarationNode::gen(const TemplateInfo& template_info)
 
 void FunctionDeclarationNode::check(const TemplateInfo& template_info) 
 { 
-	GlobalHelper::setDefined(getScope()->resolve(name));
+	getScope()->resolve(name)->is_defined = true;
 
 	for ( auto param : params_symbols )
-		GlobalHelper::setDefined(param);
+		param->is_defined = true;
 
 	statements->check(template_info); 
 }

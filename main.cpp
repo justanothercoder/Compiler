@@ -83,20 +83,20 @@ int main()
 
 		BuiltIns::int_struct->accept(new FunctionSymbolDefine(BuiltIns::int_char_constructor));
 
-		GlobalHelper::setDefined(BuiltIns::int_struct);
-		GlobalHelper::setDefined(BuiltIns::ASCII_string);
-		GlobalHelper::setDefined(BuiltIns::char_struct);
+		BuiltIns::int_struct->is_defined = true;
+		BuiltIns::ASCII_string->is_defined = true;
+		BuiltIns::char_struct->is_defined = true;
 
 		root->build_scope();
 
-		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("putchar"));
-		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("getchar"));
-		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("print"));
+		BuiltIns::global_scope->resolve("putchar")->is_defined = true;
+		BuiltIns::global_scope->resolve("getchar")->is_defined = true;
+		BuiltIns::global_scope->resolve("print")->is_defined   = true;
 
-		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("__fopen"));
-		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("__fclose"));
-		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("__fwrite"));
-		GlobalHelper::setDefined(BuiltIns::global_scope->resolve("__fread"));
+		BuiltIns::global_scope->resolve("__fopen")->is_defined  = true;
+		BuiltIns::global_scope->resolve("__fclose")->is_defined = true;
+		BuiltIns::global_scope->resolve("__fwrite")->is_defined = true;
+		BuiltIns::global_scope->resolve("__fread")->is_defined  = true;
 		
 		root->define(TemplateInfo());
 		root->check (TemplateInfo());

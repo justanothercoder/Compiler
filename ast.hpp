@@ -26,7 +26,9 @@ public:
     virtual void check(const TemplateInfo& template_info) = 0;
     virtual CodeObject& gen(const TemplateInfo& template_info) = 0;
 
-	virtual std::vector<AST*> getChildren() const = 0;
+	virtual std::vector<AST*> getChildren() const = 0;	
+
+	Scope *scope;
 };
 
 #endif
