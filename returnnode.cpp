@@ -35,11 +35,11 @@ CodeObject& ReturnNode::gen(const TemplateInfo& template_info)
 
 void ReturnNode::check(const TemplateInfo& template_info)
 {
-	auto scope = getScope();
-	while ( scope != nullptr && dynamic_cast<FunctionSymbol*>(scope) == nullptr )
-		scope = scope->getEnclosingScope();
+	auto _scope = scope;
+	while ( _scope != nullptr && dynamic_cast<FunctionSymbol*>(_scope) == nullptr )
+		_scope = _scope->getEnclosingScope();
 
-	if ( scope == nullptr )
+	if ( _scope == nullptr )
 		throw SemanticError("return is not a in a function");
 
 	enclosing_func = dynamic_cast<FunctionSymbol*>(scope);

@@ -4,16 +4,16 @@ TemplateStructDeclarationNode::TemplateStructDeclarationNode(string name, const 
 
 void TemplateStructDeclarationNode::build_scope()
 {
-    definedSymbol = new TemplateStructSymbol(name, getScope(), template_params, this);
+    definedSymbol = new TemplateStructSymbol(name, scope, template_params, this);
 
     for ( auto decl : inner )
     {
-		decl->setScope(definedSymbol);
+		decl->scope = definedSymbol;
 		decl->build_scope();
     }
 }
 
-void TemplateStructDeclarationNode::define(const TemplateInfo&) { getScope()->accept(new SymbolDefine(definedSymbol)); }
+void TemplateStructDeclarationNode::define(const TemplateInfo&) { scope->accept(new SymbolDefine(definedSymbol)); }
 
 void TemplateStructDeclarationNode::check(const TemplateInfo&) { }
 CodeObject& TemplateStructDeclarationNode::gen(const TemplateInfo&) { return code_obj; }

@@ -37,7 +37,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 			else
 			{
 				CodeObject param_code;
-				param_code.emit("lea rax, [rbp - " + std::to_string(param->getScope()->get_valloc()->getAddressForLocal()) + "]");
+				param_code.emit("lea rax, [rbp - " + std::to_string(param->scope->get_valloc()->getAddressForLocal()) + "]");
 
 				genCallCode(CallHelper::getCallInfo(conv, {param}), {param}, template_info, param_code, false); 
 			}
@@ -62,7 +62,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 
 //			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 				
-			emit("lea r8, [rbp - " + std::to_string(param->getScope()->get_valloc()->getSpecialAddress(param)) + "]");
+			emit("lea r8, [rbp - " + std::to_string(param->scope->get_valloc()->getSpecialAddress(param)) + "]");
 			emit("lea r10, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 			emit("mov [r8], r10");
 
@@ -71,7 +71,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 			{
 				CodeObject code_obj;
 //				code_obj.emit("lea rax, [r8]");
-				code_obj.emit("mov rax, [rbp - " + std::to_string(param->getScope()->get_valloc()->getSpecialAddress(param)) + "]");
+				code_obj.emit("mov rax, [rbp - " + std::to_string(param->scope->get_valloc()->getSpecialAddress(param)) + "]");
 
 				genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, template_info, code_obj, false);
 			}

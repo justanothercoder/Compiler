@@ -8,7 +8,7 @@ void ImportNode::define(const TemplateInfo&)
 {
 	auto root = FileHelper::parse((lib + ".txt").c_str());
 
-	root->setScope(getScope());
+	root->scope = scope;
 	root->build_scope();
 
 	root->define(TemplateInfo());
@@ -18,5 +18,3 @@ void ImportNode::define(const TemplateInfo&)
 
 void ImportNode::check(const TemplateInfo&) { }
 CodeObject& ImportNode::gen(const TemplateInfo&) { return code_obj; }
-
-vector<AST*> ImportNode::getChildren() const { return { }; }

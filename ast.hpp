@@ -15,9 +15,6 @@ public:
 
     virtual ~AST();
 
-    Scope* getScope() const;
-    void setScope(Scope *sc);
-    
     virtual AST* copyTree() const = 0;
 	
     virtual void build_scope(); 
@@ -26,7 +23,7 @@ public:
     virtual void check(const TemplateInfo& template_info) = 0;
     virtual CodeObject& gen(const TemplateInfo& template_info) = 0;
 
-	virtual std::vector<AST*> getChildren() const = 0;	
+	virtual std::vector<AST*> getChildren() const;	
 
 	Scope *scope;
 };

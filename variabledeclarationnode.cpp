@@ -24,7 +24,7 @@ void VariableDeclarationNode::build_scope()
 {
     for ( auto i : constructor_call_params )
     {
-		i->setScope(getScope());
+		i->scope = scope;
 		i->build_scope();
     }
 }
@@ -38,7 +38,7 @@ void VariableDeclarationNode::check(const TemplateInfo& template_info)
 		{
 			string type_name = type_info.type_name;
 
-			auto _ = TypeHelper::fromTypeInfo(type_info, getScope(), template_info);
+			auto _ = TypeHelper::fromTypeInfo(type_info, scope, template_info);
 
 			if ( _.type->getTypeKind() != TypeKind::STRUCT )
 				throw SemanticError("No such struct " + type_name);
@@ -65,12 +65,12 @@ CodeObject& VariableDeclarationNode::gen(const TemplateInfo& template_info)
 			for ( auto i : constructor_call_params )
 				i->gen(template_info);
 
-			code_obj.emit("mov [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "], rax");
+			code_obj.emit("mov [rbp - " + std::to_string(scope->get_valloc()->getAddress(definedSymbol)) + "], rax");
 		}
 		else
 		{
 			CodeObject var_code;
-			var_code.emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(definedSymbol)) + "]");
+			var_code.emit("lea rax, [rbp - " + std::to_string(scope->get_valloc()->getAddress(definedSymbol)) + "]");
 
 			code_obj.genCallCode(call_info, constructor_call_params, template_info, var_code, false);
 		}
@@ -90,13 +90,13 @@ void VariableDeclarationNode::define(const TemplateInfo& template_info)
 		type_info.type_name = sym.getTypeName();
     }
     
-    auto var_type = TypeHelper::fromTypeInfo(type_info, getScope(), template_info);
+    auto var_type = TypeHelper::fromTypeInfo(type_info, scope, template_info);
     
     if ( var_type.type == BuiltIns::void_type )
 		throw SemanticError("can't declare a variable of 'void' type.");
    
     definedSymbol->setType(var_type);
-	getScope()->accept(new VariableSymbolDefine(definedSymbol));
+	scope->accept(new VariableSymbolDefine(definedSymbol));
 }
 
 AST* VariableDeclarationNode::copyTree() const

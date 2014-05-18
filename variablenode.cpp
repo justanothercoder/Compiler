@@ -12,9 +12,8 @@ void VariableNode::check(const TemplateInfo& template_info)
 		return;
 	}
 
-	auto sym = getScope()->resolve(name);
+	auto sym = scope->resolve(name);
 
-//	if ( sym == nullptr || !GlobalHelper::isAlreadyDefined(sym) )
 	if ( sym == nullptr || !sym->is_defined )
 		throw SemanticError("No such symbol '" + name + "'.");
 
@@ -51,15 +50,15 @@ CodeObject& VariableNode::gen(const TemplateInfo& template_info)
 	{
 		if ( variable->isField() )
 		{
-			auto sym = static_cast<VariableSymbol*>(getScope()->resolve("this"));
+			auto sym = static_cast<VariableSymbol*>(scope->resolve("this"));
 
 			auto struc_scope = static_cast<StructSymbol*>(sym->getType().type);
 
-			code_obj->emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
+			code_obj->emit("mov rax, [rbp - " + std::to_string(scope->get_valloc()->getAddress(sym)) + "]");
 			code_obj->emit("mov rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");
 		}
 		else
-			code_obj->emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(variable)) + "]");
+			code_obj->emit("mov rax, [rbp - " + std::to_string(scope->get_valloc()->getAddress(variable)) + "]");
 	}    
 	else if ( var_type.type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
@@ -92,13 +91,13 @@ CodeObject& VariableNode::gen(const TemplateInfo& template_info)
 	{
 		if ( variable->isField() )
 		{
-			auto _this = getScope()->resolve("this");
+			auto _this = scope->resolve("this");
 
 			auto sym = static_cast<VariableSymbol*>(_this);
 
 			auto struc_scope = static_cast<StructSymbol*>(sym->getType().type);
 
-			code_obj->emit("mov rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(sym)) + "]");
+			code_obj->emit("mov rax, [rbp - " + std::to_string(scope->get_valloc()->getAddress(sym)) + "]");
 			code_obj->emit("lea rax, [rax - " + std::to_string(struc_scope->get_valloc()->getAddress(variable)) + "]");
 		}
 		else
@@ -107,7 +106,7 @@ CodeObject& VariableNode::gen(const TemplateInfo& template_info)
 			if ( hint != nullptr )
 				code_obj->emit("lea rax, [" + static_cast<FunctionSymbol*>(hint)->getScopedTypedName() + "]");
 			else
-				code_obj->emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(variable)) + "]");
+				code_obj->emit("lea rax, [rbp - " + std::to_string(scope->get_valloc()->getAddress(variable)) + "]");
 		}
 	}
 
@@ -116,8 +115,6 @@ CodeObject& VariableNode::gen(const TemplateInfo& template_info)
 
 bool VariableNode::isTemplateParam() const { return template_info.sym != nullptr; }
 	
-vector<AST*> VariableNode::getChildren() const { return { }; }
-
 AST* VariableNode::copyTree() const { return new VariableNode(name); }
 
 VariableType VariableNode::getType() const

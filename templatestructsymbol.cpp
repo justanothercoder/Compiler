@@ -49,14 +49,14 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 
 	for ( auto i : symbols )
 	{
-		i->setScope(holder->getScope());
+		i->scope = holder->scope;
 		i->build_scope();	
 	}
 
 	for ( auto i : symbols )
 		i->check(TemplateInfo());	
 
-	decl->setScope(holder->getScope());
+	decl->scope = holder->scope;
 	decl->build_scope();
 
 	decl->define(TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols));

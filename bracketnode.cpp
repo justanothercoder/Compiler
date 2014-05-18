@@ -11,7 +11,7 @@ void BracketNode::check(const TemplateInfo& template_info)
 	auto base_type = dynamic_cast<StructSymbol*>(base->getType().type);
 	call_info = CallHelper::callCheck("operator[]", base_type, {this->expr}, template_info);
 	
-	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
+	scope->get_valloc()->addReturnValueSpace(getType().getSize());
 }
 
 CodeObject& BracketNode::gen(const TemplateInfo& template_info)

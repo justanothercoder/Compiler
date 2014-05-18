@@ -1,6 +1,6 @@
 #include "asmarraynode.hpp"
 
-AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) { setScope(BuiltIns::global_scope); }
+AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) { scope = BuiltIns::global_scope; }
 
 void AsmArrayNode::define(const TemplateInfo& template_info) 
 {
@@ -28,7 +28,7 @@ void AsmArrayNode::define(const TemplateInfo& template_info)
 	}
 	else throw SemanticError("");
 
-	auto arr = VariableType(dynamic_cast<StructSymbol*>(getScope()));
+	auto arr = VariableType(dynamic_cast<StructSymbol*>(scope));
 
 	auto ref_arr = arr;
 	ref_arr.is_ref = true;
@@ -36,29 +36,29 @@ void AsmArrayNode::define(const TemplateInfo& template_info)
 	auto array_constructor = new FunctionSymbol(
 			"array",			
 			FunctionTypeInfo(ref_arr, {ref_arr}),
-			getScope(),
+			scope,
 			{true, true, false}
 			);
 
 	auto array_elem_operator = new FunctionSymbol(
 			"operator[]",
 			FunctionTypeInfo(ref_type, {ref_arr, VariableType(BuiltIns::int_struct)}),
-			getScope(),
+			scope,
 			{true, false, true}
 			);
 
 	auto array_size_func = new FunctionSymbol(
 			"size",
 			FunctionTypeInfo(VariableType(BuiltIns::int_struct), {ref_arr}),
-			getScope(),
+			scope,
 			{true, false, false}
 			);
 
-	getScope()->accept(new FunctionSymbolDefine(array_constructor));
-	getScope()->accept(new FunctionSymbolDefine(array_elem_operator));
-	getScope()->accept(new FunctionSymbolDefine(array_size_func));
+	scope->accept(new FunctionSymbolDefine(array_constructor));
+	scope->accept(new FunctionSymbolDefine(array_elem_operator));
+	scope->accept(new FunctionSymbolDefine(array_size_func));
 
-	getScope()->accept(new VariableSymbolDefine(
+	scope->accept(new VariableSymbolDefine(
 								new VariableSymbol(
 									"~~impl",
 									VariableType(new BuiltInTypeSymbol("~~array_impl", array_size * size_of_type))
@@ -71,7 +71,7 @@ void AsmArrayNode::check(const TemplateInfo&) { }
 
 CodeObject& AsmArrayNode::gen(const TemplateInfo&)
 {
-	auto arr = dynamic_cast<StructSymbol*>(getScope());
+	auto arr = dynamic_cast<StructSymbol*>(scope);
 
 	code_obj.emit("jmp _~_"+arr->getName()+"_array_"+arr->getName()+"~ref");
 	code_obj.emit("_"+arr->getName()+"_array_"+arr->getName()+"~ref:");
@@ -120,5 +120,3 @@ CodeObject& AsmArrayNode::gen(const TemplateInfo&)
 }
 	
 AST* AsmArrayNode::copyTree() const { return new AsmArrayNode(*this); }
-
-std::vector<AST*> AsmArrayNode::getChildren() const { return { }; }

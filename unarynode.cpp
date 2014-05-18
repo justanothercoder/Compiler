@@ -8,7 +8,7 @@ void UnaryNode::check(const TemplateInfo& template_info)
 	exp->check(template_info);
 	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(exp->getType().type), { }, template_info);
 	
-	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
+	scope->get_valloc()->addReturnValueSpace(getType().getSize());
 }
 
 CodeObject& UnaryNode::gen(const TemplateInfo& template_info)

@@ -14,11 +14,11 @@ Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; 
 
 void StructDeclarationNode::build_scope()
 {
-    definedSymbol = new StructSymbol(name, getScope());
-    getScope()->accept(new SymbolDefine(definedSymbol));
+    definedSymbol = new StructSymbol(name, scope);
+    scope->accept(new SymbolDefine(definedSymbol));
     for ( auto i : inner )
     {
-		i->setScope(definedSymbol);
+		i->scope = definedSymbol;
 		i->build_scope();
     }
 }
@@ -35,7 +35,7 @@ void StructDeclarationNode::check(const TemplateInfo& template_info)
 	
 	try
 	{
-		auto constr = TypeHelper::getDefaultConstructor(definedSymbol);
+		TypeHelper::getDefaultConstructor(definedSymbol);
 	}
 	catch ( SemanticError& e )
 	{

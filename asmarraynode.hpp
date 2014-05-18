@@ -19,7 +19,6 @@ public:
 	virtual CodeObject& gen(const TemplateInfo& template_info);
 	
 	virtual AST* copyTree() const;
-	virtual std::vector<AST*> getChildren() const;
 
 private:
 	

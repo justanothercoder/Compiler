@@ -32,8 +32,6 @@ CodeObject& StringNode::gen(const TemplateInfo&)
 	return code_obj;
 }
 	
-vector<AST*> StringNode::getChildren() const { return { }; }
-
 AST* StringNode::copyTree() const { return new StringNode(str); }
 	
 string StringNode::getStr() const { return str; }

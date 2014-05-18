@@ -12,21 +12,21 @@ void NewExpressionNode::check(const TemplateInfo& template_info)
 {
 	string name = type_info.type_name;
 
-	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope(), template_info).type);
+	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, scope, template_info).type);
 
 	call_info = CallHelper::callCheck(name, type, params, template_info); 
 
-	getScope()->get_valloc()->addLocal(this, type->getSize());
+	scope->get_valloc()->addLocal(this, type->getSize());
 	
-	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
+	scope->get_valloc()->addReturnValueSpace(getType().getSize());
 	for ( auto param : params )
-		getScope()->get_valloc()->addSpecialSpace(param);
+		scope->get_valloc()->addSpecialSpace(param);
 }
 
 CodeObject& NewExpressionNode::gen(const TemplateInfo& template_info)
 {
 	CodeObject new_place;
-	new_place.emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(this)) + "]");
+	new_place.emit("lea rax, [rbp - " + std::to_string(scope->get_valloc()->getAddress(this)) + "]");
 
 	code_obj.genCallCode(call_info, params, template_info, new_place, false);
 

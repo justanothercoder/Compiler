@@ -21,7 +21,7 @@ int main()
 	{    
 		shared_ptr<AST> root(FileHelper::parse(filename));
 
-		root->setScope(BuiltIns::global_scope);
+		root->scope = BuiltIns::global_scope;
 
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::int_struct));
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::ASCII_string));
@@ -49,7 +49,7 @@ int main()
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::putchar_func));
 		BuiltIns::global_scope->accept(new FunctionSymbolDefine(BuiltIns::getchar_func));
 
-		BuiltIns::array_struct->holder->setScope(BuiltIns::global_scope);
+		BuiltIns::array_struct->holder->scope = BuiltIns::global_scope;
 		BuiltIns::global_scope->accept(new SymbolDefine(BuiltIns::array_struct));
 		
 		BuiltIns::ASCII_string->accept(new VariableSymbolDefine(
@@ -146,8 +146,8 @@ int main()
 		main_code.emit("push rbp");
 		main_code.emit("mov rbp, rsp");	
 
-		if ( root->getScope()->get_valloc()->getSpace() > 0 )		
-			main_code.emit("sub rsp, " + std::to_string(root->getScope()->get_valloc()->getSpace()));
+		if ( root->scope->get_valloc()->getSpace() > 0 )		
+			main_code.emit("sub rsp, " + std::to_string(root->scope->get_valloc()->getSpace()));
 
 		main_code.emit(root->gen(TemplateInfo()).getCode());
 

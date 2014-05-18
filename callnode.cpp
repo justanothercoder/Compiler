@@ -20,16 +20,16 @@ void CallNode::check(const TemplateInfo& template_info)
 	else
 	{
 		auto ov_func = static_cast<OverloadedFunctionSymbol*>(caller_type);
-		auto scope = ov_func->isMethod() ? static_cast<StructSymbol*>(ov_func->getBaseType().type) : getScope();
-		call_info = CallHelper::callCheck(ov_func->getName(), scope, params, template_info);
+		auto _scope = ov_func->isMethod() ? static_cast<StructSymbol*>(ov_func->getBaseType().type) : scope;
+		call_info = CallHelper::callCheck(ov_func->getName(), _scope, params, template_info);
 	}
 
 	caller->type_hint = call_info.callee;
 	
-	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
+	scope->get_valloc()->addReturnValueSpace(getType().getSize());
 	
 	for ( auto param : params )
-		getScope()->get_valloc()->addSpecialSpace(param);
+		scope->get_valloc()->addSpecialSpace(param);
 }
 
 CodeObject& CallNode::gen(const TemplateInfo& template_info)

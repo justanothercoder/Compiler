@@ -15,7 +15,6 @@ public:
     virtual void check(const TemplateInfo& template_info);
     virtual CodeObject& gen(const TemplateInfo& template_info);
 
-	virtual vector<AST*> getChildren() const;
     virtual AST* copyTree() const;
 
 	string getNum() const;

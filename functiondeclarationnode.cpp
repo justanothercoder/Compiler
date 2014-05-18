@@ -10,9 +10,9 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 
 void FunctionDeclarationNode::build_scope()
 {
-	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(VariableType(), { }), getScope(), traits, nullptr);
+	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(VariableType(), { }), scope, traits, nullptr);
 
-	statements->setScope(definedSymbol);
+	statements->scope = definedSymbol;
 	statements->build_scope();
 }
 
@@ -21,13 +21,13 @@ Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol
 void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 {
 	if ( template_info.sym != nullptr && return_type_info.type_name == template_info.sym->getName() )
-		return_type_info.type_name = static_cast<StructSymbol*>(getScope())->getName();
+		return_type_info.type_name = static_cast<StructSymbol*>(scope)->getName();
 
 	auto fromTypeInfo = [&] (TypeInfo type_info) 
 	{
-		if ( definedSymbol->isMethod() && type_info.type_name == static_cast<StructSymbol*>(getScope())->getName() )
-			return VariableType(static_cast<StructSymbol*>(getScope()), type_info.is_ref, type_info.is_const);
-		return TypeHelper::fromTypeInfo(type_info, getScope(), template_info);
+		if ( definedSymbol->isMethod() && type_info.type_name == static_cast<StructSymbol*>(scope)->getName() )
+			return VariableType(static_cast<StructSymbol*>(scope), type_info.is_ref, type_info.is_const);
+		return TypeHelper::fromTypeInfo(type_info, scope, template_info);
 	};
 
 	VariableType return_type = fromTypeInfo(return_type_info);
@@ -36,7 +36,7 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 
 	if ( traits.is_method )
 	{
-		auto _this_type = VariableType(static_cast<StructSymbol*>(getScope()), true, false);
+		auto _this_type = VariableType(static_cast<StructSymbol*>(scope), true, false);
 		params_types.push_back(_this_type);
 		
 		auto _this_sym = new VariableSymbol("this", _this_type, VariableSymbolType::PARAM);
@@ -61,7 +61,7 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 
 	definedSymbol->function_type_info = function_type_info;
 
-	getScope()->accept(new FunctionSymbolDefine(definedSymbol));
+	scope->accept(new FunctionSymbolDefine(definedSymbol));
 
 	statements->define(template_info);
 }
@@ -95,7 +95,7 @@ CodeObject& FunctionDeclarationNode::gen(const TemplateInfo& template_info)
 
 void FunctionDeclarationNode::check(const TemplateInfo& template_info) 
 { 
-	getScope()->resolve(name)->is_defined = true;
+	scope->resolve(name)->is_defined = true;
 
 	for ( auto param : params_symbols )
 		param->is_defined = true;

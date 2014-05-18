@@ -11,12 +11,12 @@ WhileNode::~WhileNode()
 
 void WhileNode::build_scope()
 {
-    while_scope = new LocalScope(getScope());
+    while_scope = new LocalScope(scope);
 
-    cond->setScope(getScope());
+    cond->scope = scope;
     cond->build_scope();
 
-    stats->setScope(while_scope);
+    stats->scope = while_scope;
     stats->build_scope();
 }
 

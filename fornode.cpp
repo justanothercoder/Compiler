@@ -12,11 +12,11 @@ ForNode::~ForNode()
 
 void ForNode::build_scope()
 {
-	for_scope = new LocalScope(getScope());
+	for_scope = new LocalScope(scope);
 
 	for ( auto child : getChildren() )
 	{
-		child->setScope(for_scope);
+		child->scope = for_scope;
 		child->build_scope();
 	}
 }
