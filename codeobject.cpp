@@ -14,11 +14,11 @@ void CodeObject::pushOnStack(size_t size, int offset)
 	}
 }
 		
-void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr, const TemplateInfo& template_info)
+void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr)
 {
 	if ( copy_constr == nullptr ) 
 	{
-		emit(param->gen(template_info).getCode());
+		emit(param->gen().getCode());
 
 		if ( conv_info.deref )
 			emit("mov rax, [rax]");
@@ -33,13 +33,13 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		if ( conv )
 		{
 			if ( conv->isOperator() )
-				genCallCode(CallHelper::getCallInfo(conv, { }), { }, template_info, param->gen(template_info), param->getType().is_ref);
+				genCallCode(CallHelper::getCallInfo(conv, { }), { }, param->gen(), param->getType().is_ref);
 			else
 			{
 				CodeObject param_code;
 				param_code.emit("lea rax, [rbp - " + std::to_string(param->scope->get_valloc()->getAddressForLocal()) + "]");
 
-				genCallCode(CallHelper::getCallInfo(conv, {param}), {param}, template_info, param_code, false); 
+				genCallCode(CallHelper::getCallInfo(conv, {param}), {param}, param_code, false); 
 			}
 		}
 
@@ -47,7 +47,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		{
 			if ( conv == nullptr )
 			{
-				emit(param->gen(template_info).getCode());
+				emit(param->gen().getCode());
 				if ( conv_info.deref )
 					emit("mov rax, [rax]");
 			}
@@ -73,7 +73,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 //				code_obj.emit("lea rax, [r8]");
 				code_obj.emit("mov rax, [rbp - " + std::to_string(param->scope->get_valloc()->getSpecialAddress(param)) + "]");
 
-				genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, template_info, code_obj, false);
+				genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, code_obj, false);
 			}
 			else
 			{
@@ -87,7 +87,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 	}
 }
 
-void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, const TemplateInfo& template_info, CodeObject& genThis, bool thisIsRef)
+void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, CodeObject& genThis, bool thisIsRef)
 {
 	auto func = call_info.callee;
 
@@ -103,7 +103,7 @@ void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, const
 		params_size += GlobalConfig::int_size;
 
 	for ( int i = static_cast<int>(function_info.params_types.size()) - 1; i >= is_meth; --i )
-		genParam(params[i - is_meth], call_info.conversions[i - is_meth], call_info.copy_constructors[i - is_meth], template_info);
+		genParam(params[i - is_meth], call_info.conversions[i - is_meth], call_info.copy_constructors[i - is_meth]);
 
 	if ( is_method )
 	{

@@ -4,17 +4,18 @@ ImportNode::ImportNode(string lib) : lib(lib), code_obj() { }
 
 AST* ImportNode::copyTree() const { return new ImportNode(lib); }
 
-void ImportNode::define(const TemplateInfo&) 
+void ImportNode::define() 
 {
 	auto root = FileHelper::parse((lib + ".txt").c_str());
 
-	root->scope = scope;
-	root->build_scope();
+	root -> scope = scope;
+	root -> template_info = new TemplateInfo();
+	root -> build_scope();
 
-	root->define(TemplateInfo());
-	root->check(TemplateInfo());
-	code_obj.emit(root->gen(TemplateInfo()).getCode());
+	root -> define();
+	root -> check();
+	code_obj.emit(root -> gen().getCode());
 }
 
-void ImportNode::check(const TemplateInfo&) { }
-CodeObject& ImportNode::gen(const TemplateInfo&) { return code_obj; }
+void ImportNode::check() { }
+CodeObject& ImportNode::gen() { return code_obj; }

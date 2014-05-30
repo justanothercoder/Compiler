@@ -42,7 +42,7 @@ FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol *over
 }
 
 
-FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc, const TemplateInfo& template_info)
+FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 {
 	auto copy_constr = new FunctionSymbol(struc->getName(),
 		 								  FunctionTypeInfo(VariableType(struc, true),
@@ -94,7 +94,7 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc, 
 	return copy_constr;
 }
 
-FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc, const TemplateInfo& template_info)
+FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 {
 	auto constr = new FunctionSymbol(struc->getName(),
 		 						     FunctionTypeInfo(VariableType(struc, true),

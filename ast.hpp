@@ -19,13 +19,14 @@ public:
 	
     virtual void build_scope(); 
 
-    virtual void define(const TemplateInfo& template_info) = 0;
-    virtual void check(const TemplateInfo& template_info) = 0;
-    virtual CodeObject& gen(const TemplateInfo& template_info) = 0;
+    virtual void define() = 0;
+    virtual void check() = 0;
+    virtual CodeObject& gen() = 0;
 
 	virtual std::vector<AST*> getChildren() const;	
 
 	Scope *scope;
+	TemplateInfo *template_info;
 };
 
 #endif

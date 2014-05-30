@@ -24,13 +24,13 @@ void VariableDeclarationNode::build_scope()
 {
     for ( auto i : constructor_call_params )
     {
-		i->scope = scope;
-		i->build_scope();
+		i -> scope = scope;
+		i -> build_scope();
     }
 }
 
 
-void VariableDeclarationNode::check(const TemplateInfo& template_info)
+void VariableDeclarationNode::check()
 {
 	if ( !is_field )
 	{
@@ -40,52 +40,52 @@ void VariableDeclarationNode::check(const TemplateInfo& template_info)
 
 			auto _ = TypeHelper::fromTypeInfo(type_info, scope, template_info);
 
-			if ( _.type->getTypeKind() != TypeKind::STRUCT )
+			if ( _.type -> getTypeKind() != TypeKind::STRUCT )
 				throw SemanticError("No such struct " + type_name);
 
 			auto type = static_cast<StructSymbol*>(_.type);
-			call_info = CallHelper::callCheck(type_name, type, constructor_call_params, template_info);
+			call_info = CallHelper::callCheck(type_name, type, constructor_call_params);
 		}
 		else
 		{
 			for ( auto i : constructor_call_params )
-				i->check(template_info);
+				i -> check();
 		}
 	}
 	
-	getDefinedSymbol()->is_defined = true;
+	getDefinedSymbol() -> is_defined = true;
 }
 
-CodeObject& VariableDeclarationNode::gen(const TemplateInfo& template_info)
+CodeObject& VariableDeclarationNode::gen()
 {
 	if ( !is_field )
 	{  
 		if ( type_info.is_ref )
 		{
 			for ( auto i : constructor_call_params )
-				i->gen(template_info);
+				i -> gen();
 
-			code_obj.emit("mov [rbp - " + std::to_string(scope->get_valloc()->getAddress(definedSymbol)) + "], rax");
+			code_obj.emit("mov [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(definedSymbol)) + "], rax");
 		}
 		else
 		{
 			CodeObject var_code;
-			var_code.emit("lea rax, [rbp - " + std::to_string(scope->get_valloc()->getAddress(definedSymbol)) + "]");
+			var_code.emit("lea rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(definedSymbol)) + "]");
 
-			code_obj.genCallCode(call_info, constructor_call_params, template_info, var_code, false);
+			code_obj.genCallCode(call_info, constructor_call_params, var_code, false);
 		}
 	}
 
 	return code_obj;
 }
 
-void VariableDeclarationNode::define(const TemplateInfo& template_info)
+void VariableDeclarationNode::define()
 {
-    if ( template_info.sym && template_info.sym->isIn(type_info.type_name) )
+    if ( template_info -> sym && template_info -> sym -> isIn(type_info.type_name) )
     {
-		auto replace = template_info.getReplacement(type_info.type_name);
+		auto replace = template_info -> getReplacement(type_info.type_name);
 
-		auto sym = replace->getType();
+		auto sym = replace -> getType();
 		
 		type_info.type_name = sym.getTypeName();
     }
@@ -95,15 +95,15 @@ void VariableDeclarationNode::define(const TemplateInfo& template_info)
     if ( var_type.type == BuiltIns::void_type )
 		throw SemanticError("can't declare a variable of 'void' type.");
    
-    definedSymbol->setType(var_type);
-	scope->accept(new VariableSymbolDefine(definedSymbol));
+    definedSymbol -> setType(var_type);
+	scope -> accept(new VariableSymbolDefine(definedSymbol));
 }
 
 AST* VariableDeclarationNode::copyTree() const
 {
     vector<ExprNode*> params(constructor_call_params.size());
 
-    std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::begin(params), [&] (ExprNode *expr) { return static_cast<ExprNode*>(expr->copyTree()); });
+    std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::begin(params), [&] (ExprNode *expr) { return static_cast<ExprNode*>(expr -> copyTree()); });
     
     return new VariableDeclarationNode(name, type_info, is_field, params);
 }

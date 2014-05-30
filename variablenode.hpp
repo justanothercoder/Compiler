@@ -20,8 +20,8 @@ public:
     VariableNode(string name);
 	~VariableNode();
 
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+    virtual void check();
+    virtual CodeObject& gen();
 
     virtual AST* copyTree() const;
 

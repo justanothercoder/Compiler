@@ -12,20 +12,20 @@ void FunctionDeclarationNode::build_scope()
 {
 	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(VariableType(), { }), scope, traits, nullptr);
 
-	statements->scope = definedSymbol;
-	statements->build_scope();
+	statements -> scope = definedSymbol;
+	statements -> build_scope();
 }
 
 Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 
-void FunctionDeclarationNode::define(const TemplateInfo& template_info)
+void FunctionDeclarationNode::define()
 {
-	if ( template_info.sym != nullptr && return_type_info.type_name == template_info.sym->getName() )
-		return_type_info.type_name = static_cast<StructSymbol*>(scope)->getName();
+	if ( template_info -> sym != nullptr && return_type_info.type_name == template_info -> sym -> getName() )
+		return_type_info.type_name = static_cast<StructSymbol*>(scope) -> getName();
 
 	auto fromTypeInfo = [&] (TypeInfo type_info) 
 	{
-		if ( definedSymbol->isMethod() && type_info.type_name == static_cast<StructSymbol*>(scope)->getName() )
+		if ( definedSymbol -> isMethod() && type_info.type_name == static_cast<StructSymbol*>(scope) -> getName() )
 			return VariableType(static_cast<StructSymbol*>(scope), type_info.is_ref, type_info.is_const);
 		return TypeHelper::fromTypeInfo(type_info, scope, template_info);
 	};
@@ -42,7 +42,7 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 		auto _this_sym = new VariableSymbol("this", _this_type, VariableSymbolType::PARAM);
 
 		params_symbols.push_back(_this_sym);
-		definedSymbol->accept(new VariableSymbolDefine(_this_sym));
+		definedSymbol -> accept(new VariableSymbolDefine(_this_sym));
 	}
 
 	for ( auto i : params )
@@ -54,33 +54,33 @@ void FunctionDeclarationNode::define(const TemplateInfo& template_info)
 		auto param_sym = new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM);
 
 		params_symbols.push_back(param_sym);
-		definedSymbol->accept(new VariableSymbolDefine(param_sym));
+		definedSymbol -> accept(new VariableSymbolDefine(param_sym));
 	}
 
 	FunctionTypeInfo function_type_info(return_type, params_types);
 
-	definedSymbol->function_type_info = function_type_info;
+	definedSymbol -> function_type_info = function_type_info;
 
-	scope->accept(new FunctionSymbolDefine(definedSymbol));
+	scope -> accept(new FunctionSymbolDefine(definedSymbol));
 
-	statements->define(template_info);
+	statements -> define();
 }
 
-CodeObject& FunctionDeclarationNode::gen(const TemplateInfo& template_info)
+CodeObject& FunctionDeclarationNode::gen()
 {    
-	string scoped_typed_name = definedSymbol->getScopedTypedName();
+	string scoped_typed_name = definedSymbol -> getScopedTypedName();
 
 	code_obj.emit("jmp _~" + scoped_typed_name);
 	code_obj.emit(scoped_typed_name + ":");
 	code_obj.emit("push rbp");
 	code_obj.emit("mov rbp, rsp");
 
-	if ( definedSymbol->get_valloc()->getSpace() > 0 )
-		code_obj.emit("sub rsp, " + std::to_string(definedSymbol->get_valloc()->getSpace()));
+	if ( definedSymbol -> get_valloc() -> getSpace() > 0 )
+		code_obj.emit("sub rsp, " + std::to_string(definedSymbol -> get_valloc() -> getSpace()));
 
-	code_obj.emit(statements->gen(template_info).getCode());
+	code_obj.emit(statements -> gen().getCode());
 
-	if ( definedSymbol->isConstructor() )
+	if ( definedSymbol -> isConstructor() )
 		code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
 
 	code_obj.emit("mov rsp, rbp");
@@ -88,21 +88,21 @@ CodeObject& FunctionDeclarationNode::gen(const TemplateInfo& template_info)
 	code_obj.emit("ret");
 	code_obj.emit("_~" + scoped_typed_name + ":");
 
-	definedSymbol->code_obj = &code_obj;
+	definedSymbol -> code_obj = &code_obj;
 
 	return code_obj;
 }
 
-void FunctionDeclarationNode::check(const TemplateInfo& template_info) 
+void FunctionDeclarationNode::check() 
 { 
-	scope->resolve(name)->is_defined = true;
+	scope -> resolve(name) -> is_defined = true;
 
 	for ( auto param : params_symbols )
-		param->is_defined = true;
+		param -> is_defined = true;
 
-	statements->check(template_info); 
+	statements -> check(); 
 }
 
-AST* FunctionDeclarationNode::copyTree() const { return new FunctionDeclarationNode(name, params, return_type_info, statements->copyTree(), traits); }
+AST* FunctionDeclarationNode::copyTree() const { return new FunctionDeclarationNode(name, params, return_type_info, statements -> copyTree(), traits); }
 
 vector<AST*> FunctionDeclarationNode::getChildren() const { return {statements}; }

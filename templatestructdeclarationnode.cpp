@@ -13,7 +13,7 @@ void TemplateStructDeclarationNode::build_scope()
     }
 }
 
-void TemplateStructDeclarationNode::define(const TemplateInfo&) { scope->accept(new SymbolDefine(definedSymbol)); }
+void TemplateStructDeclarationNode::define() { scope->accept(new SymbolDefine(definedSymbol)); }
 
-void TemplateStructDeclarationNode::check(const TemplateInfo&) { }
-CodeObject& TemplateStructDeclarationNode::gen(const TemplateInfo&) { return code_obj; }
+void TemplateStructDeclarationNode::check() { }
+CodeObject& TemplateStructDeclarationNode::gen() { return code_obj; }

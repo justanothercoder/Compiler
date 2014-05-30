@@ -8,16 +8,16 @@ StatementNode::~StatementNode()
 		delete i;
 }
 
-void StatementNode::define(const TemplateInfo& template_info)
+void StatementNode::define()
 {
 	for ( auto i : statements )
-		i->define(template_info);
+		i->define();
 }
 
-void StatementNode::check(const TemplateInfo& template_info)
+void StatementNode::check()
 {
 	for ( auto i : statements )
-		i->check(template_info);
+		i->check();
 }
 
 AST* StatementNode::copyTree() const
@@ -29,10 +29,10 @@ AST* StatementNode::copyTree() const
 	return new StatementNode(stats);
 }
 
-CodeObject& StatementNode::gen(const TemplateInfo& template_info)
+CodeObject& StatementNode::gen()
 {
 	for ( auto i : statements )
-		code_obj.emit(i->gen(template_info).getCode());
+		code_obj.emit(i->gen().getCode());
 	return code_obj;
 }
 

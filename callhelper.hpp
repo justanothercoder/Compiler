@@ -14,7 +14,7 @@ class CallHelper
 {
 public:
 
-	static CallInfo callCheck(string name, Scope *sc, std::vector<ExprNode*> params, const TemplateInfo& template_info);
+	static CallInfo callCheck(string name, Scope *sc, std::vector<ExprNode*> params);
 	static CallInfo getCallInfo(FunctionSymbol *function_sym, std::vector<ExprNode*> params_types);
 
 	static OverloadedFunctionSymbol* getOverloadedFunc(string name, Scope *scope);

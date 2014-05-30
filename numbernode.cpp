@@ -2,9 +2,9 @@
 
 NumberNode::NumberNode(string num) : num(num), code_obj() { }
 
-void NumberNode::check(const TemplateInfo&) { scope->get_valloc()->addLocal(this, getType().getSize()); }
+void NumberNode::check() { scope->get_valloc()->addLocal(this, getType().getSize()); }
 
-CodeObject& NumberNode::gen(const TemplateInfo&)
+CodeObject& NumberNode::gen()
 {
 //    code_obj.emit("mov qword [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "], " + num);
 //	code_obj.emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddressForLocal()) + "]");

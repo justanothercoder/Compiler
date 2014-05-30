@@ -17,8 +17,8 @@ public:
     BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type);
 	virtual ~BinaryOperatorNode();
 
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+    virtual void check();
+    virtual CodeObject& gen();
 
     string getOperatorName();
     string getCodeOperatorName();

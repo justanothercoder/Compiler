@@ -14,7 +14,7 @@ bool TypeHelper::isConvertable(VariableType lhs, VariableType rhs)
 
 FunctionSymbol* TypeHelper::getConversion(VariableType lhs, VariableType rhs)
 {
-	if ( rhs.type->getTypeKind() != TypeKind::STRUCT )
+	if ( rhs.type -> getTypeKind() != TypeKind::STRUCT )
 		return nullptr;
 
 	auto struc = static_cast<StructSymbol*>(rhs.type);
@@ -38,20 +38,20 @@ FunctionSymbol* TypeHelper::getConversion(VariableType lhs, VariableType rhs)
 		auto ref_lhs = lhs;
 		ref_lhs.is_ref = true;
 
-		return cast_op->getTypeInfo().symbols[FunctionTypeInfo(rhs, {ref_lhs})];
+		return cast_op -> getTypeInfo().symbols[FunctionTypeInfo(rhs, {ref_lhs})];
 	}
 	else
 	{
 		auto ref_rhs = rhs;
 		ref_rhs.is_ref = true;
 
-		return conversion->getTypeInfo().symbols[FunctionTypeInfo(ref_rhs, {ref_rhs, lhs})];
+		return conversion -> getTypeInfo().symbols[FunctionTypeInfo(ref_rhs, {ref_rhs, lhs})];
 	}
 }
 
 FunctionSymbol* TypeHelper::getCopyConstructor(VariableType type)
 {
-	if ( type.type->getTypeKind() != TypeKind::STRUCT )
+	if ( type.type -> getTypeKind() != TypeKind::STRUCT )
 		return nullptr;
 
 	type.is_ref = false;
@@ -59,7 +59,7 @@ FunctionSymbol* TypeHelper::getCopyConstructor(VariableType type)
 
 	StructSymbol *struc = static_cast<StructSymbol*>(type.type);
 
-	auto type_name = struc->getName();
+	auto type_name = struc -> getName();
 
 	auto constructor = CallHelper::getOverloadedMethod(type_name, struc);
 
@@ -74,7 +74,7 @@ FunctionSymbol* TypeHelper::getCopyConstructor(VariableType type)
 
 FunctionSymbol* TypeHelper::getDefaultConstructor(VariableType type)
 {
-	if ( type.type->getTypeKind() != TypeKind::STRUCT )
+	if ( type.type -> getTypeKind() != TypeKind::STRUCT )
 		return nullptr;
 
 	type.is_ref = false;
@@ -82,7 +82,7 @@ FunctionSymbol* TypeHelper::getDefaultConstructor(VariableType type)
 
 	StructSymbol *struc = static_cast<StructSymbol*>(type.type);
 
-	auto type_name = struc->getName();
+	auto type_name = struc -> getName();
 
 	auto constructor = CallHelper::getOverloadedMethod(type_name, struc);
 
@@ -92,12 +92,12 @@ FunctionSymbol* TypeHelper::getDefaultConstructor(VariableType type)
 	return FunctionHelper::getViableOverload(constructor, {rt});
 }
 
-VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateInfo& template_info)
+VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, TemplateInfo *template_info)
 {    
 	auto type_name = type_info.type_name;
 
-	if ( template_info.sym && template_info.sym->isIn(type_name) )
-		type_name = template_info.getReplacement(type_name)->getType().type->getName();
+	if ( template_info -> sym && template_info -> sym -> isIn(type_name) )
+		type_name = template_info -> getReplacement(type_name) -> getType().type -> getName();
 
 	auto type = VariableType(TypeHelper::resolveType(type_name, scope));
 	
@@ -107,7 +107,7 @@ VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const Te
 	if ( type_info.template_params.size() > 0 )
 	{
 		auto tmpl = dynamic_cast<TemplateStructSymbol*>(type.type);
-		auto sym = tmpl->getSpec(type_info.template_params);	
+		auto sym = tmpl -> getSpec(type_info.template_params);	
 		type.type = dynamic_cast<Type*>(sym);
 	}
 
@@ -125,13 +125,13 @@ Type* TypeHelper::resolveType(string name, Scope *sc)
 
 	while ( true )
 	{
-		while ( scope != nullptr && scope->resolve(name) == _ )
-			scope = scope->getEnclosingScope();
+		while ( scope != nullptr && scope -> resolve(name) == _ )
+			scope = scope -> getEnclosingScope();
 
 		if ( scope == nullptr ) 
 			return nullptr;
 
-		_ = scope->resolve(name);
+		_ = scope -> resolve(name);
 
 		if ( dynamic_cast<Type*>(_) != nullptr )
 			return dynamic_cast<Type*>(_);		

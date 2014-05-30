@@ -4,29 +4,29 @@ BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op
 
 BinaryOperatorNode::~BinaryOperatorNode() { delete lhs; delete rhs; }
 
-void BinaryOperatorNode::check(const TemplateInfo& template_info)
+void BinaryOperatorNode::check()
 {
-	lhs->check(template_info);
+	lhs -> check();
 	try
 	{
-		call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(lhs->getType().type), {rhs}, template_info);
+		call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(lhs -> getType().type), {rhs});
 	}
 	catch ( SemanticError& e )
 	{
-		call_info = CallHelper::callCheck(getOperatorName(), scope, {lhs, rhs}, template_info);
+		call_info = CallHelper::callCheck(getOperatorName(), scope, {lhs, rhs});
 	}
 	
-	scope->get_valloc()->addReturnValueSpace(getType().getSize());
+	scope -> get_valloc() -> addReturnValueSpace(getType().getSize());
 }
 
-CodeObject& BinaryOperatorNode::gen(const TemplateInfo& template_info)
+CodeObject& BinaryOperatorNode::gen()
 {
-	if ( call_info.callee->isMethod() )
-		code_obj.genCallCode(call_info, {rhs}, template_info, lhs->gen(template_info), lhs->getType().is_ref);
+	if ( call_info.callee -> isMethod() )
+		code_obj.genCallCode(call_info, {rhs}, lhs -> gen(), lhs -> getType().is_ref);
 	else
 	{
 		CodeObject empty;
-		code_obj.genCallCode(call_info, {lhs, rhs}, template_info, empty, false);
+		code_obj.genCallCode(call_info, {lhs, rhs}, empty, false);
 	}
 
 	return code_obj;
@@ -68,13 +68,13 @@ string BinaryOperatorNode::getCodeOperatorName()
 
 AST* BinaryOperatorNode::copyTree() const
 {
-	auto lhs_copy = static_cast<ExprNode*>(lhs->copyTree()), 
-		 rhs_copy = static_cast<ExprNode*>(rhs->copyTree());
+	auto lhs_copy = static_cast<ExprNode*>(lhs -> copyTree()), 
+		 rhs_copy = static_cast<ExprNode*>(rhs -> copyTree());
 
 	return new BinaryOperatorNode(lhs_copy, rhs_copy, op_type);
 }
 
 vector<AST*> BinaryOperatorNode::getChildren() const { return {lhs, rhs}; }
 
-VariableType BinaryOperatorNode::getType() const { return call_info.callee->function_type_info.return_type; }
+VariableType BinaryOperatorNode::getType() const { return call_info.callee -> function_type_info.return_type; }
 bool BinaryOperatorNode::isLeftValue() const { return false; }

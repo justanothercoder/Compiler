@@ -13,46 +13,49 @@ IfNode::~IfNode()
 
 void IfNode::build_scope()
 {
-    if_scope = new LocalScope(scope);
+    if_scope   = new LocalScope(scope);
     else_scope = new LocalScope(scope);
     
-    cond->scope = scope;
-    cond->build_scope();
+    cond -> scope         = scope;
+	cond -> template_info = template_info;
+    cond -> build_scope();
 
-    stats_true->scope = if_scope;
-    stats_true->build_scope();
+    stats_true -> scope         = if_scope;
+	stats_true -> template_info = template_info;
+    stats_true -> build_scope();
 
-    stats_false->scope = else_scope;
-    stats_false->build_scope();
+    stats_false -> scope         = else_scope;
+	stats_false -> template_info = template_info;
+    stats_false -> build_scope();
 }
 
-void IfNode::define(const TemplateInfo& template_info)
+void IfNode::define()
 {
 	for ( auto child : getChildren() )
-		child->define(template_info);
+		child -> define();
 }
     
-void IfNode::check(const TemplateInfo& template_info)
+void IfNode::check()
 {
 	for ( auto child : getChildren() )
-		child->check(template_info);
+		child -> check();
 }
     
-CodeObject& IfNode::gen(const TemplateInfo& template_info)
+CodeObject& IfNode::gen()
 {
-    code_obj.emit(cond->gen(template_info).getCode());
+    code_obj.emit(cond -> gen().getCode());
 
     string false_label = IfNode::getNewLabel(), exit_label = IfNode::getNewLabel();
 
     code_obj.emit("cmp qword [rax], 0");
     code_obj.emit("jz " + false_label);
     
-	code_obj.emit(stats_true->gen(template_info).getCode());
+	code_obj.emit(stats_true -> gen().getCode());
     
 	code_obj.emit("jmp " + exit_label);
     code_obj.emit(false_label + ":");
     
-	code_obj.emit(stats_false->gen(template_info).getCode());
+	code_obj.emit(stats_false -> gen().getCode());
  
  	code_obj.emit(exit_label + ":");
 
@@ -65,6 +68,6 @@ string IfNode::getNewLabel()
 	return "@if_label" + std::to_string(++label_num); 
 }
 
-AST* IfNode::copyTree() const { return new IfNode(static_cast<ExprNode*>(cond->copyTree()), stats_true->copyTree(), stats_false->copyTree()); }
+AST* IfNode::copyTree() const { return new IfNode(static_cast<ExprNode*>(cond -> copyTree()), stats_true -> copyTree(), stats_false -> copyTree()); }
 	
 vector<AST*> IfNode::getChildren() const { return {cond, stats_true, stats_false}; }

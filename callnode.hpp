@@ -23,8 +23,8 @@ public:
     CallNode(ExprNode *caller, const vector<ExprNode*>& params);
 	virtual ~CallNode();
     
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+    virtual void check();
+    virtual CodeObject& gen();
 
 	virtual vector<AST*> getChildren() const;
     virtual AST* copyTree() const;

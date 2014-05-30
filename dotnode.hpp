@@ -16,8 +16,8 @@ public:
     DotNode(ExprNode *base, string member_name);   
 	virtual ~DotNode();
     
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);    
+    virtual void check();
+    virtual CodeObject& gen();    
 
 	virtual vector<AST*> getChildren() const;
     virtual AST* copyTree() const;

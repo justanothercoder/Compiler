@@ -8,8 +8,10 @@ void AST::build_scope()
 
 	for ( auto child : children )
 	{
-		child->scope = scope;
-		child->build_scope();
+		child -> scope         = scope;
+		child -> template_info = template_info;
+
+		child -> build_scope();
 	}
 }
 	

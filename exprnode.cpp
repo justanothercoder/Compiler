@@ -2,4 +2,4 @@
 
 ExprNode::ExprNode() : type_hint(nullptr) { }
 
-void ExprNode::define(const TemplateInfo&) { }
+void ExprNode::define() { }

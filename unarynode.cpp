@@ -3,17 +3,17 @@
 UnaryNode::UnaryNode(ExprNode *exp, UnaryOp op_type) : exp(exp), op_type(op_type) { }
 UnaryNode::~UnaryNode() { delete exp; } 
 
-void UnaryNode::check(const TemplateInfo& template_info)
+void UnaryNode::check()
 {
-	exp->check(template_info);
-	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(exp->getType().type), { }, template_info);
+	exp->check();
+	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(exp->getType().type), { });
 	
 	scope->get_valloc()->addReturnValueSpace(getType().getSize());
 }
 
-CodeObject& UnaryNode::gen(const TemplateInfo& template_info)
+CodeObject& UnaryNode::gen()
 {
-	code_obj.genCallCode(call_info, { }, template_info, exp->gen(template_info), exp->getType().is_ref);
+	code_obj.genCallCode(call_info, { }, exp->gen(), exp->getType().is_ref);
 	return code_obj;
 }
 

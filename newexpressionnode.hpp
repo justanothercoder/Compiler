@@ -21,8 +21,8 @@ public:
     NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params);
 	virtual ~NewExpressionNode();
 
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+    virtual void check();
+    virtual CodeObject& gen();
 
 	virtual vector<AST*> getChildren() const;
     virtual AST* copyTree() const;

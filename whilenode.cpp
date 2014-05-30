@@ -13,30 +13,32 @@ void WhileNode::build_scope()
 {
     while_scope = new LocalScope(scope);
 
-    cond->scope = scope;
-    cond->build_scope();
+    cond -> scope         = scope;
+	cond -> template_info = template_info;
+    cond -> build_scope();
 
-    stats->scope = while_scope;
-    stats->build_scope();
+    stats -> scope         = while_scope;
+	stats -> template_info = template_info;
+    stats -> build_scope();
 }
 
-void WhileNode::define(const TemplateInfo& template_info) { stats->define(template_info); }
+void WhileNode::define() { stats -> define(); }
 
-void WhileNode::check(const TemplateInfo& template_info)
+void WhileNode::check()
 {
-    cond->check(template_info);
-    stats->check(template_info);
+    cond  -> check();
+    stats -> check();
 }
 
-CodeObject& WhileNode::gen(const TemplateInfo& template_info)
+CodeObject& WhileNode::gen()
 {
     string exit_label = WhileNode::getNewLabel(), cycle_label = WhileNode::getNewLabel();
     
     code_obj.emit(cycle_label + ":");
-    code_obj.emit(cond->gen(template_info).getCode());
+    code_obj.emit(cond -> gen().getCode());
     code_obj.emit("cmp qword [rax], 0");
     code_obj.emit("jz " + exit_label);
-    code_obj.emit(stats->gen(template_info).getCode());
+    code_obj.emit(stats -> gen().getCode());
     code_obj.emit("jmp " + cycle_label);
     code_obj.emit(exit_label + ":");
 
@@ -49,6 +51,6 @@ string WhileNode::getNewLabel()
 	return "@while_label" + std::to_string(++label_num); 
 }
 
-AST* WhileNode::copyTree() const { return new WhileNode(static_cast<ExprNode*>(cond->copyTree()), stats->copyTree()); }
+AST* WhileNode::copyTree() const { return new WhileNode(static_cast<ExprNode*>(cond -> copyTree()), stats -> copyTree()); }
    	
 vector<AST*> WhileNode::getChildren() const { return {cond, stats}; }

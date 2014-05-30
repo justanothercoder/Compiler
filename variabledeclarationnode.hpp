@@ -32,9 +32,9 @@ public:
     
     virtual void build_scope();    
 
-    virtual void define(const TemplateInfo& template_info);
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+    virtual void define();
+    virtual void check();
+    virtual CodeObject& gen();
     
     virtual Symbol* getDefinedSymbol() const;
 

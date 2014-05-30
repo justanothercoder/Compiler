@@ -2,23 +2,23 @@
 
 AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) { scope = BuiltIns::global_scope; }
 
-void AsmArrayNode::define(const TemplateInfo& template_info) 
+void AsmArrayNode::define() 
 {
 	VariableType type, ref_type;
 
-	if ( template_info.sym->isIn("size") )
+	if ( template_info -> sym -> isIn("size") )
 	{
-		auto replace = template_info.getReplacement("size");
+		auto replace = template_info -> getReplacement("size");
 		
-		array_size = std::stoi(dynamic_cast<NumberNode*>(replace)->getNum());
+		array_size = std::stoi(dynamic_cast<NumberNode*>(replace) -> getNum());
 	}
 	else throw SemanticError("");
 
-	if ( template_info.sym->isIn("T") )
+	if ( template_info -> sym -> isIn("T") )
 	{
-		auto replace = template_info.getReplacement("T");
+		auto replace = template_info -> getReplacement("T");
 
-		type = replace->getType();
+		type = replace -> getType();
 		type.is_ref = false;
 
 		ref_type = type;
@@ -54,11 +54,11 @@ void AsmArrayNode::define(const TemplateInfo& template_info)
 			{true, false, false}
 			);
 
-	scope->accept(new FunctionSymbolDefine(array_constructor));
-	scope->accept(new FunctionSymbolDefine(array_elem_operator));
-	scope->accept(new FunctionSymbolDefine(array_size_func));
+	scope -> accept(new FunctionSymbolDefine(array_constructor));
+	scope -> accept(new FunctionSymbolDefine(array_elem_operator));
+	scope -> accept(new FunctionSymbolDefine(array_size_func));
 
-	scope->accept(new VariableSymbolDefine(
+	scope -> accept(new VariableSymbolDefine(
 								new VariableSymbol(
 									"~~impl",
 									VariableType(new BuiltInTypeSymbol("~~array_impl", array_size * size_of_type))
@@ -67,21 +67,21 @@ void AsmArrayNode::define(const TemplateInfo& template_info)
 			);
 }
 
-void AsmArrayNode::check(const TemplateInfo&) { }
+void AsmArrayNode::check() { }
 
-CodeObject& AsmArrayNode::gen(const TemplateInfo&)
+CodeObject& AsmArrayNode::gen()
 {
 	auto arr = dynamic_cast<StructSymbol*>(scope);
 
-	code_obj.emit("jmp _~_"+arr->getName()+"_array_"+arr->getName()+"~ref");
-	code_obj.emit("_"+arr->getName()+"_array_"+arr->getName()+"~ref:");
+	code_obj.emit("jmp _~_"+arr -> getName()+"_array_"+arr -> getName()+"~ref");
+	code_obj.emit("_"+arr -> getName()+"_array_"+arr -> getName()+"~ref:");
 	code_obj.emit("ret");
-	code_obj.emit("_~_"+arr->getName()+"_array_"+arr->getName()+"~ref:");
+	code_obj.emit("_~_"+arr -> getName()+"_array_"+arr -> getName()+"~ref:");
 
 
 /////////////////////////////////////////////////////////////////////////////
-	code_obj.emit("jmp _~_"+arr->getName()+"_size_"+arr->getName()+"~ref");
-	code_obj.emit("_"+arr->getName()+"_size_"+arr->getName()+"~ref:");
+	code_obj.emit("jmp _~_"+arr -> getName()+"_size_"+arr -> getName()+"~ref");
+	code_obj.emit("_"+arr -> getName()+"_size_"+arr -> getName()+"~ref:");
 
 	code_obj.emit("push rbp");
 	code_obj.emit("mov rbp, rsp");
@@ -95,12 +95,12 @@ CodeObject& AsmArrayNode::gen(const TemplateInfo&)
 	code_obj.emit("pop rbp");
 	code_obj.emit("ret");
 
-	code_obj.emit("_~_"+arr->getName()+"_size_"+arr->getName()+"~ref:");
+	code_obj.emit("_~_"+arr -> getName()+"_size_"+arr -> getName()+"~ref:");
 ///////////////////////////////////////////////////////////////////////////////
 
 
-	code_obj.emit("jmp _~_"+arr->getName()+"_operatorelem_"+arr->getName()+"~ref_int");
-	code_obj.emit("_"+arr->getName()+"_operatorelem_"+arr->getName()+"~ref_int:");
+	code_obj.emit("jmp _~_"+arr -> getName()+"_operatorelem_"+arr -> getName()+"~ref_int");
+	code_obj.emit("_"+arr -> getName()+"_operatorelem_"+arr -> getName()+"~ref_int:");
 	code_obj.emit("push rbp");
 	code_obj.emit("mov rbp, rsp");
 	code_obj.emit("mov rbx, [rbp + " + std::to_string(3 * GlobalConfig::int_size) + "]");
@@ -114,7 +114,7 @@ CodeObject& AsmArrayNode::gen(const TemplateInfo&)
 	code_obj.emit("pop rbp");
 	code_obj.emit("ret");
 
-	code_obj.emit("_~_"+arr->getName()+"_operatorelem_"+arr->getName()+"~ref_int:");
+	code_obj.emit("_~_"+arr -> getName()+"_operatorelem_"+arr -> getName()+"~ref_int:");
 
 	return code_obj;
 }
