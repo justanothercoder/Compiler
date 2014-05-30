@@ -15,23 +15,26 @@ Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; 
 void StructDeclarationNode::build_scope()
 {
     definedSymbol = new StructSymbol(name, scope);
-    scope->accept(new SymbolDefine(definedSymbol));
-    for ( auto i : inner )
+
+	scope -> accept(new SymbolDefine(definedSymbol));
+
+	for ( auto i : inner )
     {
-		i->scope = definedSymbol;
-		i->build_scope();
+		i -> scope         = definedSymbol;
+		i -> template_info = template_info;
+		i -> build_scope();
     }
 }
 
 void StructDeclarationNode::define()
 {
     for ( auto decl : inner )
-		decl->define();
+		decl -> define();
 }
 
 void StructDeclarationNode::check()
 {
-	getDefinedSymbol()->is_defined = true;
+	getDefinedSymbol() -> is_defined = true;
 	
 	try
 	{

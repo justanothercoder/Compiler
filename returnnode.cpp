@@ -42,7 +42,7 @@ void ReturnNode::check()
 	if ( _scope == nullptr )
 		throw SemanticError("return is not a in a function");
 
-	enclosing_func = dynamic_cast<FunctionSymbol*>(scope);
+	enclosing_func = dynamic_cast<FunctionSymbol*>(_scope);
 
     expr -> check();
 

@@ -8,8 +8,9 @@ void TemplateStructDeclarationNode::build_scope()
 
     for ( auto decl : inner )
     {
-		decl->scope = definedSymbol;
-		decl->build_scope();
+		decl -> scope = definedSymbol;
+		decl -> template_info = new TemplateInfo();
+		decl -> build_scope();
     }
 }
 

@@ -20,16 +20,6 @@ VariableDeclarationNode::~VariableDeclarationNode()
 
 Symbol* VariableDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 
-void VariableDeclarationNode::build_scope()
-{
-    for ( auto i : constructor_call_params )
-    {
-		i -> scope = scope;
-		i -> build_scope();
-    }
-}
-
-
 void VariableDeclarationNode::check()
 {
 	if ( !is_field )

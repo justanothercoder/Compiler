@@ -30,8 +30,6 @@ public:
 
     virtual AST* copyTree() const;
     
-    virtual void build_scope();    
-
     virtual void define();
     virtual void check();
     virtual CodeObject& gen();

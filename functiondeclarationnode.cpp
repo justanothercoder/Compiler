@@ -12,7 +12,8 @@ void FunctionDeclarationNode::build_scope()
 {
 	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(VariableType(), { }), scope, traits, nullptr);
 
-	statements -> scope = definedSymbol;
+	statements -> scope         = definedSymbol;
+	statements -> template_info = template_info;
 	statements -> build_scope();
 }
 
