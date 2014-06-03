@@ -18,7 +18,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 {
 	if ( copy_constr == nullptr ) 
 	{
-		emit(param->gen().getCode());
+		emit(param -> gen().getCode());
 
 		if ( conv_info.deref )
 			emit("mov rax, [rax]");
@@ -32,12 +32,12 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 
 		if ( conv )
 		{
-			if ( conv->isOperator() )
-				genCallCode(CallHelper::getCallInfo(conv, { }), { }, param->gen(), param->getType().is_ref);
+			if ( conv -> isOperator() )
+				genCallCode(CallHelper::getCallInfo(conv, { }), { }, param -> gen(), param -> getType().is_ref);
 			else
 			{
 				CodeObject param_code;
-				param_code.emit("lea rax, [rbp - " + std::to_string(param->scope->get_valloc()->getAddressForLocal()) + "]");
+				param_code.emit("lea rax, [rbp - " + std::to_string(param -> scope -> get_valloc() -> getAddressForLocal()) + "]");
 
 				genCallCode(CallHelper::getCallInfo(conv, {param}), {param}, param_code, false); 
 			}
@@ -47,7 +47,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		{
 			if ( conv == nullptr )
 			{
-				emit(param->gen().getCode());
+				emit(param -> gen().getCode());
 				if ( conv_info.deref )
 					emit("mov rax, [rax]");
 			}
@@ -58,31 +58,40 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		}
 		else
 		{
-			auto desired_type = copy_constr->function_type_info.params_types[0];
+			auto desired_type = copy_constr -> function_type_info.params_types[0];
 
-//			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
-				
-			emit("lea r8, [rbp - " + std::to_string(param->scope->get_valloc()->getSpecialAddress(param)) + "]");
+			emit("lea r8, [rbp - " + std::to_string(GlobalConfig::int_size) + "]");
+//			emit("lea r8, [rbp - " + std::to_string(param -> scope -> get_valloc() -> getSpecialAddress(param)) + "]");
 			emit("lea r10, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
-			emit("mov [r8], r10");
 
-			emit("sub rsp, " + std::to_string(param->getType().getSize()));
+			emit("sub rsp, " + std::to_string(param -> getType().getSize()));
 			if ( conv == nullptr )
 			{
 				CodeObject code_obj;
-//				code_obj.emit("lea rax, [r8]");
-				code_obj.emit("mov rax, [rbp - " + std::to_string(param->scope->get_valloc()->getSpecialAddress(param)) + "]");
+			
+				code_obj.emit("mov [rsp], rax");
+				code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+				
+				emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], r8");
+				emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 
 				genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, code_obj, false);
 			}
 			else
 			{
-				pushOnStack(desired_type.type->getSize(), GlobalConfig::int_size);
-				emit("call " + copy_constr->getScopedTypedName());
-				emit("add rsp, " + std::to_string(desired_type.type->getSize())); 
+				emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], r8");
+				emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+
+				emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], r10");
+				emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+				
+				emit("call " + copy_constr -> getScopedTypedName());
+//				emit("add rsp, " + std::to_string(desired_type.type -> getSize())); 
+				emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));				
 			}
-			emit("add rsp, " + std::to_string(param->getType().getSize()));
-			emit("sub rsp, " + std::to_string(desired_type.type->getSize())); 
+			emit("add rsp, " + std::to_string(param -> getType().getSize()));
+
+			emit("sub rsp, " + std::to_string(desired_type.type -> getSize())); 
 		}
 	}
 }
@@ -91,11 +100,11 @@ void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, CodeO
 {
 	auto func = call_info.callee;
 
-	bool is_method = func->isMethod();
+	bool is_method = func -> isMethod();
 
 	int is_meth = (is_method ? 1 : 0);
 
-	auto function_info = func->function_type_info;
+	auto function_info = func -> function_type_info;
 
 	size_t params_size = std::accumulate(std::begin(function_info.params_types) + is_meth, std::end(function_info.params_types), 0, [](size_t x, VariableType type) { return x += type.getSize(); });
 
@@ -114,7 +123,7 @@ void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, CodeO
 		emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 	}
 
-	emit("call " + func->getScopedTypedName());
+	emit("call " + func -> getScopedTypedName());
 	emit("add rsp, " + std::to_string(params_size));
 }
 
@@ -128,7 +137,7 @@ void CodeObject::genCopy(FunctionSymbol *copy_constr, CodeObject& genThis, CodeO
 	emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 	emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 
-	emit("call " + copy_constr->getScopedTypedName()); 
+	emit("call " + copy_constr -> getScopedTypedName()); 
 	emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
 }
 
@@ -138,6 +147,6 @@ void CodeObject::genDefaultConstructorCall(FunctionSymbol *default_constr, CodeO
 	emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 	emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 
-	emit("call " + default_constr->getScopedTypedName()); 
+	emit("call " + default_constr -> getScopedTypedName()); 
 	emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
 }
