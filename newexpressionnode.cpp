@@ -36,7 +36,7 @@ CodeObject& NewExpressionNode::gen()
 AST* NewExpressionNode::copyTree() const 
 {
 	vector<ExprNode*> vec(params.size());
-	std::transform(std::begin(params), std::end(params), std::begin(vec), [&](ExprNode *e) { return static_cast<ExprNode*>(e -> copyTree()); });
+	std::transform(std::begin(params), std::end(params), std::begin(vec), [](ExprNode *e) { return static_cast<ExprNode*>(e -> copyTree()); });
 
 	return new NewExpressionNode(type_info, vec);
 }

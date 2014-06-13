@@ -27,9 +27,7 @@ CodeObject& DotNode::gen()
 	
 	auto member_type = member -> getType();
 
-	if ( member_type.is_ref )
-		code_obj -> emit("mov rax, [rax - " + std::to_string(base_type -> get_valloc() -> getAddress(member)) + "]");
-	else if ( member_type.type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
+	if ( member_type.type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
 		auto ov_func = static_cast<OverloadedFunctionSymbol*>(member_type.type);
 

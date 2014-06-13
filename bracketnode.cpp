@@ -17,9 +17,6 @@ void BracketNode::check()
 
 CodeObject& BracketNode::gen()
 {
-	Logger::log(base -> getType() . getName());
-	Logger::log(std::to_string(base -> getType() . is_ref));
-
     code_obj.genCallCode(call_info, {this -> expr}, base -> gen(), base -> getType().is_ref);
 	return code_obj;
 }

@@ -71,6 +71,9 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		
 				emit(param -> gen().getCode());
 
+				if ( param -> getType() . is_ref )
+					emit("mov rax, [rax]");
+
 				emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 				emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 				

@@ -46,21 +46,7 @@ CodeObject& VariableNode::gen()
 
 	auto var_type = variable -> getType();
 
-	if ( var_type.is_ref )
-	{
-		if ( variable -> isField() )
-		{
-			auto sym = static_cast<VariableSymbol*>(scope -> resolve("this"));
-
-			auto struc_scope = static_cast<StructSymbol*>(sym -> getType().type);
-
-			code_obj -> emit("mov rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(sym)) + "]");
-			code_obj -> emit("mov rax, [rax - " + std::to_string(struc_scope -> get_valloc() -> getAddress(variable)) + "]");
-		}
-		else
-			code_obj -> emit("mov rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(variable)) + "]");
-	}    
-	else if ( var_type.type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
+	if ( var_type.type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
 		auto function = static_cast<OverloadedFunctionSymbol*>(var_type.type);
 
@@ -102,11 +88,7 @@ CodeObject& VariableNode::gen()
 		}
 		else
 		{
-			auto hint = this -> type_hint;
-			if ( hint != nullptr )
-				code_obj -> emit("lea rax, [" + static_cast<FunctionSymbol*>(hint) -> getScopedTypedName() + "]");
-			else
-				code_obj -> emit("lea rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(variable)) + "]");
+			code_obj -> emit("lea rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(variable)) + "]");
 		}
 	}
 
