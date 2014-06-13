@@ -1,4 +1,5 @@
 #include "codeobject.hpp"
+#include "logger.hpp"
 
 void CodeObject::gen() const { std::cout << code; }
 std::string CodeObject::getCode() const { return code; }
@@ -61,21 +62,23 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 			auto desired_type = copy_constr -> function_type_info.params_types[0];
 
 			emit("lea r8, [rbp - " + std::to_string(GlobalConfig::int_size) + "]");
-//			emit("lea r8, [rbp - " + std::to_string(param -> scope -> get_valloc() -> getSpecialAddress(param)) + "]");
 			emit("lea r10, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 
 			emit("sub rsp, " + std::to_string(param -> getType().getSize()));
 			if ( conv == nullptr )
 			{
 				CodeObject code_obj;
-			
-				code_obj.emit("mov [rsp], rax");
-				code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+		
+				emit(param -> gen().getCode());
+
+				emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
+				emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 				
-				emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], r8");
+				emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], r10");
 				emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 
-				genCallCode(CallHelper::getCallInfo(copy_constr, {param}), {param}, code_obj, false);
+				emit("call " + copy_constr -> getScopedTypedName());
+				emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));				
 			}
 			else
 			{
@@ -86,7 +89,6 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 				emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 				
 				emit("call " + copy_constr -> getScopedTypedName());
-//				emit("add rsp, " + std::to_string(desired_type.type -> getSize())); 
 				emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));				
 			}
 			emit("add rsp, " + std::to_string(param -> getType().getSize()));

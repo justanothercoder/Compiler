@@ -67,7 +67,7 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 			auto var = dynamic_cast<VariableSymbol*>(member.second); 
 			auto var_type = var->getType();
 
-			if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type.type) )
+			if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type.type) || dynamic_cast<BuiltInTypeSymbol*>(var_type.type) )
 				continue;
 
 			auto member_copy = TypeHelper::getCopyConstructor(var_type);
@@ -118,7 +118,7 @@ FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 			auto var = dynamic_cast<VariableSymbol*>(member.second); 
 			auto var_type = var->getType();
 
-			if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type.type) )
+			if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type.type) || dynamic_cast<BuiltInTypeSymbol*>(var_type.type) )
 				continue;
 
 			auto member_default = TypeHelper::getDefaultConstructor(var_type);

@@ -9,6 +9,7 @@ void BracketNode::check()
 	base -> check();
 
 	auto base_type = dynamic_cast<StructSymbol*>(base -> getType().type);
+
 	call_info = CallHelper::callCheck("operator[]", base_type, {this -> expr});
 	
 	scope -> get_valloc() -> addReturnValueSpace(getType().getSize());
@@ -16,13 +17,30 @@ void BracketNode::check()
 
 CodeObject& BracketNode::gen()
 {
+	Logger::log(base -> getType() . getName());
+	Logger::log(std::to_string(base -> getType() . is_ref));
+
     code_obj.genCallCode(call_info, {this -> expr}, base -> gen(), base -> getType().is_ref);
 	return code_obj;
 }
 
-AST* BracketNode::copyTree() const { return new BracketNode(static_cast<ExprNode*>(base -> copyTree()), static_cast<ExprNode*>(expr -> copyTree())); }
-vector<AST*> BracketNode::getChildren() const { return {base, expr}; }
+AST* BracketNode::copyTree() const 
+{ 
+	return new BracketNode(
+			               static_cast<ExprNode*>(base -> copyTree()), 
+						   static_cast<ExprNode*>(expr -> copyTree())
+						  ); 
+}
 
-VariableType BracketNode::getType() const { return call_info.callee -> function_type_info.return_type; }
+vector<AST*> BracketNode::getChildren() const 
+{ 
+	return {base, expr}; 
+}
+
+VariableType BracketNode::getType() const 
+{ 
+	return call_info.callee -> function_type_info.return_type; 
+}
+
 bool BracketNode::isLeftValue() const { return false; }
 

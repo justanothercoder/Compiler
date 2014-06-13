@@ -11,20 +11,20 @@ StatementNode::~StatementNode()
 void StatementNode::define()
 {
 	for ( auto i : statements )
-		i->define();
+		i -> define();
 }
 
 void StatementNode::check()
 {
 	for ( auto i : statements )
-		i->check();
+		i -> check();
 }
 
 AST* StatementNode::copyTree() const
 {
 	vector<AST*> stats(statements.size());
 
-	std::transform(std::begin(statements), std::end(statements), std::begin(stats), [&](AST *t) { return t->copyTree(); });
+	std::transform(std::begin(statements), std::end(statements), std::begin(stats), [&](AST *t) { return t -> copyTree(); });
 
 	return new StatementNode(stats);
 }
@@ -32,7 +32,7 @@ AST* StatementNode::copyTree() const
 CodeObject& StatementNode::gen()
 {
 	for ( auto i : statements )
-		code_obj.emit(i->gen().getCode());
+		code_obj.emit(i -> gen().getCode());
 	return code_obj;
 }
 

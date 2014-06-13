@@ -4,6 +4,8 @@
 #include "ast.hpp"
 #include "variabletype.hpp"
 
+#include "logger.hpp"
+
 class ExprNode : public AST
 {
 public:

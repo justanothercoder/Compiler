@@ -3,7 +3,7 @@
 CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> params)
 {
     for ( auto i : params )
-		i->check();
+		i -> check();
 
 	auto params_types = CallHelper::extractTypes(params);
 
@@ -12,14 +12,14 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 	if ( function_sym == nullptr )
 		throw SemanticError("No viable overload of '" + name + "'.");
 
-    auto function_info = function_sym->function_type_info;
+    auto function_info = function_sym -> function_type_info;
     
-    int is_meth = (function_sym->isMethod() ? 1 : 0);
+    int is_meth = (function_sym -> isMethod() ? 1 : 0);
 	
 	for ( int i = function_info.params_types.size() - 1; i >= is_meth; --i )
     {
 		auto t = function_info.params_types.at(i);
-		if ( t.is_ref && !params.at(i - is_meth)->isLeftValue() && !t.is_const )
+		if ( t.is_ref && !params.at(i - is_meth) -> isLeftValue() && !t.is_const )
 			throw SemanticError("parameter is not an lvalue.");
     }
 
@@ -28,21 +28,21 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 
 CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<ExprNode*> params)
 {
-    auto function_info = function_sym->function_type_info;
+    auto function_info = function_sym -> function_type_info;
 	
 	auto params_types = CallHelper::extractTypes(params);
    
 	vector<ConversionInfo> conversions;
 	vector<FunctionSymbol*> copy_constructors;
 
-    int is_meth = (function_sym->isMethod() ? 1 : 0);
+    int is_meth = (function_sym -> isMethod() ? 1 : 0);
    
 	for ( size_t i = is_meth; i < function_info.params_types.size(); ++i )
 	{
 		auto actual_type = params_types.at(i - is_meth);
 		auto desired_type = function_info.params_types.at(i);
 
-		bool is_left_value = params.at(i - is_meth)->isLeftValue();
+		bool is_left_value = params.at(i - is_meth) -> isLeftValue();
 
 		conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type, is_left_value));
 		
@@ -55,22 +55,22 @@ CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<ExprN
 
 OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(string name, Scope *scope)
 {
-	auto _ = scope->resolve(name);
+	auto _ = scope -> resolve(name);
 	
-	if ( _ == nullptr || _->getSymbolType() != SymbolType::VARIABLE )
+	if ( _ == nullptr || _ -> getSymbolType() != SymbolType::VARIABLE )
 		throw SemanticError("No such symbol " + name + ".");	
 
-	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_)->getType().type);
+	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_) -> getType().type);
 }
 
 OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(string name, StructSymbol *scope)
 {
-	auto _ = scope->resolveMember(name);
+	auto _ = scope -> resolveMember(name);
 	
-	if ( _ == nullptr || _->getSymbolType() != SymbolType::VARIABLE )
+	if ( _ == nullptr || _ -> getSymbolType() != SymbolType::VARIABLE )
 		throw SemanticError("No such symbol " + name + ".");	
 
-	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_)->getType().type);
+	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_) -> getType().type);
 }
 	
 FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vector<VariableType> params_types)
@@ -84,9 +84,9 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 
 		auto pt = params_types;
 		
-		if ( ov_func->isMethod() )
+		if ( ov_func -> isMethod() )
 		{
-			auto t = ov_func->getBaseType();
+			auto t = ov_func -> getBaseType();
 			t.is_ref = true;
 
 			pt.insert(std::begin(pt), t);
@@ -99,7 +99,7 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 			try
 			{
 				while ( scope != nullptr && CallHelper::getOverloadedFunc(name, scope) == ov_func )
-					scope = scope->getEnclosingScope();
+					scope = scope -> getEnclosingScope();
 				continue;
 			}
 			catch ( SemanticError& e ) { return nullptr; }
@@ -113,7 +113,7 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 std::vector<VariableType> CallHelper::extractTypes(std::vector<ExprNode*> params)
 {
 	vector<VariableType> params_types(params.size());
-	std::transform(std::begin(params), std::end(params), std::begin(params_types), [](ExprNode *t) { return t->getType(); });
+	std::transform(std::begin(params), std::end(params), std::begin(params_types), [](ExprNode *t) { return t -> getType(); });
 
 	return params_types;
 }
