@@ -36,7 +36,7 @@ private:
     
     VariableSymbol *variable;
 
-	TemplateInfo template_info;
+	TemplateInfo _template_info;
 	CodeObject *code_obj;
 };
 

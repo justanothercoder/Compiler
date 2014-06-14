@@ -6,11 +6,8 @@ VariableNode::~VariableNode() { delete code_obj; }
 
 void VariableNode::check()
 {
-	if ( template_info.sym && template_info.sym -> isIn(name) )
-	{
-		this -> template_info = template_info;
+	if ( template_info -> sym && template_info -> sym -> isIn(name) )
 		return;
-	}
 
 	auto sym = scope -> resolve(name);
 
@@ -33,9 +30,9 @@ void VariableNode::check()
 
 CodeObject& VariableNode::gen()
 {
-	if ( template_info.sym && template_info.sym -> isIn(name) )
+	if ( template_info -> sym && template_info -> sym -> isIn(name) )
 	{
-		auto replace = template_info.getReplacement(name);
+		auto replace = template_info -> getReplacement(name);
 	
 		if ( dynamic_cast<VariableNode*>(replace) != nullptr )
 			if ( dynamic_cast<VariableNode*>(replace) -> variable -> getSymbolType() == SymbolType::CLASSVARIABLE )
@@ -95,7 +92,7 @@ CodeObject& VariableNode::gen()
 	return *code_obj;
 }
 
-bool VariableNode::isTemplateParam() const { return template_info.sym != nullptr; }
+bool VariableNode::isTemplateParam() const { return template_info -> sym != nullptr; }
 	
 AST* VariableNode::copyTree() const { return new VariableNode(name); }
 
@@ -103,7 +100,7 @@ VariableType VariableNode::getType() const
 {
 	if ( isTemplateParam() )
 	{
-		auto replace = template_info.getReplacement(name);
+		auto replace = template_info -> getReplacement(name);
 		return replace -> getType();
 	}
 

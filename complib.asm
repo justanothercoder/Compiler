@@ -61,8 +61,9 @@ _int_operatorplus_int~ref_int:
 	mov rax, [rax]
 	add rax, [rbp + 24]
 
-	mov [rsp - 8], rax
-	lea rax, [rsp - 8]
+	mov r9, [rbp]
+	mov [r9 - 8], rax
+	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp
@@ -76,8 +77,9 @@ _int_operatorminus_int~ref_int:
 	mov rax, [rax]
 	sub rax, [rbp + 24]
 
-	mov [rsp - 8], rax
-	lea rax, [rsp - 8]
+	mov r9, [rbp]
+	mov [r9 - 8], rax
+	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp
@@ -91,8 +93,9 @@ _int_operatormul_int~ref_int:
 	mov rax, [rax]
 	imul qword [rbp + 24]
 
-	mov [rsp - 8], rax
-	lea rax, [rsp - 8]
+	mov r9, [rbp]
+	mov [r9 - 8], rax
+	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp
@@ -176,15 +179,18 @@ _int_operatoreq_int~ref_int:
 	cmp rax, qword [rbp + 24]
 	jz .equal
 
-	mov qword [rsp - 8], 0
-	lea rax, [rsp - 8]
+	mov r9, [rbp]
+	mov qword [r9 - 8], 0
+	lea rax, [r9 - 8]
+
 	mov rsp, rbp
 	pop rbp
 	ret
 
 .equal:
-	mov qword [rsp - 8], 1
-	lea rax, [rsp - 8]		
+	mov r9, [rbp]
+	mov qword [r9 - 8], 1
+	lea rax, [r9 - 8]
 	mov rsp, rbp
 	pop rbp
 	ret
@@ -199,15 +205,17 @@ _int_operatorneq_int~ref_int:
 	cmp rax, qword [rbp + 24]
 	je .equal
 
-	mov qword [rsp - 8], 1
-	lea rax, [rsp - 8]
+	mov r9, [rbp]
+	mov qword [r9 - 8], 1
+	lea rax, [r9 - 8]
 	mov rsp, rbp
 	pop rbp
 	ret
 
 .equal:
-	mov qword [rsp - 8], 0
-	lea rax, [rsp - 8]		
+	mov r9, [rbp]
+	mov qword [r9 - 8], 0
+	lea rax, [r9 - 8]
 	mov rsp, rbp
 	pop rbp
 	ret
@@ -222,8 +230,9 @@ _int_operatordiv_int~ref_int:
 	xor rdx, rdx
 	idiv qword [rbp + 24]
 
-	mov [rsp - 8], rax
-	lea rax, [rsp - 8]
+	mov r9, [rbp]
+	mov qword [r9 - 8], rax
+	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp
@@ -239,8 +248,9 @@ _int_operatormod_int~ref_int:
 	xor rdx, rdx
 	idiv qword [rbp + 24]
 
-	mov [rsp - 8], rdx
-	lea rax, [rsp - 8]
+	mov r9, [rbp]
+	mov qword [r9 - 8], rdx
+	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp
