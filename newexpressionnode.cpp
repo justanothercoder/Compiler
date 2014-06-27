@@ -45,3 +45,8 @@ vector<AST*> NewExpressionNode::getChildren() const { return vector<AST*>(std::b
 
 VariableType NewExpressionNode::getType() const { return call_info.callee -> function_type_info.return_type; }
 bool NewExpressionNode::isLeftValue() const { return false; }
+
+int NewExpressionNode::neededSpaceForTemporaries()
+{
+	return getType().getSize();
+}

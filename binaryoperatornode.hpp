@@ -29,6 +29,8 @@ public:
     virtual VariableType getType() const;
 	virtual bool isLeftValue() const;
 
+	virtual int neededSpaceForTemporaries();
+
 protected:
 
     ExprNode *lhs, *rhs;

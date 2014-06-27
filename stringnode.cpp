@@ -51,3 +51,8 @@ VariableType StringNode::getType() const
 }
 
 bool StringNode::isLeftValue() const { return false; }
+
+int StringNode::neededSpaceForTemporaries()
+{
+	return 0;
+}

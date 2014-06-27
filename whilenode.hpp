@@ -11,17 +11,20 @@ public:
 
     WhileNode(ExprNode *cond, AST *stats);
 
-	virtual ~WhileNode();
+	~WhileNode() override;
 
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
 
-    virtual void build_scope();
+    void build_scope() override;
 
-    virtual void define();
-    virtual void check();
-    virtual CodeObject& gen();
+    void define() override;
+    void check() override;
+
+    CodeObject& gen() override;
    
-   	virtual vector<AST*> getChildren() const;
+   	vector<AST*> getChildren() const override;
+
+	int neededSpaceForTemporaries() override;
     
 private:
 

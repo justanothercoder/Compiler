@@ -17,20 +17,23 @@ public:
 
     StructDeclarationNode(string name, const vector<AST*>& inner);
 
-    virtual ~StructDeclarationNode();
+    ~StructDeclarationNode() override;
 
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
     
     void build_scope();    
 
-    virtual Symbol* getDefinedSymbol() const;
+    Symbol* getDefinedSymbol() const override;
 
-	virtual void define();
-    virtual void check();
-    virtual CodeObject& gen();
-
-	virtual vector<AST*> getChildren() const;
+	void define() override;
+    void check() override;
     
+	CodeObject& gen() override;
+
+	vector<AST*> getChildren() const override;
+    
+	int neededSpaceForTemporaries() override;
+
 protected:
 
     string name;

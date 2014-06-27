@@ -21,10 +21,12 @@ public:
 
     virtual void define() = 0;
     virtual void check() = 0;
-    virtual CodeObject& gen() = 0;
+	virtual CodeObject& gen() = 0;
 
 	virtual std::vector<AST*> getChildren() const;	
 
+	virtual int neededSpaceForTemporaries() = 0;
+	
 	Scope *scope;
 	TemplateInfo *template_info;
 };

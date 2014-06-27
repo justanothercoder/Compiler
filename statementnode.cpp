@@ -37,3 +37,11 @@ CodeObject& StatementNode::gen()
 }
 
 vector<AST*> StatementNode::getChildren() const { return statements; }
+
+int StatementNode::neededSpaceForTemporaries()
+{
+	return std::accumulate(std::begin(statements), std::end(statements), -1, [](int acc, AST *t)
+	{
+		return std::max(acc, t -> neededSpaceForTemporaries());
+	});
+}

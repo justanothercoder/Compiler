@@ -56,11 +56,26 @@ CodeObject& ForNode::gen()
 	return code_obj;
 }
 
-AST* ForNode::copyTree() const { return new ForNode(init -> copyTree(), static_cast<ExprNode*>(cond -> copyTree()), step -> copyTree(), stats -> copyTree()); }
+AST* ForNode::copyTree() const 
+{ 
+	return new ForNode(init -> copyTree(), static_cast<ExprNode*>(cond -> copyTree()), step -> copyTree(), stats -> copyTree()); 
+}
+
 vector<AST*> ForNode::getChildren() const { return {init, cond, step, stats}; }
 
 string ForNode::getNewLabel() 
 {
 	static int label_num = 0;
 	return "@for_label" + std::to_string(++label_num);
+}
+
+int ForNode::neededSpaceForTemporaries()
+{
+	return std::max(init -> neededSpaceForTemporaries(),
+			        std::max(cond -> neededSpaceForTemporaries(),
+						     std::max(step -> neededSpaceForTemporaries(),
+								      stats -> neededSpaceForTemporaries()
+							 )
+					)
+	);
 }

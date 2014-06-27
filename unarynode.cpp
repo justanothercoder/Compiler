@@ -42,3 +42,8 @@ AST* UnaryNode::copyTree() const { return new UnaryNode(static_cast<ExprNode*>(e
 
 VariableType UnaryNode::getType() const { return call_info.callee->function_type_info.return_type; }
 bool UnaryNode::isLeftValue() const { return false; }
+
+int UnaryNode::neededSpaceForTemporaries()
+{
+	return exp -> neededSpaceForTemporaries();
+}

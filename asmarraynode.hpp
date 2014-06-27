@@ -14,11 +14,14 @@ public:
 	
 	AsmArrayNode();
 
-	virtual void define();
-	virtual void check();
-	virtual CodeObject& gen();
+	void define() override;
+	void check() override;
+
+	CodeObject& gen() override;
 	
-	virtual AST* copyTree() const;
+	AST* copyTree() const override;
+
+	int neededSpaceForTemporaries() override;
 
 private:
 	

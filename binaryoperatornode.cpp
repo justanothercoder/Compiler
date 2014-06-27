@@ -78,3 +78,8 @@ vector<AST*> BinaryOperatorNode::getChildren() const { return {lhs, rhs}; }
 
 VariableType BinaryOperatorNode::getType() const { return call_info.callee -> function_type_info.return_type; }
 bool BinaryOperatorNode::isLeftValue() const { return false; }
+
+int BinaryOperatorNode::neededSpaceForTemporaries()
+{
+	return std::max(lhs -> neededSpaceForTemporaries(), rhs -> neededSpaceForTemporaries());
+}

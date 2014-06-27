@@ -30,14 +30,17 @@ public:
 
     virtual AST* copyTree() const;
     
-    virtual void define();
-    virtual void check();
-    virtual CodeObject& gen();
+    void define() override;
+    void check() override;
     
-    virtual Symbol* getDefinedSymbol() const;
+	CodeObject& gen() override;
+    
+    Symbol* getDefinedSymbol() const override;
 
-	virtual vector<AST*> getChildren() const;
-    
+	vector<AST*> getChildren() const override;
+	
+	int neededSpaceForTemporaries() override;
+
 private:
 
     string name;

@@ -68,6 +68,18 @@ string IfNode::getNewLabel()
 	return "@if_label" + std::to_string(++label_num); 
 }
 
-AST* IfNode::copyTree() const { return new IfNode(static_cast<ExprNode*>(cond -> copyTree()), stats_true -> copyTree(), stats_false -> copyTree()); }
+AST* IfNode::copyTree() const 
+{ 
+	return new IfNode(static_cast<ExprNode*>(cond -> copyTree()), stats_true -> copyTree(), stats_false -> copyTree()); 
+}
 	
 vector<AST*> IfNode::getChildren() const { return {cond, stats_true, stats_false}; }
+
+int IfNode::neededSpaceForTemporaries()
+{
+	return std::max(cond -> neededSpaceForTemporaries(), 
+			        std::max(stats_true -> neededSpaceForTemporaries(), 
+				             stats_false -> neededSpaceForTemporaries()
+					)
+    );
+}

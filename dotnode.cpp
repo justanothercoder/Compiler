@@ -54,3 +54,8 @@ AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base 
 
 VariableType DotNode::getType() const { return member -> getType(); }
 bool DotNode::isLeftValue() const { return true; }
+
+int DotNode::neededSpaceForTemporaries()
+{
+	return 0;
+}

@@ -76,6 +76,8 @@ CodeObject& FunctionDeclarationNode::gen()
 	code_obj.emit("push rbp");
 	code_obj.emit("mov rbp, rsp");
 
+	code_obj.emit("sub rsp, " + std::to_string(neededSpaceForTemporaries()));
+
 	if ( definedSymbol -> get_valloc() -> getSpace() > 0 )
 		code_obj.emit("sub rsp, " + std::to_string(definedSymbol -> get_valloc() -> getSpace()));
 
@@ -84,6 +86,8 @@ CodeObject& FunctionDeclarationNode::gen()
 	if ( definedSymbol -> isConstructor() )
 		code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
 
+	code_obj.emit("add rsp, " + std::to_string(neededSpaceForTemporaries()));
+	
 	code_obj.emit("mov rsp, rbp");
 	code_obj.emit("pop rbp");
 	code_obj.emit("ret");
@@ -104,6 +108,15 @@ void FunctionDeclarationNode::check()
 	statements -> check(); 
 }
 
-AST* FunctionDeclarationNode::copyTree() const { return new FunctionDeclarationNode(name, params, return_type_info, statements -> copyTree(), traits); }
+AST* FunctionDeclarationNode::copyTree() const 
+{ 
+	return new FunctionDeclarationNode(name, params, return_type_info, statements -> copyTree(), traits); 
+}
 
 vector<AST*> FunctionDeclarationNode::getChildren() const { return {statements}; }
+
+int FunctionDeclarationNode::neededSpaceForTemporaries()
+{
+	static int res = statements -> neededSpaceForTemporaries();
+	return res;
+}

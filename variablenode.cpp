@@ -108,3 +108,8 @@ VariableType VariableNode::getType() const
 }
 
 bool VariableNode::isLeftValue() const { return true; }
+
+int VariableNode::neededSpaceForTemporaries() 
+{
+	return 0;
+}

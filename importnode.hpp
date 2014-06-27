@@ -8,11 +8,14 @@ class ImportNode : public AST
 public:
 	ImportNode(string lib);
 
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
 	
-    virtual void define();
-    virtual void check();
-    virtual CodeObject& gen();
+    void define() override;
+    void check() override;
+
+    CodeObject& gen() override;
+
+	int neededSpaceForTemporaries() override;
 
 private:
 

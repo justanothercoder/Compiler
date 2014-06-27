@@ -11,18 +11,21 @@ public:
 
     IfNode(ExprNode *cond, AST *stats_true, AST *stats_false);
 
-	virtual ~IfNode();
+	~IfNode() override;
 
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
 
-    virtual void build_scope();
+    void build_scope() override;
 
-    virtual void define();
-    virtual void check();
-    virtual CodeObject& gen();
+    void define() override;
+    void check() override;
+
+    CodeObject& gen() override;
 	
-	virtual vector<AST*> getChildren() const;
+	vector<AST*> getChildren() const override;
 		
+	int neededSpaceForTemporaries() override;
+
 private:
 
     ExprNode *cond;

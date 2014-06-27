@@ -81,3 +81,8 @@ AST* StructDeclarationNode::copyTree() const
 }
 
 vector<AST*> StructDeclarationNode::getChildren() const { return inner; } 
+
+int StructDeclarationNode::neededSpaceForTemporaries()
+{
+	return 0;
+}

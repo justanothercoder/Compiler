@@ -15,15 +15,20 @@ public:
 
 	ForNode(AST *init, ExprNode *cond, AST *step, AST *stats);
 
-	virtual	~ForNode();
+	~ForNode() override;
 
-	virtual void build_scope();
-	virtual void define();
-	virtual void check();
-	virtual CodeObject& gen();
+	void build_scope() override;
 
-	virtual AST* copyTree() const;
-	virtual vector<AST*> getChildren() const;
+	void define() override;
+	void check() override;
+
+	CodeObject& gen() override;
+
+	AST* copyTree() const override;
+
+	vector<AST*> getChildren() const override;
+
+	int neededSpaceForTemporaries() override;
 
 private:
 	
