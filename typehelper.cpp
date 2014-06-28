@@ -1,49 +1,6 @@
 #include "typehelper.hpp"
 #include "classvariablesymbol.hpp"
 
-FunctionSymbol* TypeHelper::getCopyConstructor(VariableType type)
-{
-	if ( type.type -> getTypeKind() != TypeKind::STRUCT )
-		return nullptr;
-
-	type.is_ref = false;
-	type.is_const = false;
-
-	StructSymbol *struc = static_cast<StructSymbol*>(type.type);
-
-	auto type_name = struc -> getName();
-
-	auto constructor = CallHelper::getOverloadedMethod(type_name, struc);
-
-	auto vt = type;
-	vt.is_ref = true;
-
-	auto cvt = vt;
-	cvt.is_const = true;
-
-	return FunctionHelper::getViableOverload(constructor, {vt, cvt});
-}
-
-FunctionSymbol* TypeHelper::getDefaultConstructor(VariableType type)
-{
-	if ( type.type -> getTypeKind() != TypeKind::STRUCT )
-		return nullptr;
-
-	type.is_ref = false;
-	type.is_const = false;
-
-	StructSymbol *struc = static_cast<StructSymbol*>(type.type);
-
-	auto type_name = struc -> getName();
-
-	auto constructor = CallHelper::getOverloadedMethod(type_name, struc);
-
-	auto rt = type;
-	rt.is_ref = true;
-
-	return FunctionHelper::getViableOverload(constructor, {rt});
-}
-
 VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, TemplateInfo *template_info)
 {    
 	auto type_name = type_info.type_name;

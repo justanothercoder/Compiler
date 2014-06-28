@@ -46,7 +46,7 @@ CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<ExprN
 
 		conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type, is_left_value));
 		
-		auto copy_constr = desired_type.is_ref ? nullptr : TypeHelper::getCopyConstructor(desired_type);
+		auto copy_constr = desired_type.is_ref ? nullptr : static_cast<StructSymbol*>(desired_type.type) -> getCopyConstructor();
 		copy_constructors.push_back(copy_constr);
 	}
 

@@ -36,15 +36,17 @@ public:
 
 	virtual VarAllocator* get_valloc() const;
 
+	FunctionSymbol* getConversionTo(StructSymbol *st);
 	bool isConvertableTo(StructSymbol *st);
 
+	FunctionSymbol* getConversionConstructor(StructSymbol *st);
 	bool hasConversionConstructor(StructSymbol *st);
+
+	FunctionSymbol* getConversionOperator(StructSymbol *st);
 	bool hasConversionOperator(StructSymbol *st);
 
-	FunctionSymbol* getConversionConstructor(StructSymbol *st);
-	FunctionSymbol* getConversionOperator(StructSymbol *st);
-
-	FunctionSymbol* getConversionTo(StructSymbol *st);
+	FunctionSymbol* getCopyConstructor();
+	FunctionSymbol* getDefaultConstructor();
 
 private:
 

@@ -36,18 +36,14 @@ void StructDeclarationNode::check()
 {
 	getDefinedSymbol() -> is_defined = true;
 	
-	try
-	{
-		TypeHelper::getDefaultConstructor(definedSymbol);
-	}
-	catch ( SemanticError& e )
+	if ( definedSymbol -> getDefaultConstructor() == nullptr )
 	{
 		auto default_constr = FunctionHelper::makeDefaultConstructor(definedSymbol);
-		definedSymbol->accept(new FunctionSymbolDefine(default_constr));
+		definedSymbol -> accept(new FunctionSymbolDefine(default_constr));
 		default_constr_code = *default_constr->code_obj;
 	}
 
-	if ( TypeHelper::getCopyConstructor(definedSymbol) == nullptr )
+	if ( definedSymbol -> getCopyConstructor() == nullptr )
 	{
 		auto copy_constr = FunctionHelper::makeDefaultCopyConstructor(definedSymbol);
 		definedSymbol->accept(new FunctionSymbolDefine(copy_constr));

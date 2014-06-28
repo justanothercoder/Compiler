@@ -104,3 +104,39 @@ FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
 
 	return conv_constr;
 }
+	
+FunctionSymbol* StructSymbol::getCopyConstructor()
+{
+	string copy_constructor_name = getName();
+
+	auto func_sym = resolveMember(copy_constructor_name);
+	
+	if ( func_sym == nullptr )
+		return nullptr;
+
+	auto copy_constr = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym) -> getType().type);
+
+	auto info = copy_constr -> getTypeInfo();
+
+	auto it = info.symbols.find({VariableType(this, true), VariableType(this, true, true)});
+
+	return it == std::end(info.symbols) ? nullptr : it -> second;
+}
+
+FunctionSymbol* StructSymbol::getDefaultConstructor()
+{
+	string default_constructor_name = getName();
+
+	auto func_sym = resolveMember(default_constructor_name);
+	
+	if ( func_sym == nullptr )
+		return nullptr;
+
+	auto copy_constr = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym) -> getType().type);
+
+	auto info = copy_constr -> getTypeInfo();
+
+	auto it = info.symbols.find({ });
+
+	return it == std::end(info.symbols) ? nullptr : it -> second;
+}
