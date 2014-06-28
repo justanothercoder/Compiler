@@ -1,24 +1,23 @@
 #ifndef _FUNCTIONTYPEINFO_HPP_
 #define _FUNCTIONTYPEINFO_HPP_
 
+#include <initializer_list>
 #include <vector>
 
 #include "variabletype.hpp"
-
-using std::vector;
 
 struct FunctionTypeInfo
 {
 public:
 
-    FunctionTypeInfo(VariableType return_type, vector<VariableType> params_types);
+    FunctionTypeInfo(std::vector<VariableType> params_types);
+	FunctionTypeInfo(std::initializer_list<VariableType> init_list);
 
-	string toString() const;
+	std::string toString() const;
 
 	long long hash_func() const;
 
-    VariableType return_type;
-    vector<VariableType> params_types;
+	std::vector<VariableType> params_types;
 };
 
 bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs);

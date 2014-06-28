@@ -7,7 +7,8 @@ bool FunctionHelper::isCompatible(FunctionTypeInfo ft, vector<VariableType> para
 
 	for ( size_t i = 0; i < params_type.size(); ++i )
 	{
-		if ( !TypeHelper::isConvertable(params_type[i], ft.params_types[i]) )
+//		if ( !TypeHelper::isConvertable(params_type[i], ft.params_types[i]) )
+		if ( !static_cast<StructSymbol*>(params_type[i].type) -> isConvertableTo(static_cast<StructSymbol*>(ft.params_types[i].type)) )
 			return false;
 	}
 
@@ -45,11 +46,10 @@ FunctionSymbol* FunctionHelper::getViableOverload(OverloadedFunctionSymbol *over
 FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 {
 	auto copy_constr = new FunctionSymbol(struc->getName(),
-		 								  FunctionTypeInfo(VariableType(struc, true),
-										                  {VariableType(struc, true),
-														   VariableType(struc, true, true)}),
+		 								  VariableType(struc, true),
+										  {VariableType(struc, true), VariableType(struc, true, true)},
 										  struc,
-										  {true, true, false}, 
+										  {true, true, false},
 										  nullptr
 	);
 
@@ -97,8 +97,8 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 {
 	auto constr = new FunctionSymbol(struc->getName(),
-		 						     FunctionTypeInfo(VariableType(struc, true),
-									                 {VariableType(struc, true)}),
+		 						     VariableType(struc, true),
+									 {VariableType(struc, true)},
                                      struc,
 									 {true, true, false}, 
 									 nullptr

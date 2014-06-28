@@ -1,3 +1,3 @@
 #include "overloadedfunctiontypeinfo.hpp"
 
-OverloadedFunctionTypeInfo::OverloadedFunctionTypeInfo(const set<FunctionTypeInfo>& overloads) : overloads(overloads) { }
+OverloadedFunctionTypeInfo::OverloadedFunctionTypeInfo(std::set<FunctionTypeInfo> overloads) : overloads(overloads) { }

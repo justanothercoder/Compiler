@@ -1,15 +1,16 @@
 #include "functionsymbol.hpp"
 
-FunctionSymbol::FunctionSymbol(string name, 
-							   FunctionTypeInfo function_type_info, 
-							   Scope *enclosing_scope, 
-							   FunctionTraits traits,
-							   CodeObject *code_obj) : code_obj(code_obj),
-													   function_type_info(function_type_info), 
-												 	   name(name),
-												 	   enclosing_scope(enclosing_scope), 
-													   traits(traits), 
-													   valloc()
+FunctionSymbol::FunctionSymbol(string name
+		                      , VariableType return_type
+							  , FunctionTypeInfo function_type_info
+							  , Scope *enclosing_scope
+							  , FunctionTraits traits
+							  , CodeObject *code_obj) : code_obj(code_obj)
+													  , return_type(return_type)
+													  , function_type_info(function_type_info)
+													  , name(name)
+													  , enclosing_scope(enclosing_scope)
+													  , traits(traits)
 {
 	scope_name = enclosing_scope->getScopeName() + "_" + (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
 }

@@ -36,7 +36,7 @@ vector<AST*> BracketNode::getChildren() const
 
 VariableType BracketNode::getType() const 
 { 
-	return call_info.callee -> function_type_info.return_type; 
+	return call_info.callee -> return_type; 
 }
 
 bool BracketNode::isLeftValue() const { return false; }

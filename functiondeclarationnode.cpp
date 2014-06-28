@@ -10,7 +10,7 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 
 void FunctionDeclarationNode::build_scope()
 {
-	definedSymbol = new FunctionSymbol(name, FunctionTypeInfo(VariableType(), { }), scope, traits, nullptr);
+	definedSymbol = new FunctionSymbol(name, VariableType(), { }, scope, traits, nullptr);
 
 	statements -> scope         = definedSymbol;
 	statements -> template_info = template_info;
@@ -58,8 +58,9 @@ void FunctionDeclarationNode::define()
 		definedSymbol -> accept(new VariableSymbolDefine(param_sym));
 	}
 
-	FunctionTypeInfo function_type_info(return_type, params_types);
+	FunctionTypeInfo function_type_info(params_types);
 
+	definedSymbol -> return_type = return_type;
 	definedSymbol -> function_type_info = function_type_info;
 
 	scope -> accept(new FunctionSymbolDefine(definedSymbol));

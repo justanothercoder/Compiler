@@ -8,17 +8,14 @@
 
 class FunctionSymbol;
 
-using std::set;
-using std::map;
-
 class OverloadedFunctionTypeInfo
 {
 public:
 
-    OverloadedFunctionTypeInfo(const set<FunctionTypeInfo>& overloads);
+    OverloadedFunctionTypeInfo(std::set<FunctionTypeInfo> overloads);
     
-    set<FunctionTypeInfo> overloads;
-    map<FunctionTypeInfo, FunctionSymbol*> symbols;
+	std::set<FunctionTypeInfo> overloads;
+	std::map<FunctionTypeInfo, FunctionSymbol*> symbols;
 
 };
 

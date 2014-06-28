@@ -59,7 +59,7 @@ vector<AST*> CallNode::getChildren() const
 	return vec;
 }
 
-VariableType CallNode::getType() const { return call_info.callee -> function_type_info.return_type; }
+VariableType CallNode::getType() const { return call_info.callee -> return_type; }
 bool CallNode::isLeftValue() const { return false; }
 
 int CallNode::neededSpaceForTemporaries()

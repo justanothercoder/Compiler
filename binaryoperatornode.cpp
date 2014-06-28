@@ -76,7 +76,7 @@ AST* BinaryOperatorNode::copyTree() const
 
 vector<AST*> BinaryOperatorNode::getChildren() const { return {lhs, rhs}; }
 
-VariableType BinaryOperatorNode::getType() const { return call_info.callee -> function_type_info.return_type; }
+VariableType BinaryOperatorNode::getType() const { return call_info.callee -> return_type; }
 bool BinaryOperatorNode::isLeftValue() const { return false; }
 
 int BinaryOperatorNode::neededSpaceForTemporaries()

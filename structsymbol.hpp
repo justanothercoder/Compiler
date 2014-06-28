@@ -1,7 +1,5 @@
 #ifndef _STRUCTSYMBOL_HPP_
-#define _STRUCTSYMBOL_HPP_
-
-#include <map>
+#define _STRUCTSYMBOL_HPP_ #include <map>
 
 #include "symbol.hpp"
 #include "scope.hpp"
@@ -37,6 +35,13 @@ public:
     virtual string getScopeName() const;
 
 	virtual VarAllocator* get_valloc() const;
+
+	bool isConvertableTo(StructSymbol *st);
+
+	bool hasConversionConstructor(StructSymbol *st);
+	bool hasConversionOperator(StructSymbol *st);
+
+	OverloadedFunctionSymbol* getOverloadedMethod(string name);
 
 private:
 

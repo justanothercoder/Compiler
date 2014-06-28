@@ -1,5 +1,7 @@
 #include "structsymbol.hpp"
 
+#include "callhelper.hpp"
+
 StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope), valloc()
 {
 	type_size = 0;
@@ -39,3 +41,30 @@ TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }
 void StructSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
 
 VarAllocator* StructSymbol::get_valloc() const { return &valloc; }
+	
+bool StructSymbol::isConvertableTo(StructSymbol *st)
+{
+	return this == st || this -> hasConversionOperator(st) || st -> hasConversionConstructor(this);
+}
+	
+bool StructSymbol::hasConversionConstructor(StructSymbol *st)
+{
+	string conversion_constructor_name = st -> getName();
+
+	auto conv_constr = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(st -> resolveMember(conversion_constructor_name)) -> getType().type);
+
+	auto info = conv_constr -> getTypeInfo();
+
+	auto it = info.symbols.find({VariableType(this)});
+
+	return it != std::end(info.symbols);
+}
+
+bool StructSymbol::hasConversionOperator(StructSymbol *st)
+{
+	string cast_operator_name = "operator " + st -> getName();
+	FunctionSymbol *cast_operator = CallHelper::resolveOverload(cast_operator_name, this, { });
+
+	return cast_operator != nullptr;
+}
+	

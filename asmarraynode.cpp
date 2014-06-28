@@ -28,31 +28,16 @@ void AsmArrayNode::define()
 	}
 	else throw SemanticError("");
 
+	auto just_int = VariableType(BuiltIns::int_struct);
+
 	auto arr = VariableType(dynamic_cast<StructSymbol*>(scope));
 
 	auto ref_arr = arr;
 	ref_arr.is_ref = true;
 
-	auto array_constructor = new FunctionSymbol(
-			"array",			
-			FunctionTypeInfo(ref_arr, {ref_arr}),
-			scope,
-			{true, true, false}
-			);
-
-	auto array_elem_operator = new FunctionSymbol(
-			"operator[]",
-			FunctionTypeInfo(ref_type, {ref_arr, VariableType(BuiltIns::int_struct)}),
-			scope,
-			{true, false, true}
-			);
-
-	auto array_size_func = new FunctionSymbol(
-			"size",
-			FunctionTypeInfo(VariableType(BuiltIns::int_struct), {ref_arr}),
-			scope,
-			{true, false, false}
-			);
+	auto array_constructor   = new FunctionSymbol("array"     , ref_arr , {ref_arr}          , scope, {true, true, false});
+	auto array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, scope, {true, false, true});
+	auto array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , scope, {true, false, false});
 
 	scope -> accept(new FunctionSymbolDefine(array_constructor));
 	scope -> accept(new FunctionSymbolDefine(array_elem_operator));

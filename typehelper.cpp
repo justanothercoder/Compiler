@@ -38,14 +38,14 @@ FunctionSymbol* TypeHelper::getConversion(VariableType lhs, VariableType rhs)
 		auto ref_lhs = lhs;
 		ref_lhs.is_ref = true;
 
-		return cast_op -> getTypeInfo().symbols[FunctionTypeInfo(rhs, {ref_lhs})];
+		return cast_op -> getTypeInfo().symbols.at({ref_lhs});
 	}
 	else
 	{
 		auto ref_rhs = rhs;
 		ref_rhs.is_ref = true;
 
-		return conversion -> getTypeInfo().symbols[FunctionTypeInfo(ref_rhs, {ref_rhs, lhs})];
+		return conversion -> getTypeInfo().symbols.at({ref_rhs, lhs});
 	}
 }
 

@@ -6,10 +6,10 @@ ReturnNode::~ReturnNode() { delete expr; }
 
 CodeObject& ReturnNode::gen()
 {
-	if ( enclosing_func -> function_type_info.return_type.is_ref )
+	if ( enclosing_func -> return_type.is_ref )
 	{
 		if ( !expr -> isLeftValue() )
-			throw SemanticError("cannot initialize " + enclosing_func -> function_type_info.return_type.getName() + " with value of type " + expr -> getType().getName());
+			throw SemanticError("cannot initialize " + enclosing_func -> return_type.getName() + " with value of type " + expr -> getType().getName());
 
 		code_obj.emit(expr -> gen().getCode());
 	}
@@ -23,7 +23,7 @@ CodeObject& ReturnNode::gen()
 		code_obj.genCallCode(copy_call_info, {expr}, return_place, false);
 	}
 
-	if ( !enclosing_func -> function_type_info.return_type.is_ref )
+	if ( !enclosing_func -> return_type.is_ref )
 		code_obj.emit("mov rax, [rax]");
 
     code_obj.emit("mov rsp, rbp");
