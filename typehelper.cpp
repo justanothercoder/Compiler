@@ -1,17 +1,6 @@
 #include "typehelper.hpp"
 #include "classvariablesymbol.hpp"
 
-bool TypeHelper::isConvertable(VariableType lhs, VariableType rhs)
-{
-	auto _lhs = VariableType(lhs.type);
-	auto _rhs = VariableType(rhs.type);
-
-	if ( rhs.is_ref )
-		return _lhs == _rhs;
-	else
-		return (_lhs == _rhs) ? true : (getConversion(_lhs, rhs) != nullptr);
-}
-
 FunctionSymbol* TypeHelper::getConversion(VariableType lhs, VariableType rhs)
 {
 	if ( rhs.type -> getTypeKind() != TypeKind::STRUCT )
