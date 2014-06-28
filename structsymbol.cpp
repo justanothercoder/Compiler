@@ -49,22 +49,58 @@ bool StructSymbol::isConvertableTo(StructSymbol *st)
 	
 bool StructSymbol::hasConversionConstructor(StructSymbol *st)
 {
+	return getConversionConstructor(st) != nullptr;
+}
+
+bool StructSymbol::hasConversionOperator(StructSymbol *st)
+{
+	return getConversionOperator(st) != nullptr;
+}
+
+FunctionSymbol* StructSymbol::getConversionConstructor(StructSymbol *st)
+{
 	string conversion_constructor_name = st -> getName();
 
-	auto conv_constr = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(st -> resolveMember(conversion_constructor_name)) -> getType().type);
+	auto func_sym = st -> resolveMember(conversion_constructor_name);
+	
+	if ( func_sym == nullptr )
+		return nullptr;
+
+	auto conv_constr = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym) -> getType().type);
 
 	auto info = conv_constr -> getTypeInfo();
 
 	auto it = info.symbols.find({VariableType(this)});
 
-	return it != std::end(info.symbols);
+	return it == std::end(info.symbols) ? nullptr : it -> second;
 }
 
-bool StructSymbol::hasConversionOperator(StructSymbol *st)
+FunctionSymbol* StructSymbol::getConversionOperator(StructSymbol *st)
 {
 	string cast_operator_name = "operator " + st -> getName();
-	FunctionSymbol *cast_operator = CallHelper::resolveOverload(cast_operator_name, this, { });
 
-	return cast_operator != nullptr;
+	auto func_sym = resolveMember(cast_operator_name);
+
+	if ( func_sym == nullptr )
+		return nullptr;
+
+	auto conv_oper = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym) -> getType().type);
+
+	auto info = conv_oper -> getTypeInfo();
+
+	auto it = info.symbols.find({ });
+
+	return it == std::end(info.symbols) ? nullptr : it -> second;
 }
-	
+
+FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
+{
+	auto conv_operator = getConversionOperator(st);
+
+	if ( conv_operator != nullptr )
+		return conv_operator;
+
+	auto conv_constr = getConversionConstructor(st);
+
+	return conv_constr;
+}

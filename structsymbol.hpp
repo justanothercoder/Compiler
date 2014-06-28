@@ -41,7 +41,10 @@ public:
 	bool hasConversionConstructor(StructSymbol *st);
 	bool hasConversionOperator(StructSymbol *st);
 
-	OverloadedFunctionSymbol* getOverloadedMethod(string name);
+	FunctionSymbol* getConversionConstructor(StructSymbol *st);
+	FunctionSymbol* getConversionOperator(StructSymbol *st);
+
+	FunctionSymbol* getConversionTo(StructSymbol *st);
 
 private:
 

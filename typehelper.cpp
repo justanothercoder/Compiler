@@ -1,43 +1,6 @@
 #include "typehelper.hpp"
 #include "classvariablesymbol.hpp"
 
-FunctionSymbol* TypeHelper::getConversion(VariableType lhs, VariableType rhs)
-{
-	if ( rhs.type -> getTypeKind() != TypeKind::STRUCT )
-		return nullptr;
-
-	auto struc = static_cast<StructSymbol*>(rhs.type);
-
-	string lhs_name = lhs.getTypeName();    
-	string rhs_name = rhs.getTypeName();
-
-	OverloadedFunctionSymbol *cast_op = nullptr, *conversion = nullptr;
-
-	try { cast_op = CallHelper::getOverloadedMethod("operator " + rhs_name, static_cast<StructSymbol*>(lhs.type)); }
-	catch ( ... ) { }
-	
-	try { conversion = CallHelper::getOverloadedMethod(rhs_name, struc); }
-	catch ( ... ) { }
-
-	if ( cast_op == nullptr && conversion == nullptr )
-		throw SemanticError("No conversion from '" + lhs_name + "' to '" + rhs_name + "'.");
-
-	if ( cast_op != nullptr )
-	{
-		auto ref_lhs = lhs;
-		ref_lhs.is_ref = true;
-
-		return cast_op -> getTypeInfo().symbols.at({ref_lhs});
-	}
-	else
-	{
-		auto ref_rhs = rhs;
-		ref_rhs.is_ref = true;
-
-		return conversion -> getTypeInfo().symbols.at({ref_rhs, lhs});
-	}
-}
-
 FunctionSymbol* TypeHelper::getCopyConstructor(VariableType type)
 {
 	if ( type.type -> getTypeKind() != TypeKind::STRUCT )

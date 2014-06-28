@@ -132,7 +132,8 @@ ConversionInfo CallHelper::getConversionInfo(VariableType lhs, VariableType rhs,
 	}
 	else
 	{
-		auto conv = (_lhs == _rhs) ? nullptr : TypeHelper::getConversion(_lhs, _rhs);
+//		auto conv = (_lhs == _rhs) ? nullptr : TypeHelper::getConversion(_lhs, _rhs);
+		auto conv = (_lhs == _rhs) ? nullptr : static_cast<StructSymbol*>(lhs.type) -> getConversionTo(static_cast<StructSymbol*>(rhs.type));
 		return ConversionInfo(conv, lhs.is_ref && !is_lhs_left_value, false);
 	}
 }
