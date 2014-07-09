@@ -69,3 +69,8 @@ int CallNode::neededSpaceForTemporaries()
 		return std::max(acc, expr -> neededSpaceForTemporaries());
 	});
 }
+
+void CallNode::freeTempSpace()
+{
+
+}

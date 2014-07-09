@@ -7,4 +7,6 @@ string GlobalScope::getScopeName() const { return ""; }
 
 void GlobalScope::accept(ScopeVisitor *visitor) { visitor->visit(this); }
 
-VarAllocator* GlobalScope::get_valloc() const { return &valloc; }
+VarAllocator* GlobalScope::get_valloc() { return &valloc; }
+
+TempAllocator& GlobalScope::getTempAlloc() { return temp_alloc; }

@@ -113,3 +113,8 @@ int VariableNode::neededSpaceForTemporaries()
 {
 	return 0;
 }
+
+void VariableNode::freeTempSpace()
+{
+
+}

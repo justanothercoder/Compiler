@@ -14,18 +14,20 @@ class DotNode : public ExprNode
 public:
 
     DotNode(ExprNode *base, string member_name);   
-	virtual ~DotNode();
+	~DotNode() override;
     
-    virtual void check();
-    virtual CodeObject& gen();    
+    void check() override;
+    CodeObject& gen() override;
 
-	virtual vector<AST*> getChildren() const;
-    virtual AST* copyTree() const;
+	vector<AST*> getChildren() const override;
+    AST* copyTree() const override;
 
-    virtual VariableType getType() const;
-	virtual bool isLeftValue() const;
+    VariableType getType() const override;
+	bool isLeftValue() const override;
 
-	virtual int neededSpaceForTemporaries();
+	int neededSpaceForTemporaries() override;
+
+	void freeTempSpace() override;
 
 private:
 

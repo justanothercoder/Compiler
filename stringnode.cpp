@@ -56,3 +56,8 @@ int StringNode::neededSpaceForTemporaries()
 {
 	return 0;
 }
+
+void StringNode::freeTempSpace()
+{
+
+}

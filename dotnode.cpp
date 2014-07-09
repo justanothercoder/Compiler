@@ -59,3 +59,8 @@ int DotNode::neededSpaceForTemporaries()
 {
 	return 0;
 }
+
+void DotNode::freeTempSpace()
+{
+
+}

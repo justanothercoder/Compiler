@@ -24,6 +24,8 @@ public:
 
 	virtual int neededSpaceForTemporaries();
 
+	virtual void freeTempSpace();
+
 private:
 
     string num;

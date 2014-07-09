@@ -41,7 +41,9 @@ public:
     
     TypeKind getTypeKind() const override;
     int getSize() const override;
-	VarAllocator* get_valloc() const override;
+	VarAllocator* get_valloc() override;
+
+	TempAllocator& getTempAlloc() override;
 
 	CodeObject *code_obj;
 
@@ -58,7 +60,9 @@ private:
 
     FunctionTraits traits;
 
-	mutable ParamVarAllocator valloc;
+	ParamVarAllocator valloc;
+
+	TempAllocator temp_alloc;
 };
 
 #endif

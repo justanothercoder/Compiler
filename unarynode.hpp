@@ -14,21 +14,23 @@ class UnaryNode : public ExprNode
 public:
 	
 	UnaryNode(ExprNode *exp, UnaryOp op_type);
-	virtual ~UnaryNode();
+	~UnaryNode() override;
 
-	virtual void check();
-    virtual CodeObject& gen();
+	void check() override;
+    CodeObject& gen() override;
 
-	virtual vector<AST*> getChildren() const;
-	virtual AST* copyTree() const;
+	vector<AST*> getChildren() const override;
+	AST* copyTree() const override;
 
 	string getOperatorName();
 	string getCodeOperatorName();
     
-	virtual VariableType getType() const;
-	virtual bool isLeftValue() const;
+	VariableType getType() const override;
+	bool isLeftValue() const override;
 
-	virtual int neededSpaceForTemporaries();
+	int neededSpaceForTemporaries() override;
+
+	void freeTempSpace() override;
 
 private:
 

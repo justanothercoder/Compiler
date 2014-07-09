@@ -16,3 +16,4 @@ void AST::build_scope()
 }
 	
 std::vector<AST*> AST::getChildren() const { return { }; } 
+

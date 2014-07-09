@@ -17,10 +17,15 @@ void BinaryOperatorNode::check()
 	}
 	
 	scope -> get_valloc() -> addReturnValueSpace(getType().getSize());
+
+	scope -> getTempAlloc().add(getType().getSize());
 }
 
 CodeObject& BinaryOperatorNode::gen()
 {
+	string addr = "[rbp - " + std::to_string(scope -> getTempAlloc().getOffset()) + "]";
+	scope -> getTempAlloc().claim(getType().getSize());
+
 	if ( call_info.callee -> isMethod() )
 		code_obj.genCallCode(call_info, {rhs}, lhs -> gen(), lhs -> getType().is_ref);
 	else
@@ -82,4 +87,11 @@ bool BinaryOperatorNode::isLeftValue() const { return false; }
 int BinaryOperatorNode::neededSpaceForTemporaries()
 {
 	return std::max(lhs -> neededSpaceForTemporaries(), rhs -> neededSpaceForTemporaries());
+}
+
+void BinaryOperatorNode::freeTempSpace()
+{
+	lhs -> freeTempSpace();
+	rhs -> freeTempSpace();
+	scope -> getTempAlloc().free();
 }

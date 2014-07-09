@@ -40,7 +40,7 @@ TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }
 
 void StructSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
 
-VarAllocator* StructSymbol::get_valloc() const { return &valloc; }
+VarAllocator* StructSymbol::get_valloc() { return &valloc; }
 	
 bool StructSymbol::isConvertableTo(StructSymbol *st)
 {
@@ -59,20 +59,9 @@ bool StructSymbol::hasConversionOperator(StructSymbol *st)
 
 FunctionSymbol* StructSymbol::getConversionConstructor(StructSymbol *st)
 {
-	string conversion_constructor_name = st -> getName();
-
-	auto func_sym = st -> resolveMember(conversion_constructor_name);
+	auto constr = constructorWith({VariableType(this, true), VariableType(st)});
 	
-	if ( func_sym == nullptr )
-		return nullptr;
-
-	auto conv_constr = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym) -> getType().type);
-
-	auto info = conv_constr -> getTypeInfo();
-
-	auto it = info.symbols.find({VariableType(this)});
-
-	return it == std::end(info.symbols) ? nullptr : it -> second;
+	return constr == nullptr ? constructorWith({VariableType(this, true), VariableType(st, true, true)}) : constr;
 }
 
 FunctionSymbol* StructSymbol::getConversionOperator(StructSymbol *st)
@@ -100,43 +89,34 @@ FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
 	if ( conv_operator != nullptr )
 		return conv_operator;
 
-	auto conv_constr = getConversionConstructor(st);
+	auto conv_constr = st -> getConversionConstructor(this);
 
 	return conv_constr;
 }
 	
 FunctionSymbol* StructSymbol::getCopyConstructor()
 {
-	string copy_constructor_name = getName();
-
-	auto func_sym = resolveMember(copy_constructor_name);
-	
-	if ( func_sym == nullptr )
-		return nullptr;
-
-	auto copy_constr = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym) -> getType().type);
-
-	auto info = copy_constr -> getTypeInfo();
-
-	auto it = info.symbols.find({VariableType(this, true), VariableType(this, true, true)});
-
-	return it == std::end(info.symbols) ? nullptr : it -> second;
+	return constructorWith({VariableType(this, true), VariableType(this, true, true)});
 }
 
 FunctionSymbol* StructSymbol::getDefaultConstructor()
 {
-	string default_constructor_name = getName();
-
-	auto func_sym = resolveMember(default_constructor_name);
+	return constructorWith({VariableType(this, true)});
+}
 	
-	if ( func_sym == nullptr )
-		return nullptr;
+FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft)
+{
+	string constructor_name = getName();
 
-	auto copy_constr = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym) -> getType().type);
+	auto member = dynamic_cast<VariableSymbol*>(resolveMember(constructor_name));
+	auto func = dynamic_cast<OverloadedFunctionSymbol*>(member -> getType().type);
+	auto info = func -> getTypeInfo();
 
-	auto info = copy_constr -> getTypeInfo();
-
-	auto it = info.symbols.find({ });
-
+	auto it = info.symbols.find(ft);
 	return it == std::end(info.symbols) ? nullptr : it -> second;
+}
+	
+TempAllocator& StructSymbol::getTempAlloc() 
+{
+	return temp_alloc;
 }

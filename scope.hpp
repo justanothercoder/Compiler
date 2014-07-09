@@ -7,6 +7,7 @@
 
 #include "scopevisitor.hpp"
 #include "varallocator.hpp"
+#include "tempallocator.hpp"
 
 class VariableSymbol;
 
@@ -19,7 +20,8 @@ public:
     virtual Scope* getEnclosingScope() const = 0;
     virtual Symbol* resolve(string name) const = 0;
 
-	virtual VarAllocator* get_valloc() const = 0;
+	virtual VarAllocator* get_valloc() = 0;
+	virtual TempAllocator& getTempAlloc() = 0;
 
     virtual string getScopeName() const = 0;
 

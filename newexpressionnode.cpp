@@ -50,3 +50,8 @@ int NewExpressionNode::neededSpaceForTemporaries()
 {
 	return getType().getSize();
 }
+
+void NewExpressionNode::freeTempSpace()
+{
+
+}

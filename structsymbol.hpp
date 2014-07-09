@@ -17,24 +17,24 @@ public:
 
     friend class VariableSymbolDefine;
 
-    virtual void accept(ScopeVisitor *visitor);
+    void accept(ScopeVisitor *visitor) override;
     
     StructSymbol(string name, Scope *enclosing_scope);
 
-    virtual SymbolType getSymbolType() const;
-    virtual string getName() const;
+    SymbolType getSymbolType() const override;
+    string getName() const override;
 
-    virtual int getSize() const;
-    virtual TypeKind getTypeKind() const ;
+    int getSize() const override;
+    TypeKind getTypeKind() const override;
 	
     Symbol* resolveMember(string name) const;
 
-    virtual Scope* getEnclosingScope() const;
-    virtual Symbol* resolve(string name) const;
+    Scope* getEnclosingScope() const override;
+    Symbol* resolve(string name) const override;
 
-    virtual string getScopeName() const;
+    string getScopeName() const override;
 
-	virtual VarAllocator* get_valloc() const;
+	VarAllocator* get_valloc() override;
 
 	FunctionSymbol* getConversionTo(StructSymbol *st);
 	bool isConvertableTo(StructSymbol *st);
@@ -48,6 +48,10 @@ public:
 	FunctionSymbol* getCopyConstructor();
 	FunctionSymbol* getDefaultConstructor();
 
+	FunctionSymbol* constructorWith(FunctionTypeInfo ft);
+
+	TempAllocator& getTempAlloc() override;
+
 private:
 
     string name;
@@ -58,7 +62,8 @@ private:
 
     string scope_name;
 
-	mutable FieldVarAllocator valloc;
+	FieldVarAllocator valloc;
+	TempAllocator temp_alloc;
 };
 		     
 #endif

@@ -18,19 +18,21 @@ class VariableNode : public ExprNode
 public:
 
     VariableNode(string name);
-	~VariableNode();
+	~VariableNode() override;
 
-    virtual void check();
-    virtual CodeObject& gen();
+    void check() override;
+    CodeObject& gen() override;
 
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
 
     bool isTemplateParam() const;
     
-    virtual VariableType getType() const;
-	virtual bool isLeftValue() const;
+    VariableType getType() const override;
+	bool isLeftValue() const override;
 
-	virtual int neededSpaceForTemporaries();
+	int neededSpaceForTemporaries() override;
+
+	void freeTempSpace() override;
 
 private:
 

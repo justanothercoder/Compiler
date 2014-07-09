@@ -7,4 +7,6 @@ string LocalScope::getScopeName() const { return ""; }
 
 void LocalScope::accept(ScopeVisitor *visitor) { visitor->visit(this); }
 
-VarAllocator* LocalScope::get_valloc() const { return getEnclosingScope()->get_valloc(); }
+VarAllocator* LocalScope::get_valloc() { return getEnclosingScope()->get_valloc(); }
+
+TempAllocator& LocalScope::getTempAlloc() { return temp_alloc; }

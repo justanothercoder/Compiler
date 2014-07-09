@@ -17,7 +17,8 @@ void CodeObject::pushOnStack(size_t size, int offset)
 		
 void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr)
 {
-	if ( copy_constr == nullptr ) 
+//	if ( copy_constr == nullptr ) 
+	if ( conv_info.desired_type.is_ref )
 	{
 		emit(param -> gen().getCode());
 
@@ -59,7 +60,8 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		}
 		else
 		{
-			auto desired_type = copy_constr -> function_type_info.params_types[0];
+//			auto desired_type = copy_constr -> function_type_info.params_types[0];
+			auto desired_type = conv_info.desired_type;
 
 			emit("lea r8, [rbp - " + std::to_string(GlobalConfig::int_size) + "]");
 			emit("lea r10, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
@@ -116,6 +118,8 @@ void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, CodeO
 	if ( is_method )
 		params_size += GlobalConfig::int_size;
 
+	emit("sub rsp, " + std::to_string(func -> return_type.getSize()));
+
 	for ( int i = static_cast<int>(function_info.params_types.size()) - 1; i >= is_meth; --i )
 		genParam(params[i - is_meth], call_info.conversions[i - is_meth], call_info.copy_constructors[i - is_meth]);
 
@@ -130,6 +134,7 @@ void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, CodeO
 
 	emit("call " + func -> getScopedTypedName());
 	emit("add rsp, " + std::to_string(params_size));
+	emit("add rsp, " + std::to_string(func -> return_type.getSize()));
 }
 
 void CodeObject::genCopy(FunctionSymbol *copy_constr, CodeObject& genThis, CodeObject& copied)

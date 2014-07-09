@@ -18,6 +18,8 @@ public:
     
 	static std::string getCodeOperatorName(std::string op);
 
+	static int transformAddress(Scope *scope, int addr); 
+
 private:
 
     GlobalHelper();

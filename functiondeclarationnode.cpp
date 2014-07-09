@@ -77,17 +77,18 @@ CodeObject& FunctionDeclarationNode::gen()
 	code_obj.emit("push rbp");
 	code_obj.emit("mov rbp, rsp");
 
-	code_obj.emit("sub rsp, " + std::to_string(neededSpaceForTemporaries()));
-
+//	code_obj.emit("sub rsp, " + std::to_string(neededSpaceForTemporaries()));
 	if ( definedSymbol -> get_valloc() -> getSpace() > 0 )
 		code_obj.emit("sub rsp, " + std::to_string(definedSymbol -> get_valloc() -> getSpace()));
+	code_obj.emit("sub rsp, " + std::to_string(scope -> getTempAlloc().getSpaceNeeded()));
 
 	code_obj.emit(statements -> gen().getCode());
 
 	if ( definedSymbol -> isConstructor() )
 		code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
 
-	code_obj.emit("add rsp, " + std::to_string(neededSpaceForTemporaries()));
+//	code_obj.emit("add rsp, " + std::to_string(neededSpaceForTemporaries()));
+	code_obj.emit("add rsp, " + std::to_string(scope -> getTempAlloc().getSpaceNeeded()));
 	
 	code_obj.emit("mov rsp, rbp");
 	code_obj.emit("pop rbp");

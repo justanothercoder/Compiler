@@ -45,3 +45,8 @@ int BracketNode::neededSpaceForTemporaries()
 {
 	return std::max(base -> neededSpaceForTemporaries(), expr -> neededSpaceForTemporaries());
 }
+
+void BracketNode::freeTempSpace()
+{
+
+}

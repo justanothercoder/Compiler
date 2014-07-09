@@ -1,4 +1,5 @@
 #include "globalhelper.hpp"
+#include "scope.hpp"
 
 std::string GlobalHelper::getCodeOperatorName(std::string op)
 {
@@ -17,4 +18,9 @@ std::string GlobalHelper::getCodeOperatorName(std::string op)
 	else if ( op == "operator||" ) return "operatoror";
 	else if ( op.substr(0, 8) == "operator" ) return "operator~" + op.substr(9);
 	else throw;
+}
+
+int GlobalHelper::transformAddress(Scope *scope, int addr)
+{
+	return scope -> get_valloc() -> getSpace() + GlobalConfig::int_size + addr; 
 }

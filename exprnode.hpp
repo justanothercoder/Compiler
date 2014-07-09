@@ -17,6 +17,8 @@ public:
     virtual VariableType getType() const = 0;
 	virtual bool isLeftValue() const = 0;
 
+	virtual void freeTempSpace() = 0;
+
 	Type *type_hint;
 };
 

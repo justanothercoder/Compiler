@@ -47,3 +47,8 @@ int UnaryNode::neededSpaceForTemporaries()
 {
 	return exp -> neededSpaceForTemporaries();
 }
+
+void UnaryNode::freeTempSpace() 
+{
+
+}
