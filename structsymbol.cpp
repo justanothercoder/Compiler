@@ -61,7 +61,7 @@ FunctionSymbol* StructSymbol::getConversionConstructor(StructSymbol *st)
 {
 	auto constr = constructorWith({VariableType(this, true), VariableType(st)});
 	
-	return constr == nullptr ? constructorWith({VariableType(this, true), VariableType(st, true, true)}) : constr;
+	return constr ? constr : constructorWith({VariableType(this, true), VariableType(st, true, true)});
 }
 
 FunctionSymbol* StructSymbol::getConversionOperator(StructSymbol *st)

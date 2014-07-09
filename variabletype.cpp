@@ -25,5 +25,5 @@ size_t VariableType::getSize() const { return is_ref ? GlobalConfig::int_size : 
 	
 string VariableType::getTypeName() const { return type->getName(); }
 	
-bool VariableType::operator==(VariableType vt) { return type == vt.type && is_const == vt.is_const && is_ref == vt.is_ref; }
-bool VariableType::operator!=(VariableType vt) { return !(*this == vt); }
+bool VariableType::operator==(VariableType vt) const { return type == vt.type && is_const == vt.is_const && is_ref == vt.is_ref; }
+bool VariableType::operator!=(VariableType vt) const { return !(*this == vt); }

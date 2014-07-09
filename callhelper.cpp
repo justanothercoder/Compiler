@@ -123,10 +123,11 @@ ConversionInfo CallHelper::getConversionInfo(VariableType lhs, VariableType rhs,
 	auto _lhs = VariableType(lhs.type);
 	auto _rhs = VariableType(rhs.type);
 
+/*
 	if ( rhs.is_ref )
 	{
 		if ( _lhs != _rhs )
-			throw SemanticError("Invalid initialization of '" + rhs.getName() + "' with type '" + lhs.getName() + "'");
+			throw SemanticError("Invalid initialization of '" + rhs.getName() + "' with type '" + lhs.getName() + "'.");
 
 		ConversionInfo conv_info(nullptr, lhs.is_ref && !is_lhs_left_value, !lhs.is_ref);
 		
@@ -147,4 +148,16 @@ ConversionInfo CallHelper::getConversionInfo(VariableType lhs, VariableType rhs,
 
 		return conv_info;
 	}
+*/
+	auto conv = (_lhs == _rhs) ? nullptr : static_cast<StructSymbol*>(lhs.type) -> getConversionTo(static_cast<StructSymbol*>(rhs.type));
+
+	if ( _lhs != _rhs && conv == nullptr )
+		throw SemanticError("Invalid initialization of '" + rhs.getName() + "' with type '" + lhs.getName() + "'.");
+
+	ConversionInfo conv_info(conv, lhs.is_ref && !is_lhs_left_value, !lhs.is_ref);
+
+	conv_info.actual_type  = lhs;
+	conv_info.desired_type = rhs;
+
+	return conv_info;
 }

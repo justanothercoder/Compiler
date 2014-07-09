@@ -20,6 +20,7 @@ public:
 	std::vector<VariableType> params_types;
 };
 
+bool operator==(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs);
 bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs);
 
 #endif
