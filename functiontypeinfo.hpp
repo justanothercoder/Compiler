@@ -19,6 +19,8 @@ public:
 
 	bool isCompatibleWith(const FunctionTypeInfo& info) const;
 
+	int rankOfConversion(const FunctionTypeInfo& info) const;
+
 	std::vector<VariableType> params_types;
 };
 

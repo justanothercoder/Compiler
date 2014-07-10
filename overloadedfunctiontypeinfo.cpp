@@ -1,4 +1,6 @@
 #include "overloadedfunctiontypeinfo.hpp"
+	
+//#include "logger.hpp"
 
 OverloadedFunctionTypeInfo::OverloadedFunctionTypeInfo(std::set<FunctionTypeInfo> overloads) : overloads(overloads) { }
 	
@@ -13,12 +15,20 @@ std::set<FunctionTypeInfo> OverloadedFunctionTypeInfo::getBestOverload(FunctionT
 		else
 			++i;
 	}
+	    
+    auto func_better = [&params_type](const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
+    {
+		return lhs.rankOfConversion(params_type) < rhs.rankOfConversion(params_type);
+    };
 
-	/*    
-		  auto func_better = [&params_type](FunctionType *lhs, FunctionType *rhs)
-		  {
-
-		  }
-	 */        
-	return possible;
+	std::vector<FunctionTypeInfo> v(std::begin(possible), std::end(possible));
+	
+	std::sort(std::begin(v), std::end(v), func_better);
+/*
+	Logger::log("Debug: " + params_type.toString());
+	for ( auto ft : v )
+		Logger::log(ft.toString() + " " + std::to_string(ft.rankOfConversion(params_type)));
+*/
+//	return possible;
+	return { v.front() };
 }

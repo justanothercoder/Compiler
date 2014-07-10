@@ -26,6 +26,8 @@ public:
 	bool operator==(VariableType vt) const;
 	bool operator!=(VariableType vt) const;
 
+	int rankOfConversion(VariableType vt);
+
 public:
 	Type *type;
 	bool is_ref, is_const;	

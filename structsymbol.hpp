@@ -40,6 +40,8 @@ public:
 	FunctionSymbol* getConversionTo(StructSymbol *st);
 	bool isConvertableTo(StructSymbol *st);
 
+	int rankOfConversion(StructSymbol *st);
+
 	FunctionSymbol* getConversionConstructor(StructSymbol *st);
 	bool hasConversionConstructor(StructSymbol *st);
 

@@ -5,14 +5,10 @@ NumberNode::NumberNode(string num) : num(num), code_obj() { }
 void NumberNode::check() 
 { 
 	scope -> getTempAlloc().add(getType().getSize());
-	/*scope->get_valloc()->addLocal(this, getType().getSize());*/
 }
 
 CodeObject& NumberNode::gen()
 {
-//    code_obj.emit("mov qword [rbp - " + std::to_string(scope->get_valloc()->getAddress(this)) + "], " + num);
-//	code_obj.emit("lea rax, [rbp - " + std::to_string(scope->get_valloc()->getAddress(this)) + "]");
-
 	std::string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 
 	code_obj.emit("mov qword " + addr + ", " + num);

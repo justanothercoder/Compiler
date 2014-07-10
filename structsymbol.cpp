@@ -60,9 +60,14 @@ bool StructSymbol::hasConversionOperator(StructSymbol *st)
 
 FunctionSymbol* StructSymbol::getConversionConstructor(StructSymbol *st)
 {
-	auto constr = constructorWith({VariableType(this, true), VariableType(st)});
+	auto constr_const_ref = constructorWith({VariableType(this, true), VariableType(st, true, true)});
+
+	if ( constr_const_ref )
+		return constr_const_ref;
+
+	auto constr_ref = constructorWith({VariableType(this, true), VariableType(st, true)});
 	
-	return constr ? constr : constructorWith({VariableType(this, true), VariableType(st, true, true)});
+	return constr_ref ? constr_ref : constructorWith({VariableType(this, true), VariableType(st)});
 }
 
 FunctionSymbol* StructSymbol::getConversionOperator(StructSymbol *st)
@@ -120,4 +125,9 @@ FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft)
 TempAllocator& StructSymbol::getTempAlloc() 
 {
 	return temp_alloc;
+}
+	
+int StructSymbol::rankOfConversion(StructSymbol *st)
+{
+	return (this == st) ? 0 : 1;
 }
