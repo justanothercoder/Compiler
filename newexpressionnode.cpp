@@ -16,12 +16,7 @@ void NewExpressionNode::check()
 
 	call_info = CallHelper::callCheck(name, type, params); 
 
-//	scope -> get_valloc() -> addLocal(this, type -> getSize());
 	scope -> getTempAlloc().add(type -> getSize());
-
-//	scope -> get_valloc() -> addReturnValueSpace(getType().getSize());
-//	for ( auto param : params )
-//		scope -> get_valloc() -> addSpecialSpace(param);
 }
 
 CodeObject& NewExpressionNode::gen()
@@ -30,8 +25,6 @@ CodeObject& NewExpressionNode::gen()
 	scope -> getTempAlloc().claim(getType().type -> getSize());
 
 	CodeObject new_place;
-//	new_place.emit("lea rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(this)) + "]");
-
 	new_place.emit("lea rax, " + addr);
 
 	code_obj.genCallCode(call_info, params, new_place, false);
@@ -59,5 +52,5 @@ int NewExpressionNode::neededSpaceForTemporaries()
 
 void NewExpressionNode::freeTempSpace()
 {
-	
+	scope -> getTempAlloc().free();	
 }

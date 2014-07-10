@@ -1,18 +1,19 @@
 #include "codeobject.hpp"
 #include "logger.hpp"
 
-void CodeObject::gen() const { std::cout << code; }
-std::string CodeObject::getCode() const { return code; }
+void CodeObject::gen() const 
+{ 
+	std::cout << code; 
+}
 
-void CodeObject::emit(string text) { code += text + '\n'; }
+std::string CodeObject::getCode() const 
+{ 
+	return code; 
+}
 
-void CodeObject::pushOnStack(size_t size, int offset)
+void CodeObject::emit(string text) 
 {
-	for ( size_t i = 0; i < size; i += GlobalConfig::int_size )
-	{
-		emit("mov rbx, [rax - " + std::to_string(i) + "]");
-		emit("mov [rsp - " + std::to_string(offset + i) + "], rbx");
-	}
+   	code += text + '\n'; 
 }
 		
 void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr)
@@ -40,6 +41,9 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 
 			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size));		
+
+			if ( param -> getType().is_ref )
+				emit("mov rax, [rax]");
 
 			emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 			emit("sub rsp, " + std::to_string(GlobalConfig::int_size));		
@@ -73,6 +77,9 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 
 			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size));		
 
+			if ( param -> getType().is_ref )
+				emit("mov rax, [rax]");
+
 			emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 			emit("sub rsp, " + std::to_string(GlobalConfig::int_size));		
 
@@ -82,7 +89,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 			emit("call " + copy_constr -> getScopedTypedName());
 			emit("add rsp, " + std::to_string(4 * GlobalConfig::int_size)); //offset + params + return
 
-//			emit("sub rsp, " + std::to_string(conv_info.desired_type.getSize()));
+			emit("sub rsp, " + std::to_string(conv_info.desired_type.getSize()));
 		}
 	}
 }
@@ -102,7 +109,7 @@ void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, CodeO
 	if ( is_method )
 		params_size += GlobalConfig::int_size;
 
-	emit("sub rsp, " + std::to_string(func -> return_type.getSize()));
+	emit("sub rsp, " + std::to_string(func -> return_type.getSize()) + ";\t\t\tReturnType");
 
 	for ( int i = static_cast<int>(function_info.params_types.size()) - 1; i >= is_meth; --i )
 		genParam(params[i - is_meth], call_info.conversions[i - is_meth], call_info.copy_constructors[i - is_meth]);
