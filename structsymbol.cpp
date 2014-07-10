@@ -1,12 +1,13 @@
 #include "structsymbol.hpp"
 
 #include "callhelper.hpp"
+#include "functionsymbol.hpp"
 
 StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope), valloc()
 {
 	type_size = 0;
 
-	scope_name = getEnclosingScope()->getScopeName() + "_" + name;
+	scope_name = getEnclosingScope() -> getScopeName() + "_" + name;
 }
 
 Scope* StructSymbol::getEnclosingScope() const { return enclosing_scope; }
@@ -17,10 +18,10 @@ Symbol* StructSymbol::resolve(string name) const
 	if ( it == std::end(table) )
 	{
 		if ( getEnclosingScope() )
-			return getEnclosingScope()->resolve(name);
+			return getEnclosingScope() -> resolve(name);
 		return nullptr;
 	}
-	return it->second;
+	return it -> second;
 }
 
 Symbol* StructSymbol::resolveMember(string name) const
@@ -28,7 +29,7 @@ Symbol* StructSymbol::resolveMember(string name) const
 	auto it = table.find(name);
 	if ( it == std::end(table) )
 		return nullptr;
-	return it->second;    
+	return it -> second;    
 }
 
 int StructSymbol::getSize() const { return type_size; }
@@ -38,13 +39,13 @@ string StructSymbol::getScopeName() const { return scope_name; }
 SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }
 TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }
 
-void StructSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
+void StructSymbol::accept(ScopeVisitor *visitor) { visitor -> visit(this); }
 
 VarAllocator* StructSymbol::get_valloc() { return &valloc; }
 	
 bool StructSymbol::isConvertableTo(StructSymbol *st)
 {
-	return this == st || this -> hasConversionOperator(st) || st -> hasConversionConstructor(this);
+	return this == st || this  ->  hasConversionOperator(st) || st  ->  hasConversionConstructor(this);
 }
 	
 bool StructSymbol::hasConversionConstructor(StructSymbol *st)
@@ -66,20 +67,20 @@ FunctionSymbol* StructSymbol::getConversionConstructor(StructSymbol *st)
 
 FunctionSymbol* StructSymbol::getConversionOperator(StructSymbol *st)
 {
-	string cast_operator_name = "operator " + st -> getName();
+	string cast_operator_name = "operator " + st  ->  getName();
 
 	auto func_sym = resolveMember(cast_operator_name);
 
 	if ( func_sym == nullptr )
 		return nullptr;
 
-	auto conv_oper = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym) -> getType().type);
+	auto conv_oper = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym)  ->  getType().type);
 
-	auto info = conv_oper -> getTypeInfo();
+	auto info = conv_oper  ->  getTypeInfo();
 
 	auto it = info.symbols.find({ });
 
-	return it == std::end(info.symbols) ? nullptr : it -> second;
+	return it == std::end(info.symbols) ? nullptr : it  ->  second;
 }
 
 FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
@@ -89,7 +90,7 @@ FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
 	if ( conv_operator != nullptr )
 		return conv_operator;
 
-	auto conv_constr = st -> getConversionConstructor(this);
+	auto conv_constr = st  ->  getConversionConstructor(this);
 
 	return conv_constr;
 }
@@ -109,11 +110,11 @@ FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft)
 	string constructor_name = getName();
 
 	auto member = dynamic_cast<VariableSymbol*>(resolveMember(constructor_name));
-	auto func = dynamic_cast<OverloadedFunctionSymbol*>(member -> getType().type);
-	auto info = func -> getTypeInfo();
+	auto func = dynamic_cast<OverloadedFunctionSymbol*>(member  ->  getType().type);
+	auto info = func  ->  getTypeInfo();
 
 	auto it = info.symbols.find(ft);
-	return it == std::end(info.symbols) ? nullptr : it -> second;
+	return it == std::end(info.symbols) ? nullptr : it  ->  second;
 }
 	
 TempAllocator& StructSymbol::getTempAlloc() 

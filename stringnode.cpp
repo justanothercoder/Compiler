@@ -1,4 +1,5 @@
 #include "stringnode.hpp"
+#include "typehelper.hpp"
 
 StringNode::StringNode(string str) : str(str) { }
 

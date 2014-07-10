@@ -1,5 +1,5 @@
 #include "functionhelper.hpp"
-
+#include "functionsymbol.hpp"
 
 FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 {
@@ -7,11 +7,10 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 		 								  VariableType(struc, true),
 										  {VariableType(struc, true), VariableType(struc, true, true)},
 										  struc,
-										  {true, true, false},
-										  nullptr
+										  {true, true, false}
 	);
 
-	CodeObject *func_code = new CodeObject();
+	optional<CodeObject> func_code = CodeObject();
 
 	func_code -> emit("jmp _~" + copy_constr -> getScopedTypedName());
 	func_code -> emit(copy_constr -> getScopedTypedName() + ":");
@@ -58,11 +57,10 @@ FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 		 						     VariableType(struc, true),
 									 {VariableType(struc, true)},
                                      struc,
-									 {true, true, false}, 
-									 nullptr
+									 {true, true, false}
 	);
 
-	CodeObject *func_code = new CodeObject();
+	optional<CodeObject> func_code = CodeObject();
 
 	func_code -> emit("jmp _~" + constr -> getScopedTypedName());
 	func_code -> emit(constr -> getScopedTypedName() + ":");

@@ -6,8 +6,6 @@
 
 #include "abstractparser.hpp"
 
-//#include "alldeps.hpp"
-
 #include "structdeclarationnode.hpp"
 #include "variabledeclarationnode.hpp"
 #include "functiondeclarationnode.hpp"
@@ -30,6 +28,9 @@
 #include "bracketnode.hpp"
 #include "stringnode.hpp"
 
+
+#include "optional.hpp"
+
 class Parser : public AbstractParser
 {
 public:
@@ -45,11 +46,11 @@ private:
     TypeInfo typeInfo();
     vector<ExprNode*> call_params_list();
   
-    DeclarationNode* declaration(std::shared_ptr<string> struct_name = nullptr);
+    DeclarationNode* declaration(optional<string> struct_name = optional<string>::empty());
     DeclarationNode* templateStructDecl();
     DeclarationNode* structDecl();
-    DeclarationNode* variableDecl(std::shared_ptr<string> struct_name = nullptr);
-    DeclarationNode* functionDecl(std::shared_ptr<string> struct_name = nullptr);
+    DeclarationNode* variableDecl(optional<string> struct_name = optional<string>::empty());
+    DeclarationNode* functionDecl(optional<string> struct_name = optional<string>::empty());
 
 	AST* import_stat();
 	

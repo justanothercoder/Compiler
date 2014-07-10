@@ -2,13 +2,11 @@
 #define _BUILTINS_HPP_
 
 #include "builtintypesymbol.hpp"
-#include "functionsymbol.hpp"
-#include "globalscope.hpp"
-#include "typehelper.hpp"
-#include "structsymbol.hpp"
 #include "templatestructsymbol.hpp"
 
 class TemplateStructDeclarationNode;
+class StructSymbol;
+class FunctionSymbol;
 
 class BuiltIns
 {

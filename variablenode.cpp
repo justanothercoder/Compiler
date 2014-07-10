@@ -1,8 +1,9 @@
 #include "variablenode.hpp"
+#include "functionsymbol.hpp"
+#include "typehelper.hpp"
+#include "structsymbol.hpp"
 
-VariableNode::VariableNode(string name) : name(name), variable(nullptr), code_obj(new CodeObject()) { }
-
-VariableNode::~VariableNode() { delete code_obj; }
+VariableNode::VariableNode(string name) : name(name), variable(nullptr) { }
 
 void VariableNode::check()
 {
@@ -68,7 +69,7 @@ CodeObject& VariableNode::gen()
 		else
 			variable = new VariableSymbol(function -> getName(), VariableType(std::begin(function_info.symbols) -> second));
 
-		code_obj -> emit("lea rax, [" + static_cast<FunctionSymbol*>(variable -> getType().type) -> getScopedTypedName() + "]");
+		code_obj.emit("lea rax, [" + static_cast<FunctionSymbol*>(variable -> getType().type) -> getScopedTypedName() + "]");
 	}
 	else
 	{
@@ -80,16 +81,16 @@ CodeObject& VariableNode::gen()
 
 			auto struc_scope = static_cast<StructSymbol*>(sym -> getType().type);
 
-			code_obj -> emit("mov rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(sym)) + "]");
-			code_obj -> emit("lea rax, [rax - " + std::to_string(struc_scope -> get_valloc() -> getAddress(variable)) + "]");
+			code_obj.emit("mov rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(sym)) + "]");
+			code_obj.emit("lea rax, [rax - " + std::to_string(struc_scope -> get_valloc() -> getAddress(variable)) + "]");
 		}
 		else
 		{
-			code_obj -> emit("lea rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(variable)) + "]");
+			code_obj.emit("lea rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(variable)) + "]");
 		}
 	}
 
-	return *code_obj;
+	return code_obj;
 }
 
 bool VariableNode::isTemplateParam() const { return template_info -> sym != nullptr; }

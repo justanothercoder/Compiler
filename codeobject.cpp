@@ -1,5 +1,7 @@
 #include "codeobject.hpp"
 #include "logger.hpp"
+#include "functionsymbol.hpp"
+#include "callhelper.hpp"
 
 void CodeObject::gen() const 
 { 

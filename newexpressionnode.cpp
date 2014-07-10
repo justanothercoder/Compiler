@@ -1,4 +1,5 @@
 #include "newexpressionnode.hpp"
+#include "functionsymbol.hpp"
 
 NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params) : type_info(type_info), params(params), call_info(), code_obj() { }
 

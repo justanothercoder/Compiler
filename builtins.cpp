@@ -1,6 +1,9 @@
 #include "builtins.hpp"
 #include "asmarraynode.hpp"
 #include "templatestructdeclarationnode.hpp"
+#include "structsymbol.hpp"
+#include "functionsymbol.hpp"
+#include "globalscope.hpp"
 
 Scope *BuiltIns::global_scope = new GlobalScope();
 

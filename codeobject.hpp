@@ -8,14 +8,10 @@
 using std::string;
 
 #include "type.hpp"
-#include "functionsymbol.hpp"
-#include "typehelper.hpp"
-#include "templateinfo.hpp"
 #include "builtins.hpp"
 #include "callinfo.hpp"
 
-#include "variablenode.hpp"
-#include "dotnode.hpp"
+class FunctionSymbol;
 
 class CodeObject
 {

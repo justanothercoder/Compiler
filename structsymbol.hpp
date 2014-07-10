@@ -5,9 +5,10 @@
 #include "scope.hpp"
 #include "type.hpp"
 #include "variablesymbol.hpp"
-#include "functionsymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 #include "fieldvarallocator.hpp"
+
+#include "basescope.hpp"
 
 using std::map;
 

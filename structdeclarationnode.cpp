@@ -1,4 +1,6 @@
 #include "structdeclarationnode.hpp"
+#include "structsymbol.hpp"
+#include "symboldefine.hpp"
 
 StructDeclarationNode::StructDeclarationNode(string name, const vector<AST*>& inner) : name(name), inner(inner), definedSymbol(nullptr) { }
 

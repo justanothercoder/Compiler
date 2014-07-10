@@ -4,21 +4,17 @@
 #include "exprnode.hpp"
 #include "overloadedfunctiontypeinfo.hpp"
 #include "variablesymbol.hpp"
-#include "functionsymbol.hpp"
-#include "typehelper.hpp"
-#include "structsymbol.hpp"
 #include "globalhelper.hpp"
-#include "codeobject.hpp"
 #include "templatestructsymbol.hpp"
 #include "classvariablesymbol.hpp"
 #include "templateinfo.hpp"
+#include "codeobject.hpp"
 
 class VariableNode : public ExprNode
 {
 public:
 
     VariableNode(string name);
-	~VariableNode() override;
 
     void check() override;
     CodeObject& gen() override;
@@ -41,7 +37,7 @@ private:
     VariableSymbol *variable;
 
 	TemplateInfo _template_info;
-	CodeObject *code_obj;
+	CodeObject code_obj;
 };
 
 #endif

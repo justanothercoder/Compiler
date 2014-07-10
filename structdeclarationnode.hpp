@@ -4,12 +4,12 @@
 #include <vector>
 
 #include "declarationnode.hpp"
-#include "structsymbol.hpp"
-#include "symboldefine.hpp"
 #include "codeobject.hpp"
 #include "functionsymboldefine.hpp"
 
 using std::vector;
+
+class StructSymbol;
 
 class StructDeclarationNode : public DeclarationNode
 {

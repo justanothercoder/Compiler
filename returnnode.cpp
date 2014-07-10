@@ -1,4 +1,5 @@
 #include "returnnode.hpp"
+#include "callhelper.hpp"
 
 ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), copy_call_info(), enclosing_func(nullptr), code_obj() { }
 

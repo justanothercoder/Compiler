@@ -11,6 +11,9 @@
 #include "overloadedfunctionsymbol.hpp"
 #include "paramvarallocator.hpp"
 
+#include "codeobject.hpp"
+#include "optional.hpp"
+
 class VariableSymbol;
 
 using std::map;
@@ -21,7 +24,7 @@ class FunctionSymbol : public Symbol, public BaseScope, public Type
     friend class VariableSymbolDefine;
 public:
 
-    FunctionSymbol(string name, VariableType return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, CodeObject *code_obj = nullptr);
+    FunctionSymbol(string name, VariableType return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, optional<CodeObject> code_obj = optional<CodeObject>::empty());
 
     string getTypedName() const;
     string getScopedTypedName() const;
@@ -45,7 +48,7 @@ public:
 
 	TempAllocator& getTempAlloc() override;
 
-	CodeObject *code_obj;
+	optional<CodeObject> code_obj;
 
 	VariableType return_type;
     FunctionTypeInfo function_type_info;

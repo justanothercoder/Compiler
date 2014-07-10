@@ -1,4 +1,5 @@
 #include "callhelper.hpp"
+#include "functionsymbol.hpp"
 
 CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> params)
 {
