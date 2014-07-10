@@ -64,8 +64,14 @@ _int_operatorplus_int~ref_int:
 ;	mov r9, [rbp]
 ;	mov [r9 - 8], rax
 ;	lea rax, [r9 - 8]
-	mov [rbp + 32], rax
+
+;	mov [rbp + 32], rax
+;	lea rax, [rbp + 32]
+	
+	mov rbx, rax
 	lea rax, [rbp + 32]
+	mov rax, [rax]
+	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp

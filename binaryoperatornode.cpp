@@ -26,6 +26,9 @@ CodeObject& BinaryOperatorNode::gen()
 	string addr = "[rbp - " + std::to_string(scope -> getTempAlloc().getOffset()) + "]";
 	scope -> getTempAlloc().claim(getType().getSize());
 
+	code_obj.emit("lea rax, " + addr);
+	code_obj.emit("push rax");
+
 	if ( call_info.callee -> isMethod() )
 		code_obj.genCallCode(call_info, {rhs}, lhs -> gen(), lhs -> getType().is_ref);
 	else
@@ -33,6 +36,8 @@ CodeObject& BinaryOperatorNode::gen()
 		CodeObject empty;
 		code_obj.genCallCode(call_info, {lhs, rhs}, empty, false);
 	}
+
+	code_obj.emit("pop rax");
 
 	return code_obj;
 }

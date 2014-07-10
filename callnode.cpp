@@ -34,6 +34,12 @@ void CallNode::check()
 
 CodeObject& CallNode::gen()
 {  
+	string addr = "[rbp - " + std::to_string(scope -> getTempAlloc().getOffset()) + "]";
+	scope -> getTempAlloc().claim(getType().getSize());
+
+	code_obj.emit("lea rax, " + addr);
+	code_obj.emit("push rax");
+
   	if ( call_info.callee -> isMethod() )
 		code_obj.genCallCode(call_info, params, caller -> gen(), caller -> getType().is_ref);
 	else
@@ -41,6 +47,8 @@ CodeObject& CallNode::gen()
 		CodeObject empty;
 		code_obj.genCallCode(call_info, params, empty, false);
 	}
+
+	code_obj.emit("pop rax");
 
 	return code_obj;
 }

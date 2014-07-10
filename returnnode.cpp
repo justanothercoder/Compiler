@@ -25,9 +25,10 @@ CodeObject& ReturnNode::gen()
 		int addr = std::accumulate(std::begin(params_types), std::end(params_types), 0, [](int acc, VariableType type)
 		{
 			return acc += type.getSize();
-		}) + expr -> getType().getSize();
+		}) + GlobalConfig::int_size; // expr -> getType().getSize();
 
 		return_place.emit("lea rax, [rbp + " + std::to_string(addr));
+		return_place.emit("mov rax, [rax]");
 
 		code_obj.genCallCode(copy_call_info, {expr}, return_place, false);
 	}
