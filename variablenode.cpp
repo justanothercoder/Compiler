@@ -59,7 +59,7 @@ CodeObject& VariableNode::gen()
 
 			if ( function_info.symbols.find(type_info) == std::end(function_info.symbols) )
 			{
-				auto sym = FunctionHelper::getViableOverload(function, type_info.params_types);
+				auto sym = function -> getViableOverload(type_info);
 				variable = new VariableSymbol(function -> getName(), VariableType(sym));
 			}
 			else

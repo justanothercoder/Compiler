@@ -12,8 +12,8 @@ public:
 
     OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits);
 
-    virtual string getName() const;
-    virtual int getSize() const;
+    string getName() const override;
+    int getSize() const override;
 
     OverloadedFunctionTypeInfo getTypeInfo() const;
 
@@ -25,8 +25,10 @@ public:
 
     VariableType getBaseType() const;
 
-    virtual SymbolType getSymbolType() const;
-    virtual TypeKind getTypeKind() const;
+    SymbolType getSymbolType() const override;
+    TypeKind getTypeKind() const override;
+    
+	FunctionSymbol* getViableOverload(FunctionTypeInfo params_type);
     
 private:
 

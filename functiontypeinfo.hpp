@@ -17,6 +17,8 @@ public:
 
 	long long hash_func() const;
 
+	bool isCompatibleWith(const FunctionTypeInfo& info) const;
+
 	std::vector<VariableType> params_types;
 };
 

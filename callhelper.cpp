@@ -92,7 +92,7 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 			pt.insert(std::begin(pt), t);
 		}
 
-		auto func_sym = FunctionHelper::getViableOverload(ov_func, pt);
+		auto func_sym = ov_func -> getViableOverload(FunctionTypeInfo(pt));
 
 		if ( func_sym == nullptr )
 		{

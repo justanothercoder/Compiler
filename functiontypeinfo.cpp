@@ -1,4 +1,5 @@
 #include "functiontypeinfo.hpp"
+#include "structsymbol.hpp"
 
 FunctionTypeInfo::FunctionTypeInfo(std::vector<VariableType> params_types) : params_types(params_types) 
 {
@@ -60,3 +61,17 @@ long long FunctionTypeInfo::hash_func() const
 
 	return res;
 };
+	
+bool FunctionTypeInfo::isCompatibleWith(const FunctionTypeInfo& info) const
+{
+	if ( params_types.size() != info.params_types.size() )
+		return false;	
+
+	for ( size_t i = 0; i < info.params_types.size(); ++i )
+	{
+		if ( !static_cast<StructSymbol*>(info.params_types[i].type)  ->  isConvertableTo(static_cast<StructSymbol*>(params_types[i].type)) )
+			return false;
+	}
+
+	return true;
+}
