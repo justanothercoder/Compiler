@@ -1,4 +1,5 @@
 #include "asmarraynode.hpp"
+#include "templateinfo.hpp"
 
 AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) { scope = BuiltIns::global_scope; }
 

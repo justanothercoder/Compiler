@@ -3,8 +3,6 @@
 
 #include <map>
 
-#include "alldeps.hpp"
-
 #include "basescope.hpp"
 #include "functionsymbol.hpp"
 #include "overloadedfunctiontypeinfo.hpp"

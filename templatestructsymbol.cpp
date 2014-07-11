@@ -1,5 +1,6 @@
 #include "templatestructsymbol.hpp"
 #include "structdeclarationnode.hpp"
+#include "templateinfo.hpp"
 
 TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, AST *holder) : 
 	StructSymbol(name, enclosing_scope),

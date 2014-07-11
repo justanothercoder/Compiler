@@ -1,5 +1,6 @@
 #include "templatestructdeclarationnode.hpp"
 #include "symboldefine.hpp"
+#include "templateinfo.hpp"
 
 TemplateStructDeclarationNode::TemplateStructDeclarationNode(string name, const vector<AST*>& inner, const vector< pair<string, TypeInfo> >& template_params) : StructDeclarationNode(name, inner), template_params(template_params) { }
 
