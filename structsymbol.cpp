@@ -45,7 +45,7 @@ VarAllocator& StructSymbol::getVarAlloc() { return var_alloc; }
 	
 bool StructSymbol::isConvertableTo(StructSymbol *st)
 {
-	return this == st || this  ->  hasConversionOperator(st) || st  ->  hasConversionConstructor(this);
+	return this == st || this -> hasConversionOperator(st) || st -> hasConversionConstructor(this);
 }
 	
 bool StructSymbol::hasConversionConstructor(StructSymbol *st)
@@ -72,20 +72,20 @@ FunctionSymbol* StructSymbol::getConversionConstructor(StructSymbol *st)
 
 FunctionSymbol* StructSymbol::getConversionOperator(StructSymbol *st)
 {
-	string cast_operator_name = "operator " + st  ->  getName();
+	string cast_operator_name = "operator " + st -> getName();
 
 	auto func_sym = resolveMember(cast_operator_name);
 
 	if ( func_sym == nullptr )
 		return nullptr;
 
-	auto conv_oper = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym)  ->  getType().type);
+	auto conv_oper = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym) -> getType().type);
 
-	auto info = conv_oper  ->  getTypeInfo();
+	auto info = conv_oper -> getTypeInfo();
 
 	auto it = info.symbols.find({ });
 
-	return it == std::end(info.symbols) ? nullptr : it  ->  second;
+	return it == std::end(info.symbols) ? nullptr : it -> second;
 }
 
 FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
@@ -95,7 +95,7 @@ FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
 	if ( conv_operator != nullptr )
 		return conv_operator;
 
-	auto conv_constr = st  ->  getConversionConstructor(this);
+	auto conv_constr = st -> getConversionConstructor(this);
 
 	return conv_constr;
 }
@@ -119,11 +119,11 @@ FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft)
 	if ( member == nullptr )
 		return nullptr;
 
-	auto func = dynamic_cast<OverloadedFunctionSymbol*>(member  ->  getType().type);
-	auto info = func  ->  getTypeInfo();
+	auto func = dynamic_cast<OverloadedFunctionSymbol*>(member -> getType().type);
+	auto info = func -> getTypeInfo();
 
 	auto it = info.symbols.find(ft);
-	return it == std::end(info.symbols) ? nullptr : it  ->  second;
+	return it == std::end(info.symbols) ? nullptr : it -> second;
 }
 	
 TempAllocator& StructSymbol::getTempAlloc() 

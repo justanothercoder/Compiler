@@ -1,6 +1,18 @@
 #include "functiondeclarationnode.hpp"
 
-FunctionDeclarationNode::FunctionDeclarationNode(string name, vector< pair<string, TypeInfo> > params, TypeInfo return_type_info, AST* statements, FunctionTraits traits) : name(name), params(params), return_type_info(return_type_info), statements(statements), traits(traits), definedSymbol(nullptr) { }
+FunctionDeclarationNode::FunctionDeclarationNode(string name
+		                                       , vector< pair<string, TypeInfo> > params
+											   , TypeInfo return_type_info
+											   , AST *statements
+											   , FunctionTraits traits) : name(name)
+																		, params(params)
+																		, return_type_info(return_type_info)
+																		, statements(statements)
+																		, traits(traits)
+																		, definedSymbol(nullptr) 
+{
+
+}
 
 FunctionDeclarationNode::~FunctionDeclarationNode() 
 { 
@@ -86,7 +98,7 @@ CodeObject& FunctionDeclarationNode::gen()
 	if ( definedSymbol -> isConstructor() )
 		code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
 
-	code_obj.emit("add rsp, " + std::to_string(scope -> getTempAlloc().getSpaceNeeded()));
+//	code_obj.emit("add rsp, " + std::to_string(scope -> getTempAlloc().getSpaceNeeded()));
 	
 	code_obj.emit("mov rsp, rbp");
 	code_obj.emit("pop rbp");
