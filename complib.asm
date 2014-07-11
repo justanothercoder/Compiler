@@ -85,9 +85,14 @@ _int_operatorminus_int~ref_int:
 	mov rax, [rax]
 	sub rax, [rbp + 24]
 
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]
+;	mov r9, [rbp]
+;	mov [r9 - 8], rax
+;	lea rax, [r9 - 8]
+	
+	mov rbx, rax
+	lea rax, [rbp + 32]
+	mov rax, [rax]
+	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp
@@ -129,9 +134,9 @@ _int_int_int~ref_const~int~ref:
 	mov rax, [rbp + 16]	
 	mov [rax], rbx
 
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]
+;	mov r9, [rbp]
+;	mov [r9 - 8], rax
+;	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp
@@ -496,8 +501,13 @@ _char_char_char~ref_const~char~ref:
 ;	mov [r9 - 8], rax
 ;	lea rax, [r9 - 8]
 
-	mov [rbp + 32], rax
-	lea rax, [rbp + 32]
+;	mov [rbp + 32], rax
+;	lea rax, [rbp + 32]
+
+;;	mov rbx, rax
+;;	lea rax, [rbp + 32]
+;;	mov rax, [rax]
+;;	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp
@@ -531,8 +541,13 @@ _char_char_char~ref_const~int~ref:
 ;	mov [r9 - 8], rax
 ;	lea rax, [r9 - 8]
 
-	mov [rbp + 32], rax
-	lea rax, [rbp + 32]
+;	mov [rbp + 32], rax
+;	lea rax, [rbp + 32]
+
+;;	mov rbx, rax
+;;	lea rax, [rbp + 32]
+;;	mov rax, [rax]
+;;	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp

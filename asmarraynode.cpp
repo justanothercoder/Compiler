@@ -95,9 +95,13 @@ CodeObject& AsmArrayNode::gen()
 
 	code_obj.emit("sub rax, rbx");
 
-	code_obj.emit("mov r9, [rbp]");	
-	code_obj.emit("mov [r9 - 8], rax");
-	code_obj.emit("lea rax, [r9 - 8]");
+//	code_obj.emit("mov r9, [rbp]");	
+//	code_obj.emit("mov [r9 - 8], rax");
+//	code_obj.emit("lea rax, [r9 - 8]");
+
+	code_obj.emit("mov rbx, rax");
+	code_obj.emit("mov rax, [rbp + 32]");
+	code_obj.emit("mov [rax], rbx");
 
 	code_obj.emit("mov rsp, rbp");
 	code_obj.emit("pop rbp");

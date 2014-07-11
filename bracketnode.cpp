@@ -12,12 +12,20 @@ void BracketNode::check()
 
 	call_info = CallHelper::callCheck("operator[]", base_type, {this -> expr});
 	
-	scope -> get_valloc() -> addReturnValueSpace(getType().getSize());
+	scope -> getTempAlloc().add(getType().getSize());
 }
 
 CodeObject& BracketNode::gen()
 {
+	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	scope -> getTempAlloc().claim(getType().getSize());
+
+	code_obj.emit("lea rax, " + addr);
+	code_obj.emit("push rax");
+
     code_obj.genCallCode(call_info, {this -> expr}, base -> gen(), base -> getType().is_ref);
+	code_obj.emit("pop rax");
+
 	return code_obj;
 }
 

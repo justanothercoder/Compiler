@@ -17,7 +17,8 @@ void NewExpressionNode::check()
 
 	call_info = CallHelper::callCheck(name, type, params); 
 
-	scope -> getTempAlloc().add(type -> getSize());
+	scope -> getTempAlloc().add(type -> getSize());      //place for object itself
+	scope -> getTempAlloc().add(GlobalConfig::int_size); //place for reference to it
 }
 
 CodeObject& NewExpressionNode::gen()
@@ -25,10 +26,21 @@ CodeObject& NewExpressionNode::gen()
 	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(getType().type -> getSize());
 
+	string addr2 = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	scope -> getTempAlloc().claim(GlobalConfig::int_size);
+
 	CodeObject new_place;
 	new_place.emit("lea rax, " + addr);
 
+//	code_obj.emit("lea rax, " + addr2);
+//	code_obj.emit("push rax");
+
 	code_obj.genCallCode(call_info, params, new_place, false);
+
+	code_obj.emit("mov " + addr2 + ", rax");
+	code_obj.emit("lea rax, " + addr2);
+
+//	code_obj.emit("pop rax");
 
 	return code_obj;
 }

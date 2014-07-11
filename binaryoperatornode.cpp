@@ -16,14 +16,12 @@ void BinaryOperatorNode::check()
 		call_info = CallHelper::callCheck(getOperatorName(), scope, {lhs, rhs});
 	}
 	
-	scope -> get_valloc() -> addReturnValueSpace(getType().getSize());
-
 	scope -> getTempAlloc().add(getType().getSize());
 }
 
 CodeObject& BinaryOperatorNode::gen()
 {
-	string addr = "[rbp - " + std::to_string(scope -> getTempAlloc().getOffset()) + "]";
+	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(getType().getSize());
 
 	code_obj.emit("lea rax, " + addr);

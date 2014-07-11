@@ -26,15 +26,12 @@ void CallNode::check()
 
 	caller -> type_hint = call_info.callee;
 	
-	scope -> get_valloc() -> addReturnValueSpace(getType().getSize());
-	
-	for ( auto param : params )
-		scope -> get_valloc() -> addSpecialSpace(param);
+	scope -> getTempAlloc().add(getType().getSize());
 }
 
 CodeObject& CallNode::gen()
 {  
-	string addr = "[rbp - " + std::to_string(scope -> getTempAlloc().getOffset()) + "]";
+	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(getType().getSize());
 
 	code_obj.emit("lea rax, " + addr);

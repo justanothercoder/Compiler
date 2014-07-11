@@ -115,6 +115,10 @@ FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft)
 	string constructor_name = getName();
 
 	auto member = dynamic_cast<VariableSymbol*>(resolveMember(constructor_name));
+
+	if ( member == nullptr )
+		return nullptr;
+
 	auto func = dynamic_cast<OverloadedFunctionSymbol*>(member  ->  getType().type);
 	auto info = func  ->  getTypeInfo();
 
