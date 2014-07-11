@@ -64,8 +64,3 @@ void ReturnNode::define() { expr -> define(); }
 AST* ReturnNode::copyTree() const { return new ReturnNode(static_cast<ExprNode*>(expr -> copyTree())); }
 
 vector<AST*> ReturnNode::getChildren() const { return {expr}; }
-
-int ReturnNode::neededSpaceForTemporaries()
-{
-	return GlobalConfig::int_size;
-}

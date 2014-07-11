@@ -20,8 +20,3 @@ void ImportNode::define()
 void ImportNode::check() { }
 
 CodeObject& ImportNode::gen() { return code_obj; }
-
-int ImportNode::neededSpaceForTemporaries()
-{
-	return 0;
-}

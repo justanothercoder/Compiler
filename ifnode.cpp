@@ -74,12 +74,3 @@ AST* IfNode::copyTree() const
 }
 	
 vector<AST*> IfNode::getChildren() const { return {cond, stats_true, stats_false}; }
-
-int IfNode::neededSpaceForTemporaries()
-{
-	return std::max(cond -> neededSpaceForTemporaries(), 
-			        std::max(stats_true -> neededSpaceForTemporaries(), 
-				             stats_false -> neededSpaceForTemporaries()
-					)
-    );
-}

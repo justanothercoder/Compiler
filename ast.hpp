@@ -25,8 +25,6 @@ public:
 
 	virtual std::vector<AST*> getChildren() const;	
 
-	virtual int neededSpaceForTemporaries() = 0;
-
 	Scope *scope;
 	TemplateInfo *template_info;
 };

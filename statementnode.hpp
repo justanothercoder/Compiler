@@ -25,8 +25,6 @@ public:
 
 	virtual vector<AST*> getChildren() const;
 
-	virtual int neededSpaceForTemporaries();
-
 private:
 
     vector<AST*> statements;

@@ -71,14 +71,6 @@ vector<AST*> CallNode::getChildren() const
 VariableType CallNode::getType() const { return call_info.callee -> return_type; }
 bool CallNode::isLeftValue() const { return false; }
 
-int CallNode::neededSpaceForTemporaries()
-{
-	return std::accumulate(std::begin(params), std::end(params), -1, [](int acc, ExprNode *expr)
-	{
-		return std::max(acc, expr -> neededSpaceForTemporaries());
-	});
-}
-
 void CallNode::freeTempSpace()
 {
 

@@ -68,14 +68,3 @@ string ForNode::getNewLabel()
 	static int label_num = 0;
 	return "@for_label" + std::to_string(++label_num);
 }
-
-int ForNode::neededSpaceForTemporaries()
-{
-	return std::max(init -> neededSpaceForTemporaries(),
-			        std::max(cond -> neededSpaceForTemporaries(),
-						     std::max(step -> neededSpaceForTemporaries(),
-								      stats -> neededSpaceForTemporaries()
-							 )
-					)
-	);
-}

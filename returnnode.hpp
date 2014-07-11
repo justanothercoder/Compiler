@@ -24,8 +24,6 @@ public:
 
 	vector<AST*> getChildren() const override;
 
-	int neededSpaceForTemporaries() override;
-
 private:
 
     ExprNode *expr;

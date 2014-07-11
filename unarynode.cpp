@@ -8,12 +8,21 @@ void UnaryNode::check()
 	exp -> check();
 	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(exp -> getType().type), { });
 	
-	scope -> get_valloc() -> addReturnValueSpace(getType().getSize());
+	scope -> getTempAlloc().add(getType().getSize());
 }
 
 CodeObject& UnaryNode::gen()
 {
+	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	scope -> getTempAlloc().claim(getType().getSize());
+
+	code_obj.emit("lea rax, " + addr);
+	code_obj.emit("push rax");
+
 	code_obj.genCallCode(call_info, { }, exp -> gen(), exp -> getType().is_ref);
+	
+	code_obj.emit("pop rax");
+
 	return code_obj;
 }
 
@@ -42,11 +51,6 @@ AST* UnaryNode::copyTree() const { return new UnaryNode(static_cast<ExprNode*>(e
 
 VariableType UnaryNode::getType() const { return call_info.callee -> return_type; }
 bool UnaryNode::isLeftValue() const { return false; }
-
-int UnaryNode::neededSpaceForTemporaries()
-{
-	return exp -> neededSpaceForTemporaries();
-}
 
 void UnaryNode::freeTempSpace() 
 {

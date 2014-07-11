@@ -54,6 +54,6 @@ TypeKind FunctionSymbol::getTypeKind() const { return TypeKind::FUNCTION; }
 
 void FunctionSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
 	
-VarAllocator* FunctionSymbol::get_valloc() { return &valloc; }
+VarAllocator& FunctionSymbol::getVarAlloc() { return var_alloc; }
 
 TempAllocator& FunctionSymbol::getTempAlloc() { return temp_alloc; }

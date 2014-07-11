@@ -49,11 +49,6 @@ VariableType BracketNode::getType() const
 
 bool BracketNode::isLeftValue() const { return false; }
 
-int BracketNode::neededSpaceForTemporaries()
-{
-	return std::max(base -> neededSpaceForTemporaries(), expr -> neededSpaceForTemporaries());
-}
-
 void BracketNode::freeTempSpace()
 {
 

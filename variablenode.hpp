@@ -26,8 +26,6 @@ public:
     VariableType getType() const override;
 	bool isLeftValue() const override;
 
-	int neededSpaceForTemporaries() override;
-
 	void freeTempSpace() override;
 
 private:

@@ -147,8 +147,8 @@ int main()
 		main_code.emit("push rbp");
 		main_code.emit("mov rbp, rsp");	
 
-		if ( root -> scope -> get_valloc() -> getSpace() > 0 )		
-			main_code.emit("sub rsp, " + std::to_string(root -> scope -> get_valloc() -> getSpace()));
+		if ( root -> scope -> getVarAlloc().getSpace() > 0 )		
+			main_code.emit("sub rsp, " + std::to_string(root -> scope -> getVarAlloc().getSpace()));
 		main_code.emit("sub rsp, " + std::to_string(root -> scope -> getTempAlloc().getSpaceNeeded()));
 
 		main_code.emit(root -> gen().getCode());

@@ -3,7 +3,7 @@
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
 
-StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope), valloc()
+StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope)
 {
 	type_size = 0;
 
@@ -41,7 +41,7 @@ TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }
 
 void StructSymbol::accept(ScopeVisitor *visitor) { visitor -> visit(this); }
 
-VarAllocator* StructSymbol::get_valloc() { return &valloc; }
+VarAllocator& StructSymbol::getVarAlloc() { return var_alloc; }
 	
 bool StructSymbol::isConvertableTo(StructSymbol *st)
 {

@@ -3,7 +3,7 @@
 
 StringNode::StringNode(string str) : str(str) { }
 
-void StringNode::check() { /*getScope()->get_valloc()->addLocal(256);*/ }
+void StringNode::check() {  }
 
 CodeObject& StringNode::gen()
 {
@@ -52,11 +52,6 @@ VariableType StringNode::getType() const
 }
 
 bool StringNode::isLeftValue() const { return false; }
-
-int StringNode::neededSpaceForTemporaries()
-{
-	return 0;
-}
 
 void StringNode::freeTempSpace()
 {

@@ -35,7 +35,7 @@ public:
 
     string getScopeName() const override;
 
-	VarAllocator* get_valloc() override;
+	VarAllocator& getVarAlloc() override;
 
 	FunctionSymbol* getConversionTo(StructSymbol *st);
 	bool isConvertableTo(StructSymbol *st);
@@ -65,7 +65,7 @@ private:
 
     string scope_name;
 
-	FieldVarAllocator valloc;
+	FieldVarAllocator var_alloc;
 	TempAllocator temp_alloc;
 };
 		     

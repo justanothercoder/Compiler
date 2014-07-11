@@ -55,12 +55,12 @@ CodeObject& VariableDeclarationNode::gen()
 			for ( auto i : constructor_call_params )
 				i -> gen();
 
-			code_obj.emit("mov [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(definedSymbol)) + "], rax");
+			code_obj.emit("mov [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(definedSymbol)) + "], rax");
 		}
 		else
 		{
 			CodeObject var_code;
-			var_code.emit("lea rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(definedSymbol)) + "]");
+			var_code.emit("lea rax, [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(definedSymbol)) + "]");
 
 			code_obj.genCallCode(call_info, constructor_call_params, var_code, false);
 		}
@@ -101,12 +101,4 @@ AST* VariableDeclarationNode::copyTree() const
 vector<AST*> VariableDeclarationNode::getChildren() const 
 { 
 	return vector<AST*>(std::begin(constructor_call_params), std::end(constructor_call_params)); 
-}
-
-int VariableDeclarationNode::neededSpaceForTemporaries()
-{
-	return std::accumulate(std::begin(constructor_call_params), std::end(constructor_call_params), -1, [](int acc, ExprNode *expr)
-	{
-		return std::max(acc, expr -> neededSpaceForTemporaries());
-	});
 }

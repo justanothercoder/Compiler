@@ -31,11 +31,11 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 
 			CodeObject param;
 			param.emit("mov rax, [rbp + " + std::to_string(3 * GlobalConfig::int_size) + "]");
-			param.emit("lea rax, [rax - " + std::to_string(struc -> get_valloc() -> getAddress(var)) + "]");
+			param.emit("lea rax, [rax - " + std::to_string(struc -> getVarAlloc().getAddress(var)) + "]");
 
 			CodeObject genThis;
 			genThis.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
-			genThis.emit("lea rax, [rax - " + std::to_string(struc -> get_valloc() -> getAddress(var)) + "]");
+			genThis.emit("lea rax, [rax - " + std::to_string(struc -> getVarAlloc().getAddress(var)) + "]");
 
 			func_code -> genCopy(member_copy, genThis, param); 
 		}
@@ -84,7 +84,7 @@ FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 
 			CodeObject genThis;
 			genThis.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
-			genThis.emit("lea rax, [rax - " + std::to_string(struc -> get_valloc() -> getAddress(var)) + "]");
+			genThis.emit("lea rax, [rax - " + std::to_string(struc -> getVarAlloc().getAddress(var)) + "]");
 
 			func_code -> genDefaultConstructorCall(member_default, genThis); 
 		}

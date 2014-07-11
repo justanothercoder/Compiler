@@ -81,12 +81,12 @@ CodeObject& VariableNode::gen()
 
 			auto struc_scope = static_cast<StructSymbol*>(sym -> getType().type);
 
-			code_obj.emit("mov rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(sym)) + "]");
-			code_obj.emit("lea rax, [rax - " + std::to_string(struc_scope -> get_valloc() -> getAddress(variable)) + "]");
+			code_obj.emit("mov rax, [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(sym)) + "]");
+			code_obj.emit("lea rax, [rax - " + std::to_string(struc_scope -> getVarAlloc().getAddress(variable)) + "]");
 		}
 		else
 		{
-			code_obj.emit("lea rax, [rbp - " + std::to_string(scope -> get_valloc() -> getAddress(variable)) + "]");
+			code_obj.emit("lea rax, [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(variable)) + "]");
 		}
 	}
 
@@ -109,11 +109,6 @@ VariableType VariableNode::getType() const
 }
 
 bool VariableNode::isLeftValue() const { return true; }
-
-int VariableNode::neededSpaceForTemporaries() 
-{
-	return 0;
-}
 
 void VariableNode::freeTempSpace()
 {

@@ -23,8 +23,6 @@ public:
     CodeObject& gen() override;
 	
 	vector<AST*> getChildren() const override;
-		
-	int neededSpaceForTemporaries() override;
 
 private:
 

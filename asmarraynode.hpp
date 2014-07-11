@@ -21,8 +21,6 @@ public:
 	
 	AST* copyTree() const override;
 
-	int neededSpaceForTemporaries() override;
-
 private:
 	
 	int size_of_type;

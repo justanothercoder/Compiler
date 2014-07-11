@@ -22,5 +22,5 @@ std::string GlobalHelper::getCodeOperatorName(std::string op)
 
 int GlobalHelper::transformAddress(Scope *scope, int addr)
 {
-	return scope -> get_valloc() -> getSpace() + GlobalConfig::int_size + addr; 
+	return scope -> getVarAlloc().getSpace() + GlobalConfig::int_size + addr; 
 }

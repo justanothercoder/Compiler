@@ -44,7 +44,7 @@ CodeObject& DotNode::gen()
 			member = new VariableSymbol(ov_func -> getName(), VariableType(std::begin(ov_func_type_info.symbols) -> second));
 	}
 	else
-		code_obj -> emit("lea rax, [rax - " + std::to_string(base_type -> get_valloc() -> getAddress(member)) + "]");
+		code_obj -> emit("lea rax, [rax - " + std::to_string(base_type -> getVarAlloc().getAddress(member)) + "]");
 
 	return *code_obj;
 }
@@ -55,11 +55,6 @@ AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base 
 
 VariableType DotNode::getType() const { return member -> getType(); }
 bool DotNode::isLeftValue() const { return true; }
-
-int DotNode::neededSpaceForTemporaries()
-{
-	return 0;
-}
 
 void DotNode::freeTempSpace()
 {

@@ -15,8 +15,6 @@ public:
 
     CodeObject& gen() override;
 
-	int neededSpaceForTemporaries() override;
-
 private:
 
 	string lib;

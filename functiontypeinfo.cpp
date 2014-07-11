@@ -80,7 +80,7 @@ int FunctionTypeInfo::rankOfConversion(const FunctionTypeInfo& info) const
 {
 	int rank = 0;
 
-	for ( int i = 0; i < params_types.size(); ++i )
+	for ( int i = 0; i < static_cast<int>(params_types.size()); ++i )
 		rank += static_cast<StructSymbol*>(info.params_types[i].type) -> rankOfConversion(static_cast<StructSymbol*>(params_types[i].type));
 
 	return rank;

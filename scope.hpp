@@ -20,7 +20,7 @@ public:
     virtual Scope* getEnclosingScope() const = 0;
     virtual Symbol* resolve(string name) const = 0;
 
-	virtual VarAllocator* get_valloc() = 0;
+	virtual VarAllocator& getVarAlloc() = 0;
 	virtual TempAllocator& getTempAlloc() = 0;
 
     virtual string getScopeName() const = 0;

@@ -26,12 +26,12 @@ public:
     Scope* getEnclosingScope() const override;
     string getScopeName() const override;
 	
-	VarAllocator* get_valloc() override;
+	VarAllocator& getVarAlloc() override;
 	TempAllocator& getTempAlloc() override;
 
 private:
 
-	VarAllocator valloc;
+	VarAllocator var_alloc;
 	TempAllocator temp_alloc;
 };
 

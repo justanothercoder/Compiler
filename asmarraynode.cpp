@@ -113,8 +113,3 @@ CodeObject& AsmArrayNode::gen()
 }
 	
 AST* AsmArrayNode::copyTree() const { return new AsmArrayNode(*this); }
-
-int AsmArrayNode::neededSpaceForTemporaries()
-{
-	return 0;
-}
