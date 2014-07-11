@@ -1,9 +1,10 @@
 #include "callhelper.hpp"
+#include "functionsymbol.hpp"
 
-CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> params, const TemplateInfo& template_info)
+CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> params)
 {
     for ( auto i : params )
-		i->check(template_info);
+		i -> check();
 
 	auto params_types = CallHelper::extractTypes(params);
 
@@ -12,14 +13,14 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 	if ( function_sym == nullptr )
 		throw SemanticError("No viable overload of '" + name + "'.");
 
-    auto function_info = function_sym->function_type_info;
+    auto function_info = function_sym -> function_type_info;
     
-    int is_meth = (function_sym->isMethod() ? 1 : 0);
+    int is_meth = (function_sym -> isMethod() ? 1 : 0);
 	
 	for ( int i = function_info.params_types.size() - 1; i >= is_meth; --i )
     {
 		auto t = function_info.params_types.at(i);
-		if ( t.is_ref && !params.at(i - is_meth)->isLeftValue() && !t.is_const )
+		if ( t.is_ref && !params.at(i - is_meth) -> isLeftValue() && !t.is_const )
 			throw SemanticError("parameter is not an lvalue.");
     }
 
@@ -28,25 +29,25 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 
 CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<ExprNode*> params)
 {
-    auto function_info = function_sym->function_type_info;
+    auto function_info = function_sym -> function_type_info;
 	
 	auto params_types = CallHelper::extractTypes(params);
    
 	vector<ConversionInfo> conversions;
 	vector<FunctionSymbol*> copy_constructors;
 
-    int is_meth = (function_sym->isMethod() ? 1 : 0);
+    int is_meth = (function_sym -> isMethod() ? 1 : 0);
    
 	for ( size_t i = is_meth; i < function_info.params_types.size(); ++i )
 	{
 		auto actual_type = params_types.at(i - is_meth);
 		auto desired_type = function_info.params_types.at(i);
 
-		bool is_left_value = params.at(i - is_meth)->isLeftValue();
+		bool is_left_value = params.at(i - is_meth) -> isLeftValue();
 
 		conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type, is_left_value));
 		
-		auto copy_constr = desired_type.is_ref ? nullptr : TypeHelper::getCopyConstructor(desired_type);
+		auto copy_constr = desired_type.is_ref ? nullptr : static_cast<StructSymbol*>(desired_type.type) -> getCopyConstructor();
 		copy_constructors.push_back(copy_constr);
 	}
 
@@ -55,22 +56,22 @@ CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<ExprN
 
 OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(string name, Scope *scope)
 {
-	auto _ = scope->resolve(name);
+	auto _ = scope -> resolve(name);
 	
-	if ( _ == nullptr || _->getSymbolType() != SymbolType::VARIABLE )
+	if ( _ == nullptr || _ -> getSymbolType() != SymbolType::VARIABLE )
 		throw SemanticError("No such symbol " + name + ".");	
 
-	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_)->getType().type);
+	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_) -> getType().type);
 }
 
 OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(string name, StructSymbol *scope)
 {
-	auto _ = scope->resolveMember(name);
+	auto _ = scope -> resolveMember(name);
 	
-	if ( _ == nullptr || _->getSymbolType() != SymbolType::VARIABLE )
+	if ( _ == nullptr || _ -> getSymbolType() != SymbolType::VARIABLE )
 		throw SemanticError("No such symbol " + name + ".");	
 
-	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_)->getType().type);
+	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_) -> getType().type);
 }
 	
 FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vector<VariableType> params_types)
@@ -84,22 +85,22 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 
 		auto pt = params_types;
 		
-		if ( ov_func->isMethod() )
+		if ( ov_func -> isMethod() )
 		{
-			auto t = ov_func->getBaseType();
+			auto t = ov_func -> getBaseType();
 			t.is_ref = true;
 
 			pt.insert(std::begin(pt), t);
 		}
 
-		auto func_sym = FunctionHelper::getViableOverload(ov_func, pt);
+		auto func_sym = ov_func -> getViableOverload(FunctionTypeInfo(pt));
 
 		if ( func_sym == nullptr )
 		{
 			try
 			{
 				while ( scope != nullptr && CallHelper::getOverloadedFunc(name, scope) == ov_func )
-					scope = scope->getEnclosingScope();
+					scope = scope -> getEnclosingScope();
 				continue;
 			}
 			catch ( SemanticError& e ) { return nullptr; }
@@ -113,7 +114,7 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 std::vector<VariableType> CallHelper::extractTypes(std::vector<ExprNode*> params)
 {
 	vector<VariableType> params_types(params.size());
-	std::transform(std::begin(params), std::end(params), std::begin(params_types), [](ExprNode *t) { return t->getType(); });
+	std::transform(std::begin(params), std::end(params), std::begin(params_types), [](ExprNode *t) { return t -> getType(); });
 
 	return params_types;
 }
@@ -123,16 +124,15 @@ ConversionInfo CallHelper::getConversionInfo(VariableType lhs, VariableType rhs,
 	auto _lhs = VariableType(lhs.type);
 	auto _rhs = VariableType(rhs.type);
 
-	if ( rhs.is_ref )
-	{
-		if ( _lhs != _rhs )
-			throw SemanticError("Invalid initialization of '" + rhs.getName() + "' with type '" + lhs.getName() + "'");
+	auto conv = (_lhs == _rhs) ? nullptr : static_cast<StructSymbol*>(lhs.type) -> getConversionTo(static_cast<StructSymbol*>(rhs.type));
 
-		return ConversionInfo(nullptr, lhs.is_ref && !is_lhs_left_value, !lhs.is_ref);
-	}
-	else
-	{
-		auto conv = (_lhs == _rhs) ? nullptr : TypeHelper::getConversion(_lhs, _rhs);
-		return ConversionInfo(conv, lhs.is_ref && !is_lhs_left_value, false);
-	}
+	if ( _lhs != _rhs && conv == nullptr )
+		throw SemanticError("Invalid initialization of '" + rhs.getName() + "' with type '" + lhs.getName() + "'.");
+
+	ConversionInfo conv_info(conv, lhs.is_ref && !is_lhs_left_value, !lhs.is_ref);
+
+	conv_info.actual_type  = lhs;
+	conv_info.desired_type = rhs;
+
+	return conv_info;
 }

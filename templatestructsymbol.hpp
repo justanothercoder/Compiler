@@ -8,24 +8,25 @@
 #include "templatesymbol.hpp"
 
 #include "typeinfo.hpp"
+#include "structsymbol.hpp"
 
 class TemplateStructSymbol : public StructSymbol, public TemplateSymbol
 {
 public:
 
-    TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, AST *holder);
+    TemplateStructSymbol(string name, Scope *enclosing_scope, const std::vector< std::pair<string, TypeInfo> >& template_symbols, AST *holder);
 
-    virtual SymbolType getSymbolType() const;
+    SymbolType getSymbolType() const override;
 
     bool isIn(string name) const;
     
-    virtual Symbol* getSpec(vector<ExprNode*> symbols) const;
+    Symbol* getSpec(vector<ExprNode*> symbols) const override;
     
 public:
 
 	mutable map< vector<ExprNode*>, StructSymbol*> specs;   
 
-    vector< pair<string, TypeInfo> > template_symbols;
+	std::vector< std::pair<string, TypeInfo> > template_symbols;
     AST *holder;
 };
 

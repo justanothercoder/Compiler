@@ -1,29 +1,38 @@
 #include "returnnode.hpp"
+#include "callhelper.hpp"
 
 ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), copy_call_info(), enclosing_func(nullptr), code_obj() { }
 
 ReturnNode::~ReturnNode() { delete expr; }
 
-CodeObject& ReturnNode::gen(const TemplateInfo& template_info)
+CodeObject& ReturnNode::gen()
 {
-	if ( enclosing_func->function_type_info.return_type.is_ref )
+	if ( enclosing_func -> return_type.is_ref )
 	{
-		if ( !expr->isLeftValue() )
-			throw SemanticError("cannot initialize " + enclosing_func->function_type_info.return_type.getName() + " with value of type " + expr->getType().getName());
+		if ( !expr -> isLeftValue() )
+			throw SemanticError("cannot initialize " + enclosing_func -> return_type.getName() + " with value of type " + expr -> getType().getName());
 
-		code_obj.emit(expr->gen(template_info).getCode());
+		code_obj.emit(expr -> gen().getCode());
 	}
 	else
 	{
 		CodeObject return_place;
 
-		return_place.emit("mov r9, [rbp]");
-	   	return_place.emit("lea rax, [r9 - " + std::to_string(GlobalConfig::int_size) + "]");
+//		return_place.emit("mov r9, [rbp]");
+//	   	return_place.emit("lea rax, [r9 - " + std::to_string(GlobalConfig::int_size) + "]");
 
-		code_obj.genCallCode(copy_call_info, {expr}, template_info, return_place, false);
+		auto& params_types = enclosing_func -> function_type_info.params_types;
+		int addr = std::accumulate(std::begin(params_types), std::end(params_types), 0, [](int acc, VariableType type)
+		{
+			return acc += type.getSize();
+		}) + 2 * GlobalConfig::int_size; // expr -> getType().getSize();
+
+		return_place.emit("mov rax, [rbp + " + std::to_string(addr) + "]");
+
+		code_obj.genCallCode(copy_call_info, {expr}, return_place, false);
 	}
 
-	if ( !enclosing_func->function_type_info.return_type.is_ref )
+	if ( !enclosing_func -> return_type.is_ref )
 		code_obj.emit("mov rax, [rax]");
 
     code_obj.emit("mov rsp, rbp");
@@ -33,24 +42,24 @@ CodeObject& ReturnNode::gen(const TemplateInfo& template_info)
 	return code_obj;
 }
 
-void ReturnNode::check(const TemplateInfo& template_info)
+void ReturnNode::check()
 {
-	auto scope = getScope();
-	while ( scope != nullptr && dynamic_cast<FunctionSymbol*>(scope) == nullptr )
-		scope = scope->getEnclosingScope();
+	auto _scope = scope;
+	while ( _scope != nullptr && dynamic_cast<FunctionSymbol*>(_scope) == nullptr )
+		_scope = _scope -> getEnclosingScope();
 
-	if ( scope == nullptr )
+	if ( _scope == nullptr )
 		throw SemanticError("return is not a in a function");
 
-	enclosing_func = dynamic_cast<FunctionSymbol*>(scope);
+	enclosing_func = dynamic_cast<FunctionSymbol*>(_scope);
 
-    expr->check(template_info);
+    expr -> check();
 
-	copy_call_info = CallHelper::callCheck(expr->getType().getTypeName(), static_cast<StructSymbol*>(expr->getType().type), {expr}, template_info);
+	copy_call_info = CallHelper::callCheck(expr -> getType().getTypeName(), static_cast<StructSymbol*>(expr -> getType().type), {expr});
 }
 	
-void ReturnNode::define(const TemplateInfo& template_info) { expr->define(template_info); }
+void ReturnNode::define() { expr -> define(); }
 
-AST* ReturnNode::copyTree() const { return new ReturnNode(static_cast<ExprNode*>(expr->copyTree())); }
+AST* ReturnNode::copyTree() const { return new ReturnNode(static_cast<ExprNode*>(expr -> copyTree())); }
 
 vector<AST*> ReturnNode::getChildren() const { return {expr}; }

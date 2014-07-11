@@ -12,16 +12,19 @@ public:
 
     NumberNode(string num);
 
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+    virtual void check();
+    virtual CodeObject& gen();
 
-	virtual vector<AST*> getChildren() const;
     virtual AST* copyTree() const;
 
 	string getNum() const;
     
 	virtual VariableType getType() const;
 	virtual bool isLeftValue() const;
+
+	virtual int neededSpaceForTemporaries();
+
+	virtual void freeTempSpace();
 
 private:
 

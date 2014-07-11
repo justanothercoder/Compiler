@@ -1,4 +1,5 @@
 #include "newexpressionnode.hpp"
+#include "functionsymbol.hpp"
 
 NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params) : type_info(type_info), params(params), call_info(), code_obj() { }
 
@@ -8,27 +9,38 @@ NewExpressionNode::~NewExpressionNode()
 		delete i;
 }
 
-void NewExpressionNode::check(const TemplateInfo& template_info)
+void NewExpressionNode::check()
 {
 	string name = type_info.type_name;
 
-	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, getScope(), template_info).type);
+	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, scope, template_info).type);
 
-	call_info = CallHelper::callCheck(name, type, params, template_info); 
+	call_info = CallHelper::callCheck(name, type, params); 
 
-	getScope()->get_valloc()->addLocal(this, type->getSize());
-	
-	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
-	for ( auto param : params )
-		getScope()->get_valloc()->addSpecialSpace(param);
+	scope -> getTempAlloc().add(type -> getSize());      //place for object itself
+	scope -> getTempAlloc().add(GlobalConfig::int_size); //place for reference to it
 }
 
-CodeObject& NewExpressionNode::gen(const TemplateInfo& template_info)
+CodeObject& NewExpressionNode::gen()
 {
-	CodeObject new_place;
-	new_place.emit("lea rax, [rbp - " + std::to_string(getScope()->get_valloc()->getAddress(this)) + "]");
+	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	scope -> getTempAlloc().claim(getType().type -> getSize());
 
-	code_obj.genCallCode(call_info, params, template_info, new_place, false);
+	string addr2 = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	scope -> getTempAlloc().claim(GlobalConfig::int_size);
+
+	CodeObject new_place;
+	new_place.emit("lea rax, " + addr);
+
+//	code_obj.emit("lea rax, " + addr2);
+//	code_obj.emit("push rax");
+
+	code_obj.genCallCode(call_info, params, new_place, false);
+
+	code_obj.emit("mov " + addr2 + ", rax");
+	code_obj.emit("lea rax, " + addr2);
+
+//	code_obj.emit("pop rax");
 
 	return code_obj;
 }
@@ -36,12 +48,17 @@ CodeObject& NewExpressionNode::gen(const TemplateInfo& template_info)
 AST* NewExpressionNode::copyTree() const 
 {
 	vector<ExprNode*> vec(params.size());
-	std::transform(std::begin(params), std::end(params), std::begin(vec), [&](ExprNode *e) { return static_cast<ExprNode*>(e->copyTree()); });
+	std::transform(std::begin(params), std::end(params), std::begin(vec), [](ExprNode *e) { return static_cast<ExprNode*>(e -> copyTree()); });
 
 	return new NewExpressionNode(type_info, vec);
 }
 
 vector<AST*> NewExpressionNode::getChildren() const { return vector<AST*>(std::begin(params), std::end(params)); }
 
-VariableType NewExpressionNode::getType() const { return call_info.callee->function_type_info.return_type; }
+VariableType NewExpressionNode::getType() const { return call_info.callee -> return_type; }
 bool NewExpressionNode::isLeftValue() const { return false; }
+
+void NewExpressionNode::freeTempSpace()
+{
+	scope -> getTempAlloc().free();	
+}

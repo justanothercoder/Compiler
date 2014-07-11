@@ -4,14 +4,22 @@
 #include "ast.hpp"
 #include "variabletype.hpp"
 
+#include "logger.hpp"
+
 class ExprNode : public AST
 {
 public:
 
-    virtual void define(const TemplateInfo& template_info);
+	ExprNode();
+
+    virtual void define();
     
     virtual VariableType getType() const = 0;
 	virtual bool isLeftValue() const = 0;
+
+	virtual void freeTempSpace() = 0;
+
+	Type *type_hint;
 };
 
 #endif

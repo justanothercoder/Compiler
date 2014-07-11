@@ -1,10 +1,11 @@
 #include "stringnode.hpp"
+#include "typehelper.hpp"
 
 StringNode::StringNode(string str) : str(str) { }
 
-void StringNode::check(const TemplateInfo&) { /*getScope()->get_valloc()->addLocal(256);*/ }
+void StringNode::check() {  }
 
-CodeObject& StringNode::gen(const TemplateInfo&)
+CodeObject& StringNode::gen()
 {
 	string str_label = StringNode::getNewLabel();
 
@@ -32,8 +33,6 @@ CodeObject& StringNode::gen(const TemplateInfo&)
 	return code_obj;
 }
 	
-vector<AST*> StringNode::getChildren() const { return { }; }
-
 AST* StringNode::copyTree() const { return new StringNode(str); }
 	
 string StringNode::getStr() const { return str; }
@@ -53,3 +52,8 @@ VariableType StringNode::getType() const
 }
 
 bool StringNode::isLeftValue() const { return false; }
+
+void StringNode::freeTempSpace()
+{
+
+}

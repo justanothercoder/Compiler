@@ -1,7 +1,9 @@
 #ifndef _CONVERSIONINFO_HPP_
 #define _CONVERSIONINFO_HPP_
 
-#include "functionsymbol.hpp"
+#include "variabletype.hpp"
+
+class FunctionSymbol;
 
 struct ConversionInfo 
 {
@@ -9,6 +11,9 @@ struct ConversionInfo
 	
 	FunctionSymbol *conversion;
 	bool deref, ref;
+
+	VariableType actual_type;
+	VariableType desired_type;
 };
 
 #endif

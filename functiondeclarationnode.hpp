@@ -24,19 +24,20 @@ public:
 
     FunctionDeclarationNode(string name, vector< pair<string, TypeInfo> > params, TypeInfo return_type_info, AST *statements, FunctionTraits traits);
 
-    virtual ~FunctionDeclarationNode();
+    ~FunctionDeclarationNode() override;
     
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
 
-    virtual void build_scope();    
+    void build_scope() override;
 
-    virtual Symbol* getDefinedSymbol() const;
+    Symbol* getDefinedSymbol() const override;
 
-    virtual void define(const TemplateInfo& template_info);
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+    void define() override;
+    void check() override;
 
-	virtual vector<AST*> getChildren() const;
+    CodeObject& gen() override;
+
+	vector<AST*> getChildren() const override;
     
 private:
 

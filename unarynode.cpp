@@ -3,17 +3,26 @@
 UnaryNode::UnaryNode(ExprNode *exp, UnaryOp op_type) : exp(exp), op_type(op_type) { }
 UnaryNode::~UnaryNode() { delete exp; } 
 
-void UnaryNode::check(const TemplateInfo& template_info)
+void UnaryNode::check()
 {
-	exp->check(template_info);
-	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(exp->getType().type), { }, template_info);
+	exp -> check();
+	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(exp -> getType().type), { });
 	
-	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
+	scope -> getTempAlloc().add(getType().getSize());
 }
 
-CodeObject& UnaryNode::gen(const TemplateInfo& template_info)
+CodeObject& UnaryNode::gen()
 {
-	code_obj.genCallCode(call_info, { }, template_info, exp->gen(template_info), exp->getType().is_ref);
+	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	scope -> getTempAlloc().claim(getType().getSize());
+
+	code_obj.emit("lea rax, " + addr);
+	code_obj.emit("push rax");
+
+	code_obj.genCallCode(call_info, { }, exp -> gen(), exp -> getType().is_ref);
+	
+	code_obj.emit("pop rax");
+
 	return code_obj;
 }
 
@@ -38,7 +47,12 @@ string UnaryNode::getCodeOperatorName()
 }
 
 std::vector<AST*> UnaryNode::getChildren() const { return {exp}; }
-AST* UnaryNode::copyTree() const { return new UnaryNode(static_cast<ExprNode*>(exp->copyTree()), op_type); }
+AST* UnaryNode::copyTree() const { return new UnaryNode(static_cast<ExprNode*>(exp -> copyTree()), op_type); }
 
-VariableType UnaryNode::getType() const { return call_info.callee->function_type_info.return_type; }
+VariableType UnaryNode::getType() const { return call_info.callee -> return_type; }
 bool UnaryNode::isLeftValue() const { return false; }
+
+void UnaryNode::freeTempSpace() 
+{
+
+}

@@ -12,42 +12,43 @@ ForNode::~ForNode()
 
 void ForNode::build_scope()
 {
-	for_scope = new LocalScope(getScope());
+	for_scope = new LocalScope(scope);
 
 	for ( auto child : getChildren() )
 	{
-		child->setScope(for_scope);
-		child->build_scope();
+		child -> scope         = for_scope;
+		child -> template_info = template_info;
+		child -> build_scope();
 	}
 }
 
-void ForNode::define(const TemplateInfo& template_info)
+void ForNode::define()
 {
 	for ( auto child : getChildren() )
-		child->define(template_info);
+		child -> define();
 }
 
-void ForNode::check(const TemplateInfo& template_info)
+void ForNode::check()
 {
 	for ( auto child : getChildren() )
-		child->check(template_info);
+		child -> check();
 }
 
-CodeObject& ForNode::gen(const TemplateInfo& template_info)
+CodeObject& ForNode::gen()
 {
 	auto label1 = ForNode::getNewLabel();	
 	auto label2 = ForNode::getNewLabel();
 
-	code_obj.emit(init->gen(template_info).getCode());
+	code_obj.emit(init -> gen().getCode());
 	code_obj.emit(label1 + ":");
 
-	code_obj.emit(cond->gen(template_info).getCode());
+	code_obj.emit(cond -> gen().getCode());
 
     code_obj.emit("cmp qword [rax], 0");
     code_obj.emit("jz " + label2);
 
-	code_obj.emit(stats->gen(template_info).getCode());
-	code_obj.emit(step->gen(template_info).getCode());
+	code_obj.emit(stats -> gen().getCode());
+	code_obj.emit(step -> gen().getCode());
 
 	code_obj.emit("jmp " + label1);
 	code_obj.emit(label2 + ":");
@@ -55,7 +56,11 @@ CodeObject& ForNode::gen(const TemplateInfo& template_info)
 	return code_obj;
 }
 
-AST* ForNode::copyTree() const { return new ForNode(init->copyTree(), static_cast<ExprNode*>(cond->copyTree()), step->copyTree(), stats->copyTree()); }
+AST* ForNode::copyTree() const 
+{ 
+	return new ForNode(init -> copyTree(), static_cast<ExprNode*>(cond -> copyTree()), step -> copyTree(), stats -> copyTree()); 
+}
+
 vector<AST*> ForNode::getChildren() const { return {init, cond, step, stats}; }
 
 string ForNode::getNewLabel() 

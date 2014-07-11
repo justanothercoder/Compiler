@@ -1,3 +1,5 @@
 #include "exprnode.hpp"
 
-void ExprNode::define(const TemplateInfo&) { }
+ExprNode::ExprNode() : type_hint(nullptr) { }
+
+void ExprNode::define() { }

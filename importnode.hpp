@@ -8,13 +8,12 @@ class ImportNode : public AST
 public:
 	ImportNode(string lib);
 
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
 	
-    virtual void define(const TemplateInfo& template_info);
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+    void define() override;
+    void check() override;
 
-	virtual std::vector<AST*> getChildren() const;
+    CodeObject& gen() override;
 
 private:
 

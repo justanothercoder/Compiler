@@ -4,43 +4,48 @@ CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(c
 
 CallNode::~CallNode() { delete caller; }
     
-void CallNode::check(const TemplateInfo& template_info)
+void CallNode::check()
 {
-    caller->check(template_info);
+    caller -> check();
 
-    auto caller_type = caller->getType().type;
+    auto caller_type = caller -> getType().type;
 
-    if ( caller_type->getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
+    if ( caller_type -> getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	{
-		if ( caller_type->getTypeKind() != TypeKind::STRUCT )
+		if ( caller_type -> getTypeKind() != TypeKind::STRUCT )
 			throw SemanticError("caller is not a function.");
 
-		call_info = CallHelper::callCheck("operator()", static_cast<StructSymbol*>(caller_type), params, template_info);
+		call_info = CallHelper::callCheck("operator()", static_cast<StructSymbol*>(caller_type), params);
 	}
 	else
 	{
 		auto ov_func = static_cast<OverloadedFunctionSymbol*>(caller_type);
-		auto scope = ov_func->isMethod() ? static_cast<StructSymbol*>(ov_func->getBaseType().type) : getScope();
-		call_info = CallHelper::callCheck(ov_func->getName(), scope, params, template_info);
+		auto _scope = ov_func -> isMethod() ? static_cast<StructSymbol*>(ov_func -> getBaseType().type) : scope;
+		call_info = CallHelper::callCheck(ov_func -> getName(), _scope, params);
 	}
 
-	GlobalHelper::setTypeHint(caller, call_info.callee);
+	caller -> type_hint = call_info.callee;
 	
-	getScope()->get_valloc()->addReturnValueSpace(getType().getSize());
-	
-	for ( auto param : params )
-		getScope()->get_valloc()->addSpecialSpace(param);
+	scope -> getTempAlloc().add(getType().getSize());
 }
 
-CodeObject& CallNode::gen(const TemplateInfo& template_info)
+CodeObject& CallNode::gen()
 {  
-  	if ( call_info.callee->isMethod() )
-		code_obj.genCallCode(call_info, params, template_info, caller->gen(template_info), caller->getType().is_ref);
+	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	scope -> getTempAlloc().claim(getType().getSize());
+
+	code_obj.emit("lea rax, " + addr);
+	code_obj.emit("push rax");
+
+  	if ( call_info.callee -> isMethod() )
+		code_obj.genCallCode(call_info, params, caller -> gen(), caller -> getType().is_ref);
 	else
 	{
 		CodeObject empty;
-		code_obj.genCallCode(call_info, params, template_info, empty, false);
+		code_obj.genCallCode(call_info, params, empty, false);
 	}
+
+	code_obj.emit("pop rax");
 
 	return code_obj;
 }
@@ -48,8 +53,12 @@ CodeObject& CallNode::gen(const TemplateInfo& template_info)
 AST* CallNode::copyTree() const
 {
     vector<ExprNode*> expr(params.size());
-    std::transform(std::begin(params), std::end(params), std::begin(expr), [&] (ExprNode *ex) { return static_cast<ExprNode*>(ex->copyTree()); });
-    return new CallNode(static_cast<ExprNode*>(caller->copyTree()), expr);
+    std::transform(std::begin(params), std::end(params), std::begin(expr), [&] (ExprNode *ex) 
+	{ 
+		return static_cast<ExprNode*>(ex -> copyTree()); 
+	});
+
+    return new CallNode(static_cast<ExprNode*>(caller -> copyTree()), expr);
 }
 
 vector<AST*> CallNode::getChildren() const
@@ -59,5 +68,10 @@ vector<AST*> CallNode::getChildren() const
 	return vec;
 }
 
-VariableType CallNode::getType() const { return call_info.callee->function_type_info.return_type; }
+VariableType CallNode::getType() const { return call_info.callee -> return_type; }
 bool CallNode::isLeftValue() const { return false; }
+
+void CallNode::freeTempSpace()
+{
+
+}

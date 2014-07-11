@@ -3,8 +3,6 @@
 
 #include <map>
 
-#include "alldeps.hpp"
-
 #include "basescope.hpp"
 #include "functionsymbol.hpp"
 #include "overloadedfunctiontypeinfo.hpp"
@@ -21,16 +19,18 @@ public:
 
     GlobalScope();
 
-    virtual void accept(ScopeVisitor *visitor);
+    void accept(ScopeVisitor *visitor) override;
 
-    virtual Scope* getEnclosingScope() const;
-    virtual string getScopeName() const;
+    Scope* getEnclosingScope() const override;
+    string getScopeName() const override;
 	
-	virtual VarAllocator* get_valloc() const;
+	VarAllocator& getVarAlloc() override;
+	TempAllocator& getTempAlloc() override;
 
 private:
 
-	mutable VarAllocator valloc;
+	VarAllocator var_alloc;
+	TempAllocator temp_alloc;
 };
 
 #endif

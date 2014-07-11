@@ -18,7 +18,7 @@ public:
 
     static FunctionSymbol* getConversion(VariableType lhs, VariableType rhs);
 
-    static VariableType fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateInfo& template_info);
+    static VariableType fromTypeInfo(TypeInfo type_info, Scope *scope, TemplateInfo *template_info);
     
     static bool isConvertable(VariableType lhs, VariableType rhs);
     

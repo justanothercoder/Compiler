@@ -1,15 +1,14 @@
 #ifndef _STRUCTSYMBOL_HPP_
-#define _STRUCTSYMBOL_HPP_
-
-#include <map>
+#define _STRUCTSYMBOL_HPP_ #include <map>
 
 #include "symbol.hpp"
 #include "scope.hpp"
 #include "type.hpp"
 #include "variablesymbol.hpp"
-#include "functionsymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 #include "fieldvarallocator.hpp"
+
+#include "basescope.hpp"
 
 using std::map;
 
@@ -19,24 +18,42 @@ public:
 
     friend class VariableSymbolDefine;
 
-    virtual void accept(ScopeVisitor *visitor);
+    void accept(ScopeVisitor *visitor) override;
     
     StructSymbol(string name, Scope *enclosing_scope);
 
-    virtual SymbolType getSymbolType() const;
-    virtual string getName() const;
+    SymbolType getSymbolType() const override;
+    string getName() const override;
 
-    virtual int getSize() const;
-    virtual TypeKind getTypeKind() const ;
+    int getSize() const override;
+    TypeKind getTypeKind() const override;
 	
     Symbol* resolveMember(string name) const;
 
-    virtual Scope* getEnclosingScope() const;
-    virtual Symbol* resolve(string name) const;
+    Scope* getEnclosingScope() const override;
+    Symbol* resolve(string name) const override;
 
-    virtual string getScopeName() const;
+    string getScopeName() const override;
 
-	virtual VarAllocator* get_valloc() const;
+	VarAllocator& getVarAlloc() override;
+
+	FunctionSymbol* getConversionTo(StructSymbol *st);
+	bool isConvertableTo(StructSymbol *st);
+
+	int rankOfConversion(StructSymbol *st);
+
+	FunctionSymbol* getConversionConstructor(StructSymbol *st);
+	bool hasConversionConstructor(StructSymbol *st);
+
+	FunctionSymbol* getConversionOperator(StructSymbol *st);
+	bool hasConversionOperator(StructSymbol *st);
+
+	FunctionSymbol* getCopyConstructor();
+	FunctionSymbol* getDefaultConstructor();
+
+	FunctionSymbol* constructorWith(FunctionTypeInfo ft);
+
+	TempAllocator& getTempAlloc() override;
 
 private:
 
@@ -48,7 +65,8 @@ private:
 
     string scope_name;
 
-	mutable FieldVarAllocator valloc;
+	FieldVarAllocator var_alloc;
+	TempAllocator temp_alloc;
 };
 		     
 #endif

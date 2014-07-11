@@ -11,6 +11,9 @@
 #include "overloadedfunctionsymbol.hpp"
 #include "paramvarallocator.hpp"
 
+#include "codeobject.hpp"
+#include "optional.hpp"
+
 class VariableSymbol;
 
 using std::map;
@@ -21,7 +24,7 @@ class FunctionSymbol : public Symbol, public BaseScope, public Type
     friend class VariableSymbolDefine;
 public:
 
-    FunctionSymbol(string name, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, CodeObject *code_obj = nullptr);
+    FunctionSymbol(string name, VariableType return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, optional<CodeObject> code_obj = optional<CodeObject>::empty());
 
     string getTypedName() const;
     string getScopedTypedName() const;
@@ -30,21 +33,24 @@ public:
     bool isMethod() const;
     bool isConstructor() const;
 
-    virtual string getScopeName() const;
-    virtual Scope* getEnclosingScope() const;
-    virtual void accept(ScopeVisitor *visitor);
+    string getScopeName() const override;
+    Scope* getEnclosingScope() const override;
+    void accept(ScopeVisitor *visitor) override;
 
-    virtual string getName() const;
-    virtual SymbolType getSymbolType() const;
+    string getName() const override;
+	SymbolType getSymbolType() const override;
     
     FunctionTraits getTraits() const;
     
-    virtual TypeKind getTypeKind() const;
-    virtual int getSize() const;
-	virtual VarAllocator* get_valloc() const;
+    TypeKind getTypeKind() const override;
+    int getSize() const override;
 
-	CodeObject *code_obj;
+	VarAllocator& getVarAlloc() override;
+	TempAllocator& getTempAlloc() override;
 
+	optional<CodeObject> code_obj;
+
+	VariableType return_type;
     FunctionTypeInfo function_type_info;
 
 private:
@@ -57,7 +63,9 @@ private:
 
     FunctionTraits traits;
 
-	mutable ParamVarAllocator valloc;
+	ParamVarAllocator var_alloc;
+
+	TempAllocator temp_alloc;
 };
 
 #endif

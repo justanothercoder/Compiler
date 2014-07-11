@@ -8,14 +8,10 @@
 using std::string;
 
 #include "type.hpp"
-#include "functionsymbol.hpp"
-#include "typehelper.hpp"
-#include "templateinfo.hpp"
 #include "builtins.hpp"
 #include "callinfo.hpp"
 
-#include "variablenode.hpp"
-#include "dotnode.hpp"
+class FunctionSymbol;
 
 class CodeObject
 {
@@ -23,8 +19,8 @@ public:
 
 	void emit(string text);
 
-	void genCallCode(CallInfo call_info, vector<ExprNode*> params, const TemplateInfo& template_info, CodeObject& genThis, bool thisIsRef);
-	void genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr, const TemplateInfo& template_info);
+	void genCallCode(CallInfo call_info, vector<ExprNode*> params, CodeObject& genThis, bool thisIsRef);
+	void genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr);
 
 	void pushOnStack(size_t size, int offset);
 

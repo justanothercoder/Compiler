@@ -1,4 +1,5 @@
 #include "templateinfo.hpp"
+#include "templatestructsymbol.hpp"
 
 TemplateInfo::TemplateInfo() : TemplateInfo(nullptr, { }) { }
 TemplateInfo::TemplateInfo(TemplateStructSymbol *sym, std::vector<ExprNode*> expr) : sym(sym), expr(expr) { }

@@ -4,7 +4,8 @@
 #include <vector>
 #include <string>
 
-#include "templatestructsymbol.hpp"
+//#include "templatestructsymbol.hpp"
+class TemplateStructSymbol;
 
 using namespace std;
 

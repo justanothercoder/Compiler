@@ -3,22 +3,22 @@
 
 #include <set>
 #include <map>
+#include <algorithm>
 
 #include "functiontypeinfo.hpp"
 
 class FunctionSymbol;
 
-using std::set;
-using std::map;
-
 class OverloadedFunctionTypeInfo
 {
 public:
 
-    OverloadedFunctionTypeInfo(const set<FunctionTypeInfo>& overloads);
-    
-    set<FunctionTypeInfo> overloads;
-    map<FunctionTypeInfo, FunctionSymbol*> symbols;
+    OverloadedFunctionTypeInfo(std::set<FunctionTypeInfo> overloads);
+
+	std::set<FunctionTypeInfo> getBestOverload(FunctionTypeInfo params_type) const;
+
+	std::set<FunctionTypeInfo> overloads;
+	std::map<FunctionTypeInfo, FunctionSymbol*> symbols;
 
 };
 

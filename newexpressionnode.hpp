@@ -19,16 +19,18 @@ class NewExpressionNode : public ExprNode
 {
 public:
     NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params);
-	virtual ~NewExpressionNode();
+	~NewExpressionNode() override;
 
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+    void check() override;
+    CodeObject& gen() override;
 
-	virtual vector<AST*> getChildren() const;
-    virtual AST* copyTree() const;
+	vector<AST*> getChildren() const override;
+    AST* copyTree() const override;
 
-    virtual VariableType getType() const;
-	virtual bool isLeftValue() const;
+    VariableType getType() const override;
+	bool isLeftValue() const override;
+
+	void freeTempSpace() override;
 
 private:
 

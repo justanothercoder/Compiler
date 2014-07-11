@@ -1,59 +1,62 @@
 #include "dotnode.hpp"
+#include "functionsymbol.hpp"
 
 DotNode::DotNode(ExprNode *base, string member_name) : base(base), member_name(member_name), base_type(nullptr), member(nullptr), code_obj(new CodeObject()) { }
 
 DotNode::~DotNode() { delete base; delete code_obj; }
 
-void DotNode::check(const TemplateInfo& template_info)
+void DotNode::check()
 {
-	base->check(template_info);
+	base -> check();
 
-	auto _base_type = base->getType();
+	auto _base_type = base -> getType();
 
 	base_type = dynamic_cast<StructSymbol*>(_base_type.type);
 
 	if ( base_type == nullptr )
 		throw SemanticError("left side of '.' is not an instance of struct.");
 
-	member = dynamic_cast<VariableSymbol*>(base_type->resolveMember(member_name));
+	member = dynamic_cast<VariableSymbol*>(base_type -> resolveMember(member_name));
 
 	if ( member == nullptr )
-		throw SemanticError(member_name + " is not member of " + base_type->getName());
+		throw SemanticError(member_name + " is not member of " + base_type -> getName());
 }
 
-CodeObject& DotNode::gen(const TemplateInfo& template_info)
+CodeObject& DotNode::gen()
 {    
-	code_obj->emit(base->gen(template_info).getCode());
+	code_obj -> emit(base -> gen().getCode());
 	
-	auto member_type = member->getType();
+	auto member_type = member -> getType();
 
-	if ( member_type.is_ref )
-		code_obj->emit("mov rax, [rax - " + std::to_string(base_type->get_valloc()->getAddress(member)) + "]");
-	else if ( member_type.type->getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
+	if ( member_type.type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
 		auto ov_func = static_cast<OverloadedFunctionSymbol*>(member_type.type);
 
-		auto ov_func_type_info = ov_func->getTypeInfo();
+		auto ov_func_type_info = ov_func -> getTypeInfo();
 
 		if ( ov_func_type_info.overloads.size() > 1 )
 		{
-			auto hint_type = GlobalHelper::getTypeHint(this);
-			if ( hint_type == nullptr )
-				throw SemanticError("multiple overloads of " + base_type->getName() + "::" + member->getName());
+			if ( type_hint == nullptr )
+				throw SemanticError("multiple overloads of " + base_type -> getName() + "::" + member -> getName());
 
-			member = new VariableSymbol(member_name, VariableType(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(hint_type)->function_type_info]));
+			member = new VariableSymbol(member_name, VariableType(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(type_hint) -> function_type_info]));
 		} else
-			member = new VariableSymbol(ov_func->getName(), VariableType(std::begin(ov_func_type_info.symbols)->second));
+			member = new VariableSymbol(ov_func -> getName(), VariableType(std::begin(ov_func_type_info.symbols) -> second));
 	}
 	else
-		code_obj->emit("lea rax, [rax - " + std::to_string(base_type->get_valloc()->getAddress(member)) + "]");
+		code_obj -> emit("lea rax, [rax - " + std::to_string(base_type -> getVarAlloc().getAddress(member)) + "]");
 
 	return *code_obj;
 }
 	
 vector<AST*> DotNode::getChildren() const { return {base}; }
 
-AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base->copyTree()), member_name); }
+AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base -> copyTree()), member_name); }
 
-VariableType DotNode::getType() const { return member->getType(); }
+VariableType DotNode::getType() const { return member -> getType(); }
 bool DotNode::isLeftValue() const { return true; }
+
+void DotNode::freeTempSpace()
+{
+
+}

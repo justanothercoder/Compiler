@@ -14,12 +14,12 @@ public:
 	
 	AsmArrayNode();
 
-	virtual void define(const TemplateInfo& template_info);
-	virtual void check(const TemplateInfo& template_info);
-	virtual CodeObject& gen(const TemplateInfo& template_info);
+	void define() override;
+	void check() override;
+
+	CodeObject& gen() override;
 	
-	virtual AST* copyTree() const;
-	virtual std::vector<AST*> getChildren() const;
+	AST* copyTree() const override;
 
 private:
 	

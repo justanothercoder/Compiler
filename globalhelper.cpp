@@ -1,19 +1,6 @@
 #include "globalhelper.hpp"
+#include "scope.hpp"
 
-map<ExprNode*, Type*> GlobalHelper::type_hints;
-map<Symbol*, bool> GlobalHelper::is_defined;
-map<AST*, Scope*> GlobalHelper::ast_scopes;
-
-Type* GlobalHelper::getTypeHint(ExprNode *expr) 
-{ 
-	auto it = type_hints.find(expr);
-	return it == std::end(type_hints) ? nullptr : it->second;
-}
-void GlobalHelper::setTypeHint(ExprNode *expr, Type *type) { type_hints[expr] = type; }
-
-Scope* GlobalHelper::getASTScope(AST *t) { return ast_scopes.at(t); }
-void GlobalHelper::setASTScope(AST *t, Scope *sc) { ast_scopes[t] = sc; }
-	
 std::string GlobalHelper::getCodeOperatorName(std::string op)
 {
     if      ( op == "operator()" ) return "operatorcall";
@@ -32,6 +19,8 @@ std::string GlobalHelper::getCodeOperatorName(std::string op)
 	else if ( op.substr(0, 8) == "operator" ) return "operator~" + op.substr(9);
 	else throw;
 }
-    
-int GlobalHelper::isAlreadyDefined(Symbol *sym) { return is_defined.find(sym) != std::end(is_defined) && is_defined[sym] == true; }
-void GlobalHelper::setDefined(Symbol *sym) { is_defined[sym] = true; }
+
+int GlobalHelper::transformAddress(Scope *scope, int addr)
+{
+	return scope -> getVarAlloc().getSpace() + GlobalConfig::int_size + addr; 
+}

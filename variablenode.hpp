@@ -4,32 +4,29 @@
 #include "exprnode.hpp"
 #include "overloadedfunctiontypeinfo.hpp"
 #include "variablesymbol.hpp"
-#include "functionsymbol.hpp"
-#include "typehelper.hpp"
-#include "structsymbol.hpp"
 #include "globalhelper.hpp"
-#include "codeobject.hpp"
 #include "templatestructsymbol.hpp"
 #include "classvariablesymbol.hpp"
 #include "templateinfo.hpp"
+#include "codeobject.hpp"
 
 class VariableNode : public ExprNode
 {
 public:
 
     VariableNode(string name);
-	~VariableNode();
 
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+    void check() override;
+    CodeObject& gen() override;
 
-	virtual vector<AST*> getChildren() const;
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
 
     bool isTemplateParam() const;
     
-    virtual VariableType getType() const;
-	virtual bool isLeftValue() const;
+    VariableType getType() const override;
+	bool isLeftValue() const override;
+
+	void freeTempSpace() override;
 
 private:
 
@@ -37,8 +34,8 @@ private:
     
     VariableSymbol *variable;
 
-	TemplateInfo template_info;
-	CodeObject *code_obj;
+	TemplateInfo _template_info;
+	CodeObject code_obj;
 };
 
 #endif

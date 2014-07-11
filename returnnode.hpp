@@ -13,15 +13,16 @@ public:
 
     ReturnNode(ExprNode *expr);
 	
-	virtual ~ReturnNode();
+	~ReturnNode() override;
 
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
 
-	virtual void define(const TemplateInfo& template_info);
-	virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+	void define() override;
+	void check() override;
 
-	virtual vector<AST*> getChildren() const;
+    CodeObject& gen() override;
+
+	vector<AST*> getChildren() const override;
 
 private:
 

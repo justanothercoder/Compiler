@@ -11,17 +11,18 @@ public:
 
 	StringNode(string str);
 
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
+    void check() override;
+    CodeObject& gen() override;
 
-	virtual std::vector<AST*> getChildren() const;
-	virtual AST* copyTree() const;
+	AST* copyTree() const override;
 
 	string getStr() const;
 	static string getNewLabel();
 
-	virtual VariableType getType() const;
-	virtual bool isLeftValue() const;
+	VariableType getType() const override;
+	bool isLeftValue() const override;
+
+	void freeTempSpace() override;
 
 private:
 	

@@ -4,12 +4,12 @@
 #include <vector>
 
 #include "declarationnode.hpp"
-#include "structsymbol.hpp"
-#include "symboldefine.hpp"
 #include "codeobject.hpp"
 #include "functionsymboldefine.hpp"
 
 using std::vector;
+
+class StructSymbol;
 
 class StructDeclarationNode : public DeclarationNode
 {
@@ -17,20 +17,21 @@ public:
 
     StructDeclarationNode(string name, const vector<AST*>& inner);
 
-    virtual ~StructDeclarationNode();
+    ~StructDeclarationNode() override;
 
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
     
     void build_scope();    
 
-    virtual Symbol* getDefinedSymbol() const;
+    Symbol* getDefinedSymbol() const override;
 
-	virtual void define(const TemplateInfo& template_info);
-    virtual void check(const TemplateInfo& template_info);
-    virtual CodeObject& gen(const TemplateInfo& template_info);
-
-	virtual vector<AST*> getChildren() const;
+	void define() override;
+    void check() override;
     
+	CodeObject& gen() override;
+
+	vector<AST*> getChildren() const override;
+
 protected:
 
     string name;

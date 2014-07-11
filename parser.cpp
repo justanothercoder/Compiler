@@ -45,7 +45,7 @@ AST* Parser::block()
 	return new StatementNode(statements);
 }
 
-DeclarationNode* Parser::declaration(std::shared_ptr<string> struct_name)
+DeclarationNode* Parser::declaration(optional<string> struct_name)
 {
 	if      ( getTokenType(1) == TokenType::STRUCT )   return structDecl();
 	else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateStructDecl();
@@ -68,7 +68,7 @@ bool Parser::tryVarDecl()
 	return success;
 }
 
-DeclarationNode* Parser::variableDecl(std::shared_ptr<string> struct_name)
+DeclarationNode* Parser::variableDecl(optional<string> struct_name)
 {
 	auto type_info = typeInfo();
 	string var_name  = id();
@@ -83,7 +83,7 @@ DeclarationNode* Parser::variableDecl(std::shared_ptr<string> struct_name)
 		constructor_call_params = {expression()};
 	}
 
-	return new VariableDeclarationNode(var_name, type_info, struct_name != nullptr, constructor_call_params);
+	return new VariableDeclarationNode(var_name, type_info, bool(struct_name), constructor_call_params);
 }
 
 DeclarationNode* Parser::structDecl()
@@ -105,9 +105,9 @@ DeclarationNode* Parser::structDecl()
 		if ( getTokenType(1) != TokenType::RBRACE )
 		{
 			if ( getTokenType(1) == TokenType::DEF )
-				functions.push_back(functionDecl(std::make_shared<string>(string(struct_name))));
+				functions.push_back(functionDecl(make_optional(string(struct_name))));
 			else		
-				struct_in.push_back(declaration(std::make_shared<string>(string(struct_name))));
+				struct_in.push_back(declaration(make_optional(string(struct_name))));
 		}
 	}
 
@@ -158,7 +158,7 @@ DeclarationNode* Parser::templateStructDecl()
 			match(TokenType::SEMICOLON);
 
 		if ( getTokenType(1) != TokenType::RBRACE )
-			struct_in.push_back(declaration(std::make_shared<string>(string(struct_name))));
+			struct_in.push_back(declaration(make_optional(string(struct_name))));
 	}
 
 	match(TokenType::RBRACE);
@@ -166,7 +166,7 @@ DeclarationNode* Parser::templateStructDecl()
 	return new TemplateStructDeclarationNode(struct_name, struct_in, template_params);
 }
 
-DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
+DeclarationNode* Parser::functionDecl(optional<string> struct_name)
 {
 	match(TokenType::DEF);
 
@@ -199,7 +199,7 @@ DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
 
 	TypeInfo return_type;
 
-	bool is_constructor = (struct_name != nullptr && function_name == *struct_name);
+	bool is_constructor = (bool(struct_name) && function_name == *struct_name);
 
 	if ( !is_constructor )
 	{
@@ -216,7 +216,7 @@ DeclarationNode* Parser::functionDecl(std::shared_ptr<string> struct_name)
 
 	AST *statements = block();
 
-	return new FunctionDeclarationNode(function_name, params, return_type, statements, {struct_name != nullptr, is_constructor, is_operator});
+	return new FunctionDeclarationNode(function_name, params, return_type, statements, {bool(struct_name), is_constructor, is_operator});
 }
 
 string Parser::id()

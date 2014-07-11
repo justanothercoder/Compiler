@@ -1,4 +1,7 @@
 #include "structdeclarationnode.hpp"
+#include "structsymbol.hpp"
+#include "symboldefine.hpp"
+#include "functionhelper.hpp"
 
 StructDeclarationNode::StructDeclarationNode(string name, const vector<AST*>& inner) : name(name), inner(inner), definedSymbol(nullptr) { }
 
@@ -14,39 +17,38 @@ Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; 
 
 void StructDeclarationNode::build_scope()
 {
-    definedSymbol = new StructSymbol(name, getScope());
-    getScope()->accept(new SymbolDefine(definedSymbol));
-    for ( auto i : inner )
+    definedSymbol = new StructSymbol(name, scope);
+
+	scope -> accept(new SymbolDefine(definedSymbol));
+
+	for ( auto i : inner )
     {
-		i->setScope(definedSymbol);
-		i->build_scope();
+		i -> scope         = definedSymbol;
+		i -> template_info = template_info;
+		i -> build_scope();
     }
 }
 
-void StructDeclarationNode::define(const TemplateInfo& template_info)
+void StructDeclarationNode::define()
 {
     for ( auto decl : inner )
-		decl->define(template_info);
+		decl -> define();
 }
 
-void StructDeclarationNode::check(const TemplateInfo& template_info)
+void StructDeclarationNode::check()
 {
-	GlobalHelper::setDefined(getDefinedSymbol());
+	getDefinedSymbol() -> is_defined = true;
 	
-	try
+	if ( definedSymbol -> getDefaultConstructor() == nullptr )
 	{
-		auto constr = TypeHelper::getDefaultConstructor(definedSymbol);
-	}
-	catch ( SemanticError& e )
-	{
-		auto default_constr = FunctionHelper::makeDefaultConstructor(definedSymbol, template_info);
-		definedSymbol->accept(new FunctionSymbolDefine(default_constr));
+		auto default_constr = FunctionHelper::makeDefaultConstructor(definedSymbol);
+		definedSymbol -> accept(new FunctionSymbolDefine(default_constr));
 		default_constr_code = *default_constr->code_obj;
 	}
 
-	if ( TypeHelper::getCopyConstructor(definedSymbol) == nullptr )
+	if ( definedSymbol -> getCopyConstructor() == nullptr )
 	{
-		auto copy_constr = FunctionHelper::makeDefaultCopyConstructor(definedSymbol, template_info);
+		auto copy_constr = FunctionHelper::makeDefaultCopyConstructor(definedSymbol);
 		definedSymbol->accept(new FunctionSymbolDefine(copy_constr));
 		default_copy_constr_code = *copy_constr->code_obj;
 	}
@@ -54,19 +56,19 @@ void StructDeclarationNode::check(const TemplateInfo& template_info)
 	for ( auto decl : inner )
 	{
 		if ( dynamic_cast<DeclarationNode*>(decl) )
-			GlobalHelper::setDefined(static_cast<DeclarationNode*>(decl)->getDefinedSymbol());
+			static_cast<DeclarationNode*>(decl)->getDefinedSymbol()->is_defined = true;
 	}
 
 	for ( auto decl : inner )
-		decl->check(template_info);	
+		decl->check();	
 }
 
-CodeObject& StructDeclarationNode::gen(const TemplateInfo& template_info)
+CodeObject& StructDeclarationNode::gen()
 {
 	code_obj.emit(default_constr_code.getCode());
 	code_obj.emit(default_copy_constr_code.getCode());
     for ( auto decl : inner )
-		code_obj.emit(decl->gen(template_info).getCode());
+		code_obj.emit(decl->gen().getCode());
 	return code_obj;
 }
 

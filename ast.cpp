@@ -2,16 +2,18 @@
 
 AST::~AST() { }
  
-Scope* AST::getScope() const { return GlobalHelper::getASTScope(const_cast<AST*>(this)); }
-void AST::setScope(Scope *sc) { return GlobalHelper::setASTScope(this, sc); }
-
 void AST::build_scope()
 {
 	std::vector<AST*> children = getChildren();
 
 	for ( auto child : children )
 	{
-		child->setScope(getScope());
-		child->build_scope();
+		child -> scope         = scope;
+		child -> template_info = template_info;
+
+		child -> build_scope();
 	}
 }
+	
+std::vector<AST*> AST::getChildren() const { return { }; } 
+

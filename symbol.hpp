@@ -18,6 +18,8 @@ public:
     virtual ~Symbol();    
     virtual string getName() const = 0;
     virtual SymbolType getSymbolType() const = 0;
+
+	bool is_defined;
 };
 
 #endif

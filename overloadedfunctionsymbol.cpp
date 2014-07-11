@@ -26,3 +26,10 @@ VariableType OverloadedFunctionSymbol::getBaseType() const
 
 SymbolType OverloadedFunctionSymbol::getSymbolType() const { return SymbolType::OVERLOADED_FUNCTION; }
 TypeKind OverloadedFunctionSymbol::getTypeKind() const { return TypeKind::OVERLOADEDFUNCTION; }
+
+FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeInfo params_type)
+{
+	auto overloads = getTypeInfo().getBestOverload(params_type);
+	return overloads.empty() ? nullptr : getTypeInfo().symbols.at(*std::begin(overloads)); 
+}
+

@@ -1,4 +1,5 @@
 #include "variabletype.hpp"
+#include "structsymbol.hpp"
 
 VariableType::VariableType() : VariableType(nullptr) { }
 VariableType::VariableType(Type *type, bool is_ref, bool is_const) : type(type), is_ref(is_ref), is_const(is_const) { }
@@ -25,5 +26,10 @@ size_t VariableType::getSize() const { return is_ref ? GlobalConfig::int_size : 
 	
 string VariableType::getTypeName() const { return type->getName(); }
 	
-bool VariableType::operator==(VariableType vt) { return type == vt.type && is_const == vt.is_const && is_ref == vt.is_ref; }
-bool VariableType::operator!=(VariableType vt) { return !(*this == vt); }
+bool VariableType::operator==(VariableType vt) const { return type == vt.type && is_const == vt.is_const && is_ref == vt.is_ref; }
+bool VariableType::operator!=(VariableType vt) const { return !(*this == vt); }
+
+int VariableType::rankOfConversion(VariableType vt)
+{
+	return static_cast<StructSymbol*>(type) -> rankOfConversion(static_cast<StructSymbol*>(vt.type)) + (is_const != vt.is_const) + (is_ref != vt.is_ref);
+}

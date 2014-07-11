@@ -23,8 +23,10 @@ public:
 
 	string getTypeName() const;
 
-	bool operator==(VariableType vt);
-	bool operator!=(VariableType vt);
+	bool operator==(VariableType vt) const;
+	bool operator!=(VariableType vt) const;
+
+	int rankOfConversion(VariableType vt);
 
 public:
 	Type *type;
