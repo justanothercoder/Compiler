@@ -1,25 +1,14 @@
 #ifndef _SEMANTICERROR_HPP_
 #define _SEMANTICERROR_HPP_
 
-#include <exception>
+#include <stdexcept>
 #include <string>
 
-using std::string;
-using std::exception;
-
-class SemanticError : public exception
+class SemanticError : public std::logic_error
 {
 public:
 
-    SemanticError(string error);
-    
-    virtual ~SemanticError() noexcept;
-    virtual const char* what() const noexcept;
-    
-private:
-
-    string error;
-    
+    SemanticError(std::string error);
 };
 
 #endif
