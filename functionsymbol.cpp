@@ -11,6 +11,7 @@ FunctionSymbol::FunctionSymbol(string name
 													           , name(name)
 													           , enclosing_scope(enclosing_scope)
 													           , traits(traits)
+															   , is_constexpr(false)
 {
 	scope_name = enclosing_scope->getScopeName() + "_" + (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
 }

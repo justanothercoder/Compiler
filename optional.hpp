@@ -17,6 +17,7 @@ public:
 	T& operator*() { return value(); }
 	T* operator->() { if ( engaged ) return &value_; else throw "optional misuse"; }
 
+	operator T() { return engaged ? value_ : throw "optional misuse"; }
 	operator bool() { return engaged; }
 
 	static optional empty() { return optional(); }

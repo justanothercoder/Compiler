@@ -15,7 +15,8 @@ void NewExpressionNode::check()
 
 	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, scope, template_info).type);
 
-	call_info = CallHelper::callCheck(name, type, params); 
+//	call_info = CallHelper::callCheck(name, type, params); 
+	call_info = CallHelper::callCheck(type -> getName(), type, params); 
 
 	scope -> getTempAlloc().add(type -> getSize());      //place for object itself
 	scope -> getTempAlloc().add(GlobalConfig::int_size); //place for reference to it
@@ -61,4 +62,14 @@ bool NewExpressionNode::isLeftValue() const { return false; }
 void NewExpressionNode::freeTempSpace()
 {
 	scope -> getTempAlloc().free();	
+}
+
+bool NewExpressionNode::isCompileTimeExpr() const
+{
+	return false;
+}
+
+optional<int> NewExpressionNode::getCompileTimeValue() const
+{
+	return optional<int>::empty();
 }

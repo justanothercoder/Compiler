@@ -57,3 +57,13 @@ void StringNode::freeTempSpace()
 {
 
 }
+
+bool StringNode::isCompileTimeExpr() const
+{
+	return false;
+}
+
+optional<int> StringNode::getCompileTimeValue() const
+{
+	return optional<int>::empty();
+}

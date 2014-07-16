@@ -75,3 +75,16 @@ void CallNode::freeTempSpace()
 {
 
 }
+
+bool CallNode::isCompileTimeExpr() const
+{
+	return call_info.callee -> is_constexpr && std::all_of(std::begin(params), std::end(params), [&](ExprNode *expr) 
+	{ 
+		return expr -> isCompileTimeExpr(); 
+	});
+}
+
+optional<int> CallNode::getCompileTimeValue() const
+{
+	return optional<int>::empty();
+}

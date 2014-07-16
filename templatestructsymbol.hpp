@@ -24,7 +24,8 @@ public:
     
 public:
 
-	mutable map< vector<ExprNode*>, StructSymbol*> specs;   
+//	mutable map< vector<ExprNode*>, StructSymbol*> specs;   
+	mutable map< long long, StructSymbol*> specs;   
 
 	std::vector< std::pair<string, TypeInfo> > template_symbols;
     AST *holder;

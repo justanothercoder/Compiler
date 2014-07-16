@@ -22,22 +22,26 @@ bool TemplateStructSymbol::isIn(string name) const
 
 Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 {
-	auto it = specs.find(symbols);
-	if ( it != std::end(specs) )
-		return it -> second;
-
 	auto hash_func = [](vector<ExprNode*> vec)
 	{
 		long long P = 31, pow = 1, ans = 0;
 
 		for ( size_t i = 0; i < vec.size(); ++i )
 		{
-			ans += ((long long)vec[i]) * pow;
+//			ans += ((long long)vec[i]) * pow;
+			ans += (/*(long long)*/static_cast<int>(vec[i] -> getCompileTimeValue())) * pow;
 			pow *= P;		
 		}
 
 		return ans;
 	};
+
+	auto hash_ = hash_func(symbols);
+
+//	auto it = specs.find(symbols);
+	auto it = specs.find(hash_);
+	if ( it != std::end(specs) )
+		return it -> second;
 
 	auto children = holder -> getChildren();
 
@@ -46,7 +50,8 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 	for ( auto t : children )
 		vec.push_back(t -> copyTree());
 
-	StructDeclarationNode *decl = new StructDeclarationNode(this -> getName() + std::to_string(hash_func(symbols)), vec);
+//	StructDeclarationNode *decl = new StructDeclarationNode(this -> getName() + std::to_string(hash_func(symbols)), vec);
+	StructDeclarationNode *decl = new StructDeclarationNode(this -> getName() + std::to_string(hash_), vec);
 
 	for ( auto i : symbols )
 	{
@@ -66,5 +71,6 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 	decl -> check();
 	decl -> gen().gen();
 
-	return (specs[symbols] = static_cast<StructSymbol*>(decl -> getDefinedSymbol()));
+//	return (specs[symbols] = static_cast<StructSymbol*>(decl -> getDefinedSymbol()));
+	return (specs[hash_] = static_cast<StructSymbol*>(decl -> getDefinedSymbol()));
 }

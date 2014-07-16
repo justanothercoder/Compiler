@@ -60,3 +60,13 @@ void DotNode::freeTempSpace()
 {
 
 }
+
+bool DotNode::isCompileTimeExpr() const
+{
+	return false;
+}
+
+optional<int> DotNode::getCompileTimeValue() const
+{
+	return optional<int>::empty();
+}

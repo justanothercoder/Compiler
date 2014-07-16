@@ -25,6 +25,9 @@ public:
 	bool isLeftValue() const override;
 
 	void freeTempSpace() override;
+	
+	bool isCompileTimeExpr() const override;
+	optional<int> getCompileTimeValue() const override;
 
 private:
 

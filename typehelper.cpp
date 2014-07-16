@@ -13,7 +13,8 @@ VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, Template
 	if ( type.type == nullptr )
 		throw SemanticError(type_name + " is not a type");
 
-	if ( type_info.template_params.size() > 0 )
+//	if ( type_info.template_params.size() > 0 )
+	if ( dynamic_cast<TemplateStructSymbol*>(type.type) )
 	{
 		auto tmpl = dynamic_cast<TemplateStructSymbol*>(type.type);
 		auto sym = tmpl -> getSpec(type_info.template_params);	

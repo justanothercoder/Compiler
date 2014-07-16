@@ -8,7 +8,18 @@ VariableNode::VariableNode(string name) : name(name), variable(nullptr) { }
 void VariableNode::check()
 {
 	if ( template_info -> sym && template_info -> sym -> isIn(name) )
-		return;
+//		return;
+	{
+		auto replace = template_info -> getReplacement(name);
+	
+		if ( dynamic_cast<VariableNode*>(replace) != nullptr )
+			if ( dynamic_cast<VariableNode*>(replace) -> variable -> getSymbolType() == SymbolType::CLASSVARIABLE )
+				throw SemanticError(name + " is typename");
+
+		replace -> scope = scope;
+
+		return replace -> check();
+	}
 
 	auto sym = scope -> resolve(name);
 
@@ -35,9 +46,9 @@ CodeObject& VariableNode::gen()
 	{
 		auto replace = template_info -> getReplacement(name);
 	
-		if ( dynamic_cast<VariableNode*>(replace) != nullptr )
-			if ( dynamic_cast<VariableNode*>(replace) -> variable -> getSymbolType() == SymbolType::CLASSVARIABLE )
-				throw SemanticError(name + " is typename");
+//		if ( dynamic_cast<VariableNode*>(replace) != nullptr )
+//			if ( dynamic_cast<VariableNode*>(replace) -> variable -> getSymbolType() == SymbolType::CLASSVARIABLE )
+//				throw SemanticError(name + " is typename");
 
 		return replace -> gen();
 	}
@@ -113,4 +124,17 @@ bool VariableNode::isLeftValue() const { return true; }
 void VariableNode::freeTempSpace()
 {
 
+}
+
+bool VariableNode::isCompileTimeExpr() const
+{
+	return false;
+}
+
+optional<int> VariableNode::getCompileTimeValue() const
+{
+	if ( dynamic_cast<ClassVariableSymbol*>(variable) )
+		return std::hash<std::string>()(variable -> getName());
+	else
+		return optional<int>::empty();
 }

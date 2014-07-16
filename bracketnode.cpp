@@ -53,3 +53,13 @@ void BracketNode::freeTempSpace()
 {
 
 }
+
+bool BracketNode::isCompileTimeExpr() const
+{
+	return base -> isCompileTimeExpr() && expr -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
+}
+
+optional<int> BracketNode::getCompileTimeValue() const
+{
+	return optional<int>::empty();
+}

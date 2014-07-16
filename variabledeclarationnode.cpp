@@ -34,7 +34,8 @@ void VariableDeclarationNode::check()
 				throw SemanticError("No such struct " + type_name);
 
 			auto type = static_cast<StructSymbol*>(_.type);
-			call_info = CallHelper::callCheck(type_name, type, constructor_call_params);
+//			call_info = CallHelper::callCheck(type_name, type, constructor_call_params);
+			call_info = CallHelper::callCheck(type -> getName(), type, constructor_call_params);
 		}
 		else
 		{
