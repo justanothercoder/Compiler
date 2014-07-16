@@ -93,3 +93,29 @@ void BinaryOperatorNode::freeTempSpace()
 	rhs -> freeTempSpace();
 	scope -> getTempAlloc().free();
 }
+	
+bool BinaryOperatorNode::isCompileTimeExpr() const
+{
+	return lhs -> isCompileTimeExpr() && rhs -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
+}
+
+optional<int> BinaryOperatorNode::getCompileTimeValue() const
+{
+	if ( !isCompileTimeExpr() )
+		return optional<int>::empty();
+
+	int lhs_value = static_cast<int>(lhs -> getCompileTimeValue());
+	int rhs_value = static_cast<int>(rhs -> getCompileTimeValue());
+
+	switch ( op_type )
+	{
+	case BinaryOp::PLUS   : return lhs_value + rhs_value;
+	case BinaryOp::MINUS  : return lhs_value - rhs_value;
+	case BinaryOp::MUL    : return lhs_value * rhs_value;
+	case BinaryOp::DIV    : return lhs_value / rhs_value;
+	case BinaryOp::MOD    : return lhs_value % rhs_value;
+	case BinaryOp::EQUALS : return lhs_value == rhs_value;
+	case BinaryOp::NEQUALS: return lhs_value != rhs_value;
+	default: return optional<int>::empty();
+	}	
+}

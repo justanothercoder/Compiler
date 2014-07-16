@@ -22,9 +22,10 @@ public:
 	virtual VariableType getType() const;
 	virtual bool isLeftValue() const;
 
-	virtual int neededSpaceForTemporaries();
-
 	virtual void freeTempSpace();
+	
+	bool isCompileTimeExpr() const override;
+	optional<int> getCompileTimeValue() const override;
 
 private:
 

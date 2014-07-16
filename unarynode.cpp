@@ -56,3 +56,13 @@ void UnaryNode::freeTempSpace()
 {
 
 }
+
+bool UnaryNode::isCompileTimeExpr() const
+{
+	return exp -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
+}
+
+optional<int> UnaryNode::getCompileTimeValue() const
+{
+	return optional<int>::empty();
+}

@@ -22,7 +22,7 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 
 void FunctionDeclarationNode::build_scope()
 {
-	definedSymbol = new FunctionSymbol(name, VariableType(), { }, scope, traits);
+	definedSymbol = new FunctionSymbol(traits.is_constructor ? static_cast<StructSymbol*>(scope) -> getName() : name, VariableType(), { }, scope, traits);
 
 	statements -> scope         = definedSymbol;
 	statements -> template_info = template_info;
@@ -38,6 +38,9 @@ void FunctionDeclarationNode::define()
 
 	auto fromTypeInfo = [&] (TypeInfo type_info) 
 	{
+		if ( template_info -> sym != nullptr && type_info.type_name == template_info -> sym -> getName() )
+			type_info.type_name = static_cast<StructSymbol*>(scope) -> getName();
+
 		if ( definedSymbol -> isMethod() && type_info.type_name == static_cast<StructSymbol*>(scope) -> getName() )
 			return VariableType(static_cast<StructSymbol*>(scope), type_info.is_ref, type_info.is_const);
 		return TypeHelper::fromTypeInfo(type_info, scope, template_info);
@@ -91,7 +94,7 @@ CodeObject& FunctionDeclarationNode::gen()
 
 	if ( definedSymbol -> getVarAlloc().getSpace() > 0 )
 		code_obj.emit("sub rsp, " + std::to_string(definedSymbol -> getVarAlloc().getSpace()));
-	code_obj.emit("sub rsp, " + std::to_string(scope -> getTempAlloc().getSpaceNeeded()));
+	code_obj.emit("sub rsp, " + std::to_string(definedSymbol -> getTempAlloc().getSpaceNeeded()));
 
 	code_obj.emit(statements -> gen().getCode());
 

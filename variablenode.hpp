@@ -28,6 +28,9 @@ public:
 
 	void freeTempSpace() override;
 
+	bool isCompileTimeExpr() const override;
+	optional<int> getCompileTimeValue() const override;
+
 private:
 
     string name;

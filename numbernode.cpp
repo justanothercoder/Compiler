@@ -26,12 +26,17 @@ string NumberNode::getNum() const { return num; }
 VariableType NumberNode::getType() const { return VariableType(BuiltIns::int_struct, false, true); }
 bool NumberNode::isLeftValue() const { return false; }
 
-int NumberNode::neededSpaceForTemporaries()
-{
-	return GlobalConfig::int_size;
-}
-
 void NumberNode::freeTempSpace()
 {
 	scope -> getTempAlloc().free();
+}
+
+bool NumberNode::isCompileTimeExpr() const
+{
+	return true;
+}
+
+optional<int> NumberNode::getCompileTimeValue() const
+{
+	return optional<int>(std::stoi(num));
 }

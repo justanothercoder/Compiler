@@ -51,7 +51,9 @@ public:
 	optional<CodeObject> code_obj;
 
 	VariableType return_type;
-    FunctionTypeInfo function_type_info;
+    FunctionTypeInfo function_type_info;	
+	
+	bool is_constexpr;
 
 private:
 
