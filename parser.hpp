@@ -11,6 +11,8 @@
 #include "functiondeclarationnode.hpp"
 #include "templatestructdeclarationnode.hpp"
 
+#include "varinfertypedeclarationnode.hpp"
+
 #include "statementnode.hpp"
 #include "binaryoperatornode.hpp"
 #include "unarynode.hpp"
@@ -51,6 +53,7 @@ private:
     DeclarationNode* structDecl();
     DeclarationNode* variableDecl(optional<string> struct_name = optional<string>::empty());
     DeclarationNode* functionDecl(optional<string> struct_name = optional<string>::empty());
+	DeclarationNode* varInferDecl(optional<string> struct_name = optional<string>::empty());
 
 	AST* import_stat();
 	

@@ -19,7 +19,12 @@ AST* Parser::statement()
 		match(TokenType::SEMICOLON);
 		return new StatementNode({ });
 	}
-	else if ( getTokenType(1) == TokenType::STRUCT || getTokenType(1) == TokenType::DEF || tryVarDecl() || getTokenType(1) == TokenType::TEMPLATE )
+	else if ( getTokenType(1) == TokenType::STRUCT 
+		   || getTokenType(1) == TokenType::DEF 
+		   || tryVarDecl() 
+		   || getTokenType(1) == TokenType::TEMPLATE 
+		   || getTokenType(1) == TokenType::VAR
+		   )
 		return declaration();
 	else if ( getTokenType(1) == TokenType::RETURN ) return return_stat();
 	else if ( getTokenType(1) == TokenType::IF     ) return if_stat();
@@ -50,6 +55,7 @@ DeclarationNode* Parser::declaration(optional<string> struct_name)
 	if      ( getTokenType(1) == TokenType::STRUCT )   return structDecl();
 	else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateStructDecl();
 	else if ( getTokenType(1) == TokenType::DEF )      return functionDecl(struct_name);
+	else if ( getTokenType(1) == TokenType::VAR )      return varInferDecl(struct_name);
 	else if ( tryVarDecl() )                           return variableDecl(struct_name);
 	else                                               throw RecognitionError("Declaration expected.");
 }
@@ -642,4 +648,17 @@ bool Parser::tryTypeInfo()
 	release();
 
 	return success;
+}
+    
+DeclarationNode* Parser::varInferDecl(optional<string> struct_name)
+{
+	match(TokenType::VAR);
+	
+	string name = id();
+
+	match(TokenType::ASSIGN);
+	
+	auto expr = expression();
+	
+	return new VarInferTypeDeclarationNode(name, expr);
 }

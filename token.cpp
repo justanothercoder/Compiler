@@ -22,6 +22,7 @@ string to_string(TokenType tt)
 	case TokenType::CONST:     return "const";
 	case TokenType::STRING:    return "string";
 	case TokenType::IMPORT:    return "import";
+	case TokenType::VAR:       return "var";
  	case TokenType::LPAREN:    return "(";
     case TokenType::RPAREN:    return ")";
     case TokenType::LBRACE:    return "{";
