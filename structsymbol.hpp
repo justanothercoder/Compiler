@@ -55,6 +55,8 @@ public:
 
 	TempAllocator& getTempAlloc() override;
 
+	FunctionSymbol* methodWith(string name, FunctionTypeInfo ft);
+
 private:
 
     string name;

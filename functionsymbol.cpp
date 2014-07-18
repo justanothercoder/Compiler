@@ -38,23 +38,68 @@ string FunctionSymbol::getScopedTypedName() const
 	return res;
 }
 
-Scope* FunctionSymbol::getEnclosingScope() const { return enclosing_scope; }
-string FunctionSymbol::getScopeName() const { return scope_name; }
+Scope* FunctionSymbol::getEnclosingScope() const 
+{ 
+	return enclosing_scope; 
+}
 
-bool FunctionSymbol::isOperator() const { return traits.is_operator; }
-bool FunctionSymbol::isMethod() const { return traits.is_method; }
-bool FunctionSymbol::isConstructor() const { return traits.is_constructor; }
+string FunctionSymbol::getScopeName() const 
+{ 
+	return scope_name; 
+}
 
-string FunctionSymbol::getName() const { return name; }
-int FunctionSymbol::getSize() const { return GlobalConfig::int_size; }
+bool FunctionSymbol::isOperator() const 
+{ 
+	return traits.is_operator; 
+}
 
-FunctionTraits FunctionSymbol::getTraits() const { return traits; }
+bool FunctionSymbol::isMethod() const 
+{ 
+	return traits.is_method; 
+}
 
-SymbolType FunctionSymbol::getSymbolType() const { return SymbolType::FUNCTION; }
-TypeKind FunctionSymbol::getTypeKind() const { return TypeKind::FUNCTION; }
+bool FunctionSymbol::isConstructor() const 
+{ 
+	return traits.is_constructor; 
+}
 
-void FunctionSymbol::accept(ScopeVisitor *visitor) { visitor->visit(this); }
+string FunctionSymbol::getName() const 
+{ 
+	return name; 
+}
+
+int FunctionSymbol::getSize() const 
+{ 
+	return GlobalConfig::int_size; 
+}
+
+FunctionTraits FunctionSymbol::getTraits() const 
+{ 
+	return traits; 
+}
+
+SymbolType FunctionSymbol::getSymbolType() const 
+{ 
+	return SymbolType::FUNCTION; 
+}
+
+TypeKind FunctionSymbol::getTypeKind() const 
+{ 
+	return TypeKind::FUNCTION; 
+}
+
+void FunctionSymbol::accept(ScopeVisitor *visitor) 
+{ 
+	visitor -> visit(this); 
+}
 	
-VarAllocator& FunctionSymbol::getVarAlloc() { return var_alloc; }
+VarAllocator& FunctionSymbol::getVarAlloc() 
+{ 
+	return var_alloc; 
+}
 
-TempAllocator& FunctionSymbol::getTempAlloc() { return temp_alloc; }
+TempAllocator& FunctionSymbol::getTempAlloc() 
+{ 
+	return temp_alloc; 
+}
+
