@@ -104,7 +104,7 @@ CodeObject& VariableNode::gen()
 	return code_obj;
 }
 
-bool VariableNode::isTemplateParam() const { return template_info -> sym != nullptr; }
+bool VariableNode::isTemplateParam() const { return template_info -> sym != nullptr && template_info -> sym -> isIn(name); }
 	
 AST* VariableNode::copyTree() const { return new VariableNode(name); }
 

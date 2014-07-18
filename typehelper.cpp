@@ -17,6 +17,10 @@ VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, Template
 	if ( dynamic_cast<TemplateStructSymbol*>(type.type) )
 	{
 		auto tmpl = dynamic_cast<TemplateStructSymbol*>(type.type);
+		
+		if ( type_info.template_params.size() != tmpl -> template_symbols.size() )
+			throw SemanticError("Wrong number of template parameters");
+
 		auto sym = tmpl -> getSpec(type_info.template_params);	
 		type.type = dynamic_cast<Type*>(sym);
 	}

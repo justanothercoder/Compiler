@@ -2,6 +2,8 @@
 #include "structdeclarationnode.hpp"
 #include "templateinfo.hpp"
 
+#include "variablenode.hpp"
+
 TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, AST *holder) : 
 	StructSymbol(name, enclosing_scope),
 	template_symbols(template_symbols),
@@ -22,9 +24,19 @@ bool TemplateStructSymbol::isIn(string name) const
 
 Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 {
+	for ( auto i : symbols )
+	{
+		i -> scope = holder -> scope;
+		i -> template_info = new TemplateInfo();
+		i -> build_scope();	
+	}
+
+	for ( auto i : symbols )
+		i -> check();
+
 	auto hash_func = [](vector<ExprNode*> vec)
 	{
-		long long P = 31, pow = 1, ans = 0;
+		unsigned long long P = 31, pow = 1, ans = 0;
 
 		for ( size_t i = 0; i < vec.size(); ++i )
 		{
@@ -38,7 +50,6 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 
 	auto hash_ = hash_func(symbols);
 
-//	auto it = specs.find(symbols);
 	auto it = specs.find(hash_);
 	if ( it != std::end(specs) )
 		return it -> second;
@@ -50,18 +61,7 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 	for ( auto t : children )
 		vec.push_back(t -> copyTree());
 
-//	StructDeclarationNode *decl = new StructDeclarationNode(this -> getName() + std::to_string(hash_func(symbols)), vec);
 	StructDeclarationNode *decl = new StructDeclarationNode(this -> getName() + std::to_string(hash_), vec);
-
-	for ( auto i : symbols )
-	{
-		i -> scope = holder -> scope;
-		i -> template_info = new TemplateInfo();
-		i -> build_scope();	
-	}
-
-	for ( auto i : symbols )
-		i -> check();
 
 	decl -> scope = holder -> scope;
 	decl -> template_info = new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols);

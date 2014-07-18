@@ -12,6 +12,9 @@
 
 class VariableNode : public ExprNode
 {
+
+	friend class TemplateStructSymbol;
+
 public:
 
     VariableNode(string name);
@@ -37,7 +40,6 @@ private:
     
     VariableSymbol *variable;
 
-	TemplateInfo _template_info;
 	CodeObject code_obj;
 };
 
