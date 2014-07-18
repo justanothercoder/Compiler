@@ -1,6 +1,14 @@
 #include "symboldefine.hpp"
 
-SymbolDefine::SymbolDefine(Symbol *sym) : sym(sym) { }
+#include "globalscope.hpp"
+#include "localscope.hpp"
+#include "structscope.hpp"
+#include "functionsymbol.hpp"
+
+SymbolDefine::SymbolDefine(Symbol *sym) : sym(sym) 
+{
+
+}
 
 void SymbolDefine::visit(GlobalScope *sc) 
 {
@@ -18,7 +26,7 @@ void SymbolDefine::visit(LocalScope *sc)
 	sc -> table[sym -> getName()] = sym; 
 }
 
-void SymbolDefine::visit(StructSymbol *sc) 
+void SymbolDefine::visit(StructScope *sc) 
 { 
 	if ( sc -> table . find(sym -> getName()) != std::end(sc -> table) )
 		throw SemanticError("Error: " + sym -> getName() + " is already defined");

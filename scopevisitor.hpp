@@ -3,7 +3,7 @@
 
 class GlobalScope;
 class LocalScope;
-class StructSymbol;
+class StructScope;
 class FunctionSymbol;
 
 class ScopeVisitor
@@ -12,7 +12,7 @@ public:
 
     virtual void visit(GlobalScope *sc) = 0;
     virtual void visit(LocalScope *sc) = 0;
-    virtual void visit(StructSymbol *sc) = 0;
+    virtual void visit(StructScope *sc) = 0;
     virtual void visit(FunctionSymbol *sc) = 0;
 	
 };

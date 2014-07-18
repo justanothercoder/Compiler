@@ -9,7 +9,7 @@ class TemplateStructDeclarationNode : public StructDeclarationNode
 {
 public:
 
-    TemplateStructDeclarationNode(string name, const vector<AST*>& inner, const vector< pair<string, TypeInfo> >& template_params);
+    TemplateStructDeclarationNode(string name, const std::vector<AST*>& inner, const std::vector< std::pair<string, TypeInfo> >& template_params);
 
     virtual void build_scope();
 	    
@@ -19,7 +19,7 @@ public:
 
 private:
 
-    vector< pair<string, TypeInfo> > template_params;
+	std::vector< std::pair<string, TypeInfo> > template_params;
 };
 
 #endif

@@ -3,36 +3,11 @@
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
 
-StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope)
+StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : StructScope(name, enclosing_scope)
+																, name(name)
 {
-	type_size = 0;
 
-	scope_name = getEnclosingScope() -> getScopeName() + "_" + name;
-}
-
-Scope* StructSymbol::getEnclosingScope() const 
-{ 
-	return enclosing_scope; 
-}
-
-Symbol* StructSymbol::resolve(string name) const
-{
-	auto it = table.find(name);
-	if ( it == std::end(table) )
-	{
-		if ( getEnclosingScope() )
-			return getEnclosingScope() -> resolve(name);
-		return nullptr;
-	}
-	return it -> second;
-}
-
-Symbol* StructSymbol::resolveMember(string name) const
-{
-	auto it = table.find(name);
-	if ( it == std::end(table) )
-		return nullptr;
-	return it -> second;    
+//	scope_name = getEnclosingScope() -> getScopeName() + "_" + name;
 }
 
 int StructSymbol::getSize() const 
@@ -45,11 +20,6 @@ string StructSymbol::getName() const
 	return name; 
 }
 
-string StructSymbol::getScopeName() const 
-{ 
-	return scope_name; 
-}
-
 SymbolType StructSymbol::getSymbolType() const 
 { 
 	return SymbolType::STRUCT; 
@@ -60,16 +30,6 @@ TypeKind StructSymbol::getTypeKind() const
    	return TypeKind::STRUCT; 
 }
 
-void StructSymbol::accept(ScopeVisitor *visitor) 
-{
-   	visitor -> visit(this); 
-}
-
-VarAllocator& StructSymbol::getVarAlloc() 
-{
-   	return var_alloc; 
-}
-	
 bool StructSymbol::isConvertableTo(StructSymbol *st)
 {
 	return this == st || this -> hasConversionOperator(st) || st -> hasConversionConstructor(this);
@@ -154,11 +114,6 @@ FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft)
 	return it == std::end(info.symbols) ? nullptr : it -> second;
 */
 	return methodWith(getName(), ft);
-}
-	
-TempAllocator& StructSymbol::getTempAlloc() 
-{
-	return temp_alloc;
 }
 	
 int StructSymbol::rankOfConversion(StructSymbol *st)

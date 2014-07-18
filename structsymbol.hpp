@@ -8,18 +8,14 @@
 #include "overloadedfunctionsymbol.hpp"
 #include "fieldvarallocator.hpp"
 
-#include "basescope.hpp"
+#include "structscope.hpp"
 
 using std::map;
 
-class StructSymbol : public Symbol, public BaseScope, public Type
+class StructSymbol : public Symbol, public StructScope, public Type
 {
 public:
 
-    friend class VariableSymbolDefine;
-
-    void accept(ScopeVisitor *visitor) override;
-    
     StructSymbol(string name, Scope *enclosing_scope);
 
     SymbolType getSymbolType() const override;
@@ -27,15 +23,6 @@ public:
 
     int getSize() const override;
     TypeKind getTypeKind() const override;
-	
-    Symbol* resolveMember(string name) const;
-
-    Scope* getEnclosingScope() const override;
-    Symbol* resolve(string name) const override;
-
-    string getScopeName() const override;
-
-	VarAllocator& getVarAlloc() override;
 
 	FunctionSymbol* getConversionTo(StructSymbol *st);
 	bool isConvertableTo(StructSymbol *st);
@@ -53,22 +40,11 @@ public:
 
 	FunctionSymbol* constructorWith(FunctionTypeInfo ft);
 
-	TempAllocator& getTempAlloc() override;
-
 	FunctionSymbol* methodWith(string name, FunctionTypeInfo ft);
 
 private:
 
     string name;
-    
-    Scope *enclosing_scope;
-    
-    int type_size;
-
-    string scope_name;
-
-	FieldVarAllocator var_alloc;
-	TempAllocator temp_alloc;
 };
 		     
 #endif

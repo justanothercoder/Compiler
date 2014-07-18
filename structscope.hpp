@@ -1,0 +1,39 @@
+#ifndef _STRUCTSCOPE_HPP_
+#define _STRUCTSCOPE_HPP_
+
+#include "basescope.hpp"
+#include "fieldvarallocator.hpp"
+
+class StructScope : public BaseScope
+{
+    friend class VariableSymbolDefine;
+
+public:
+	
+	StructScope(string scope_name, Scope *enclosing_scope);
+	
+	VarAllocator& getVarAlloc() override;
+	TempAllocator& getTempAlloc() override;
+
+    Scope* getEnclosingScope() const override;
+	
+    Symbol* resolveMember(string name) const;
+    Symbol* resolve(string name) const override;
+
+    string getScopeName() const override;
+
+    void accept(ScopeVisitor *visitor) override;
+    
+private:
+	FieldVarAllocator var_alloc;
+	TempAllocator temp_alloc;
+
+	string scope_name;
+	Scope *enclosing_scope;
+
+protected:
+
+    int type_size;
+};
+
+#endif

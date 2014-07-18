@@ -2,6 +2,7 @@
 #include "structsymbol.hpp"
 #include "symboldefine.hpp"
 #include "functionhelper.hpp"
+#include "functionsymbol.hpp"
 
 StructDeclarationNode::StructDeclarationNode(string name, const vector<AST*>& inner) : name(name), inner(inner), definedSymbol(nullptr) { }
 

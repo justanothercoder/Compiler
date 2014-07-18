@@ -1,10 +1,18 @@
 #include "functionsymboldefine.hpp"
 
-FunctionSymbolDefine::FunctionSymbolDefine(FunctionSymbol *sym) : sym(sym) { }
+#include "globalscope.hpp"
+#include "localscope.hpp"
+#include "structscope.hpp"
+#include "functionsymbol.hpp"
+
+FunctionSymbolDefine::FunctionSymbolDefine(FunctionSymbol *sym) : sym(sym) 
+{
+
+}
 
 void FunctionSymbolDefine::visit(GlobalScope *sc) { visit(static_cast<BaseScope*>(sc)); }
 void FunctionSymbolDefine::visit(LocalScope *sc) { visit(static_cast<BaseScope*>(sc)); }
-void FunctionSymbolDefine::visit(StructSymbol *sc) { visit(static_cast<BaseScope*>(sc)); }
+void FunctionSymbolDefine::visit(StructScope *sc) { visit(static_cast<BaseScope*>(sc)); }
 void FunctionSymbolDefine::visit(FunctionSymbol *sc) { visit(static_cast<BaseScope*>(sc)); }
 
 void FunctionSymbolDefine::visit(BaseScope *sc)
