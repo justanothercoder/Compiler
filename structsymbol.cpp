@@ -7,7 +7,6 @@ StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : StructScope(na
 																, name(name)
 {
 
-//	scope_name = getEnclosingScope() -> getScopeName() + "_" + name;
 }
 
 int StructSymbol::getSize() const 
@@ -59,20 +58,7 @@ FunctionSymbol* StructSymbol::getConversionConstructor(StructSymbol *st)
 
 FunctionSymbol* StructSymbol::getConversionOperator(StructSymbol *st)
 {
-	string cast_operator_name = "operator " + st -> getName();
-
-	auto func_sym = resolveMember(cast_operator_name);
-
-	if ( func_sym == nullptr )
-		return nullptr;
-
-	auto conv_oper = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym) -> getType().type);
-
-	auto info = conv_oper -> getTypeInfo();
-
-	auto it = info.symbols.find({ });
-
-	return it == std::end(info.symbols) ? nullptr : it -> second;
+	return methodWith("operator " + st -> getName(), {VariableType(this, true)});
 }
 
 FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
@@ -99,20 +85,6 @@ FunctionSymbol* StructSymbol::getDefaultConstructor()
 	
 FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft)
 {
-/*
-	string constructor_name = getName();
-
-	auto member = dynamic_cast<VariableSymbol*>(resolveMember(constructor_name));
-
-	if ( member == nullptr )
-		return nullptr;
-
-	auto func = dynamic_cast<OverloadedFunctionSymbol*>(member -> getType().type);
-	auto info = func -> getTypeInfo();
-
-	auto it = info.symbols.find(ft);
-	return it == std::end(info.symbols) ? nullptr : it -> second;
-*/
 	return methodWith(getName(), ft);
 }
 	
