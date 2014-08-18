@@ -128,11 +128,18 @@ void VariableNode::freeTempSpace()
 
 bool VariableNode::isCompileTimeExpr() const
 {
-	return false;
+	if ( template_info -> sym != nullptr && template_info -> sym -> isIn(name) )
+		return template_info -> getReplacement(name) -> isCompileTimeExpr();
+	else if ( dynamic_cast<ClassVariableSymbol*>(variable) )
+		return true;
+	else
+		return false;
 }
 
 optional<int> VariableNode::getCompileTimeValue() const
 {
+	if ( template_info -> sym != nullptr && template_info -> sym -> isIn(name) )
+		return template_info -> getReplacement(name) -> getCompileTimeValue();
 	if ( dynamic_cast<ClassVariableSymbol*>(variable) )
 		return std::hash<std::string>()(variable -> getName());
 	else

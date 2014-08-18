@@ -21,6 +21,7 @@ public:
     NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params);
 	~NewExpressionNode() override;
 
+	void build_scope() override;
     void check() override;
     CodeObject& gen() override;
 

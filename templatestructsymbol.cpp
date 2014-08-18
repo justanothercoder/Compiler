@@ -3,6 +3,7 @@
 #include "templateinfo.hpp"
 
 #include "variablenode.hpp"
+#include "typehelper.hpp"
 
 TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, AST *holder) : 
 	StructSymbol(name, enclosing_scope),
@@ -24,15 +25,34 @@ bool TemplateStructSymbol::isIn(string name) const
 
 Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 {
+/*
 	for ( auto i : symbols )
 	{
 		i -> scope = holder -> scope;
-		i -> template_info = new TemplateInfo();
+		i -> template_info = holder -> template_info;
 		i -> build_scope();	
 	}
+*/
+//	for ( auto i : symbols )
+//		i -> check();
 
-	for ( auto i : symbols )
-		i -> check();
+	for ( size_t i = 0; i < template_symbols.size(); ++i )
+	{
+		if ( template_symbols[i].second.type_name == "class" )
+		{
+			if ( dynamic_cast<VariableNode*>(symbols[i]) == nullptr 
+		      || dynamic_cast<ClassVariableSymbol*>(static_cast<VariableNode*>(symbols[i]) -> variable) == nullptr )
+				throw SemanticError("expression is not a type");
+		}
+		else
+		{
+			if ( symbols[i] -> getType().type != TypeHelper::fromTypeInfo(template_symbols[i].second, symbols[i] -> scope, symbols[i] -> template_info).type )
+				throw SemanticError("Not compatible template parameter");
+		}
+
+		if ( !symbols[i] -> isCompileTimeExpr() )
+			throw SemanticError("Template parameter is not a compile-time expression");
+	}
 
 	auto hash_func = [](vector<ExprNode*> vec)
 	{
@@ -61,7 +81,7 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 	for ( auto t : children )
 		vec.push_back(t -> copyTree());
 
-	StructDeclarationNode *decl = new StructDeclarationNode(this -> getName() + std::to_string(hash_), vec);
+	StructDeclarationNode *decl = new StructDeclarationNode(this -> getName() + "~hash" + std::to_string(hash_), vec);
 
 	decl -> scope = holder -> scope;
 	decl -> template_info = new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols);

@@ -9,13 +9,26 @@ NewExpressionNode::~NewExpressionNode()
 		delete i;
 }
 
+void NewExpressionNode::build_scope()
+{
+	AST::build_scope();
+	for ( auto param : type_info.template_params )
+	{
+		param -> scope         = scope;
+		param -> template_info = template_info;
+		param -> build_scope();
+	}
+}
+
 void NewExpressionNode::check()
 {
+	for ( auto param : type_info.template_params )
+		param -> check();
+
 	string name = type_info.type_name;
 
 	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, scope, template_info).type);
 
-//	call_info = CallHelper::callCheck(name, type, params); 
 	call_info = CallHelper::callCheck(type -> getName(), type, params); 
 
 	scope -> getTempAlloc().add(type -> getSize());      //place for object itself
@@ -33,15 +46,10 @@ CodeObject& NewExpressionNode::gen()
 	CodeObject new_place;
 	new_place.emit("lea rax, " + addr);
 
-//	code_obj.emit("lea rax, " + addr2);
-//	code_obj.emit("push rax");
-
 	code_obj.genCallCode(call_info, params, new_place, false);
 
 	code_obj.emit("mov " + addr2 + ", rax");
 	code_obj.emit("lea rax, " + addr2);
-
-//	code_obj.emit("pop rax");
 
 	return code_obj;
 }

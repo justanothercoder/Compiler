@@ -33,6 +33,9 @@ int main()
 							new BuiltInTypeSymbol("~~int", GlobalConfig::int_size)
 							), VariableSymbolType::FIELD)));
 
+		BuiltIns::int_plus  -> is_constexpr = true;
+		BuiltIns::int_minus -> is_constexpr = true;
+
 		BuiltIns::int_struct -> accept(new FunctionSymbolDefine(BuiltIns::int_default_constructor));
 		BuiltIns::int_struct -> accept(new FunctionSymbolDefine(BuiltIns::int_copy_constructor));
 		BuiltIns::int_struct -> accept(new FunctionSymbolDefine(BuiltIns::int_assign));

@@ -30,6 +30,7 @@ public:
 
     virtual AST* copyTree() const;
     
+	void build_scope() override;
     void define() override;
     void check() override;
     

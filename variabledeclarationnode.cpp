@@ -18,10 +18,27 @@ VariableDeclarationNode::~VariableDeclarationNode()
 		delete i;
 }
 
-Symbol* VariableDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
+void VariableDeclarationNode::build_scope()
+{
+	AST::build_scope();
+	for ( auto param : type_info.template_params )
+	{
+		param -> scope         = scope;
+		param -> template_info = template_info;
+		param -> build_scope();
+	}
+}
+
+Symbol* VariableDeclarationNode::getDefinedSymbol() const 
+{ 
+	return definedSymbol; 
+}
 
 void VariableDeclarationNode::check()
-{
+{	
+	for ( auto param : type_info.template_params )
+		param -> check();
+
 	if ( !is_field )
 	{
 		if ( !type_info.is_ref )
