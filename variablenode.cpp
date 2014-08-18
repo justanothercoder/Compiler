@@ -3,22 +3,26 @@
 #include "typehelper.hpp"
 #include "structsymbol.hpp"
 
-VariableNode::VariableNode(string name) : name(name), variable(nullptr) { }
+#include "numbernode.hpp"
+
+VariableNode::VariableNode(string name) : name(name), variable(nullptr), template_num(nullptr) { }
 
 void VariableNode::check()
 {
 	if ( template_info -> sym && template_info -> sym -> isIn(name) )
-//		return;
 	{
 		auto replace = template_info -> getReplacement(name);
-	
-		if ( dynamic_cast<VariableNode*>(replace) != nullptr )
-			if ( dynamic_cast<VariableNode*>(replace) -> variable -> getSymbolType() == SymbolType::CLASSVARIABLE )
-				throw SemanticError(name + " is typename");
 
-		replace -> scope = scope;
+		if ( replace -> which() == 0 )
+			throw SemanticError(name + " is typename");
 
-		return replace -> check();
+		template_num = new NumberNode(std::to_string(boost::get<int>(*replace)));
+		template_num -> scope = scope;
+		template_num -> build_scope();
+		template_num -> template_info = template_info; 
+
+		template_num -> check();
+		return;
 	}
 
 	auto sym = scope -> resolve(name);
@@ -44,13 +48,10 @@ CodeObject& VariableNode::gen()
 {
 	if ( template_info -> sym && template_info -> sym -> isIn(name) )
 	{
-		auto replace = template_info -> getReplacement(name);
-	
-//		if ( dynamic_cast<VariableNode*>(replace) != nullptr )
-//			if ( dynamic_cast<VariableNode*>(replace) -> variable -> getSymbolType() == SymbolType::CLASSVARIABLE )
-//				throw SemanticError(name + " is typename");
+//		auto replace = template_info -> getReplacement(name);	
+//		return replace -> gen();
 
-		return replace -> gen();
+		template_num -> gen();
 	}
 
 	auto var_type = variable -> getType();
@@ -113,7 +114,9 @@ VariableType VariableNode::getType() const
 	if ( isTemplateParam() )
 	{
 		auto replace = template_info -> getReplacement(name);
-		return replace -> getType();
+//		return replace -> getType();
+
+		return TypeHelper::resolveType("int", BuiltIns::global_scope);
 	}
 
 	return variable -> getType();
@@ -129,7 +132,8 @@ void VariableNode::freeTempSpace()
 bool VariableNode::isCompileTimeExpr() const
 {
 	if ( template_info -> sym != nullptr && template_info -> sym -> isIn(name) )
-		return template_info -> getReplacement(name) -> isCompileTimeExpr();
+//		return template_info -> getReplacement(name) -> isCompileTimeExpr();
+		return true;
 	else if ( dynamic_cast<ClassVariableSymbol*>(variable) )
 		return true;
 	else
@@ -139,7 +143,7 @@ bool VariableNode::isCompileTimeExpr() const
 optional<int> VariableNode::getCompileTimeValue() const
 {
 	if ( template_info -> sym != nullptr && template_info -> sym -> isIn(name) )
-		return template_info -> getReplacement(name) -> getCompileTimeValue();
+		return boost::get<int>(*template_info -> getReplacement(name));
 	if ( dynamic_cast<ClassVariableSymbol*>(variable) )
 		return std::hash<std::string>()(variable -> getName());
 	else

@@ -2,6 +2,8 @@
 #include "templateinfo.hpp"
 #include "functionsymbol.hpp"
 
+#include "typehelper.hpp"
+
 AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) { scope = BuiltIns::global_scope; }
 
 void AsmArrayNode::define() 
@@ -12,7 +14,8 @@ void AsmArrayNode::define()
 	{
 		auto replace = template_info -> getReplacement("size");
 		
-		array_size = std::stoi(dynamic_cast<NumberNode*>(replace) -> getNum());
+//		array_size = std::stoi(dynamic_cast<NumberNode*>(replace) -> getNum());
+		array_size = boost::get<int>(*replace);
 	}
 	else throw SemanticError("");
 
@@ -20,7 +23,8 @@ void AsmArrayNode::define()
 	{
 		auto replace = template_info -> getReplacement("T");
 
-		type = replace -> getType();
+//		type = replace -> getType();
+		type = TypeHelper::resolveType(boost::get<std::string>(*replace), scope);
 		type.is_ref = false;
 
 		ref_type = type;

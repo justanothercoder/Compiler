@@ -23,8 +23,15 @@ bool TemplateStructSymbol::isIn(string name) const
 			) != std::end(template_symbols);
 }
 
-Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
+Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols) const
 {
+	for ( auto param : symbols )
+	{
+		if ( param.which() == 0 ) 
+			std::cerr << "Debug: " << boost::get<std::string>(param) << '\n';
+		else	
+			std::cerr << "Debug: " << boost::get<int>(param) << '\n';
+	}
 /*
 	for ( auto i : symbols )
 	{
@@ -35,7 +42,7 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 */
 //	for ( auto i : symbols )
 //		i -> check();
-
+/*
 	for ( size_t i = 0; i < template_symbols.size(); ++i )
 	{
 		if ( template_symbols[i].second.type_name == "class" )
@@ -53,15 +60,21 @@ Symbol* TemplateStructSymbol::getSpec(vector<ExprNode*> symbols) const
 		if ( !symbols[i] -> isCompileTimeExpr() )
 			throw SemanticError("Template parameter is not a compile-time expression");
 	}
-
-	auto hash_func = [](vector<ExprNode*> vec)
+*/
+	auto hash_func = [](std::vector<TemplateParam> vec)
 	{
 		unsigned long long P = 31, pow = 1, ans = 0;
 
 		for ( size_t i = 0; i < vec.size(); ++i )
 		{
 //			ans += ((long long)vec[i]) * pow;
-			ans += (/*(long long)*/static_cast<int>(vec[i] -> getCompileTimeValue())) * pow;
+//			ans += (/*(long long)*/static_cast<int>(vec[i] -> getCompileTimeValue())) * pow;
+			
+			if ( vec[i].which() == 0 )
+				ans += static_cast<int>(std::hash<std::string>()(boost::get<std::string>(vec[i])) * pow);
+			else
+				ans += static_cast<int>(boost::get<int>(vec[i])) * pow;
+
 			pow *= P;		
 		}
 

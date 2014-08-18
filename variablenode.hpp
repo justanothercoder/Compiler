@@ -10,10 +10,13 @@
 #include "templateinfo.hpp"
 #include "codeobject.hpp"
 
+class NumberNode;
+
 class VariableNode : public ExprNode
 {
 
 	friend class TemplateStructSymbol;
+	friend class TypeHelper;
 
 public:
 
@@ -41,6 +44,8 @@ private:
     VariableSymbol *variable;
 
 	CodeObject code_obj;
+	
+	NumberNode *template_num;
 };
 
 #endif

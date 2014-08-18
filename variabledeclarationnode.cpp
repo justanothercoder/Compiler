@@ -93,9 +93,10 @@ void VariableDeclarationNode::define()
     {
 		auto replace = template_info -> getReplacement(type_info.type_name);
 
-		auto sym = replace -> getType();
-		
-		type_info.type_name = sym.getTypeName();
+//		auto sym = replace -> getType();		
+//		type_info.type_name = sym.getTypeName();
+
+		type_info.type_name = boost::get<std::string>(*replace);
     }
     
     auto var_type = TypeHelper::fromTypeInfo(type_info, scope, template_info);

@@ -4,8 +4,10 @@
 #include <vector>
 #include <string>
 
-//#include "templatestructsymbol.hpp"
 class TemplateStructSymbol;
+
+#include "optional.hpp"
+#include "templateparam.hpp"
 
 using namespace std;
 
@@ -14,12 +16,12 @@ class ExprNode;
 struct TemplateInfo
 {
 	TemplateInfo();
-	TemplateInfo(TemplateStructSymbol *sym, std::vector<ExprNode*> expr);
+	TemplateInfo(TemplateStructSymbol *sym, std::vector<TemplateParam> expr);
 
-	ExprNode* getReplacement(string name) const;
+	optional<TemplateParam> getReplacement(string name) const;
 
 	TemplateStructSymbol *sym;
-	std::vector<ExprNode*> expr;
+	std::vector<TemplateParam> expr;
 };
 
 #endif

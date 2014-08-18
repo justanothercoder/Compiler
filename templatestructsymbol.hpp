@@ -10,6 +10,8 @@
 #include "typeinfo.hpp"
 #include "structsymbol.hpp"
 
+#include "templateparam.hpp"
+
 class TemplateStructSymbol : public StructSymbol, public TemplateSymbol
 {
 public:
@@ -20,11 +22,11 @@ public:
 
     bool isIn(string name) const;
     
-    Symbol* getSpec(vector<ExprNode*> symbols) const override;
+    Symbol* getSpec(std::vector<TemplateParam> symbols) const override;
     
 public:
 
-//	mutable map< vector<ExprNode*>, StructSymbol*> specs;   
+//	mutable map< std::vector<TemplateParam>, StructSymbol*> specs;   
 	mutable map< long long, StructSymbol*> specs;   
 
 	std::vector< std::pair<string, TypeInfo> > template_symbols;
