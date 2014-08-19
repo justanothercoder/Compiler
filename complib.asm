@@ -61,13 +61,6 @@ _int_operatorplus_int~ref_int:
 	mov rax, [rax]
 	add rax, [rbp + 24]
 
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
-
-;	mov [rbp + 32], rax
-;	lea rax, [rbp + 32]
-	
 	mov rbx, rax
 	lea rax, [rbp + 32]
 	mov rax, [rax]
@@ -85,10 +78,6 @@ _int_operatorminus_int~ref_int:
 	mov rax, [rax]
 	sub rax, [rbp + 24]
 
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
-	
 	mov rbx, rax
 	lea rax, [rbp + 32]
 	mov rax, [rax]
@@ -106,9 +95,10 @@ _int_operatormul_int~ref_int:
 	mov rax, [rax]
 	imul qword [rbp + 24]
 
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]
+	mov rbx, rax
+	lea rax, [rbp + 32]
+	mov rax, [rax]
+	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp
@@ -192,18 +182,17 @@ _int_operatoreq_int~ref_int:
 	cmp rax, qword [rbp + 24]
 	jz .equal
 
-	mov r9, [rbp]
-	mov qword [r9 - 8], 0
-	lea rax, [r9 - 8]
+	mov rax, [rbp + 32]
+	mov qword [rax], 0
 
 	mov rsp, rbp
 	pop rbp
 	ret
 
 .equal:
-	mov r9, [rbp]
-	mov qword [r9 - 8], 1
-	lea rax, [r9 - 8]
+	mov rax, [rbp + 32]
+	mov qword [rax], 1
+
 	mov rsp, rbp
 	pop rbp
 	ret
@@ -218,17 +207,17 @@ _int_operatorneq_int~ref_int:
 	cmp rax, qword [rbp + 24]
 	je .equal
 
-	mov r9, [rbp]
-	mov qword [r9 - 8], 1
-	lea rax, [r9 - 8]
+	mov rax, [rbp + 32]
+	mov qword [rax], 1
+
 	mov rsp, rbp
 	pop rbp
 	ret
 
 .equal:
-	mov r9, [rbp]
-	mov qword [r9 - 8], 0
-	lea rax, [r9 - 8]
+	mov rax, [rbp + 32]
+	mov qword [rax], 0
+
 	mov rsp, rbp
 	pop rbp
 	ret

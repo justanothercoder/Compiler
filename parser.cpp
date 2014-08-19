@@ -155,6 +155,15 @@ DeclarationNode* Parser::templateStructDecl()
 
 	string struct_name = id();
 
+	if ( getTokenType(1) == TokenType::LESS )
+	{
+		match(TokenType::LESS);
+
+				
+
+		match(TokenType::GREATER);
+	}
+
 	vector<AST*> struct_in;    
 	match(TokenType::LBRACE);
 
