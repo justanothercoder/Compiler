@@ -62,8 +62,7 @@ _int_operatorplus_int~ref_int:
 	add rax, [rbp + 24]
 
 	mov rbx, rax
-	lea rax, [rbp + 32]
-	mov rax, [rax]
+	mov rax, [rbp + 32]
 	mov [rax], rbx
 
 	mov rsp, rbp
@@ -79,8 +78,7 @@ _int_operatorminus_int~ref_int:
 	sub rax, [rbp + 24]
 
 	mov rbx, rax
-	lea rax, [rbp + 32]
-	mov rax, [rax]
+	mov rax, [rbp + 32]
 	mov [rax], rbx
 
 	mov rsp, rbp
@@ -96,8 +94,7 @@ _int_operatormul_int~ref_int:
 	imul qword [rbp + 24]
 
 	mov rbx, rax
-	lea rax, [rbp + 32]
-	mov rax, [rax]
+	mov rax, [rbp + 32]
 	mov [rax], rbx
 
 	mov rsp, rbp
@@ -123,10 +120,6 @@ _int_int_int~ref_const~int~ref:
 	mov rbx, [rbx]
 	mov rax, [rbp + 16]	
 	mov [rax], rbx
-
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp
@@ -324,9 +317,13 @@ ___fopen_const~string~ref_int_int:
 	mov rdx, [rbp + 32]
 	syscall
 
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]
+;	mov r9, [rbp]
+;	mov [r9 - 8], rax
+;	lea rax, [r9 - 8]
+
+	mov rbx, rax
+	mov rax, [rbp + 40]
+	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp
@@ -566,12 +563,12 @@ _string_string_string~ref_const~string~ref:
 
 	mov byte [rsi], 0
 
-	mov r9, [rbp]
-	lea r9, [r9 - 8]
+;;	mov r9, [rbp]
+;;	lea r9, [r9 - 8]
 
-	mov rax, [rbp + 16]
-	mov [r9], rax
-	lea rax, [r9]
+;;	mov rax, [rbp + 16]
+;;	mov [r9], rax
+;;	lea rax, [r9]
 
 	mov rsp, rbp
 	pop rbp
@@ -653,10 +650,13 @@ _string_operatorplus_string~ref_const~string~ref:
 	push rbp
 	mov rbp, rsp
 
-	mov r9, [rbp]
-	lea rax, [r9 - 8]
+	mov rax, [rbp + 32]
+	mov rdi, rax
 
-	lea rdi, [r9 - 8]
+;	mov r9, [rbp]
+;	lea rax, [r9 - 8]
+
+;	lea rdi, [r9 - 8]
 	
 	mov rsi, [rbp + 16]
 
