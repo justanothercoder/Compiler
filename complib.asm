@@ -159,7 +159,9 @@ _getchar:
 	mov rdx, 1
 	syscall
 
-	lea rax, [rbp - 40]
+	mov rbx, [rbp - 40]
+	mov rax, [rbp + 16]
+	mov [rax], rbx
 	
 	mov rsp, rbp
 	pop rbp
@@ -317,10 +319,6 @@ ___fopen_const~string~ref_int_int:
 	mov rdx, [rbp + 32]
 	syscall
 
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
-
 	mov rbx, rax
 	mov rax, [rbp + 40]
 	mov [rax], rbx
@@ -390,6 +388,10 @@ ___fread_int_string~ref_int:
 	lea rsi, [rbp - 256]
 	mov rdx, [rbp + 32]
 	syscall
+
+	mov rbx, rax
+	mov rax, [rbp + 40]
+	mov [rax], rbx
 
 	lea rsi, [rbp - 256]
 	mov rdi, [rbp + 24]
@@ -483,18 +485,6 @@ _char_char_char~ref_const~char~ref:
 	mov rax, [rbp + 16]
 	mov byte [rax], bl
 
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
-
-;	mov [rbp + 32], rax
-;	lea rax, [rbp + 32]
-
-;;	mov rbx, rax
-;;	lea rax, [rbp + 32]
-;;	mov rax, [rax]
-;;	mov [rax], rbx
-
 	mov rsp, rbp
 	pop rbp
 	ret 
@@ -522,18 +512,6 @@ _char_char_char~ref_const~int~ref:
 
 	mov rax, [rbp + 16]
 	mov byte [rax], bl
-	
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
-
-;	mov [rbp + 32], rax
-;	lea rax, [rbp + 32]
-
-;;	mov rbx, rax
-;;	lea rax, [rbp + 32]
-;;	mov rax, [rax]
-;;	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp
@@ -562,13 +540,6 @@ _string_string_string~ref_const~string~ref:
 .end:
 
 	mov byte [rsi], 0
-
-;;	mov r9, [rbp]
-;;	lea r9, [r9 - 8]
-
-;;	mov rax, [rbp + 16]
-;;	mov [r9], rax
-;;	lea rax, [r9]
 
 	mov rsp, rbp
 	pop rbp
@@ -611,9 +582,13 @@ _string_length_string~ref:
 
 .end:
 
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]	
+	mov rbx, rax
+	mov rax, [rbp + 24]
+	mov [rax], rbx
+
+;	mov r9, [rbp]
+;	mov [r9 - 8], rax
+;	lea rax, [r9 - 8]	
 
 	mov rsp, rbp
 	pop rbp
@@ -653,11 +628,6 @@ _string_operatorplus_string~ref_const~string~ref:
 	mov rax, [rbp + 32]
 	mov rdi, rax
 
-;	mov r9, [rbp]
-;	lea rax, [r9 - 8]
-
-;	lea rdi, [r9 - 8]
-	
 	mov rsi, [rbp + 16]
 
 .floop:

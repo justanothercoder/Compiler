@@ -18,9 +18,6 @@ CodeObject& ReturnNode::gen()
 	{
 		CodeObject return_place;
 
-//		return_place.emit("mov r9, [rbp]");
-//	   	return_place.emit("lea rax, [r9 - " + std::to_string(GlobalConfig::int_size) + "]");
-
 		auto& params_types = enclosing_func -> function_type_info.params_types;
 		int addr = std::accumulate(std::begin(params_types), std::end(params_types), 0, [](int acc, VariableType type)
 		{

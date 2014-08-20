@@ -659,7 +659,7 @@ bool Parser::tryTypeInfo()
 	return success;
 }
     
-DeclarationNode* Parser::varInferDecl(optional<string> struct_name)
+DeclarationNode* Parser::varInferDecl(optional<string>)
 {
 	match(TokenType::VAR);
 	
