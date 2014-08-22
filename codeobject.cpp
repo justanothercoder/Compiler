@@ -42,7 +42,8 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		
 			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 
-			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size));		
+//			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size));		
+			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size + conv_info.desired_type.getSize() ));
 
 			if ( param -> getType().is_ref )
 				emit("mov rax, [rax]");
@@ -54,7 +55,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 			emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 
 			emit("call " + conv -> getScopedTypedName());
-			emit("add rsp, " + std::to_string(4 * GlobalConfig::int_size)); //offset + params
+			emit("add rsp, " + std::to_string(4 * GlobalConfig::int_size + conv_info.desired_type.getSize() )); //offset + params
 
 			emit("sub rsp, " + std::to_string(conv_info.desired_type.getSize()));
 		}
@@ -77,7 +78,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		
 			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 
-			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size));		
+			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size + conv_info.desired_type.getSize() ));
 
 			if ( param -> getType().is_ref )
 				emit("mov rax, [rax]");
@@ -89,7 +90,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 			emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 
 			emit("call " + copy_constr -> getScopedTypedName());
-			emit("add rsp, " + std::to_string(4 * GlobalConfig::int_size)); //offset + params 
+			emit("add rsp, " + std::to_string(4 * GlobalConfig::int_size + conv_info.desired_type.getSize() )); //offset + params 
 
 			emit("sub rsp, " + std::to_string(conv_info.desired_type.getSize()));
 		}
