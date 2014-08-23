@@ -11,6 +11,8 @@
 #include "overloadedfunctionsymbol.hpp"
 #include "paramvarallocator.hpp"
 
+#include "templateinfo.hpp"
+
 #include "codeobject.hpp"
 #include "optional.hpp"
 
@@ -55,6 +57,9 @@ public:
 	
 	bool is_constexpr;
 
+	const TemplateInfo& getTemplateInfo() const override;
+	bool isUnsafeBlock() const override;
+
 private:
 
     string name;
@@ -65,9 +70,10 @@ private:
 
     FunctionTraits traits;
 
+	TempAllocator temp_alloc;
 	ParamVarAllocator var_alloc;
 
-	TempAllocator temp_alloc;
+	TemplateInfo template_info;
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include "functionsymbol.hpp"
+#include "scopevisitor.hpp"
 
 FunctionSymbol::FunctionSymbol(string name
 		                      , VariableType return_type
@@ -8,10 +9,10 @@ FunctionSymbol::FunctionSymbol(string name
 							  , optional<CodeObject> code_obj) : code_obj(code_obj)
 													           , return_type(return_type)
 													           , function_type_info(function_type_info)
+															   , is_constexpr(false)
 													           , name(name)
 													           , enclosing_scope(enclosing_scope)
 													           , traits(traits)
-															   , is_constexpr(false)
 {
 	scope_name = enclosing_scope->getScopeName() + "_" + (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
 }
@@ -103,3 +104,12 @@ TempAllocator& FunctionSymbol::getTempAlloc()
 	return temp_alloc; 
 }
 
+const TemplateInfo& FunctionSymbol::getTemplateInfo() const
+{
+	return template_info;
+}
+
+bool FunctionSymbol::isUnsafeBlock() const
+{
+	return false;
+}

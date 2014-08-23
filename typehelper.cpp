@@ -8,7 +8,6 @@ VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, Template
 	auto type_name = type_info.type_name;
 
 	if ( template_info -> sym && template_info -> sym -> isIn(type_name) )
-//		type_name = template_info -> getReplacement(type_name) -> getType().type -> getName();
 		type_name = boost::get<std::string>(*template_info -> getReplacement(type_name));
 
 	auto type = VariableType(TypeHelper::resolveType(type_name, scope));
@@ -16,7 +15,6 @@ VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, Template
 	if ( type.type == nullptr )
 		throw SemanticError(type_name + " is not a type");
 
-//	if ( type_info.template_params.size() > 0 )
 	if ( dynamic_cast<TemplateStructSymbol*>(type.type) )
 	{
 		auto tmpl = dynamic_cast<TemplateStructSymbol*>(type.type);

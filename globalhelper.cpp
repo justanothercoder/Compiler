@@ -1,5 +1,6 @@
 #include "globalhelper.hpp"
 #include "scope.hpp"
+#include "varallocator.hpp"
 
 std::string GlobalHelper::getCodeOperatorName(std::string op)
 {

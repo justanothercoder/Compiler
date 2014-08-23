@@ -2,7 +2,9 @@
 #define _STRUCTSCOPE_HPP_
 
 #include "basescope.hpp"
+#include "tempallocator.hpp"
 #include "fieldvarallocator.hpp"
+#include "templateinfo.hpp"
 
 class StructScope : public BaseScope
 {
@@ -23,6 +25,9 @@ public:
     string getScopeName() const override;
 
     void accept(ScopeVisitor *visitor) override;
+	
+	const TemplateInfo& getTemplateInfo() const override;
+	bool isUnsafeBlock() const override;
     
 private:
 	FieldVarAllocator var_alloc;
@@ -30,6 +35,8 @@ private:
 
 	string scope_name;
 	Scope *enclosing_scope;
+
+	TemplateInfo template_info;
 
 protected:
 

@@ -1,15 +1,15 @@
 #ifndef _SCOPE_HPP_
 #define _SCOPE_HPP_
 
-#include "symbol.hpp"
-#include "type.hpp"
-#include "exprnode.hpp"
+#include <string>
 
-#include "scopevisitor.hpp"
-#include "varallocator.hpp"
-#include "tempallocator.hpp"
-
+class Scope;
+class Symbol;
+class ScopeVisitor;
+class VarAllocator;
+class TempAllocator;
 class VariableSymbol;
+struct TemplateInfo;
 
 class Scope
 {
@@ -18,14 +18,17 @@ public:
     virtual ~Scope();
 
     virtual Scope* getEnclosingScope() const = 0;
-    virtual Symbol* resolve(string name) const = 0;
+    virtual Symbol* resolve(std::string name) const = 0;
 
 	virtual VarAllocator& getVarAlloc() = 0;
 	virtual TempAllocator& getTempAlloc() = 0;
 
-    virtual string getScopeName() const = 0;
+    virtual std::string getScopeName() const = 0;
 
     virtual void accept(ScopeVisitor *visitor) = 0;
+
+	virtual const TemplateInfo& getTemplateInfo() const = 0;
+	virtual bool isUnsafeBlock() const = 0;
 };
 
 #endif

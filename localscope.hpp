@@ -20,6 +20,9 @@ public:
 
 	VarAllocator& getVarAlloc() override;
 	TempAllocator& getTempAlloc() override;
+
+	const TemplateInfo& getTemplateInfo() const override;
+	bool isUnsafeBlock() const override;
 	
 private:
 

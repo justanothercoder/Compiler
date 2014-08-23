@@ -1,4 +1,5 @@
 #include "structscope.hpp"
+#include "scopevisitor.hpp"
 
 StructScope::StructScope(string name, Scope *enclosing_scope) : scope_name(enclosing_scope -> getScopeName() + "_" + name)
 															  , enclosing_scope(enclosing_scope)	
@@ -50,4 +51,14 @@ string StructScope::getScopeName() const
 { 
 	return scope_name; 
 }
+	
+const TemplateInfo& StructScope::getTemplateInfo() const
+{
+	return template_info;
+}
 
+bool StructScope::isUnsafeBlock() const
+{
+	return false;
+}
+    

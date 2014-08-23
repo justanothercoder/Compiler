@@ -1,12 +1,42 @@
 #include "globalscope.hpp"
+#include "scopevisitor.hpp"
 
-GlobalScope::GlobalScope() : BaseScope() { } 
+GlobalScope::GlobalScope() : BaseScope(), template_info(TemplateInfo())
+{
 
-Scope* GlobalScope::getEnclosingScope() const { return nullptr; }
-string GlobalScope::getScopeName() const { return ""; }
+} 
 
-void GlobalScope::accept(ScopeVisitor *visitor) { visitor->visit(this); }
+Scope* GlobalScope::getEnclosingScope() const 
+{
+   	return nullptr; 
+}
 
-VarAllocator& GlobalScope::getVarAlloc() { return var_alloc; }
+std::string GlobalScope::getScopeName() const
+{
+   	return ""; 
+}
 
-TempAllocator& GlobalScope::getTempAlloc() { return temp_alloc; }
+void GlobalScope::accept(ScopeVisitor *visitor)
+{
+   	visitor -> visit(this); 
+}
+
+VarAllocator& GlobalScope::getVarAlloc() 
+{
+   	return var_alloc; 
+}
+
+TempAllocator& GlobalScope::getTempAlloc() 
+{
+   	return temp_alloc; 
+}
+
+const TemplateInfo& GlobalScope::getTemplateInfo() const
+{ 
+	return template_info;
+}
+
+bool GlobalScope::isUnsafeBlock() const
+{
+	return false;
+}

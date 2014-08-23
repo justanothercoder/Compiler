@@ -27,10 +27,15 @@ public:
 	VarAllocator& getVarAlloc() override;
 	TempAllocator& getTempAlloc() override;
 
+	const TemplateInfo& getTemplateInfo() const override;
+	bool isUnsafeBlock() const override;
+
 private:
 
 	VarAllocator var_alloc;
 	TempAllocator temp_alloc;
+
+	TemplateInfo template_info;
 };
 
 #endif
