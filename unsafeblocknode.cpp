@@ -1,4 +1,5 @@
 #include "unsafeblocknode.hpp"
+#include "unsafescope.hpp"
 
 UnsafeBlockNode::UnsafeBlockNode(StatementNode *block) : block(block)
 {
@@ -17,10 +18,7 @@ AST* UnsafeBlockNode::copyTree() const
     
 void UnsafeBlockNode::build_scope() 
 {
-	block -> scope         = scope;
-	block -> template_info = template_info;
-	block -> is_unsafe     = true;
-
+	block -> scope         = new UnsafeScope(scope);
 	block -> build_scope();
 }
 

@@ -10,20 +10,20 @@ void AsmArrayNode::define()
 {
 	VariableType type, ref_type;
 
-	if ( template_info -> sym -> isIn("size") )
+	const auto& template_info = scope -> getTemplateInfo(); 
+
+	if ( template_info.sym -> isIn("size") )
 	{
-		auto replace = template_info -> getReplacement("size");
+		auto replace = template_info.getReplacement("size");
 		
-//		array_size = std::stoi(dynamic_cast<NumberNode*>(replace) -> getNum());
 		array_size = boost::get<int>(*replace);
 	}
 	else throw SemanticError("");
 
-	if ( template_info -> sym -> isIn("T") )
+	if ( template_info.sym -> isIn("T") )
 	{
-		auto replace = template_info -> getReplacement("T");
+		auto replace = template_info.getReplacement("T");
 
-//		type = replace -> getType();
 		type = TypeHelper::resolveType(boost::get<std::string>(*replace), scope);
 		type.is_ref = false;
 

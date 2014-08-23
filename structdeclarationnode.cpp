@@ -18,14 +18,13 @@ Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; 
 
 void StructDeclarationNode::build_scope()
 {
-    definedSymbol = new StructSymbol(name, scope);
+    definedSymbol = new StructSymbol(name, scope, scope -> getTemplateInfo());
 
 	scope -> accept(new SymbolDefine(definedSymbol));
 
 	for ( auto i : inner )
     {
 		i -> scope         = definedSymbol;
-		i -> template_info = template_info;
 		i -> build_scope();
     }
 }

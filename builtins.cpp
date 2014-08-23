@@ -7,7 +7,7 @@
 
 Scope *BuiltIns::global_scope = new GlobalScope();
 
-StructSymbol *BuiltIns::int_struct = new StructSymbol("int", BuiltIns::global_scope);
+StructSymbol *BuiltIns::int_struct = new StructSymbol("int", BuiltIns::global_scope, BuiltIns::global_scope -> getTemplateInfo());
 
 FunctionSymbol *BuiltIns::int_assign = new FunctionSymbol("operator=",
 							  VariableType(BuiltIns::int_struct, true), 
@@ -109,7 +109,7 @@ TemplateStructSymbol *BuiltIns::array_struct = new TemplateStructSymbol("array",
 																		)
 		);
 	
-StructSymbol *BuiltIns::char_struct = new StructSymbol("char", BuiltIns::global_scope);
+StructSymbol *BuiltIns::char_struct = new StructSymbol("char", BuiltIns::global_scope, BuiltIns::global_scope -> getTemplateInfo());
 
 FunctionSymbol *BuiltIns::char_assign = new FunctionSymbol("operator=",
 														   VariableType(BuiltIns::char_struct, true),
@@ -153,7 +153,7 @@ FunctionSymbol *BuiltIns::getchar_func = new FunctionSymbol("getchar",
 							    {false, false, false}
     );
 
-StructSymbol *BuiltIns::ASCII_string = new StructSymbol("string", BuiltIns::global_scope);
+StructSymbol *BuiltIns::ASCII_string = new StructSymbol("string", BuiltIns::global_scope, BuiltIns::global_scope -> getTemplateInfo());
 
 FunctionSymbol *BuiltIns::ASCII_string_copy_constructor = new FunctionSymbol("string",
 										VariableType(BuiltIns::ASCII_string, true),

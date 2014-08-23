@@ -6,7 +6,7 @@
 #include "typehelper.hpp"
 
 TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, AST *holder) : 
-	StructSymbol(name, enclosing_scope),
+	StructSymbol(name, enclosing_scope, (*new TemplateInfo())),
 	template_symbols(template_symbols),
 	holder(holder)
 {
@@ -96,8 +96,10 @@ Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols) const
 
 	StructDeclarationNode *decl = new StructDeclarationNode(this -> getName() + "~hash" + std::to_string(hash_), vec);
 
-	decl -> scope = holder -> scope;
-	decl -> template_info = new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols);
+//	decl -> scope = holder -> scope;
+//	decl -> template_info = new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols);
+
+	decl -> scope = new StructSymbol(getName(), holder -> scope -> getEnclosingScope(), *(new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)));
 	decl -> build_scope();
 
 	decl -> define();

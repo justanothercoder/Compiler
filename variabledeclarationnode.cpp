@@ -24,7 +24,6 @@ void VariableDeclarationNode::build_scope()
 	for ( auto param : type_info.template_params )
 	{
 		param -> scope         = scope;
-		param -> template_info = template_info;
 		param -> build_scope();
 	}
 }
@@ -45,7 +44,7 @@ void VariableDeclarationNode::check()
 		{
 			string type_name = type_info.type_name;
 
-			auto _ = TypeHelper::fromTypeInfo(type_info, scope, template_info);
+			auto _ = TypeHelper::fromTypeInfo(type_info, scope, scope -> getTemplateInfo());
 
 			if ( _.type -> getTypeKind() != TypeKind::STRUCT )
 				throw SemanticError("No such struct " + type_name);
@@ -89,12 +88,11 @@ CodeObject& VariableDeclarationNode::gen()
 
 void VariableDeclarationNode::define()
 {
-    if ( template_info -> sym && template_info -> sym -> isIn(type_info.type_name) )
-    {
-		auto replace = template_info -> getReplacement(type_info.type_name);
+	const auto& template_info = scope -> getTemplateInfo();
 
-//		auto sym = replace -> getType();		
-//		type_info.type_name = sym.getTypeName();
+    if ( template_info.sym && template_info.sym -> isIn(type_info.type_name) )
+    {
+		auto replace = template_info.getReplacement(type_info.type_name);
 
 		type_info.type_name = boost::get<std::string>(*replace);
     }

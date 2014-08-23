@@ -15,7 +15,6 @@ void NewExpressionNode::build_scope()
 	for ( auto param : type_info.template_params )
 	{
 		param -> scope         = scope;
-		param -> template_info = template_info;
 		param -> build_scope();
 	}
 }
@@ -27,7 +26,7 @@ void NewExpressionNode::check()
 
 	string name = type_info.type_name;
 
-	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, scope, template_info).type);
+	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, scope, scope -> getTemplateInfo()).type);
 
 	call_info = CallHelper::callCheck(type -> getName(), type, params); 
 

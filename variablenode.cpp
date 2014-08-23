@@ -9,9 +9,11 @@ VariableNode::VariableNode(string name) : name(name), variable(nullptr), templat
 
 void VariableNode::check()
 {
-	if ( template_info -> sym && template_info -> sym -> isIn(name) )
+	const auto& template_info = scope -> getTemplateInfo();
+
+	if ( template_info.sym && template_info.sym -> isIn(name) )
 	{
-		auto replace = template_info -> getReplacement(name);
+		auto replace = template_info.getReplacement(name);
 
 		if ( replace -> which() == 0 )
 			throw SemanticError(name + " is typename");
@@ -19,7 +21,6 @@ void VariableNode::check()
 		template_num = new NumberNode(std::to_string(boost::get<int>(*replace)));
 		template_num -> scope = scope;
 		template_num -> build_scope();
-		template_num -> template_info = template_info; 
 
 		template_num -> check();
 		return;
@@ -46,13 +47,10 @@ void VariableNode::check()
 
 CodeObject& VariableNode::gen()
 {
-	if ( template_info -> sym && template_info -> sym -> isIn(name) )
-	{
-//		auto replace = template_info -> getReplacement(name);	
-//		return replace -> gen();
+	const auto& template_info = scope -> getTemplateInfo();
 
-		template_num -> gen();
-	}
+	if ( template_info.sym && template_info.sym -> isIn(name) )
+		return template_num -> gen();
 
 	auto var_type = variable -> getType();
 
@@ -105,7 +103,11 @@ CodeObject& VariableNode::gen()
 	return code_obj;
 }
 
-bool VariableNode::isTemplateParam() const { return template_info -> sym != nullptr && template_info -> sym -> isIn(name); }
+bool VariableNode::isTemplateParam() const 
+{ 
+	const auto& template_info = scope -> getTemplateInfo();
+	return template_info.sym != nullptr && template_info.sym -> isIn(name); 
+}
 	
 AST* VariableNode::copyTree() const { return new VariableNode(name); }
 
@@ -113,8 +115,9 @@ VariableType VariableNode::getType() const
 {
 	if ( isTemplateParam() )
 	{
-		auto replace = template_info -> getReplacement(name);
-//		return replace -> getType();
+		const auto& template_info = scope -> getTemplateInfo();
+
+		auto replace = template_info.getReplacement(name);
 
 		return TypeHelper::resolveType("int", BuiltIns::global_scope);
 	}
@@ -131,8 +134,9 @@ void VariableNode::freeTempSpace()
 
 bool VariableNode::isCompileTimeExpr() const
 {
-	if ( template_info -> sym != nullptr && template_info -> sym -> isIn(name) )
-//		return template_info -> getReplacement(name) -> isCompileTimeExpr();
+	const auto& template_info = scope -> getTemplateInfo();
+
+	if ( template_info.sym != nullptr && template_info.sym -> isIn(name) )
 		return true;
 	else if ( dynamic_cast<ClassVariableSymbol*>(variable) )
 		return true;
@@ -142,8 +146,10 @@ bool VariableNode::isCompileTimeExpr() const
 
 optional<int> VariableNode::getCompileTimeValue() const
 {
-	if ( template_info -> sym != nullptr && template_info -> sym -> isIn(name) )
-		return boost::get<int>(*template_info -> getReplacement(name));
+	const auto& template_info = scope -> getTemplateInfo();
+
+	if ( template_info.sym != nullptr && template_info.sym -> isIn(name) )
+		return boost::get<int>(*template_info.getReplacement(name));
 	if ( dynamic_cast<ClassVariableSymbol*>(variable) )
 		return std::hash<std::string>()(variable -> getName());
 	else

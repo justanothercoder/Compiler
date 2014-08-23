@@ -9,7 +9,6 @@ void ImportNode::define()
 	auto root = FileHelper::parse((lib + ".txt").c_str());
 
 	root -> scope = scope;
-	root -> template_info = new TemplateInfo();
 	root -> build_scope();
 
 	root -> define();

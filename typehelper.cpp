@@ -3,12 +3,12 @@
 
 #include "variablenode.hpp"
 
-VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, TemplateInfo *template_info)
+VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateInfo& template_info)
 {    
 	auto type_name = type_info.type_name;
 
-	if ( template_info -> sym && template_info -> sym -> isIn(type_name) )
-		type_name = boost::get<std::string>(*template_info -> getReplacement(type_name));
+	if ( template_info.sym && template_info.sym -> isIn(type_name) )
+		type_name = boost::get<std::string>(*template_info.getReplacement(type_name));
 
 	auto type = VariableType(TypeHelper::resolveType(type_name, scope));
 	

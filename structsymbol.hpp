@@ -16,7 +16,7 @@ class StructSymbol : public Symbol, public StructScope, public Type
 {
 public:
 
-    StructSymbol(string name, Scope *enclosing_scope);
+    StructSymbol(string name, Scope *enclosing_scope, const TemplateInfo& template_info);
 
     SymbolType getSymbolType() const override;
     string getName() const override;

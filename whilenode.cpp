@@ -14,11 +14,9 @@ void WhileNode::build_scope()
     while_scope = new LocalScope(scope);
 
     cond -> scope         = scope;
-	cond -> template_info = template_info;
     cond -> build_scope();
 
     stats -> scope         = while_scope;
-	stats -> template_info = template_info;
     stats -> build_scope();
 }
 

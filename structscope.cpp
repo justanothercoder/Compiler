@@ -1,8 +1,11 @@
 #include "structscope.hpp"
 #include "scopevisitor.hpp"
 
-StructScope::StructScope(string name, Scope *enclosing_scope) : scope_name(enclosing_scope -> getScopeName() + "_" + name)
-															  , enclosing_scope(enclosing_scope)	
+StructScope::StructScope(string name
+		               , Scope *enclosing_scope
+					   , const TemplateInfo& template_info) : scope_name(enclosing_scope -> getScopeName() + "_" + name)
+															, enclosing_scope(enclosing_scope)
+															, template_info(template_info)
 {
 	type_size = 0;
 }

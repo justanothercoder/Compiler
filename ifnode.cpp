@@ -17,15 +17,12 @@ void IfNode::build_scope()
     else_scope = new LocalScope(scope);
     
     cond -> scope         = scope;
-	cond -> template_info = template_info;
     cond -> build_scope();
 
     stats_true -> scope         = if_scope;
-	stats_true -> template_info = template_info;
     stats_true -> build_scope();
 
     stats_false -> scope         = else_scope;
-	stats_false -> template_info = template_info;
     stats_false -> build_scope();
 }
 

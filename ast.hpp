@@ -26,8 +26,6 @@ public:
 	virtual std::vector<AST*> getChildren() const;	
 
 	Scope *scope;
-	TemplateInfo *template_info;
-	bool is_unsafe;
 };
 
 #endif

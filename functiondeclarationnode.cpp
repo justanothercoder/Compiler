@@ -25,7 +25,6 @@ void FunctionDeclarationNode::build_scope()
 	definedSymbol = new FunctionSymbol(traits.is_constructor ? static_cast<StructSymbol*>(scope) -> getName() : name, VariableType(), { }, scope, traits);
 
 	statements -> scope         = definedSymbol;
-	statements -> template_info = template_info;
 	statements -> build_scope();
 }
 
@@ -33,12 +32,14 @@ Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol
 
 void FunctionDeclarationNode::define()
 {
-	if ( template_info -> sym != nullptr && return_type_info.type_name == template_info -> sym -> getName() )
+	const auto& template_info = scope -> getTemplateInfo();
+
+	if ( template_info.sym != nullptr && return_type_info.type_name == template_info.sym -> getName() )
 		return_type_info.type_name = static_cast<StructSymbol*>(scope) -> getName();
 
 	auto fromTypeInfo = [&] (TypeInfo type_info) 
 	{
-		if ( template_info -> sym != nullptr && type_info.type_name == template_info -> sym -> getName() )
+		if ( template_info.sym != nullptr && type_info.type_name == template_info.sym -> getName() )
 			type_info.type_name = static_cast<StructSymbol*>(scope) -> getName();
 
 		if ( definedSymbol -> isMethod() && type_info.type_name == static_cast<StructSymbol*>(scope) -> getName() )

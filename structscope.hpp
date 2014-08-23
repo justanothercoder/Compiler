@@ -12,7 +12,7 @@ class StructScope : public BaseScope
 
 public:
 	
-	StructScope(string scope_name, Scope *enclosing_scope);
+	StructScope(string scope_name, Scope *enclosing_scope, const TemplateInfo& template_info);
 	
 	VarAllocator& getVarAlloc() override;
 	TempAllocator& getTempAlloc() override;

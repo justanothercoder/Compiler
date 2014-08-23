@@ -22,7 +22,6 @@ int main()
 		shared_ptr<AST> root(FileHelper::parse(filename));
 
 		root -> scope         = BuiltIns::global_scope;
-		root -> template_info = new TemplateInfo();
 
 		BuiltIns::global_scope -> accept(new SymbolDefine(BuiltIns::int_struct));
 		BuiltIns::global_scope -> accept(new SymbolDefine(BuiltIns::ASCII_string));

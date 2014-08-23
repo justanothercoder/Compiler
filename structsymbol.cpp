@@ -3,8 +3,10 @@
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
 
-StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : StructScope(name, enclosing_scope)
-																, name(name)
+StructSymbol::StructSymbol(string name
+		                 , Scope *enclosing_scope
+						 , const TemplateInfo& template_info) : StructScope(name, enclosing_scope, template_info)
+															  , name(name)
 {
 
 }
