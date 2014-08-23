@@ -27,6 +27,7 @@ public:
 
 	Scope *scope;
 	TemplateInfo *template_info;
+	bool is_unsafe;
 };
 
 #endif

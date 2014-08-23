@@ -30,6 +30,7 @@
 #include "bracketnode.hpp"
 #include "stringnode.hpp"
 
+#include "unsafeblocknode.hpp"
 
 #include "optional.hpp"
 
@@ -64,6 +65,8 @@ private:
     AST* statement();
     AST* assignment();
 	AST* block();
+
+	AST* unsafe_block();
 
     ExprNode* expression();
 	ExprNode* bool_expr();

@@ -33,6 +33,7 @@ AST* Parser::statement()
 	else if ( tryAssignment() )                      return assignment();
 	else if ( getTokenType(1) == TokenType::LBRACE ) return block();
 	else if ( getTokenType(1) == TokenType::IMPORT ) return import_stat(); 
+	else if ( getTokenType(1) == TokenType::UNSAFE ) return unsafe_block();
 	else                                             return expression();
 }
 
@@ -670,4 +671,11 @@ DeclarationNode* Parser::varInferDecl(optional<string>)
 	auto expr = expression();
 	
 	return new VarInferTypeDeclarationNode(name, expr);
+}
+
+AST* Parser::unsafe_block()
+{
+	match(TokenType::UNSAFE);
+
+	return new UnsafeBlockNode(static_cast<StatementNode*>(block()));
 }
