@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <fstream>
+#include <boost/optional.hpp>
 
 #include "abstractparser.hpp"
 
@@ -32,8 +33,6 @@
 
 #include "unsafeblocknode.hpp"
 
-#include "optional.hpp"
-
 class Parser : public AbstractParser
 {
 public:
@@ -49,12 +48,12 @@ private:
     TypeInfo typeInfo();
     vector<ExprNode*> call_params_list();
   
-    DeclarationNode* declaration(optional<string> struct_name = optional<string>::empty());
+    DeclarationNode* declaration(boost::optional<string> struct_name = boost::none);
     DeclarationNode* templateStructDecl();
     DeclarationNode* structDecl();
-    DeclarationNode* variableDecl(optional<string> struct_name = optional<string>::empty());
-    DeclarationNode* functionDecl(optional<string> struct_name = optional<string>::empty());
-	DeclarationNode* varInferDecl(optional<string> struct_name = optional<string>::empty());
+    DeclarationNode* variableDecl(boost::optional<string> struct_name = boost::none);
+    DeclarationNode* functionDecl(boost::optional<string> struct_name = boost::none);
+	DeclarationNode* varInferDecl(boost::optional<string> struct_name = boost::none);
 
 	AST* import_stat();
 	

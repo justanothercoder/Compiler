@@ -28,7 +28,7 @@ VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const Te
 			  && dynamic_cast<ClassVariableSymbol*>(static_cast<VariableNode*>(expr) -> variable) != nullptr )
 				return TemplateParam(static_cast<ClassVariableSymbol*>(static_cast<VariableNode*>(expr) -> variable) -> getName());
 			else
-				return TemplateParam(expr -> getCompileTimeValue());
+				return TemplateParam(*expr -> getCompileTimeValue());
 		};
 
 		std::vector<TemplateParam> tmpl_params(type_info.template_params.size());

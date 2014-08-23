@@ -66,7 +66,7 @@ bool DotNode::isCompileTimeExpr() const
 	return false;
 }
 
-optional<int> DotNode::getCompileTimeValue() const
+boost::optional<int> DotNode::getCompileTimeValue() const
 {
-	return optional<int>::empty();
+	return boost::none;
 }

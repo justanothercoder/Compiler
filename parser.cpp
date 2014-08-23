@@ -51,7 +51,7 @@ AST* Parser::block()
 	return new StatementNode(statements);
 }
 
-DeclarationNode* Parser::declaration(optional<string> struct_name)
+DeclarationNode* Parser::declaration(boost::optional<string> struct_name)
 {
 	if      ( getTokenType(1) == TokenType::STRUCT )   return structDecl();
 	else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateStructDecl();
@@ -75,7 +75,7 @@ bool Parser::tryVarDecl()
 	return success;
 }
 
-DeclarationNode* Parser::variableDecl(optional<string> struct_name)
+DeclarationNode* Parser::variableDecl(boost::optional<string> struct_name)
 {
 	auto type_info = typeInfo();
 	string var_name  = id();
@@ -112,9 +112,9 @@ DeclarationNode* Parser::structDecl()
 		if ( getTokenType(1) != TokenType::RBRACE )
 		{
 			if ( getTokenType(1) == TokenType::DEF )
-				functions.push_back(functionDecl(make_optional(string(struct_name))));
+				functions.push_back(functionDecl(boost::make_optional(string(struct_name))));
 			else		
-				struct_in.push_back(declaration(make_optional(string(struct_name))));
+				struct_in.push_back(declaration(boost::make_optional(string(struct_name))));
 		}
 	}
 
@@ -174,7 +174,7 @@ DeclarationNode* Parser::templateStructDecl()
 			match(TokenType::SEMICOLON);
 
 		if ( getTokenType(1) != TokenType::RBRACE )
-			struct_in.push_back(declaration(make_optional(string(struct_name))));
+			struct_in.push_back(declaration(boost::make_optional(string(struct_name))));
 	}
 
 	match(TokenType::RBRACE);
@@ -182,7 +182,7 @@ DeclarationNode* Parser::templateStructDecl()
 	return new TemplateStructDeclarationNode(struct_name, struct_in, template_params);
 }
 
-DeclarationNode* Parser::functionDecl(optional<string> struct_name)
+DeclarationNode* Parser::functionDecl(boost::optional<string> struct_name)
 {
 	match(TokenType::DEF);
 
@@ -660,7 +660,7 @@ bool Parser::tryTypeInfo()
 	return success;
 }
     
-DeclarationNode* Parser::varInferDecl(optional<string>)
+DeclarationNode* Parser::varInferDecl(boost::optional<string>)
 {
 	match(TokenType::VAR);
 	

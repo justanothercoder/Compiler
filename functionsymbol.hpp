@@ -2,6 +2,7 @@
 #define _FUNCTIONSYMBOL_HPP_
 
 #include <map>
+#include <boost/optional.hpp>
 
 #include "basescope.hpp"
 #include "globalconfig.hpp"
@@ -14,7 +15,6 @@
 #include "templateinfo.hpp"
 
 #include "codeobject.hpp"
-#include "optional.hpp"
 
 class VariableSymbol;
 
@@ -26,7 +26,7 @@ class FunctionSymbol : public Symbol, public BaseScope, public Type
     friend class VariableSymbolDefine;
 public:
 
-    FunctionSymbol(string name, VariableType return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, optional<CodeObject> code_obj = optional<CodeObject>::empty());
+    FunctionSymbol(string name, VariableType return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, boost::optional<CodeObject> code_obj = boost::none);
 
     string getTypedName() const;
     string getScopedTypedName() const;
@@ -50,7 +50,7 @@ public:
 	VarAllocator& getVarAlloc() override;
 	TempAllocator& getTempAlloc() override;
 
-	optional<CodeObject> code_obj;
+	boost::optional<CodeObject> code_obj;
 
 	VariableType return_type;
     FunctionTypeInfo function_type_info;	

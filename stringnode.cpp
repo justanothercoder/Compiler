@@ -63,7 +63,7 @@ bool StringNode::isCompileTimeExpr() const
 	return false;
 }
 
-optional<int> StringNode::getCompileTimeValue() const
+boost::optional<int> StringNode::getCompileTimeValue() const
 {
-	return optional<int>::empty();
+	return boost::none;
 }

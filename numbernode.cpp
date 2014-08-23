@@ -36,7 +36,7 @@ bool NumberNode::isCompileTimeExpr() const
 	return true;
 }
 
-optional<int> NumberNode::getCompileTimeValue() const
+boost::optional<int> NumberNode::getCompileTimeValue() const
 {
-	return optional<int>(std::stoi(num));
+	return boost::optional<int>(std::stoi(num));
 }

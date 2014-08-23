@@ -144,7 +144,7 @@ bool VariableNode::isCompileTimeExpr() const
 		return false;
 }
 
-optional<int> VariableNode::getCompileTimeValue() const
+boost::optional<int> VariableNode::getCompileTimeValue() const
 {
 	const auto& template_info = scope -> getTemplateInfo();
 
@@ -153,5 +153,5 @@ optional<int> VariableNode::getCompileTimeValue() const
 	if ( dynamic_cast<ClassVariableSymbol*>(variable) )
 		return std::hash<std::string>()(variable -> getName());
 	else
-		return optional<int>::empty();
+		return boost::none;
 }

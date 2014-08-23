@@ -25,7 +25,7 @@ public:
 	virtual void freeTempSpace();
 	
 	bool isCompileTimeExpr() const override;
-	optional<int> getCompileTimeValue() const override;
+	boost::optional<int> getCompileTimeValue() const override;
 
 private:
 

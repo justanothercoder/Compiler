@@ -76,7 +76,7 @@ bool NewExpressionNode::isCompileTimeExpr() const
 	return false;
 }
 
-optional<int> NewExpressionNode::getCompileTimeValue() const
+boost::optional<int> NewExpressionNode::getCompileTimeValue() const
 {
-	return optional<int>::empty();
+	return boost::none;
 }

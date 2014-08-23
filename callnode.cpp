@@ -84,7 +84,7 @@ bool CallNode::isCompileTimeExpr() const
 	});
 }
 
-optional<int> CallNode::getCompileTimeValue() const
+boost::optional<int> CallNode::getCompileTimeValue() const
 {
-	return optional<int>::empty();
+	return boost::none;
 }

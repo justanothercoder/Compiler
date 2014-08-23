@@ -99,13 +99,13 @@ bool BinaryOperatorNode::isCompileTimeExpr() const
 	return lhs -> isCompileTimeExpr() && rhs -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
 }
 
-optional<int> BinaryOperatorNode::getCompileTimeValue() const
+boost::optional<int> BinaryOperatorNode::getCompileTimeValue() const
 {
 	if ( !isCompileTimeExpr() )
-		return optional<int>::empty();
+		return boost::none;
 
-	int lhs_value = static_cast<int>(lhs -> getCompileTimeValue());
-	int rhs_value = static_cast<int>(rhs -> getCompileTimeValue());
+	int lhs_value = *lhs -> getCompileTimeValue();
+	int rhs_value = *rhs -> getCompileTimeValue();
 
 	switch ( op_type )
 	{
@@ -116,6 +116,6 @@ optional<int> BinaryOperatorNode::getCompileTimeValue() const
 	case BinaryOp::MOD    : return lhs_value % rhs_value;
 	case BinaryOp::EQUALS : return lhs_value == rhs_value;
 	case BinaryOp::NEQUALS: return lhs_value != rhs_value;
-	default: return optional<int>::empty();
+	default: return boost::none;
 	}	
 }
