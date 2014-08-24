@@ -596,13 +596,21 @@ TypeInfo Parser::typeInfo()
 		match(TokenType::GREATER);
 	}
 
+	int pointer_depth = 0;
+
+	while ( getTokenType(1) == TokenType::MUL )
+	{
+		match(TokenType::MUL);
+		++pointer_depth;	
+	}
+
 	if ( getTokenType(1) == TokenType::REF )
 	{
 		is_ref = true;
 		match(TokenType::REF);
 	}
 
-	return TypeInfo(type_name, is_ref, is_const, template_params);
+	return TypeInfo(type_name, is_ref, is_const, template_params, pointer_depth);
 }
 
 vector<ExprNode*> Parser::call_params_list()

@@ -24,8 +24,6 @@ void NewExpressionNode::check()
 	for ( auto param : type_info.template_params )
 		param -> check();
 
-	string name = type_info.type_name;
-
 	auto type = static_cast<StructSymbol*>(TypeHelper::fromTypeInfo(type_info, scope, scope -> getTemplateInfo()).type);
 
 	call_info = CallHelper::callCheck(type -> getName(), type, params); 
