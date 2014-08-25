@@ -12,8 +12,8 @@ struct ConversionInfo
 	FunctionSymbol *conversion;
 	bool deref, ref;
 
-	VariableType actual_type;
-	VariableType desired_type;
+	Type *actual_type;
+	Type *desired_type;
 };
 
 #endif

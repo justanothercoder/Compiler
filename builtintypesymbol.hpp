@@ -10,16 +10,22 @@ public:
 
     BuiltInTypeSymbol(string name, int size);
     
-    virtual string getName() const;
-    virtual int getSize() const;
+	std::string getName() const override;
+    size_t getSize() const override;
 
-    virtual SymbolType getSymbolType() const;
+    SymbolType getSymbolType() const override;
 
-    virtual TypeKind getTypeKind() const;
+    TypeKind getTypeKind() const override;
+
+	bool isConvertableTo(const Type *type) const override;
+	boost::optional<int> rankOfConversion(const Type *type) const override;
+	
+	bool isReference() const override;
+	bool isConst() const override;
 
 private:
 
-    string name;
+	std::string name;
     int size;
 
 };

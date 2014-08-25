@@ -49,8 +49,7 @@ void VariableDeclarationNode::check()
 			if ( _.type -> getTypeKind() != TypeKind::STRUCT )
 				throw SemanticError("No such struct " + type_name);
 
-			auto type = static_cast<StructSymbol*>(_.type);
-//			call_info = CallHelper::callCheck(type_name, type, constructor_call_params);
+			auto type = static_cast<const StructSymbol*>(_.type);
 			call_info = CallHelper::callCheck(type -> getName(), type, constructor_call_params);
 		}
 		else

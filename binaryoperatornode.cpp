@@ -9,7 +9,7 @@ void BinaryOperatorNode::check()
 	lhs -> check();
 	try
 	{
-		call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(lhs -> getType().type), {rhs});
+		call_info = CallHelper::callCheck(getOperatorName(), static_cast<const StructSymbol*>(lhs -> getType().type), {rhs});
 	}
 	catch ( SemanticError& e )
 	{

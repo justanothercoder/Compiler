@@ -2,7 +2,7 @@
 #define _VARIABLESYMBOL_HPP_
 
 #include "symbol.hpp"
-#include "variabletype.hpp"
+#include "type.hpp"
 
 enum class VariableSymbolType { SIMPLE, PARAM, FIELD };
 
@@ -10,11 +10,11 @@ class VariableSymbol : public Symbol
 {
 public:
 
-    VariableSymbol(string name, VariableType type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
+    VariableSymbol(string name, Type *type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
 
-    virtual VariableType getType() const;
+    virtual Type* getType() const;
 
-    void setType(VariableType t);
+    void setType(Type *t);
 
     virtual string getName() const;
 
@@ -25,8 +25,8 @@ public:
     
 private:
 
-    string name;
-    VariableType type;
+	std::string name;
+    Type *type;
 
     VariableSymbolType sym_type;
 };

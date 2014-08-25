@@ -36,7 +36,7 @@ void VarInferTypeDeclarationNode::check()
 
 	auto type = expr -> getType().type;
 
-	call_info = CallHelper::callCheck(type -> getName(), static_cast<StructSymbol*>(type), {expr});
+	call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {expr});
 }
 
 CodeObject& VarInferTypeDeclarationNode::gen() 

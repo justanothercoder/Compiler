@@ -1,10 +1,31 @@
 #include "builtintypesymbol.hpp"
 
-BuiltInTypeSymbol::BuiltInTypeSymbol(string name, int size) : name(name), size(size) { }
+BuiltInTypeSymbol::BuiltInTypeSymbol(string name, int size) : name(name), size(size) 
+{
+
+}
     
-string BuiltInTypeSymbol::getName() const { return name; }
+std::string BuiltInTypeSymbol::getName() const 
+{
+   	return name; 
+}
 
-int BuiltInTypeSymbol::getSize() const { return size; }
+size_t BuiltInTypeSymbol::getSize() const 
+{
+   	return size; 
+}
 
-SymbolType BuiltInTypeSymbol::getSymbolType() const { return SymbolType::BUILTINTYPE; }
-TypeKind BuiltInTypeSymbol::getTypeKind() const { return TypeKind::BUILTIN; }
+SymbolType BuiltInTypeSymbol::getSymbolType() const 
+{
+   	return SymbolType::BUILTINTYPE; 
+}
+
+TypeKind BuiltInTypeSymbol::getTypeKind() const 
+{ 
+	return TypeKind::BUILTIN; 
+}
+	
+bool BuiltInTypeSymbol::isConvertableTo(Type *type) const
+{
+	return this == type;
+}

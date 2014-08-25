@@ -21,12 +21,12 @@ void LocalScope::accept(ScopeVisitor *visitor)
    	visitor -> visit(this); 
 }
 
-VarAllocator& LocalScope::getVarAlloc() 
+VarAllocator& LocalScope::getVarAlloc() const
 {
    	return getEnclosingScope() -> getVarAlloc(); 
 }
 
-TempAllocator& LocalScope::getTempAlloc() 
+TempAllocator& LocalScope::getTempAlloc() const
 {
    	return getEnclosingScope() -> getTempAlloc(); 
 }

@@ -56,7 +56,7 @@ CodeObject& VariableNode::gen()
 
 	if ( var_type.type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
-		auto function = static_cast<OverloadedFunctionSymbol*>(var_type.type);
+		auto function = static_cast<const OverloadedFunctionSymbol*>(var_type.type);
 
 		auto function_info = function -> getTypeInfo();
 
@@ -79,7 +79,7 @@ CodeObject& VariableNode::gen()
 		else
 			variable = new VariableSymbol(function -> getName(), VariableType(std::begin(function_info.symbols) -> second));
 
-		code_obj.emit("lea rax, [" + static_cast<FunctionSymbol*>(variable -> getType().type) -> getScopedTypedName() + "]");
+		code_obj.emit("lea rax, [" + static_cast<const FunctionSymbol*>(variable -> getType().type) -> getScopedTypedName() + "]");
 	}
 	else
 	{
@@ -89,7 +89,7 @@ CodeObject& VariableNode::gen()
 
 			auto sym = static_cast<VariableSymbol*>(_this);
 
-			auto struc_scope = static_cast<StructSymbol*>(sym -> getType().type);
+			auto struc_scope = static_cast<const StructSymbol*>(sym -> getType().type);
 
 			code_obj.emit("mov rax, [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(sym)) + "]");
 			code_obj.emit("lea rax, [rax - " + std::to_string(struc_scope -> getVarAlloc().getAddress(variable)) + "]");

@@ -11,7 +11,7 @@ StructSymbol::StructSymbol(string name
 
 }
 
-int StructSymbol::getSize() const 
+size_t StructSymbol::getSize() const 
 { 
 	return type_size; 
 }
@@ -31,36 +31,41 @@ TypeKind StructSymbol::getTypeKind() const
    	return TypeKind::STRUCT; 
 }
 
-bool StructSymbol::isConvertableTo(StructSymbol *st)
+bool StructSymbol::isConvertableTo(const Type *type) const
 {
+	if ( type -> getTypeKind() != this -> getTypeKind() )
+		return false;
+
+	auto st = static_cast<const StructSymbol*>(type);
+
 	return this == st || this -> hasConversionOperator(st) || st -> hasConversionConstructor(this);
 }
 	
-bool StructSymbol::hasConversionConstructor(StructSymbol *st)
+bool StructSymbol::hasConversionConstructor(const StructSymbol *st) const
 {
 	return getConversionConstructor(st) != nullptr;
 }
 
-bool StructSymbol::hasConversionOperator(StructSymbol *st)
+bool StructSymbol::hasConversionOperator(const StructSymbol *st) const
 {
 	return getConversionOperator(st) != nullptr;
 }
 
-FunctionSymbol* StructSymbol::getConversionConstructor(StructSymbol *st)
+FunctionSymbol* StructSymbol::getConversionConstructor(const StructSymbol *st) const
 {
-	auto constr_const_ref = constructorWith({VariableType(this, true), VariableType(st, true, true)});
+	auto constr_const_ref = constructorWith({new VariableType(this, true), new VariableType(st, true, true)});
 
 	if ( constr_const_ref )
 		return constr_const_ref;
 
-	auto constr_ref = constructorWith({VariableType(this, true), VariableType(st, true)});
+	auto constr_ref = constructorWith({new VariableType(this, true), new VariableType(st, true)});
 	
-	return constr_ref ? constr_ref : constructorWith({VariableType(this, true), VariableType(st)});
+	return constr_ref ? constr_ref : constructorWith({new VariableType(this, true), new VariableType(st)});
 }
 
-FunctionSymbol* StructSymbol::getConversionOperator(StructSymbol *st)
+FunctionSymbol* StructSymbol::getConversionOperator(const StructSymbol *st) const
 {
-	return methodWith("operator " + st -> getName(), {VariableType(this, true)});
+	return methodWith("operator " + st -> getName(), {new VariableType(this, true)});
 }
 
 FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
@@ -85,23 +90,28 @@ FunctionSymbol* StructSymbol::getDefaultConstructor()
 	return constructorWith({VariableType(this, true)});
 }
 	
-FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft)
+FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft) const
 {
 	return methodWith(getName(), ft);
 }
 	
-int StructSymbol::rankOfConversion(StructSymbol *st)
+boost::optional<int> StructSymbol::rankOfConversion(Type *type) const
 {
+	if ( !isConvertableTo(type) )
+		return boost::none;
+
+	StructSymbol *st = static_cast<StructSymbol*>(type);
+
 	return (this == st) ? 0 : 1;
 }
 	
-FunctionSymbol* StructSymbol::methodWith(string name, FunctionTypeInfo ft)
+FunctionSymbol* StructSymbol::methodWith(string name, FunctionTypeInfo ft) const
 {
 	auto member = dynamic_cast<VariableSymbol*>(resolveMember(name));
 	if ( member == nullptr )
 		return nullptr;
 
-	auto func = dynamic_cast<OverloadedFunctionSymbol*>(member -> getType().type);
+	auto func = dynamic_cast<const OverloadedFunctionSymbol*>(member -> getType().type);
 	auto info = func -> getTypeInfo();
 
 	auto it = info.symbols.find(ft);

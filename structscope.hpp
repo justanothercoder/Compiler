@@ -14,8 +14,8 @@ public:
 	
 	StructScope(string scope_name, Scope *enclosing_scope, const TemplateInfo& template_info);
 	
-	VarAllocator& getVarAlloc() override;
-	TempAllocator& getTempAlloc() override;
+	VarAllocator& getVarAlloc() const override;
+	TempAllocator& getTempAlloc() const override;
 
     Scope* getEnclosingScope() const override;
 	

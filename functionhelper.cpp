@@ -4,8 +4,8 @@
 FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 {
 	auto copy_constr = new FunctionSymbol(struc -> getName(),
-		 								  VariableType(struc, true),
-										  {VariableType(struc, true), VariableType(struc, true, true)},
+		 								  new VariableType(struc, true),
+										  {new VariableType(struc, true), new VariableType(struc, true, true)},
 										  struc,
 										  {true, true, false}
 	);
@@ -24,10 +24,10 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 			auto var = dynamic_cast<VariableSymbol*>(member.second); 
 			auto var_type = var -> getType();
 
-			if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type.type) || dynamic_cast<BuiltInTypeSymbol*>(var_type.type) )
+			if ( dynamic_cast<const OverloadedFunctionSymbol*>(var_type.type) || dynamic_cast<const BuiltInTypeSymbol*>(var_type.type) )
 				continue;
 
-			auto member_copy = static_cast<StructSymbol*>(var_type.type) -> getCopyConstructor();
+			auto member_copy = static_cast<const StructSymbol*>(var_type.type) -> getCopyConstructor();
 
 			CodeObject param;
 			param.emit("mov rax, [rbp + " + std::to_string(3 * GlobalConfig::int_size) + "]");
@@ -54,8 +54,8 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 {
 	auto constr = new FunctionSymbol(struc -> getName(),
-		 						     VariableType(struc, true),
-									 {VariableType(struc, true)},
+		 						     new VariableType(struc, true),
+									 {new VariableType(struc, true)},
                                      struc,
 									 {true, true, false}
 	);
@@ -74,10 +74,10 @@ FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 			auto var = dynamic_cast<VariableSymbol*>(member.second); 
 			auto var_type = var -> getType();
 
-			if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type.type) || dynamic_cast<BuiltInTypeSymbol*>(var_type.type) )
+			if ( dynamic_cast<const OverloadedFunctionSymbol*>(var_type.type) || dynamic_cast<const BuiltInTypeSymbol*>(var_type.type) )
 				continue;
 
-			auto member_default = static_cast<StructSymbol*>(var_type.type) -> getDefaultConstructor();
+			auto member_default = static_cast<const StructSymbol*>(var_type.type) -> getDefaultConstructor();
 
 			if ( member_default == nullptr )
 				throw SemanticError(var_type.getName() + " doesn't have default constructor");

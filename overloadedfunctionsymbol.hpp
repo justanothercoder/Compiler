@@ -13,11 +13,11 @@ public:
     OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits);
 
     string getName() const override;
-    int getSize() const override;
+    size_t getSize() const override;
 
     OverloadedFunctionTypeInfo getTypeInfo() const;
 
-    void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym);
+	void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym) const;
 
     bool isMethod() const;
     bool isConstructor() const;
@@ -28,7 +28,10 @@ public:
     SymbolType getSymbolType() const override;
     TypeKind getTypeKind() const override;
     
-	FunctionSymbol* getViableOverload(FunctionTypeInfo params_type);
+	FunctionSymbol* getViableOverload(FunctionTypeInfo params_type) const;
+
+	bool isConvertableTo(const Type *type) const override;
+	boost::optional<int> rankOfConversion(const Type *type) const override;
     
 private:
 

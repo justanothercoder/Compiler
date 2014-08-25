@@ -11,7 +11,7 @@ void DotNode::check()
 
 	auto _base_type = base -> getType();
 
-	base_type = dynamic_cast<StructSymbol*>(_base_type.type);
+	base_type = dynamic_cast<const StructSymbol*>(_base_type.type);
 
 	if ( base_type == nullptr )
 		throw SemanticError("left side of '.' is not an instance of struct.");
@@ -30,7 +30,7 @@ CodeObject& DotNode::gen()
 
 	if ( member_type.type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
-		auto ov_func = static_cast<OverloadedFunctionSymbol*>(member_type.type);
+		auto ov_func = static_cast<const OverloadedFunctionSymbol*>(member_type.type);
 
 		auto ov_func_type_info = ov_func -> getTypeInfo();
 

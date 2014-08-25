@@ -36,7 +36,7 @@ private:
 
     string member_name;
 
-    StructSymbol *base_type;
+    const StructSymbol *base_type;
     VariableSymbol *member;
 	CodeObject* code_obj;
 };

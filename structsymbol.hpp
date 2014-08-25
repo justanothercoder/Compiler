@@ -21,26 +21,30 @@ public:
     SymbolType getSymbolType() const override;
     string getName() const override;
 
-    int getSize() const override;
+    size_t getSize() const override;
     TypeKind getTypeKind() const override;
 
 	FunctionSymbol* getConversionTo(StructSymbol *st);
-	bool isConvertableTo(StructSymbol *st);
 
-	int rankOfConversion(StructSymbol *st);
+	bool isConvertableTo(const Type *type) const override;
 
-	FunctionSymbol* getConversionConstructor(StructSymbol *st);
-	bool hasConversionConstructor(StructSymbol *st);
+	boost::optional<int> rankOfConversion(const Type *type) const override;
 
-	FunctionSymbol* getConversionOperator(StructSymbol *st);
-	bool hasConversionOperator(StructSymbol *st);
+	FunctionSymbol* getConversionConstructor(const StructSymbol *st) const;
+	bool hasConversionConstructor(const StructSymbol *st) const;
 
-	FunctionSymbol* getCopyConstructor();
-	FunctionSymbol* getDefaultConstructor();
+	FunctionSymbol* getConversionOperator(const StructSymbol *st) const;
+	bool hasConversionOperator(const StructSymbol *st) const;
 
-	FunctionSymbol* constructorWith(FunctionTypeInfo ft);
+	FunctionSymbol* getCopyConstructor() const;
+	FunctionSymbol* getDefaultConstructor() const;
 
-	FunctionSymbol* methodWith(string name, FunctionTypeInfo ft);
+	FunctionSymbol* constructorWith(FunctionTypeInfo ft) const;
+
+	FunctionSymbol* methodWith(std::string name, FunctionTypeInfo ft) const;
+
+	bool isReference() const override;
+	bool isConst() const override;
 
 private:
 

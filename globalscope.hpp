@@ -24,8 +24,8 @@ public:
     Scope* getEnclosingScope() const override;
     string getScopeName() const override;
 	
-	VarAllocator& getVarAlloc() override;
-	TempAllocator& getTempAlloc() override;
+	VarAllocator& getVarAlloc() const override;
+	TempAllocator& getTempAlloc() const override;
 
 	const TemplateInfo& getTemplateInfo() const override;
 	bool isUnsafeBlock() const override;

@@ -1,11 +1,28 @@
 #include "overloadedfunctionsymbol.hpp"
 
-OverloadedFunctionSymbol::OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits) : name(name), type_info(type_info), traits(traits) { }
+OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name
+		                                         , OverloadedFunctionTypeInfo type_info
+												 , FunctionTraits traits) : name(name)
+																	      , type_info(type_info)
+																		  , traits(traits)
+{
 
-string OverloadedFunctionSymbol::getName() const { return name; }
-int OverloadedFunctionSymbol::getSize() const { return GlobalConfig::int_size; }
+}
 
-OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo() const { return type_info; }
+std::string OverloadedFunctionSymbol::getName() const 
+{ 
+	return name; 
+}
+
+size_t OverloadedFunctionSymbol::getSize() const 
+{
+   	return GlobalConfig::int_size; 
+}
+
+OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo() const
+{
+   	return type_info; 
+}
 
 void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, FunctionSymbol *sym)
 {
@@ -24,12 +41,23 @@ VariableType OverloadedFunctionSymbol::getBaseType() const
     return std::begin(type_info.overloads)->params_types[0];
 }
 
-SymbolType OverloadedFunctionSymbol::getSymbolType() const { return SymbolType::OVERLOADED_FUNCTION; }
-TypeKind OverloadedFunctionSymbol::getTypeKind() const { return TypeKind::OVERLOADEDFUNCTION; }
+SymbolType OverloadedFunctionSymbol::getSymbolType() const 
+{
+   	return SymbolType::OVERLOADED_FUNCTION; 
+}
 
-FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeInfo params_type)
+TypeKind OverloadedFunctionSymbol::getTypeKind() const 
+{
+   	return TypeKind::OVERLOADEDFUNCTION; 
+}
+
+FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeInfo params_type) const
 {
 	auto overloads = getTypeInfo().getBestOverload(params_type);
 	return overloads.empty() ? nullptr : getTypeInfo().symbols.at(*std::begin(overloads)); 
 }
 
+bool OverloadedFunctionSymbol::isConvertableTo(const Type *) const 
+{
+	return false;
+}

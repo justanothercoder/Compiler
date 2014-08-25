@@ -6,7 +6,7 @@ UnaryNode::~UnaryNode() { delete exp; }
 void UnaryNode::check()
 {
 	exp -> check();
-	call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(exp -> getType().type), { });
+	call_info = CallHelper::callCheck(getOperatorName(), static_cast<const StructSymbol*>(exp -> getType().type), { });
 	
 	scope -> getTempAlloc().add(getType().getSize());
 }

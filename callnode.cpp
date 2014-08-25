@@ -15,12 +15,12 @@ void CallNode::check()
 		if ( caller_type -> getTypeKind() != TypeKind::STRUCT )
 			throw SemanticError("caller is not a function.");
 
-		call_info = CallHelper::callCheck("operator()", static_cast<StructSymbol*>(caller_type), params);
+		call_info = CallHelper::callCheck("operator()", static_cast<const StructSymbol*>(caller_type), params);
 	}
 	else
 	{
-		auto ov_func = static_cast<OverloadedFunctionSymbol*>(caller_type);
-		auto _scope = ov_func -> isMethod() ? static_cast<StructSymbol*>(ov_func -> getBaseType().type) : scope;
+		auto ov_func = static_cast<const OverloadedFunctionSymbol*>(caller_type);
+		auto _scope = ov_func -> isMethod() ? static_cast<const StructSymbol*>(ov_func -> getBaseType().type) : scope;
 		call_info = CallHelper::callCheck(ov_func -> getName(), _scope, params);
 	}
 

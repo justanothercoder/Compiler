@@ -28,7 +28,7 @@ int main()
 		BuiltIns::global_scope -> accept(new SymbolDefine(BuiltIns::char_struct));
 
 		BuiltIns::int_struct -> accept(new VariableSymbolDefine(
-					new VariableSymbol("~~impl", VariableType(
+					new VariableSymbol("~~impl", new VariableType(
 							new BuiltInTypeSymbol("~~int", GlobalConfig::int_size)
 							), VariableSymbolType::FIELD)));
 
@@ -56,7 +56,7 @@ int main()
 		BuiltIns::global_scope -> accept(new SymbolDefine(BuiltIns::array_struct));
 		
 		BuiltIns::ASCII_string -> accept(new VariableSymbolDefine(
-					new VariableSymbol("~~impl", VariableType(
+					new VariableSymbol("~~impl", new VariableType(
 								new BuiltInTypeSymbol("~~string", 256)
 							), VariableSymbolType::FIELD)));
 
@@ -75,7 +75,7 @@ int main()
 		
 	
 		BuiltIns::char_struct -> accept(new VariableSymbolDefine(
-					new VariableSymbol("~~impl", VariableType(
+					new VariableSymbol("~~impl", new VariableType(
 								new BuiltInTypeSymbol("~~char", GlobalConfig::int_size)
 							), VariableSymbolType::FIELD)));
 

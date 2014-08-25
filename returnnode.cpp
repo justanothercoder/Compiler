@@ -52,7 +52,7 @@ void ReturnNode::check()
 
     expr -> check();
 
-	copy_call_info = CallHelper::callCheck(expr -> getType().getTypeName(), static_cast<StructSymbol*>(expr -> getType().type), {expr});
+	copy_call_info = CallHelper::callCheck(expr -> getType().getTypeName(), static_cast<const StructSymbol*>(expr -> getType().type), {expr});
 }
 	
 void ReturnNode::define() { expr -> define(); }

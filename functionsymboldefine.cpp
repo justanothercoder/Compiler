@@ -34,6 +34,6 @@ void FunctionSymbolDefine::visit(BaseScope *sc)
 
 	auto func_type_info = sym->function_type_info;
 
-	auto ofs = static_cast<OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym)->getType().type);
+	auto ofs = static_cast<const OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym)->getType().type);
 	ofs->addOverload(func_type_info, sym);
 }

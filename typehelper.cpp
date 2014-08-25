@@ -15,9 +15,9 @@ VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const Te
 	if ( type.type == nullptr )
 		throw SemanticError(type_name + " is not a type");
 
-	if ( dynamic_cast<TemplateStructSymbol*>(type.type) )
+	if ( dynamic_cast<const TemplateStructSymbol*>(type.type) )
 	{
-		auto tmpl = dynamic_cast<TemplateStructSymbol*>(type.type);
+		auto tmpl = dynamic_cast<const TemplateStructSymbol*>(type.type);
 		
 		if ( type_info.template_params.size() != tmpl -> template_symbols.size() )
 			throw SemanticError("Wrong number of template parameters");

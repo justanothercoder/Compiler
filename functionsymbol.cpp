@@ -1,8 +1,8 @@
 #include "functionsymbol.hpp"
 #include "scopevisitor.hpp"
 
-FunctionSymbol::FunctionSymbol(string name
-		                      , VariableType return_type
+FunctionSymbol::FunctionSymbol(std::string name
+		                      , Type *return_type
 							  , FunctionTypeInfo function_type_info
 							  , Scope *enclosing_scope
 							  , FunctionTraits traits
@@ -17,24 +17,24 @@ FunctionSymbol::FunctionSymbol(string name
 	scope_name = enclosing_scope->getScopeName() + "_" + (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
 }
 
-string FunctionSymbol::getTypedName() const
+std::string FunctionSymbol::getTypedName() const
 {
 	string res = (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
 
 	for ( auto type : function_type_info.params_types )
-		res += "_" + type.getName();
+		res += "_" + type -> getName();
 
 	return res;
 }
 
-string FunctionSymbol::getScopedTypedName() const
+std::string FunctionSymbol::getScopedTypedName() const
 {
 	string res = scope_name;
 
 	auto& pt = function_type_info.params_types;
 
 	for ( auto type : pt )
-		res += "_" + type.getName();
+		res += "_" + type -> getName();
 
 	return res;
 }
@@ -69,7 +69,7 @@ string FunctionSymbol::getName() const
 	return name; 
 }
 
-int FunctionSymbol::getSize() const 
+size_t FunctionSymbol::getSize() const 
 { 
 	return GlobalConfig::int_size; 
 }
@@ -112,4 +112,14 @@ const TemplateInfo& FunctionSymbol::getTemplateInfo() const
 bool FunctionSymbol::isUnsafeBlock() const
 {
 	return false;
+}
+	
+bool FunctionSymbol::isConvertableTo(const Type *) const 
+{
+	return false;
+}
+	
+boost::optional<int> FunctionSymbol::rankOfConversion(const Type *) const 
+{
+	return boost::none;
 }

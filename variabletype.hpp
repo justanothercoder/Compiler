@@ -6,30 +6,33 @@
 #include "type.hpp"
 #include "globalconfig.hpp"
 
-using std::string;
-
-class VariableType
+class VariableType : public Type
 {
 public:
 	VariableType();
-	VariableType(Type *type, bool is_ref = false, bool is_const = false);
+	VariableType(const Type *type, bool is_ref = false, bool is_const = false);
 
 	VariableType& operator =(const VariableType& vt) = default;
 	VariableType(const VariableType&);
 	VariableType(VariableType&& vt);
 
-	string getName() const;
+	std::string getName() const;
 	size_t getSize() const;
 
-	string getTypeName() const;
+	std::string getTypeName() const;
 
-	bool operator==(VariableType vt) const;
-	bool operator!=(VariableType vt) const;
+	bool operator==(const VariableType& vt) const;
+	bool operator!=(const VariableType& vt) const;
 
-	int rankOfConversion(VariableType vt);
+    TypeKind getTypeKind() const override;
+	bool isConvertableTo(const Type *type) const override;
+	boost::optional<int> rankOfConversion(const Type *t) const override;
+
+	bool isReference() const override;
+	bool isConst() const override;
 
 public:
-	Type *type;
+	const Type *type;
 	bool is_ref, is_const;	
 };
 

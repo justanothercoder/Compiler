@@ -1,7 +1,7 @@
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
 
-CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> params)
+CallInfo CallHelper::callCheck(string name, const Scope *sc, std::vector<ExprNode*> params)
 {
     for ( auto i : params )
 		i -> check();
@@ -20,7 +20,7 @@ CallInfo CallHelper::callCheck(string name, Scope *sc, std::vector<ExprNode*> pa
 	for ( int i = function_info.params_types.size() - 1; i >= is_meth; --i )
     {
 		auto t = function_info.params_types.at(i);
-		if ( t.is_ref && !params.at(i - is_meth) -> isLeftValue() && !t.is_const )
+		if ( t -> isReference() && !params.at(i - is_meth) -> isLeftValue() && !t -> isConst() )
 			throw SemanticError("parameter is not an lvalue.");
     }
 

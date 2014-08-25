@@ -26,39 +26,42 @@ class FunctionSymbol : public Symbol, public BaseScope, public Type
     friend class VariableSymbolDefine;
 public:
 
-    FunctionSymbol(string name, VariableType return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, boost::optional<CodeObject> code_obj = boost::none);
+    FunctionSymbol(std::string name, Type *return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, boost::optional<CodeObject> code_obj = boost::none);
 
-    string getTypedName() const;
-    string getScopedTypedName() const;
+    std::string getTypedName() const;
+	std::string getScopedTypedName() const;
     
     bool isOperator() const;
     bool isMethod() const;
     bool isConstructor() const;
 
-    string getScopeName() const override;
+	std::string getScopeName() const override;
     Scope* getEnclosingScope() const override;
     void accept(ScopeVisitor *visitor) override;
 
-    string getName() const override;
+	std::string getName() const override;
 	SymbolType getSymbolType() const override;
     
     FunctionTraits getTraits() const;
     
     TypeKind getTypeKind() const override;
-    int getSize() const override;
+    size_t getSize() const override;
 
-	VarAllocator& getVarAlloc() override;
-	TempAllocator& getTempAlloc() override;
+	VarAllocator& getVarAlloc() const override;
+	TempAllocator& getTempAlloc() const override;
 
 	boost::optional<CodeObject> code_obj;
 
-	VariableType return_type;
+	Type *return_type;
     FunctionTypeInfo function_type_info;	
 	
 	bool is_constexpr;
 
 	const TemplateInfo& getTemplateInfo() const override;
 	bool isUnsafeBlock() const override;
+
+	bool isConvertableTo(const Type *type) const override;
+	boost::optional<int> rankOfConversion(const Type *type) const override;
 
 private:
 

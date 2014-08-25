@@ -13,7 +13,7 @@ class TypeInfo
 {
 public:   
     TypeInfo();
-    TypeInfo(string type_name, bool is_ref, bool is_const, vector<ExprNode*> template_params = { }, pointer_depth = 0);
+    TypeInfo(string type_name, bool is_ref, bool is_const, vector<ExprNode*> template_params = { }, int pointer_depth = 0);
 
     string type_name;
     bool is_ref, is_const;
