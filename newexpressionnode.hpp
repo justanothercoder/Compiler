@@ -6,14 +6,7 @@
 #include <algorithm>
 
 #include "exprnode.hpp"
-#include "scope.hpp"
-#include "structsymbol.hpp"
-#include "typehelper.hpp"
 #include "codeobject.hpp"
-#include "callhelper.hpp"
-
-using std::vector;
-using std::string;
 
 class NewExpressionNode : public ExprNode
 {
@@ -25,10 +18,10 @@ public:
     void check() override;
     CodeObject& gen() override;
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
     AST* copyTree() const override;
 
-    VariableType getType() const override;
+    const Type* getType() const override;
 	bool isLeftValue() const override;
 
 	void freeTempSpace() override;
@@ -39,7 +32,7 @@ public:
 private:
 
     TypeInfo type_info;
-    vector<ExprNode*> params;
+	std::vector<ExprNode*> params;
     CallInfo call_info;
 	CodeObject code_obj;
 };

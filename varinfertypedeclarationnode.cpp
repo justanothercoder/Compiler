@@ -3,10 +3,11 @@
 #include "builtins.hpp"
 #include "callhelper.hpp"
 #include "variablesymboldefine.hpp"
+#include "globalhelper.hpp"
 
-VarInferTypeDeclarationNode::VarInferTypeDeclarationNode(string name, ExprNode *expr) : name(name), expr(expr)
+VarInferTypeDeclarationNode::VarInferTypeDeclarationNode(std::string name, ExprNode *expr) : name(name), expr(expr), definedSymbol(nullptr)
 {
-	definedSymbol = nullptr;
+
 }
 
 Symbol* VarInferTypeDeclarationNode::getDefinedSymbol() const
@@ -21,7 +22,7 @@ void VarInferTypeDeclarationNode::define()
 	if ( scope -> resolve(name) != nullptr )
 		throw SemanticError(name + " is already defined");
 
-	if ( expr -> getType().type == BuiltIns::void_type )
+	if ( expr -> getType() == BuiltIns::void_type )
 		throw SemanticError("can't define variable of 'void' type");
 
 	definedSymbol = new VariableSymbol(name, expr -> getType());
@@ -31,10 +32,10 @@ void VarInferTypeDeclarationNode::define()
 	
 void VarInferTypeDeclarationNode::check() 
 {
-	scope -> getTempAlloc().add(expr -> getType().getSize());	
+	scope -> getTempAlloc().add(expr -> getType() -> getSize());	
 	getDefinedSymbol() -> is_defined = true;
 
-	auto type = expr -> getType().type;
+	auto type = expr -> getType();
 
 	call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {expr});
 }
@@ -42,7 +43,7 @@ void VarInferTypeDeclarationNode::check()
 CodeObject& VarInferTypeDeclarationNode::gen() 
 {
 	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(expr -> getType().getSize());
+	scope -> getTempAlloc().claim(expr -> getType() -> getSize());
 
 	CodeObject var_code;
 	var_code.emit("lea rax, [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(definedSymbol)) + "]");

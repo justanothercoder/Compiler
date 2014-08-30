@@ -28,10 +28,8 @@ int main()
 		BuiltIns::global_scope -> accept(new SymbolDefine(BuiltIns::char_struct));
 
 		BuiltIns::int_struct -> accept(new VariableSymbolDefine(
-					new VariableSymbol("~~impl", new VariableType(
-							new BuiltInTypeSymbol("~~int", GlobalConfig::int_size)
-							), VariableSymbolType::FIELD)));
-
+					new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~int", GlobalConfig::int_size), VariableSymbolType::FIELD)
+		));
 		BuiltIns::int_plus  -> is_constexpr = true;
 		BuiltIns::int_minus -> is_constexpr = true;
 
@@ -56,9 +54,8 @@ int main()
 		BuiltIns::global_scope -> accept(new SymbolDefine(BuiltIns::array_struct));
 		
 		BuiltIns::ASCII_string -> accept(new VariableSymbolDefine(
-					new VariableSymbol("~~impl", new VariableType(
-								new BuiltInTypeSymbol("~~string", 256)
-							), VariableSymbolType::FIELD)));
+					new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~string", 256), VariableSymbolType::FIELD)
+		));
 
 		BuiltIns::ASCII_string -> accept(new FunctionSymbolDefine(BuiltIns::ASCII_string_copy_constructor));
 		BuiltIns::ASCII_string -> accept(new FunctionSymbolDefine(BuiltIns::ASCII_string_elem_operator));
@@ -75,9 +72,8 @@ int main()
 		
 	
 		BuiltIns::char_struct -> accept(new VariableSymbolDefine(
-					new VariableSymbol("~~impl", new VariableType(
-								new BuiltInTypeSymbol("~~char", GlobalConfig::int_size)
-							), VariableSymbolType::FIELD)));
+					new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~char", GlobalConfig::int_size), VariableSymbolType::FIELD)
+		));
 
 		BuiltIns::char_struct -> accept(new FunctionSymbolDefine(BuiltIns::char_default_constructor));
 		BuiltIns::char_struct -> accept(new FunctionSymbolDefine(BuiltIns::char_copy_constructor));

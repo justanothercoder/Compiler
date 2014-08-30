@@ -2,7 +2,7 @@
 #include "scopevisitor.hpp"
 
 FunctionSymbol::FunctionSymbol(std::string name
-		                      , Type *return_type
+		                      , const Type *return_type
 							  , FunctionTypeInfo function_type_info
 							  , Scope *enclosing_scope
 							  , FunctionTraits traits
@@ -94,12 +94,12 @@ void FunctionSymbol::accept(ScopeVisitor *visitor)
 	visitor -> visit(this); 
 }
 	
-VarAllocator& FunctionSymbol::getVarAlloc() 
+VarAllocator& FunctionSymbol::getVarAlloc() const 
 { 
 	return var_alloc; 
 }
 
-TempAllocator& FunctionSymbol::getTempAlloc() 
+TempAllocator& FunctionSymbol::getTempAlloc() const
 { 
 	return temp_alloc; 
 }
@@ -122,4 +122,24 @@ bool FunctionSymbol::isConvertableTo(const Type *) const
 boost::optional<int> FunctionSymbol::rankOfConversion(const Type *) const 
 {
 	return boost::none;
+}
+	
+bool FunctionSymbol::isReference() const 
+{
+	return false;
+}
+
+bool FunctionSymbol::isConst() const 
+{
+	return false;
+}
+
+FunctionSymbol* FunctionSymbol::getConversionTo(const Type *) const 
+{
+	return nullptr;
+}
+
+const Symbol* FunctionSymbol::getSymbol() const
+{
+	return this;
 }

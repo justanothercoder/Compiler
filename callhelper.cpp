@@ -1,7 +1,8 @@
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
+#include "typefactory.hpp"
 
-CallInfo CallHelper::callCheck(string name, const Scope *sc, std::vector<ExprNode*> params)
+CallInfo CallHelper::callCheck(std::string name, const Scope *sc, std::vector<ExprNode*> params)
 {
     for ( auto i : params )
 		i -> check();
@@ -27,14 +28,14 @@ CallInfo CallHelper::callCheck(string name, const Scope *sc, std::vector<ExprNod
 	return getCallInfo(function_sym, params);
 }
 
-CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<ExprNode*> params)
+CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector<ExprNode*> params)
 {
     auto function_info = function_sym -> function_type_info;
 	
 	auto params_types = CallHelper::extractTypes(params);
    
 	vector<ConversionInfo> conversions;
-	vector<FunctionSymbol*> copy_constructors;
+	vector<const FunctionSymbol*> copy_constructors;
 
     int is_meth = (function_sym -> isMethod() ? 1 : 0);
    
@@ -47,38 +48,38 @@ CallInfo CallHelper::getCallInfo(FunctionSymbol *function_sym, std::vector<ExprN
 
 		conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type, is_left_value));
 		
-		auto copy_constr = desired_type.is_ref ? nullptr : static_cast<StructSymbol*>(desired_type.type) -> getCopyConstructor();
+		auto copy_constr = desired_type -> isReference() ? nullptr : static_cast<const StructSymbol*>(desired_type -> getSymbol()) -> getCopyConstructor();
 		copy_constructors.push_back(copy_constr);
 	}
 
 	return CallInfo(function_sym, params_types, conversions, copy_constructors); 
 }
 
-OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(string name, Scope *scope)
+const OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(std::string name, const Scope *scope)
 {
 	auto _ = scope -> resolve(name);
 	
 	if ( _ == nullptr || _ -> getSymbolType() != SymbolType::VARIABLE )
 		throw SemanticError("No such symbol " + name + ".");	
 
-	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_) -> getType().type);
+	return dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_) -> getType() -> getSymbol());
 }
 
-OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(string name, StructSymbol *scope)
+const OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(std::string name, const StructSymbol *scope)
 {
 	auto _ = scope -> resolveMember(name);
 	
 	if ( _ == nullptr || _ -> getSymbolType() != SymbolType::VARIABLE )
 		throw SemanticError("No such symbol " + name + ".");	
 
-	return dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_) -> getType().type);
+	return dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_) -> getType() -> getSymbol());
 }
 	
-FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vector<VariableType> params_types)
+const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope *scope, std::vector<const Type*> params_types)
 {
 	while ( scope != nullptr )
 	{
-		OverloadedFunctionSymbol *ov_func = nullptr;
+		const OverloadedFunctionSymbol *ov_func = nullptr;
 	  
 		try { ov_func = CallHelper::getOverloadedFunc(name, scope); }
 		catch ( SemanticError& e ) { return nullptr; }
@@ -87,8 +88,7 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 		
 		if ( ov_func -> isMethod() )
 		{
-			auto t = ov_func -> getBaseType();
-			t.is_ref = true;
+			auto t = TypeFactory::getReference(ov_func -> getBaseType());
 
 			pt.insert(std::begin(pt), t);
 		}
@@ -111,25 +111,22 @@ FunctionSymbol* CallHelper::resolveOverload(string name, Scope *scope, std::vect
 	return nullptr;
 }
 	
-std::vector<VariableType> CallHelper::extractTypes(std::vector<ExprNode*> params)
+std::vector<const Type*> CallHelper::extractTypes(std::vector<ExprNode*> params)
 {
-	vector<VariableType> params_types(params.size());
+	std::vector<const Type*> params_types(params.size());
 	std::transform(std::begin(params), std::end(params), std::begin(params_types), [](ExprNode *t) { return t -> getType(); });
 
 	return params_types;
 }
 
-ConversionInfo CallHelper::getConversionInfo(VariableType lhs, VariableType rhs, bool is_lhs_left_value)
+ConversionInfo CallHelper::getConversionInfo(const Type *lhs, const Type *rhs, bool is_lhs_left_value)
 {
-	auto _lhs = VariableType(lhs.type);
-	auto _rhs = VariableType(rhs.type);
+	auto conv = (lhs == rhs) ? nullptr : lhs -> getConversionTo(rhs);
 
-	auto conv = (_lhs == _rhs) ? nullptr : static_cast<StructSymbol*>(lhs.type) -> getConversionTo(static_cast<StructSymbol*>(rhs.type));
+	if ( lhs != rhs && conv == nullptr )
+		throw SemanticError("Invalid initialization of '" + rhs -> getName() + "' with type '" + lhs -> getName() + "'.");
 
-	if ( _lhs != _rhs && conv == nullptr )
-		throw SemanticError("Invalid initialization of '" + rhs.getName() + "' with type '" + lhs.getName() + "'.");
-
-	ConversionInfo conv_info(conv, lhs.is_ref && !is_lhs_left_value, !lhs.is_ref);
+	ConversionInfo conv_info(conv, lhs -> isReference() && !is_lhs_left_value, !lhs -> isReference());
 
 	conv_info.actual_type  = lhs;
 	conv_info.desired_type = rhs;

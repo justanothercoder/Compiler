@@ -22,11 +22,13 @@ public:
 	
 	bool isReference() const override;
 	bool isConst() const override;
+	
+	FunctionSymbol* getConversionTo(const Type *type) const override;
 
 private:
 
 	std::string name;
-    int size;
+    size_t size;
 
 };
 

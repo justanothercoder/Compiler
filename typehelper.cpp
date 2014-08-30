@@ -2,22 +2,23 @@
 #include "classvariablesymbol.hpp"
 
 #include "variablenode.hpp"
+#include "typefactory.hpp"
 
-VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateInfo& template_info)
+const Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateInfo& template_info)
 {    
 	auto type_name = type_info.type_name;
 
 	if ( template_info.sym && template_info.sym -> isIn(type_name) )
 		type_name = boost::get<std::string>(*template_info.getReplacement(type_name));
 
-	auto type = VariableType(TypeHelper::resolveType(type_name, scope));
+	const Type *type = TypeHelper::resolveType(type_name, scope);
 	
-	if ( type.type == nullptr )
+	if ( type == nullptr )
 		throw SemanticError(type_name + " is not a type");
 
-	if ( dynamic_cast<const TemplateStructSymbol*>(type.type) )
+	if ( dynamic_cast<const TemplateStructSymbol*>(type) )
 	{
-		auto tmpl = dynamic_cast<const TemplateStructSymbol*>(type.type);
+		auto tmpl = dynamic_cast<const TemplateStructSymbol*>(type);
 		
 		if ( type_info.template_params.size() != tmpl -> template_symbols.size() )
 			throw SemanticError("Wrong number of template parameters");
@@ -35,11 +36,14 @@ VariableType TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const Te
 		std::transform(std::begin(type_info.template_params), std::end(type_info.template_params), std::begin(tmpl_params), getTemplateParam);
 
 		auto sym = tmpl -> getSpec(tmpl_params);	
-		type.type = dynamic_cast<Type*>(sym);
+		type = dynamic_cast<Type*>(sym);
 	}
 
-	type.is_ref = type_info.is_ref; 
-	type.is_const = type_info.is_const;
+	if ( type_info.is_ref )
+		type = TypeFactory::getReference(type);
+
+	if ( type_info.is_const )
+		type = TypeFactory::getConst(type);
 
 	return type;
 }

@@ -1,5 +1,8 @@
 #include "callnode.hpp"
 
+#include "callhelper.hpp"
+#include "functionsymbol.hpp"
+
 CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), call_info(), code_obj() { }
 
 CallNode::~CallNode() { delete caller; }
@@ -8,7 +11,7 @@ void CallNode::check()
 {
     caller -> check();
 
-    auto caller_type = caller -> getType().type;
+    auto caller_type = caller -> getType();
 
     if ( caller_type -> getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	{
@@ -20,25 +23,25 @@ void CallNode::check()
 	else
 	{
 		auto ov_func = static_cast<const OverloadedFunctionSymbol*>(caller_type);
-		auto _scope = ov_func -> isMethod() ? static_cast<const StructSymbol*>(ov_func -> getBaseType().type) : scope;
+		auto _scope = ov_func -> isMethod() ? static_cast<const StructSymbol*>(ov_func -> getBaseType()) : scope;
 		call_info = CallHelper::callCheck(ov_func -> getName(), _scope, params);
 	}
 
 	caller -> type_hint = call_info.callee;
 	
-	scope -> getTempAlloc().add(getType().getSize());
+	scope -> getTempAlloc().add(getType() -> getSize());
 }
 
 CodeObject& CallNode::gen()
 {  
 	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType().getSize());
+	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	code_obj.emit("lea rax, " + addr);
 	code_obj.emit("push rax");
 
   	if ( call_info.callee -> isMethod() )
-		code_obj.genCallCode(call_info, params, caller -> gen(), caller -> getType().is_ref);
+		code_obj.genCallCode(call_info, params, caller -> gen(), caller -> getType() -> isReference());
 	else
 	{
 		CodeObject empty;
@@ -68,8 +71,15 @@ vector<AST*> CallNode::getChildren() const
 	return vec;
 }
 
-VariableType CallNode::getType() const { return call_info.callee -> return_type; }
-bool CallNode::isLeftValue() const { return false; }
+const Type* CallNode::getType() const 
+{
+   	return call_info.callee -> return_type; 
+}
+
+bool CallNode::isLeftValue() const 
+{
+   	return false; 
+}
 
 void CallNode::freeTempSpace()
 {

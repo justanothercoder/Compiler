@@ -22,7 +22,7 @@ public:
     Symbol* resolveMember(string name) const;
     Symbol* resolve(string name) const override;
 
-    string getScopeName() const override;
+	std::string getScopeName() const override;
 
     void accept(ScopeVisitor *visitor) override;
 	
@@ -30,10 +30,10 @@ public:
 	bool isUnsafeBlock() const override;
     
 private:
-	FieldVarAllocator var_alloc;
-	TempAllocator temp_alloc;
+	mutable FieldVarAllocator var_alloc;
+	mutable TempAllocator temp_alloc;
 
-	string scope_name;
+	std::string scope_name;
 	Scope *enclosing_scope;
 
 	TemplateInfo template_info;

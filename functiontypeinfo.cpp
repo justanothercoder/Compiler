@@ -1,12 +1,12 @@
 #include "functiontypeinfo.hpp"
 #include "structsymbol.hpp"
 
-FunctionTypeInfo::FunctionTypeInfo(std::vector<Type*> params_types) : params_types(params_types) 
+FunctionTypeInfo::FunctionTypeInfo(std::vector<const Type*> params_types) : params_types(params_types) 
 {
 
 }
 	
-FunctionTypeInfo::FunctionTypeInfo(std::initializer_list<Type*> init_list) : params_types(init_list)
+FunctionTypeInfo::FunctionTypeInfo(std::initializer_list<const Type*> init_list) : params_types(init_list)
 {
 
 }

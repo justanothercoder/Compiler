@@ -2,11 +2,8 @@
 #define _BINARYOPERATORNODE_HPP_
 
 #include "exprnode.hpp"
-#include "functionsymbol.hpp"
 #include "functionhelper.hpp"
 #include "codeobject.hpp"
-#include "callhelper.hpp"
-#include "builtins.hpp"
 
 enum class BinaryOp { ASSIGN, PLUS, MINUS, MUL, EQUALS, NEQUALS, AND, OR, DIV, MOD };
 
@@ -20,13 +17,13 @@ public:
     void check() override;
     CodeObject& gen() override;
 
-    string getOperatorName();
-    string getCodeOperatorName();
+	std::string getOperatorName();
+	std::string getCodeOperatorName();
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
     AST* copyTree() const override;
 
-    VariableType getType() const override;
+    const Type* getType() const override;
 	bool isLeftValue() const override;
 
 	void freeTempSpace() override;

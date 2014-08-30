@@ -11,7 +11,7 @@ void DotNode::check()
 
 	auto _base_type = base -> getType();
 
-	base_type = dynamic_cast<const StructSymbol*>(_base_type.type);
+	base_type = dynamic_cast<const StructSymbol*>(_base_type);
 
 	if ( base_type == nullptr )
 		throw SemanticError("left side of '.' is not an instance of struct.");
@@ -28,9 +28,9 @@ CodeObject& DotNode::gen()
 	
 	auto member_type = member -> getType();
 
-	if ( member_type.type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
+	if ( member_type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
-		auto ov_func = static_cast<const OverloadedFunctionSymbol*>(member_type.type);
+		auto ov_func = static_cast<const OverloadedFunctionSymbol*>(member_type);
 
 		auto ov_func_type_info = ov_func -> getTypeInfo();
 
@@ -39,22 +39,35 @@ CodeObject& DotNode::gen()
 			if ( type_hint == nullptr )
 				throw SemanticError("multiple overloads of " + base_type -> getName() + "::" + member -> getName());
 
-			member = new VariableSymbol(member_name, VariableType(ov_func_type_info.symbols[static_cast<FunctionSymbol*>(type_hint) -> function_type_info]));
+			member = new VariableSymbol(member_name, ov_func_type_info.symbols[static_cast<const FunctionSymbol*>(type_hint) -> function_type_info]);
 		} else
-			member = new VariableSymbol(ov_func -> getName(), VariableType(std::begin(ov_func_type_info.symbols) -> second));
+			member = new VariableSymbol(ov_func -> getName(), std::begin(ov_func_type_info.symbols) -> second);
 	}
 	else
-		code_obj -> emit("lea rax, [rax - " + std::to_string(base_type -> getVarAlloc().getAddress(member)) + "]");
+		code_obj -> emit("lea rax, [rax - " + std::to_string(const_cast<StructSymbol*>(base_type) -> getVarAlloc().getAddress(member)) + "]");
 
 	return *code_obj;
 }
 	
-vector<AST*> DotNode::getChildren() const { return {base}; }
+std::vector<AST*> DotNode::getChildren() const 
+{
+   	return {base}; 
+}
 
-AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base -> copyTree()), member_name); }
+AST* DotNode::copyTree() const
+{
+   	return new DotNode(static_cast<ExprNode*>(base -> copyTree()), member_name); 
+}
 
-VariableType DotNode::getType() const { return member -> getType(); }
-bool DotNode::isLeftValue() const { return true; }
+const Type* DotNode::getType() const 
+{
+   	return member -> getType(); 
+}
+
+bool DotNode::isLeftValue() const
+{
+   	return true; 
+}
 
 void DotNode::freeTempSpace()
 {

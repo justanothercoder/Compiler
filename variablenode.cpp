@@ -54,9 +54,9 @@ CodeObject& VariableNode::gen()
 
 	auto var_type = variable -> getType();
 
-	if ( var_type.type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
+	if ( var_type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
-		auto function = static_cast<const OverloadedFunctionSymbol*>(var_type.type);
+		auto function = static_cast<const OverloadedFunctionSymbol*>(var_type);
 
 		auto function_info = function -> getTypeInfo();
 
@@ -71,15 +71,15 @@ CodeObject& VariableNode::gen()
 			if ( function_info.symbols.find(type_info) == std::end(function_info.symbols) )
 			{
 				auto sym = function -> getViableOverload(type_info);
-				variable = new VariableSymbol(function -> getName(), VariableType(sym));
+				variable = new VariableSymbol(function -> getName(), sym);
 			}
 			else
-				variable = new VariableSymbol(function -> getName(), VariableType(function_info.symbols[type_info]));
+				variable = new VariableSymbol(function -> getName(), function_info.symbols[type_info]);
 		}
 		else
-			variable = new VariableSymbol(function -> getName(), VariableType(std::begin(function_info.symbols) -> second));
+			variable = new VariableSymbol(function -> getName(), std::begin(function_info.symbols) -> second);
 
-		code_obj.emit("lea rax, [" + static_cast<const FunctionSymbol*>(variable -> getType().type) -> getScopedTypedName() + "]");
+		code_obj.emit("lea rax, [" + static_cast<const FunctionSymbol*>(variable -> getType()) -> getScopedTypedName() + "]");
 	}
 	else
 	{
@@ -89,7 +89,7 @@ CodeObject& VariableNode::gen()
 
 			auto sym = static_cast<VariableSymbol*>(_this);
 
-			auto struc_scope = static_cast<const StructSymbol*>(sym -> getType().type);
+			auto struc_scope = static_cast<const StructSymbol*>(sym -> getType() -> getSymbol());
 
 			code_obj.emit("mov rax, [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(sym)) + "]");
 			code_obj.emit("lea rax, [rax - " + std::to_string(struc_scope -> getVarAlloc().getAddress(variable)) + "]");
@@ -111,7 +111,7 @@ bool VariableNode::isTemplateParam() const
 	
 AST* VariableNode::copyTree() const { return new VariableNode(name); }
 
-VariableType VariableNode::getType() const
+const Type* VariableNode::getType() const
 {
 	if ( isTemplateParam() )
 	{

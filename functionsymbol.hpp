@@ -5,28 +5,20 @@
 #include <boost/optional.hpp>
 
 #include "basescope.hpp"
-#include "globalconfig.hpp"
 #include "functiontraits.hpp"
 #include "functiontypeinfo.hpp"
-
-#include "overloadedfunctionsymbol.hpp"
 #include "paramvarallocator.hpp"
-
 #include "templateinfo.hpp"
-
 #include "codeobject.hpp"
 
 class VariableSymbol;
-
-using std::map;
-using std::pair;
 
 class FunctionSymbol : public Symbol, public BaseScope, public Type
 {
     friend class VariableSymbolDefine;
 public:
 
-    FunctionSymbol(std::string name, Type *return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, boost::optional<CodeObject> code_obj = boost::none);
+    FunctionSymbol(std::string name, const Type *return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, boost::optional<CodeObject> code_obj = boost::none);
 
     std::string getTypedName() const;
 	std::string getScopedTypedName() const;
@@ -52,7 +44,7 @@ public:
 
 	boost::optional<CodeObject> code_obj;
 
-	Type *return_type;
+	const Type *return_type;
     FunctionTypeInfo function_type_info;	
 	
 	bool is_constexpr;
@@ -62,19 +54,26 @@ public:
 
 	bool isConvertableTo(const Type *type) const override;
 	boost::optional<int> rankOfConversion(const Type *type) const override;
+	
+	bool isReference() const override;
+	bool isConst() const override;
+
+	FunctionSymbol* getConversionTo(const Type *type) const override;
+
+	const Symbol* getSymbol() const override;
 
 private:
 
-    string name;
+	std::string name;
     
     Scope *enclosing_scope;
 
-    string scope_name;
+	std::string scope_name;
 
     FunctionTraits traits;
 
-	TempAllocator temp_alloc;
-	ParamVarAllocator var_alloc;
+	mutable TempAllocator temp_alloc;
+	mutable ParamVarAllocator var_alloc;
 
 	TemplateInfo template_info;
 };

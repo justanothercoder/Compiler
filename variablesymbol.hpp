@@ -10,11 +10,11 @@ class VariableSymbol : public Symbol
 {
 public:
 
-    VariableSymbol(string name, Type *type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
+    VariableSymbol(string name, const Type *type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
 
-    virtual Type* getType() const;
+    virtual const Type* getType() const;
 
-    void setType(Type *t);
+    void setType(const Type *t);
 
     virtual string getName() const;
 
@@ -26,7 +26,7 @@ public:
 private:
 
 	std::string name;
-    Type *type;
+    const Type *type;
 
     VariableSymbolType sym_type;
 };

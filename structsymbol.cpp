@@ -2,6 +2,7 @@
 
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
+#include "typefactory.hpp"
 
 StructSymbol::StructSymbol(string name
 		                 , Scope *enclosing_scope
@@ -33,6 +34,9 @@ TypeKind StructSymbol::getTypeKind() const
 
 bool StructSymbol::isConvertableTo(const Type *type) const
 {
+	if ( type -> getTypeKind() == TypeKind::CONSTTYPE )
+		type = static_cast<const ConstType*>(type) -> 
+
 	if ( type -> getTypeKind() != this -> getTypeKind() )
 		return false;
 
@@ -53,23 +57,32 @@ bool StructSymbol::hasConversionOperator(const StructSymbol *st) const
 
 FunctionSymbol* StructSymbol::getConversionConstructor(const StructSymbol *st) const
 {
-	auto constr_const_ref = constructorWith({new VariableType(this, true), new VariableType(st, true, true)});
+	auto ref_this     = TypeFactory::getReference(this);
+	auto ref_st       = TypeFactory::getReference(st);
+	auto const_ref_st = TypeFactory::getConst(ref_st);
+
+	auto constr_const_ref = constructorWith({ref_this, const_ref_st});
 
 	if ( constr_const_ref )
 		return constr_const_ref;
 
-	auto constr_ref = constructorWith({new VariableType(this, true), new VariableType(st, true)});
+	auto constr_ref = constructorWith({ref_this, ref_st});
 	
-	return constr_ref ? constr_ref : constructorWith({new VariableType(this, true), new VariableType(st)});
+	return constr_ref ? constr_ref : constructorWith({ref_this, st});
 }
 
 FunctionSymbol* StructSymbol::getConversionOperator(const StructSymbol *st) const
 {
-	return methodWith("operator " + st -> getName(), {new VariableType(this, true)});
+	return methodWith("operator " + st -> getName(), {TypeFactory::getReference(this)});
 }
 
-FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
+FunctionSymbol* StructSymbol::getConversionTo(const Type *type) const
 {
+	if ( type -> getTypeKind() != TypeKind::STRUCT )
+		return nullptr;
+
+	auto st = static_cast<const StructSymbol*>(type);
+
 	auto conv_operator = getConversionOperator(st);
 
 	if ( conv_operator != nullptr )
@@ -80,14 +93,17 @@ FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
 	return conv_constr;
 }
 	
-FunctionSymbol* StructSymbol::getCopyConstructor()
+FunctionSymbol* StructSymbol::getCopyConstructor() const
 {
-	return constructorWith({VariableType(this, true), VariableType(this, true, true)});
+	auto ref_this       = TypeFactory::getReference(this);
+	auto const_ref_this = TypeFactory::getConst(ref_this);
+
+	return constructorWith({ref_this, const_ref_this});
 }
 
-FunctionSymbol* StructSymbol::getDefaultConstructor()
+FunctionSymbol* StructSymbol::getDefaultConstructor() const
 {
-	return constructorWith({VariableType(this, true)});
+	return constructorWith({TypeFactory::getReference(this)});
 }
 	
 FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft) const
@@ -95,25 +111,40 @@ FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft) const
 	return methodWith(getName(), ft);
 }
 	
-boost::optional<int> StructSymbol::rankOfConversion(Type *type) const
+boost::optional<int> StructSymbol::rankOfConversion(const Type *type) const
 {
 	if ( !isConvertableTo(type) )
 		return boost::none;
 
-	StructSymbol *st = static_cast<StructSymbol*>(type);
+	auto st = static_cast<const StructSymbol*>(type);
 
 	return (this == st) ? 0 : 1;
 }
 	
-FunctionSymbol* StructSymbol::methodWith(string name, FunctionTypeInfo ft) const
+FunctionSymbol* StructSymbol::methodWith(std::string name, FunctionTypeInfo ft) const
 {
 	auto member = dynamic_cast<VariableSymbol*>(resolveMember(name));
 	if ( member == nullptr )
 		return nullptr;
 
-	auto func = dynamic_cast<const OverloadedFunctionSymbol*>(member -> getType().type);
+	auto func = dynamic_cast<const OverloadedFunctionSymbol*>(member -> getType());
 	auto info = func -> getTypeInfo();
 
 	auto it = info.symbols.find(ft);
 	return it == std::end(info.symbols) ? nullptr : it -> second;
+}
+
+bool StructSymbol::isReference() const
+{
+	return false;
+}
+
+bool StructSymbol::isConst() const
+{
+	return false;
+}
+	
+const Symbol* StructSymbol::getSymbol() const
+{
+	return this;
 }

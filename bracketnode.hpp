@@ -2,11 +2,7 @@
 #define _BRACKETNODE_HPP_
 
 #include "exprnode.hpp"
-#include "functionsymbol.hpp"
-#include "structsymbol.hpp"
-#include "functionhelper.hpp"
 #include "codeobject.hpp"
-#include "callhelper.hpp"
 
 class BracketNode : public ExprNode
 {
@@ -19,9 +15,9 @@ public:
 	CodeObject& gen() override;	
 
 	AST* copyTree() const override;
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
 
-	VariableType getType() const override;
+	const Type* getType() const override;
 	bool isLeftValue() const override;
 
 	void freeTempSpace() override;

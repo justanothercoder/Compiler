@@ -1,34 +1,43 @@
 #include "binaryoperatornode.hpp"
+#include "functionsymbol.hpp"
 
-BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type), call_info(), code_obj() { }
+BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs)
+																					   , rhs(rhs)
+																					   , op_type(op_type)
+{
 
-BinaryOperatorNode::~BinaryOperatorNode() { delete lhs; delete rhs; }
+}
+
+BinaryOperatorNode::~BinaryOperatorNode() 
+{
+   	delete lhs; delete rhs; 
+}
 
 void BinaryOperatorNode::check()
 {
 	lhs -> check();
 	try
 	{
-		call_info = CallHelper::callCheck(getOperatorName(), static_cast<const StructSymbol*>(lhs -> getType().type), {rhs});
+		call_info = CallHelper::callCheck(getOperatorName(), static_cast<const StructSymbol*>(lhs -> getType()), {rhs});
 	}
 	catch ( SemanticError& e )
 	{
 		call_info = CallHelper::callCheck(getOperatorName(), scope, {lhs, rhs});
 	}
 	
-	scope -> getTempAlloc().add(getType().getSize());
+	scope -> getTempAlloc().add(getType() -> getSize());
 }
 
 CodeObject& BinaryOperatorNode::gen()
 {
 	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType().getSize());
+	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	code_obj.emit("lea rax, " + addr);
 	code_obj.emit("push rax");
 
 	if ( call_info.callee -> isMethod() )
-		code_obj.genCallCode(call_info, {rhs}, lhs -> gen(), lhs -> getType().is_ref);
+		code_obj.genCallCode(call_info, {rhs}, lhs -> gen(), lhs -> getType() -> isReference());
 	else
 	{
 		CodeObject empty;
@@ -40,7 +49,7 @@ CodeObject& BinaryOperatorNode::gen()
 	return code_obj;
 }
 
-string BinaryOperatorNode::getOperatorName()
+std::string BinaryOperatorNode::getOperatorName()
 {
     switch ( op_type )
     {
@@ -57,7 +66,7 @@ string BinaryOperatorNode::getOperatorName()
     }    
 }
 
-string BinaryOperatorNode::getCodeOperatorName()
+std::string BinaryOperatorNode::getCodeOperatorName()
 {
     switch ( op_type )
     {
@@ -82,10 +91,20 @@ AST* BinaryOperatorNode::copyTree() const
 	return new BinaryOperatorNode(lhs_copy, rhs_copy, op_type);
 }
 
-vector<AST*> BinaryOperatorNode::getChildren() const { return {lhs, rhs}; }
+std::vector<AST*> BinaryOperatorNode::getChildren() const 
+{
+   	return {lhs, rhs}; 
+}
 
-VariableType BinaryOperatorNode::getType() const { return call_info.callee -> return_type; }
-bool BinaryOperatorNode::isLeftValue() const { return false; }
+const Type* BinaryOperatorNode::getType() const 
+{
+   	return call_info.callee -> return_type; 
+}
+
+bool BinaryOperatorNode::isLeftValue() const 
+{
+   	return false; 
+}
 
 void BinaryOperatorNode::freeTempSpace()
 {

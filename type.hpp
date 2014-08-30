@@ -4,15 +4,18 @@
 #include <string>
 #include <boost/optional.hpp>
 
-using std::string;
+class Symbol;
+class FunctionSymbol;
 
-enum class TypeKind { BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE, POINTER, VARIABLETYPE };
+enum class TypeKind { BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE, POINTER, CONSTTYPE };
 
 class Type
 {
 public:
 
-    virtual string getName() const = 0;
+	virtual ~Type();
+
+    virtual std::string getName() const = 0;
     virtual size_t getSize() const = 0;
     
     virtual TypeKind getTypeKind() const = 0;
@@ -22,6 +25,10 @@ public:
 
 	virtual bool isReference() const = 0;
 	virtual bool isConst() const = 0;
+
+	virtual FunctionSymbol* getConversionTo(const Type *type) const = 0;
+
+	virtual const Symbol* getSymbol() const;
 };
 
 #endif

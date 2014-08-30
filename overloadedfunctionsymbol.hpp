@@ -23,7 +23,7 @@ public:
     bool isConstructor() const;
     bool isOperator() const;
 
-    VariableType getBaseType() const;
+    const Type* getBaseType() const;
 
     SymbolType getSymbolType() const override;
     TypeKind getTypeKind() const override;
@@ -32,11 +32,18 @@ public:
 
 	bool isConvertableTo(const Type *type) const override;
 	boost::optional<int> rankOfConversion(const Type *type) const override;
+	
+	bool isReference() const override;
+	bool isConst() const override;
+
+	FunctionSymbol* getConversionTo(const Type *type) const override;
+
+	const Symbol* getSymbol() const override;
     
 private:
 
-    string name;
-    OverloadedFunctionTypeInfo type_info;
+	std::string name;
+    mutable OverloadedFunctionTypeInfo type_info;
 
     FunctionTraits traits;
 };

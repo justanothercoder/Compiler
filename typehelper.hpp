@@ -16,14 +16,14 @@ class TypeHelper
 {
 public:
 
-    static FunctionSymbol* getConversion(VariableType lhs, VariableType rhs);
+    static FunctionSymbol* getConversion(Type *lhs, Type *rhs);
 
-    static VariableType fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateInfo& template_info);
+    static const Type* fromTypeInfo(TypeInfo type_info, Scope *scope, const TemplateInfo& template_info);
     
-    static bool isConvertable(VariableType lhs, VariableType rhs);
+    static bool isConvertable(Type *lhs, Type *rhs);
     
-	static FunctionSymbol* getCopyConstructor(VariableType type);
-	static FunctionSymbol* getDefaultConstructor(VariableType type);
+	static FunctionSymbol* getCopyConstructor(Type *type);
+	static FunctionSymbol* getDefaultConstructor(Type *type);
 
 	static OverloadedFunctionSymbol* getOperatorCall(StructSymbol *sym);
 

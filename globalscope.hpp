@@ -22,7 +22,7 @@ public:
     void accept(ScopeVisitor *visitor) override;
 
     Scope* getEnclosingScope() const override;
-    string getScopeName() const override;
+	std::string getScopeName() const override;
 	
 	VarAllocator& getVarAlloc() const override;
 	TempAllocator& getTempAlloc() const override;
@@ -32,8 +32,8 @@ public:
 
 private:
 
-	VarAllocator var_alloc;
-	TempAllocator temp_alloc;
+	mutable VarAllocator var_alloc;
+	mutable TempAllocator temp_alloc;
 
 	TemplateInfo template_info;
 };

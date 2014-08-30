@@ -2,7 +2,6 @@
 #define _STRINGNODE_HPP_
 
 #include "exprnode.hpp"
-#include "builtins.hpp"
 #include "codeobject.hpp"
 
 class StringNode : public ExprNode
@@ -16,10 +15,10 @@ public:
 
 	AST* copyTree() const override;
 
-	string getStr() const;
-	static string getNewLabel();
+	std::string getStr() const;
+	static std::string getNewLabel();
 
-	VariableType getType() const override;
+	const Type* getType() const override;
 	bool isLeftValue() const override;
 
 	void freeTempSpace() override;
@@ -29,7 +28,7 @@ public:
 
 private:
 	
-	string str;
+	std::string str;
 	CodeObject code_obj;
 };
 

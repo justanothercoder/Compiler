@@ -1,7 +1,11 @@
 #include "newexpressionnode.hpp"
 #include "functionsymbol.hpp"
+#include "typehelper.hpp"
 
-NewExpressionNode::NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params) : type_info(type_info), params(params), call_info(), code_obj() { }
+NewExpressionNode::NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params) : type_info(type_info), params(params)
+{
+
+}
 
 NewExpressionNode::~NewExpressionNode()
 {
@@ -24,7 +28,7 @@ void NewExpressionNode::check()
 	for ( auto param : type_info.template_params )
 		param -> check();
 
-	auto type = static_cast<const StructSymbol*>(TypeHelper::fromTypeInfo(type_info, scope, scope -> getTemplateInfo()).type);
+	auto type = static_cast<const StructSymbol*>(TypeHelper::fromTypeInfo(type_info, scope, scope -> getTemplateInfo()));
 
 	call_info = CallHelper::callCheck(type -> getName(), type, params); 
 
@@ -35,7 +39,7 @@ void NewExpressionNode::check()
 CodeObject& NewExpressionNode::gen()
 {
 	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType().type -> getSize());
+	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	string addr2 = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(GlobalConfig::int_size);
@@ -59,10 +63,20 @@ AST* NewExpressionNode::copyTree() const
 	return new NewExpressionNode(type_info, vec);
 }
 
-vector<AST*> NewExpressionNode::getChildren() const { return vector<AST*>(std::begin(params), std::end(params)); }
+std::vector<AST*> NewExpressionNode::getChildren() const 
+{ 
+	return std::vector<AST*>(std::begin(params), std::end(params)); 
+}
 
-VariableType NewExpressionNode::getType() const { return call_info.callee -> return_type; }
-bool NewExpressionNode::isLeftValue() const { return false; }
+const Type* NewExpressionNode::getType() const 
+{
+   	return call_info.callee -> return_type; 
+}
+
+bool NewExpressionNode::isLeftValue() const 
+{
+   	return false; 
+}
 
 void NewExpressionNode::freeTempSpace()
 {

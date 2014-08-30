@@ -10,8 +10,6 @@
 
 #include "structscope.hpp"
 
-using std::map;
-
 class StructSymbol : public Symbol, public StructScope, public Type
 {
 public:
@@ -19,12 +17,12 @@ public:
     StructSymbol(string name, Scope *enclosing_scope, const TemplateInfo& template_info);
 
     SymbolType getSymbolType() const override;
-    string getName() const override;
+	std::string getName() const override;
 
     size_t getSize() const override;
     TypeKind getTypeKind() const override;
 
-	FunctionSymbol* getConversionTo(StructSymbol *st);
+	FunctionSymbol* getConversionTo(const Type *type) const;
 
 	bool isConvertableTo(const Type *type) const override;
 
@@ -46,9 +44,11 @@ public:
 	bool isReference() const override;
 	bool isConst() const override;
 
+	const Symbol* getSymbol() const override;
+
 private:
 
-    string name;
+	std::string name;
 };
 		     
 #endif

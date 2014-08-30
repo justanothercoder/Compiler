@@ -12,24 +12,24 @@ public:
 
     NumberNode(string num);
 
-    virtual void check();
-    virtual CodeObject& gen();
+    void check() override;
+    CodeObject& gen() override;
 
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
 
-	string getNum() const;
+	std::string getNum() const;
     
-	virtual VariableType getType() const;
-	virtual bool isLeftValue() const;
+	const Type* getType() const override;
+	bool isLeftValue() const override;
 
-	virtual void freeTempSpace();
+	void freeTempSpace() override;
 	
 	bool isCompileTimeExpr() const override;
 	boost::optional<int> getCompileTimeValue() const override;
 
 private:
 
-    string num;
+	std::string num;
 	CodeObject code_obj;    
 };
     

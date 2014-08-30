@@ -1,16 +1,23 @@
 #include "returnnode.hpp"
 #include "callhelper.hpp"
+#include "functionsymbol.hpp"
 
-ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), copy_call_info(), enclosing_func(nullptr), code_obj() { }
+ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), enclosing_func(nullptr) 
+{
 
-ReturnNode::~ReturnNode() { delete expr; }
+}
+
+ReturnNode::~ReturnNode() 
+{ 
+	delete expr; 
+}
 
 CodeObject& ReturnNode::gen()
 {
-	if ( enclosing_func -> return_type.is_ref )
+	if ( enclosing_func -> return_type -> isReference() )
 	{
 		if ( !expr -> isLeftValue() )
-			throw SemanticError("cannot initialize " + enclosing_func -> return_type.getName() + " with value of type " + expr -> getType().getName());
+			throw SemanticError("cannot initialize " + enclosing_func -> return_type -> getName() + " with value of type " + expr -> getType() -> getName());
 
 		code_obj.emit(expr -> gen().getCode());
 	}
@@ -19,9 +26,9 @@ CodeObject& ReturnNode::gen()
 		CodeObject return_place;
 
 		auto& params_types = enclosing_func -> function_type_info.params_types;
-		int addr = std::accumulate(std::begin(params_types), std::end(params_types), 0, [](int acc, VariableType type)
+		int addr = std::accumulate(std::begin(params_types), std::end(params_types), 0, [](int acc, const Type *type)
 		{
-			return acc += type.getSize();
+			return acc += type -> getSize();
 		}) + 2 * GlobalConfig::int_size; // expr -> getType().getSize();
 
 		return_place.emit("mov rax, [rbp + " + std::to_string(addr) + "]");
@@ -29,7 +36,7 @@ CodeObject& ReturnNode::gen()
 		code_obj.genCallCode(copy_call_info, {expr}, return_place, false);
 	}
 
-	if ( !enclosing_func -> return_type.is_ref )
+	if ( !enclosing_func -> return_type -> isReference() )
 		code_obj.emit("mov rax, [rax]");
 
     code_obj.emit("mov rsp, rbp");
@@ -52,7 +59,8 @@ void ReturnNode::check()
 
     expr -> check();
 
-	copy_call_info = CallHelper::callCheck(expr -> getType().getTypeName(), static_cast<const StructSymbol*>(expr -> getType().type), {expr});
+//	copy_call_info = CallHelper::callCheck(expr -> getType() -> getTypeName(), static_cast<const StructSymbol*>(expr -> getType().type), {expr});
+	copy_call_info = CallHelper::callCheck(expr -> getType() -> getName(), static_cast<const StructSymbol*>(expr -> getType()), {expr});
 }
 	
 void ReturnNode::define() { expr -> define(); }

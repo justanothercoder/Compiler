@@ -4,7 +4,6 @@
 #include <boost/optional.hpp>
 
 #include "ast.hpp"
-#include "variabletype.hpp"
 
 #include "logger.hpp"
 
@@ -16,7 +15,7 @@ public:
 
     virtual void define();
     
-    virtual VariableType getType() const = 0;
+    virtual const Type* getType() const = 0;
 	virtual bool isLeftValue() const = 0;
 
 	virtual void freeTempSpace() = 0;
@@ -24,7 +23,7 @@ public:
 	virtual bool isCompileTimeExpr() const = 0;
 	virtual boost::optional<int> getCompileTimeValue() const = 0;
 
-	Type *type_hint;
+	const Type *type_hint;
 };
 
 #endif

@@ -18,13 +18,11 @@
 
 #include "variablesymboldefine.hpp"
 
-using std::vector;
-
 class VariableDeclarationNode : public DeclarationNode
 {
 public:
 
-    VariableDeclarationNode(string name, TypeInfo type_info, bool is_field = false, const vector<ExprNode*>& constructor_call_params = {});
+    VariableDeclarationNode(std::string name, TypeInfo type_info, bool is_field = false, std::vector<ExprNode*> constructor_call_params = {});
 
     virtual ~VariableDeclarationNode();
 
@@ -38,7 +36,7 @@ public:
     
     Symbol* getDefinedSymbol() const override;
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
 
 private:
 
@@ -49,7 +47,7 @@ private:
 
     VariableSymbol *definedSymbol;
 
-    vector<ExprNode*> constructor_call_params;
+	std::vector<ExprNode*> constructor_call_params;
 
 	CallInfo call_info;
 

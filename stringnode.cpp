@@ -1,9 +1,16 @@
 #include "stringnode.hpp"
 #include "typehelper.hpp"
+#include "typefactory.hpp"
 
-StringNode::StringNode(string str) : str(str) { }
+StringNode::StringNode(std::string str) : str(str) 
+{
 
-void StringNode::check() {  }
+}
+
+void StringNode::check() 
+{
+
+}
 
 CodeObject& StringNode::gen()
 {
@@ -33,25 +40,33 @@ CodeObject& StringNode::gen()
 	return code_obj;
 }
 	
-AST* StringNode::copyTree() const { return new StringNode(str); }
+AST* StringNode::copyTree() const 
+{
+   	return new StringNode(str); 
+}
 	
-string StringNode::getStr() const { return str; }
+std::string StringNode::getStr() const 
+{
+   	return str; 
+}
 
-string StringNode::getNewLabel()
+std::string StringNode::getNewLabel()
 {
 	static int label_num = 0;
 	return "@string_label" + std::to_string(++label_num);
 }
 
-
-VariableType StringNode::getType() const 
+const Type* StringNode::getType() const 
 {
-	static Type *type = TypeHelper::resolveType("string", BuiltIns::global_scope);
+	static const Type *type = TypeHelper::resolveType("string", BuiltIns::global_scope);
 
-	return VariableType(type, false, true); 
+	return TypeFactory::getConst(type);
 }
 
-bool StringNode::isLeftValue() const { return false; }
+bool StringNode::isLeftValue() const 
+{
+   	return false; 
+}
 
 void StringNode::freeTempSpace()
 {

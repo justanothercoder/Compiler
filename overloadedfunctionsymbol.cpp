@@ -24,7 +24,7 @@ OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo() const
    	return type_info; 
 }
 
-void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, FunctionSymbol *sym)
+void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, FunctionSymbol *sym) const 
 {
     type_info.overloads.insert(func_type_info);
     type_info.symbols[func_type_info] = sym;
@@ -34,11 +34,11 @@ bool OverloadedFunctionSymbol::isMethod() const { return traits.is_method; }
 bool OverloadedFunctionSymbol::isConstructor() const { return traits.is_constructor; }
 bool OverloadedFunctionSymbol::isOperator() const { return traits.is_operator; }
 
-VariableType OverloadedFunctionSymbol::getBaseType() const
+const Type* OverloadedFunctionSymbol::getBaseType() const
 {
     if ( !isMethod() )
 		throw;    
-    return std::begin(type_info.overloads)->params_types[0];
+    return std::begin(type_info.overloads) -> params_types[0];
 }
 
 SymbolType OverloadedFunctionSymbol::getSymbolType() const 
@@ -60,4 +60,29 @@ FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeInfo par
 bool OverloadedFunctionSymbol::isConvertableTo(const Type *) const 
 {
 	return false;
+}
+	
+boost::optional<int> OverloadedFunctionSymbol::rankOfConversion(const Type *) const 
+{
+	return boost::none;
+}
+	
+bool OverloadedFunctionSymbol::isReference() const 
+{
+	return false;
+}
+
+bool OverloadedFunctionSymbol::isConst() const 
+{
+	return false;
+}
+
+FunctionSymbol* OverloadedFunctionSymbol::getConversionTo(const Type *) const 
+{
+	return nullptr;
+}
+    
+const Symbol* OverloadedFunctionSymbol::getSymbol() const
+{
+	return this;
 }

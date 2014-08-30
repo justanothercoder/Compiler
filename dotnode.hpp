@@ -2,27 +2,25 @@
 #define _DOTNODE_HPP_
 
 #include "exprnode.hpp"
-#include "structsymbol.hpp"
-#include "typehelper.hpp"
-#include "globalhelper.hpp"
-#include "codeobject.hpp"
-#include "templatestructsymbol.hpp"
-#include "codeobject.hpp"
+
+class CodeObject;
+class StructSymbol;
+class VariableSymbol;
 
 class DotNode : public ExprNode
 {
 public:
 
-    DotNode(ExprNode *base, string member_name);   
+    DotNode(ExprNode *base, std::string member_name);   
 	~DotNode() override;
     
     void check() override;
     CodeObject& gen() override;
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
     AST* copyTree() const override;
 
-    VariableType getType() const override;
+    const Type* getType() const override;
 	bool isLeftValue() const override;
 
 	void freeTempSpace() override;
@@ -34,7 +32,7 @@ private:
 
     ExprNode *base;
 
-    string member_name;
+	std::string member_name;
 
     const StructSymbol *base_type;
     VariableSymbol *member;

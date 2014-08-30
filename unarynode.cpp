@@ -1,32 +1,42 @@
 #include "unarynode.hpp"
 
-UnaryNode::UnaryNode(ExprNode *exp, UnaryOp op_type) : exp(exp), op_type(op_type) { }
-UnaryNode::~UnaryNode() { delete exp; } 
+#include "callhelper.hpp"
+#include "functionsymbol.hpp"
+
+UnaryNode::UnaryNode(ExprNode *exp, UnaryOp op_type) : exp(exp), op_type(op_type) 
+{
+
+}
+
+UnaryNode::~UnaryNode()
+{
+   	delete exp; 
+}	
 
 void UnaryNode::check()
 {
 	exp -> check();
-	call_info = CallHelper::callCheck(getOperatorName(), static_cast<const StructSymbol*>(exp -> getType().type), { });
+	call_info = CallHelper::callCheck(getOperatorName(), static_cast<const StructSymbol*>(exp -> getType() -> getSymbol()), { });
 	
-	scope -> getTempAlloc().add(getType().getSize());
+	scope -> getTempAlloc().add(getType() -> getSize());
 }
 
 CodeObject& UnaryNode::gen()
 {
 	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType().getSize());
+	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	code_obj.emit("lea rax, " + addr);
 	code_obj.emit("push rax");
 
-	code_obj.genCallCode(call_info, { }, exp -> gen(), exp -> getType().is_ref);
+	code_obj.genCallCode(call_info, { }, exp -> gen(), exp -> getType() -> isReference());
 	
 	code_obj.emit("pop rax");
 
 	return code_obj;
 }
 
-string UnaryNode::getOperatorName()
+std::string UnaryNode::getOperatorName()
 {
 	switch ( op_type )
 	{
@@ -36,7 +46,7 @@ string UnaryNode::getOperatorName()
 	}
 }
 
-string UnaryNode::getCodeOperatorName()
+std::string UnaryNode::getCodeOperatorName()
 {
 	switch ( op_type )
 	{
@@ -47,9 +57,16 @@ string UnaryNode::getCodeOperatorName()
 }
 
 std::vector<AST*> UnaryNode::getChildren() const { return {exp}; }
-AST* UnaryNode::copyTree() const { return new UnaryNode(static_cast<ExprNode*>(exp -> copyTree()), op_type); }
 
-VariableType UnaryNode::getType() const { return call_info.callee -> return_type; }
+AST* UnaryNode::copyTree() const 
+{
+   	return new UnaryNode(static_cast<ExprNode*>(exp -> copyTree()), op_type); 
+}
+
+const Type* UnaryNode::getType() const 
+{
+   	return call_info.callee -> return_type; 
+}
 bool UnaryNode::isLeftValue() const { return false; }
 
 void UnaryNode::freeTempSpace() 

@@ -10,12 +10,12 @@ StructScope::StructScope(string name
 	type_size = 0;
 }
 
-TempAllocator& StructScope::getTempAlloc() 
+TempAllocator& StructScope::getTempAlloc() const
 {
 	return temp_alloc;
 }
 	
-VarAllocator& StructScope::getVarAlloc() 
+VarAllocator& StructScope::getVarAlloc() const
 {
    	return var_alloc; 
 }

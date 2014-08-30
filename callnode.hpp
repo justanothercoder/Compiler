@@ -5,16 +5,8 @@
 #include <algorithm>
 
 #include "exprnode.hpp"
-#include "functionhelper.hpp"
-#include "overloadedfunctiontypeinfo.hpp"
-#include "overloadedfunctionsymbol.hpp"
-#include "globalhelper.hpp"
-#include "functionsymbol.hpp"
 #include "codeobject.hpp"
-#include "callhelper.hpp"
 #include "callinfo.hpp"
-
-using std::vector;
 
 class CallNode : public ExprNode
 {
@@ -26,10 +18,10 @@ public:
     void check() override;
     CodeObject& gen() override;
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
     AST* copyTree() const override;
 
-    VariableType getType() const override;
+    const Type* getType() const override;
 	bool isLeftValue() const override;
 
 	void freeTempSpace() override;
@@ -40,7 +32,7 @@ public:
 private:
 
     ExprNode *caller;
-    vector<ExprNode*> params;
+	std::vector<ExprNode*> params;
 
     CallInfo call_info;
 	CodeObject code_obj;

@@ -3,8 +3,6 @@
 
 #include "exprnode.hpp"
 #include "callinfo.hpp"
-#include "functionsymbol.hpp"
-#include "callhelper.hpp"
 #include "codeobject.hpp"
 
 enum class UnaryOp { PLUS, MINUS, NOT };
@@ -22,10 +20,10 @@ public:
 	vector<AST*> getChildren() const override;
 	AST* copyTree() const override;
 
-	string getOperatorName();
-	string getCodeOperatorName();
+	std::string getOperatorName();
+	std::string getCodeOperatorName();
     
-	VariableType getType() const override;
+	const Type* getType() const override;
 	bool isLeftValue() const override;
 
 	void freeTempSpace() override;

@@ -1,23 +1,23 @@
 #include "variablesymbol.hpp"
 
-VariableSymbol::VariableSymbol(string name, VariableType type, VariableSymbolType sym_type) : name(name)
-																							, type(type)
-																							, sym_type(sym_type) 
+VariableSymbol::VariableSymbol(string name, const Type *type, VariableSymbolType sym_type) : name(name)
+																						   , type(type)
+																						   , sym_type(sym_type) 
 {
 
 }
 
-VariableType VariableSymbol::getType() const 
+const Type* VariableSymbol::getType() const 
 {
    	return type; 
 }
 
-void VariableSymbol::setType(VariableType t) 
+void VariableSymbol::setType(const Type *t) 
 {
    	type = t; 
 }
 
-string VariableSymbol::getName() const 
+std::string VariableSymbol::getName() const 
 {
    	return name; 
 }

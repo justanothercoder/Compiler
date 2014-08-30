@@ -6,11 +6,11 @@ void ParamVarAllocator::addVariable(VariableSymbol *var)
 {
 	if ( var->isParam() )
 	{
-		space_for_params += var->getType().getSize();
+		space_for_params += var -> getType() -> getSize();
 		var_addresses[var] = -(GlobalConfig::int_size + space_for_params);
 	}
 	else
-		this->VarAllocator::addVariable(var);
+		this -> VarAllocator::addVariable(var);
 }
 	
 int ParamVarAllocator::getSpaceForParams() const { return space_for_params; }

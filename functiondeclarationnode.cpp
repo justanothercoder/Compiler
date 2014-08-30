@@ -1,5 +1,7 @@
 #include "functiondeclarationnode.hpp"
 
+#include "typefactory.hpp"
+
 FunctionDeclarationNode::FunctionDeclarationNode(string name
 		                                       , vector< pair<string, TypeInfo> > params
 											   , TypeInfo return_type_info
@@ -22,7 +24,7 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 
 void FunctionDeclarationNode::build_scope()
 {
-	definedSymbol = new FunctionSymbol(traits.is_constructor ? static_cast<StructSymbol*>(scope) -> getName() : name, VariableType(), { }, scope, traits);
+	definedSymbol = new FunctionSymbol(traits.is_constructor ? static_cast<StructSymbol*>(scope) -> getName() : name, nullptr, { }, scope, traits);
 
 	statements -> scope         = definedSymbol;
 	statements -> build_scope();
@@ -37,23 +39,33 @@ void FunctionDeclarationNode::define()
 	if ( template_info.sym != nullptr && return_type_info.type_name == template_info.sym -> getName() )
 		return_type_info.type_name = static_cast<StructSymbol*>(scope) -> getName();
 
-	auto fromTypeInfo = [&] (TypeInfo type_info) 
+	auto fromTypeInfo = [&] (TypeInfo type_info) -> const Type*
 	{
 		if ( template_info.sym != nullptr && type_info.type_name == template_info.sym -> getName() )
 			type_info.type_name = static_cast<StructSymbol*>(scope) -> getName();
 
 		if ( definedSymbol -> isMethod() && type_info.type_name == static_cast<StructSymbol*>(scope) -> getName() )
-			return VariableType(static_cast<StructSymbol*>(scope), type_info.is_ref, type_info.is_const);
+		{
+			const Type *type = static_cast<const StructSymbol*>(scope);
+
+			if ( type_info.is_ref )
+				type = TypeFactory::getReference(type);
+
+			if ( type_info.is_const )
+				type = TypeFactory::getConst(type);
+
+			return type;
+		}
 		return TypeHelper::fromTypeInfo(type_info, scope, template_info);
 	};
 
-	VariableType return_type = fromTypeInfo(return_type_info);
+    auto return_type = fromTypeInfo(return_type_info);
 
-	vector<VariableType> params_types;
+	vector<const Type*> params_types;
 
 	if ( traits.is_method )
 	{
-		auto _this_type = VariableType(static_cast<StructSymbol*>(scope), true, false);
+		auto _this_type = TypeFactory::getReference(static_cast<StructSymbol*>(scope));
 		params_types.push_back(_this_type);
 		
 		auto _this_sym = new VariableSymbol("this", _this_type, VariableSymbolType::PARAM);
@@ -64,7 +76,7 @@ void FunctionDeclarationNode::define()
 
 	for ( auto i : params )
 	{
-		VariableType param_type = fromTypeInfo(i.second);
+		auto param_type = fromTypeInfo(i.second);
 
 		params_types.push_back(param_type);
 

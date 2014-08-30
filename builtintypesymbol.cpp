@@ -25,7 +25,27 @@ TypeKind BuiltInTypeSymbol::getTypeKind() const
 	return TypeKind::BUILTIN; 
 }
 	
-bool BuiltInTypeSymbol::isConvertableTo(Type *type) const
+bool BuiltInTypeSymbol::isConvertableTo(const Type *type) const
 {
 	return this == type;
+}
+	
+boost::optional<int> BuiltInTypeSymbol::rankOfConversion(const Type *type) const 
+{
+	return isConvertableTo(type) ? 0 : boost::none;
+}
+	
+bool BuiltInTypeSymbol::isReference() const 
+{
+	return false;
+}
+
+bool BuiltInTypeSymbol::isConst() const 
+{
+	return false;
+}
+
+FunctionSymbol* BuiltInTypeSymbol::getConversionTo(const Type *) const 
+{
+	return nullptr;
 }

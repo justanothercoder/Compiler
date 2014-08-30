@@ -18,9 +18,9 @@ void CodeObject::emit(string text)
    	code += text + '\n'; 
 }
 		
-void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr)
+void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, const FunctionSymbol *copy_constr)
 {
-	if ( conv_info.desired_type.is_ref )
+	if ( conv_info.desired_type -> isReference() )
 	{
 		emit(param -> gen().getCode());
 
@@ -35,17 +35,16 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		auto conv = conv_info.conversion;
 
 		if ( conv -> isOperator() )
-			genCallCode(CallHelper::getCallInfo(conv, { }), { }, param -> gen(), param -> getType().is_ref);
+			genCallCode(CallHelper::getCallInfo(conv, { }), { }, param -> gen(), param -> getType() -> isReference());
 		else
 		{
 			emit(param -> gen().getCode());
 		
 			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 
-//			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size));		
-			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size + conv_info.desired_type.getSize() ));
+			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size + conv_info.desired_type -> getSize() ));
 
-			if ( param -> getType().is_ref )
+			if ( param -> getType() -> isReference() )
 				emit("mov rax, [rax]");
 
 			emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
@@ -55,9 +54,9 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 			emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 
 			emit("call " + conv -> getScopedTypedName());
-			emit("add rsp, " + std::to_string(4 * GlobalConfig::int_size + conv_info.desired_type.getSize() )); //offset + params
+			emit("add rsp, " + std::to_string(4 * GlobalConfig::int_size + conv_info.desired_type -> getSize() )); //offset + params
 
-			emit("sub rsp, " + std::to_string(conv_info.desired_type.getSize()));
+			emit("sub rsp, " + std::to_string(conv_info.desired_type -> getSize()));
 		}
 	}
 	else
@@ -78,9 +77,9 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 		
 			emit("lea r8, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
 
-			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size + conv_info.desired_type.getSize() ));
+			emit("sub rsp, " + std::to_string(2 * GlobalConfig::int_size + conv_info.desired_type -> getSize() ));
 
-			if ( param -> getType().is_ref )
+			if ( param -> getType() -> isReference() )
 				emit("mov rax, [rax]");
 
 			emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
@@ -90,14 +89,14 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, FunctionSym
 			emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
 
 			emit("call " + copy_constr -> getScopedTypedName());
-			emit("add rsp, " + std::to_string(4 * GlobalConfig::int_size + conv_info.desired_type.getSize() )); //offset + params 
+			emit("add rsp, " + std::to_string(4 * GlobalConfig::int_size + conv_info.desired_type -> getSize() )); //offset + params 
 
-			emit("sub rsp, " + std::to_string(conv_info.desired_type.getSize()));
+			emit("sub rsp, " + std::to_string(conv_info.desired_type -> getSize()));
 		}
 	}
 }
 
-void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, CodeObject& genThis, bool thisIsRef)
+void CodeObject::genCallCode(CallInfo call_info, std::vector<ExprNode*> params, CodeObject& genThis, bool thisIsRef)
 {
 	auto func = call_info.callee;
 
@@ -107,7 +106,7 @@ void CodeObject::genCallCode(CallInfo call_info, vector<ExprNode*> params, CodeO
 
 	auto function_info = func -> function_type_info;
 
-	size_t params_size = std::accumulate(std::begin(function_info.params_types) + is_meth, std::end(function_info.params_types), 0, [](size_t x, VariableType type) { return x += type.getSize(); });
+	size_t params_size = std::accumulate(std::begin(function_info.params_types) + is_meth, std::end(function_info.params_types), 0, [](size_t x, const Type *type) { return x += type -> getSize(); });
 
 	if ( is_method )
 		params_size += GlobalConfig::int_size;

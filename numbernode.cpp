@@ -1,10 +1,15 @@
 #include "numbernode.hpp"
 
-NumberNode::NumberNode(string num) : num(num), code_obj() { }
+#include "typefactory.hpp"
+
+NumberNode::NumberNode(string num) : num(num), code_obj() 
+{
+
+}
 
 void NumberNode::check() 
 { 
-	scope -> getTempAlloc().add(getType().getSize());
+	scope -> getTempAlloc().add(getType() -> getSize());
 }
 
 CodeObject& NumberNode::gen()
@@ -14,17 +19,30 @@ CodeObject& NumberNode::gen()
 	code_obj.emit("mov qword " + addr + ", " + num);
 	code_obj.emit("lea rax, " + addr);
 	
-	scope -> getTempAlloc().claim(getType().getSize());
+	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	return code_obj;
 }
 	
-AST* NumberNode::copyTree() const { return new NumberNode(num); }
+AST* NumberNode::copyTree() const 
+{
+   	return new NumberNode(num); 
+}
 	
-string NumberNode::getNum() const { return num; }
+std::string NumberNode::getNum() const
+{
+   	return num; 
+}
 
-VariableType NumberNode::getType() const { return VariableType(BuiltIns::int_struct, false, true); }
-bool NumberNode::isLeftValue() const { return false; }
+const Type* NumberNode::getType() const
+{
+   	return TypeFactory::getConst(BuiltIns::int_struct); 
+}
+
+bool NumberNode::isLeftValue() const 
+{
+   	return false; 
+}
 
 void NumberNode::freeTempSpace()
 {

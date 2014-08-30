@@ -2,17 +2,17 @@
 #define _VARINFERTYPEDECLARATIONNODE_HPP_
 
 #include "declarationnode.hpp"
-#include "exprnode.hpp"
 #include "callinfo.hpp"
 #include "codeobject.hpp"
 
+class ExprNode;
 class VariableSymbol;
 
 class VarInferTypeDeclarationNode : public DeclarationNode
 {
 public:
 
-	VarInferTypeDeclarationNode(string name, ExprNode *expr);
+	VarInferTypeDeclarationNode(std::string name, ExprNode *expr);
 
 	void define() override;
 	void check() override;
@@ -26,13 +26,13 @@ public:
 
 private:
 
-	VariableSymbol *definedSymbol;
-
-	string name;
+	std::string name;
 	ExprNode *expr;
 
 	CallInfo call_info;
 	CodeObject code_obj;
+	
+	VariableSymbol *definedSymbol;
 };
 
 #endif

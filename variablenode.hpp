@@ -29,7 +29,7 @@ public:
 
     bool isTemplateParam() const;
     
-    VariableType getType() const override;
+    const Type* getType() const override;
 	bool isLeftValue() const override;
 
 	void freeTempSpace() override;

@@ -19,8 +19,8 @@ public:
 
 	void emit(string text);
 
-	void genCallCode(CallInfo call_info, vector<ExprNode*> params, CodeObject& genThis, bool thisIsRef);
-	void genParam(ExprNode *param, ConversionInfo conv_info, FunctionSymbol *copy_constr);
+	void genCallCode(CallInfo call_info, std::vector<ExprNode*> params, CodeObject& genThis, bool thisIsRef);
+	void genParam(ExprNode *param, ConversionInfo conv_info, const FunctionSymbol *copy_constr);
 
 	void pushOnStack(size_t size, int offset);
 

@@ -1,13 +1,15 @@
 #include "variabledeclarationnode.hpp"
 #include "classvariablesymbol.hpp"
 
-VariableDeclarationNode::VariableDeclarationNode(string name, TypeInfo type_info, bool is_field, const vector<ExprNode*>& constructor_call_params) : name(name),
-																		     type_info(type_info),
-																		     is_field(is_field),
-																		     constructor_call_params(constructor_call_params),
-																			 call_info() 
+VariableDeclarationNode::VariableDeclarationNode(std::string name
+		                                       , TypeInfo type_info
+											   , bool is_field
+											   , std::vector<ExprNode*> constructor_call_params) : name(name)
+																								 , type_info(type_info)
+																								 , is_field(is_field)
+																								 , constructor_call_params(constructor_call_params)
 {
-    definedSymbol = new VariableSymbol(name, VariableType(), (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE));
+    definedSymbol = new VariableSymbol(name, nullptr, (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE));
 }
 
 VariableDeclarationNode::~VariableDeclarationNode() 
@@ -42,20 +44,20 @@ void VariableDeclarationNode::check()
 	{
 		if ( !type_info.is_ref )
 		{
-			string type_name = type_info.type_name;
+			std::string type_name = type_info.type_name;
 
 			auto _ = TypeHelper::fromTypeInfo(type_info, scope, scope -> getTemplateInfo());
 
-			if ( _.type -> getTypeKind() != TypeKind::STRUCT )
+			if ( _ -> getSymbol() == nullptr || _ -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
 				throw SemanticError("No such struct " + type_name);
 
-			auto type = static_cast<const StructSymbol*>(_.type);
-			call_info = CallHelper::callCheck(type -> getName(), type, constructor_call_params);
+			auto struct_symbol = static_cast<const StructSymbol*>(_ -> getSymbol());
+			call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, constructor_call_params);
 		}
 		else
 		{
-			for ( auto i : constructor_call_params )
-				i -> check();
+			for ( auto param : constructor_call_params )
+				param -> check();
 		}
 	}
 	
@@ -98,7 +100,7 @@ void VariableDeclarationNode::define()
     
     auto var_type = TypeHelper::fromTypeInfo(type_info, scope, template_info);
     
-    if ( var_type.type == BuiltIns::void_type )
+    if ( var_type == BuiltIns::void_type )
 		throw SemanticError("can't declare a variable of 'void' type.");
    
     definedSymbol -> setType(var_type);

@@ -7,15 +7,23 @@ class ReferenceType : public Type
 {
 public:
 
-	ReferenceType(Type *type);
+	ReferenceType(const Type *type);
 
 	std::string getName() const override;
 	size_t getSize() const override;
 	TypeKind getTypeKind() const override;
+	
+	bool isConvertableTo(const Type *type) const override;
+	boost::optional<int> rankOfConversion(const Type *type) const override;
+
+	bool isReference() const override;
+	bool isConst() const override;
+	
+	FunctionSymbol* getConversionTo(const Type *type) const override;
 
 private:
 
-	Type *type;
+	const Type *type;
 };
 
 #endif

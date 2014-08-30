@@ -21,12 +21,12 @@ void GlobalScope::accept(ScopeVisitor *visitor)
    	visitor -> visit(this); 
 }
 
-VarAllocator& GlobalScope::getVarAlloc() 
+VarAllocator& GlobalScope::getVarAlloc() const 
 {
    	return var_alloc; 
 }
 
-TempAllocator& GlobalScope::getTempAlloc() 
+TempAllocator& GlobalScope::getTempAlloc() const
 {
    	return temp_alloc; 
 }
