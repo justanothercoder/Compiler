@@ -4,7 +4,7 @@
 #include "functionsymbol.hpp"
 #include "typefactory.hpp"
 
-StructSymbol::StructSymbol(string name
+StructSymbol::StructSymbol(std::string name
 		                 , Scope *enclosing_scope
 						 , const TemplateInfo& template_info) : StructScope(name, enclosing_scope, template_info)
 															  , name(name)
@@ -17,7 +17,7 @@ size_t StructSymbol::getSize() const
 	return type_size; 
 }
 
-string StructSymbol::getName() const 
+std::string StructSymbol::getName() const 
 { 
 	return name; 
 }
@@ -34,9 +34,6 @@ TypeKind StructSymbol::getTypeKind() const
 
 bool StructSymbol::isConvertableTo(const Type *type) const
 {
-	if ( type -> getTypeKind() == TypeKind::CONSTTYPE )
-		type = static_cast<const ConstType*>(type) -> 
-
 	if ( type -> getTypeKind() != this -> getTypeKind() )
 		return false;
 
@@ -134,16 +131,6 @@ FunctionSymbol* StructSymbol::methodWith(std::string name, FunctionTypeInfo ft) 
 	return it == std::end(info.symbols) ? nullptr : it -> second;
 }
 
-bool StructSymbol::isReference() const
-{
-	return false;
-}
-
-bool StructSymbol::isConst() const
-{
-	return false;
-}
-	
 const Symbol* StructSymbol::getSymbol() const
 {
 	return this;

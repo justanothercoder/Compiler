@@ -48,3 +48,8 @@ FunctionSymbol* ConstType::getConversionTo(const Type *t) const
 {
 	return type -> getConversionTo(t);
 }
+	
+const Type* ConstType::getUnqualifiedType() const
+{
+	return type -> getUnqualifiedType();
+}

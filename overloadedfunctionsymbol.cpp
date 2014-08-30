@@ -67,16 +67,6 @@ boost::optional<int> OverloadedFunctionSymbol::rankOfConversion(const Type *) co
 	return boost::none;
 }
 	
-bool OverloadedFunctionSymbol::isReference() const 
-{
-	return false;
-}
-
-bool OverloadedFunctionSymbol::isConst() const 
-{
-	return false;
-}
-
 FunctionSymbol* OverloadedFunctionSymbol::getConversionTo(const Type *) const 
 {
 	return nullptr;

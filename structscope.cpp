@@ -1,7 +1,7 @@
 #include "structscope.hpp"
 #include "scopevisitor.hpp"
 
-StructScope::StructScope(string name
+StructScope::StructScope(std::string name
 		               , Scope *enclosing_scope
 					   , const TemplateInfo& template_info) : scope_name(enclosing_scope -> getScopeName() + "_" + name)
 															, enclosing_scope(enclosing_scope)
@@ -25,7 +25,7 @@ Scope* StructScope::getEnclosingScope() const
 	return enclosing_scope; 
 }
 
-Symbol* StructScope::resolve(string name) const
+Symbol* StructScope::resolve(std::string name) const
 {
 	auto it = table.find(name);
 	if ( it == std::end(table) )
@@ -37,7 +37,7 @@ Symbol* StructScope::resolve(string name) const
 	return it -> second;
 }
 
-Symbol* StructScope::resolveMember(string name) const
+Symbol* StructScope::resolveMember(std::string name) const
 {
 	auto it = table.find(name);
 	if ( it == std::end(table) )
@@ -50,7 +50,7 @@ void StructScope::accept(ScopeVisitor *visitor)
    	visitor -> visit(this); 
 }
 
-string StructScope::getScopeName() const 
+std::string StructScope::getScopeName() const 
 { 
 	return scope_name; 
 }
@@ -59,9 +59,3 @@ const TemplateInfo& StructScope::getTemplateInfo() const
 {
 	return template_info;
 }
-
-bool StructScope::isUnsafeBlock() const
-{
-	return false;
-}
-    

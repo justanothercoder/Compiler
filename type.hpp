@@ -23,12 +23,14 @@ public:
 	virtual bool isConvertableTo(const Type *type) const = 0;
 	virtual boost::optional<int> rankOfConversion(const Type *type) const = 0;
 
-	virtual bool isReference() const = 0;
-	virtual bool isConst() const = 0;
+	virtual bool isReference() const;
+	virtual bool isConst() const;
 
 	virtual FunctionSymbol* getConversionTo(const Type *type) const = 0;
 
 	virtual const Symbol* getSymbol() const;
+
+	virtual const Type* getUnqualifiedType() const;
 };
 
 #endif

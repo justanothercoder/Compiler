@@ -49,3 +49,8 @@ FunctionSymbol* ReferenceType::getConversionTo(const Type *) const
 {
 	return nullptr;
 }
+	
+const Type* ReferenceType::getUnqualifiedType() const 
+{
+	return type -> getUnqualifiedType();
+}

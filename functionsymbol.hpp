@@ -50,14 +50,10 @@ public:
 	bool is_constexpr;
 
 	const TemplateInfo& getTemplateInfo() const override;
-	bool isUnsafeBlock() const override;
 
 	bool isConvertableTo(const Type *type) const override;
 	boost::optional<int> rankOfConversion(const Type *type) const override;
 	
-	bool isReference() const override;
-	bool isConst() const override;
-
 	FunctionSymbol* getConversionTo(const Type *type) const override;
 
 	const Symbol* getSymbol() const override;

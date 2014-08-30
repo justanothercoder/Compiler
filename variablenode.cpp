@@ -62,7 +62,7 @@ CodeObject& VariableNode::gen()
 
 		if ( function_info.overloads.size() > 1 )
 		{
-			auto hint_type = static_cast<FunctionSymbol*>(this -> type_hint);
+			auto hint_type = static_cast<const FunctionSymbol*>(this -> type_hint);
 			if ( hint_type == nullptr )
 				throw SemanticError("multiple overloads of '" + name + "'.");
 

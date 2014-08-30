@@ -28,7 +28,7 @@ public:
     virtual void accept(ScopeVisitor *visitor) = 0;
 
 	virtual const TemplateInfo& getTemplateInfo() const = 0;
-	virtual bool isUnsafeBlock() const = 0;
+	virtual bool isUnsafeBlock() const;
 };
 
 #endif

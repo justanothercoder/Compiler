@@ -1,3 +1,11 @@
 #include "scope.hpp"
 
-Scope::~Scope() { }
+Scope::~Scope() 
+{
+
+}
+
+bool Scope::isUnsafeBlock() const
+{
+	return false;
+}

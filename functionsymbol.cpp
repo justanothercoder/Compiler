@@ -109,11 +109,6 @@ const TemplateInfo& FunctionSymbol::getTemplateInfo() const
 	return template_info;
 }
 
-bool FunctionSymbol::isUnsafeBlock() const
-{
-	return false;
-}
-	
 bool FunctionSymbol::isConvertableTo(const Type *) const 
 {
 	return false;
@@ -124,16 +119,6 @@ boost::optional<int> FunctionSymbol::rankOfConversion(const Type *) const
 	return boost::none;
 }
 	
-bool FunctionSymbol::isReference() const 
-{
-	return false;
-}
-
-bool FunctionSymbol::isConst() const 
-{
-	return false;
-}
-
 FunctionSymbol* FunctionSymbol::getConversionTo(const Type *) const 
 {
 	return nullptr;

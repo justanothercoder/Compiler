@@ -20,6 +20,8 @@ public:
 	bool isConst() const override;
 	
 	FunctionSymbol* getConversionTo(const Type *type) const override;
+	
+	const Type* getUnqualifiedType() const override;
 
 private:
 

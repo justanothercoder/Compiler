@@ -41,9 +41,6 @@ public:
 
 	FunctionSymbol* methodWith(std::string name, FunctionTypeInfo ft) const;
 
-	bool isReference() const override;
-	bool isConst() const override;
-
 	const Symbol* getSymbol() const override;
 
 private:
