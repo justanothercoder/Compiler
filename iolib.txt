@@ -4,6 +4,8 @@ struct InputStream
 		fd = 0;
 	}
 
+
+
 	def open(string filename) {
 		fd = __fopen(filename, 438, 0);
 	}
@@ -42,6 +44,8 @@ struct OutputStream
 	int fd;
 }
 
+
+
 struct BufferedInputStream
 {
 	InputStream istream;
@@ -66,3 +70,4 @@ struct BufferedInputStream
 
 	string buffer;
 }
+

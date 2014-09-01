@@ -23,7 +23,7 @@ void CallNode::check()
 	else
 	{
 		auto ov_func = static_cast<const OverloadedFunctionSymbol*>(caller_type);
-		auto _scope = ov_func -> isMethod() ? static_cast<const StructSymbol*>(ov_func -> getBaseType()) : scope;
+		auto _scope = ov_func -> isMethod() ? static_cast<const StructSymbol*>(ov_func -> getBaseType() -> getSymbol()) : scope;
 		call_info = CallHelper::callCheck(ov_func -> getName(), _scope, params);
 	}
 

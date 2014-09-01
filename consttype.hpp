@@ -23,6 +23,8 @@ public:
 	FunctionSymbol* getConversionTo(const Type *t) const override;
 
 	const Type* getUnqualifiedType() const override;
+	
+	const Symbol* getSymbol() const;
 
 private:
 
