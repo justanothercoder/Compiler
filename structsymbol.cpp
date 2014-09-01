@@ -34,6 +34,8 @@ TypeKind StructSymbol::getTypeKind() const
 
 bool StructSymbol::isConvertableTo(const Type *type) const
 {
+	type = type -> getUnqualifiedType();
+
 	if ( type -> getTypeKind() != this -> getTypeKind() )
 		return false;
 

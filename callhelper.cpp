@@ -121,9 +121,12 @@ std::vector<const Type*> CallHelper::extractTypes(std::vector<ExprNode*> params)
 
 ConversionInfo CallHelper::getConversionInfo(const Type *lhs, const Type *rhs, bool is_lhs_left_value)
 {
-	auto conv = (lhs == rhs) ? nullptr : lhs -> getConversionTo(rhs);
+	auto _lhs = lhs -> getUnqualifiedType();
+	auto _rhs = rhs -> getUnqualifiedType();
 
-	if ( lhs != rhs && conv == nullptr )
+	auto conv = (_lhs == _rhs) ? nullptr : lhs -> getConversionTo(rhs);
+
+	if ( _lhs != _rhs && conv == nullptr )
 		throw SemanticError("Invalid initialization of '" + rhs -> getName() + "' with type '" + lhs -> getName() + "'.");
 
 	ConversionInfo conv_info(conv, lhs -> isReference() && !is_lhs_left_value, !lhs -> isReference());

@@ -8,7 +8,8 @@ ConstType::ConstType(const Type *type) : type(type)
 
 std::string ConstType::getName() const
 {
-	return "const " + type -> getName();
+//	return "const " + type -> getName();
+	return "const~" + type -> getName();
 }
 
 size_t ConstType::getSize() const
