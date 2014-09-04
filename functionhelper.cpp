@@ -10,6 +10,8 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 
 	auto copy_constr = new FunctionSymbol(struc -> getName(), ref_struc, {ref_struc, const_ref_struc}, struc, {true, true, false});
 
+	GlobalHelper::has_definition[copy_constr] = true;
+
 	boost::optional<CodeObject> func_code = CodeObject();
 
 	func_code -> emit("jmp _~" + copy_constr -> getScopedTypedName());
@@ -19,9 +21,10 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 
 	for ( auto member : struc -> table )
 	{
-		if ( dynamic_cast<VariableSymbol*>(member.second) )
+//		if ( dynamic_cast<VariableSymbol*>(member.second) )
+		if ( member.second -> getSymbolType() == SymbolType::VARIABLE )		
 		{	
-			auto var = dynamic_cast<VariableSymbol*>(member.second); 
+			auto var = static_cast<VariableSymbol*>(member.second); 
 			auto var_type = var -> getType();
 
 			if ( dynamic_cast<const OverloadedFunctionSymbol*>(var_type) || dynamic_cast<const BuiltInTypeSymbol*>(var_type) )
@@ -66,9 +69,10 @@ FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 
 	for ( auto member : struc -> table )
 	{
-		if ( dynamic_cast<VariableSymbol*>(member.second) )
+//		if ( dynamic_cast<VariableSymbol*>(member.second) )
+		if ( member.second -> getSymbolType() == SymbolType::VARIABLE )
 		{	
-			auto var = dynamic_cast<VariableSymbol*>(member.second); 
+			auto var = static_cast<VariableSymbol*>(member.second); 
 			auto var_type = var -> getType();
 
 			if ( dynamic_cast<const OverloadedFunctionSymbol*>(var_type) || dynamic_cast<const BuiltInTypeSymbol*>(var_type) )

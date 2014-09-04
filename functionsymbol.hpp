@@ -58,6 +58,8 @@ public:
 
 	const Symbol* getSymbol() const override;
 
+	ScopeVisitor* getScopeVisitor() override;
+	
 private:
 
 	std::string name;

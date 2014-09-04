@@ -9,8 +9,7 @@ class ExprNode;
 class Type;
 class Scope;
 class Symbol;
-
-using std::map;
+class FunctionSymbol;
 
 class GlobalHelper
 {
@@ -20,6 +19,8 @@ public:
 
 	static int transformAddress(Scope *scope, int addr); 
 
+	static std::map<FunctionSymbol*, bool> has_definition;
+	
 private:
 
     GlobalHelper();

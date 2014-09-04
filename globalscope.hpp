@@ -29,7 +29,7 @@ public:
 
 	const TemplateInfo& getTemplateInfo() const override;
 	bool isUnsafeBlock() const override;
-
+	
 private:
 
 	mutable VarAllocator var_alloc;

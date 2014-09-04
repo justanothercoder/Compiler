@@ -10,18 +10,20 @@ class VariableSymbol : public Symbol
 {
 public:
 
-    VariableSymbol(string name, const Type *type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
+    VariableSymbol(std::string name, const Type *type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
 
     virtual const Type* getType() const;
 
     void setType(const Type *t);
 
-    virtual string getName() const;
+    virtual std::string getName() const;
 
     bool isParam() const;
     bool isField() const;
 
     virtual SymbolType getSymbolType() const;
+
+	ScopeVisitor* getScopeVisitor() override;
     
 private:
 

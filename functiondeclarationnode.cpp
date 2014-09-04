@@ -91,7 +91,9 @@ void FunctionDeclarationNode::define()
 	definedSymbol -> return_type = return_type;
 	definedSymbol -> function_type_info = function_type_info;
 
-	scope -> accept(new FunctionSymbolDefine(definedSymbol));
+	GlobalHelper::has_definition[definedSymbol] = true;
+
+	scope -> define(definedSymbol);
 
 	statements -> define();
 }

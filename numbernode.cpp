@@ -36,7 +36,7 @@ std::string NumberNode::getNum() const
 
 const Type* NumberNode::getType() const
 {
-   	return TypeFactory::getConst(BuiltIns::int_struct); 
+   	return TypeFactory::getConst(BuiltIns::int_type); 
 }
 
 bool NumberNode::isLeftValue() const 
