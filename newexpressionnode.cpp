@@ -18,7 +18,7 @@ void NewExpressionNode::build_scope()
 	AST::build_scope();
 	for ( auto param : type_info.template_params )
 	{
-		param -> scope         = scope;
+		param -> scope = scope;
 		param -> build_scope();
 	}
 }
@@ -38,8 +38,8 @@ void NewExpressionNode::check()
 
 CodeObject& NewExpressionNode::gen()
 {
-	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType() -> getSize());
+    string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+   	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	string addr2 = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(GlobalConfig::int_size);
