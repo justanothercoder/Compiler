@@ -104,7 +104,7 @@ void VariableDeclarationNode::define()
 		throw SemanticError("can't declare a variable of 'void' type.");
    
     definedSymbol -> setType(var_type);
-	scope -> accept(new VariableSymbolDefine(definedSymbol));
+	scope -> define(definedSymbol);
 }
 
 AST* VariableDeclarationNode::copyTree() const

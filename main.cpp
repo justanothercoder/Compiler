@@ -33,7 +33,11 @@ int main()
 		
 		main_code.emit("section .text");
 
-
+		for ( auto p : GlobalHelper::has_definition )
+		{
+			if ( !p.second )
+				main_code.emit("extern " + p.first -> getScopedTypedName());
+		}
 /*
 		main_code.emit("extern " + BuiltIns::int_assign -> getScopedTypedName());
 		main_code.emit("extern " + BuiltIns::int_plus -> getScopedTypedName());

@@ -16,6 +16,8 @@ FunctionSymbol::FunctionSymbol(std::string name
 													                  , traits(traits)
 {
 	scope_name = enclosing_scope->getScopeName() + "_" + (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
+
+	GlobalHelper::has_definition[this] = false;
 }
 
 std::string FunctionSymbol::getTypedName() const

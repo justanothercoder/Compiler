@@ -1,4 +1,5 @@
 #include "variablesymbol.hpp"
+#include "variablesymboldefine.hpp"
 
 VariableSymbol::VariableSymbol(std::string name, const Type *type, VariableSymbolType sym_type) : name(name)
 																						   , type(type)
@@ -35,4 +36,9 @@ bool VariableSymbol::isField() const
 SymbolType VariableSymbol::getSymbolType() const 
 {
    	return SymbolType::VARIABLE; 
+}
+	
+ScopeVisitor* VariableSymbol::getScopeVisitor() 
+{
+	return new VariableSymbolDefine(this);
 }

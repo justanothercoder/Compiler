@@ -22,6 +22,8 @@ public:
     bool isField() const;
 
     virtual SymbolType getSymbolType() const;
+
+	ScopeVisitor* getScopeVisitor() override;
     
 private:
 

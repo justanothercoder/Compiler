@@ -17,7 +17,7 @@ void FunctionSymbolDefine::visit(FunctionSymbol *sc) { visit(static_cast<BaseSco
 
 void FunctionSymbolDefine::visit(BaseScope *sc)
 {
-	string sym_name = sym->getName();
+	std::string sym_name = sym->getName();
 
 	auto it = sc->table.find(sym_name);
 

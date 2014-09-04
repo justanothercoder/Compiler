@@ -1,6 +1,8 @@
 #include "globalhelper.hpp"
 #include "scope.hpp"
 #include "varallocator.hpp"
+	
+std::map<FunctionSymbol*, bool> GlobalHelper::has_definition;
 
 std::string GlobalHelper::getCodeOperatorName(std::string op)
 {
