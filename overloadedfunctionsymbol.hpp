@@ -10,9 +10,9 @@ class OverloadedFunctionSymbol : public Symbol, public Type
 {
 public:
 
-    OverloadedFunctionSymbol(string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits);
+    OverloadedFunctionSymbol(std::string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits);
 
-    string getName() const override;
+	std::string getName() const override;
     size_t getSize() const override;
 
     OverloadedFunctionTypeInfo getTypeInfo() const;

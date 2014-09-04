@@ -61,7 +61,8 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, const Funct
 	}
 	else
 	{
-		if ( copy_constr == BuiltIns::int_copy_constructor )
+//		if ( copy_constr == BuiltIns::int_copy_constructor )
+		if ( copy_constr -> getName() == "int" )
 		{
 			emit(param -> gen().getCode());
 			if ( conv_info.deref )

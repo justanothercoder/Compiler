@@ -1,6 +1,6 @@
 #include "basescope.hpp"
 
-Symbol* BaseScope::resolve(string name) const
+Symbol* BaseScope::resolve(std::string name) const
 {
 	auto it = table.find(name);
 	if ( it == std::end(table) )

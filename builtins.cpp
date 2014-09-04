@@ -6,96 +6,74 @@
 #include "globalscope.hpp"
 #include "typefactory.hpp"
 
-Scope *BuiltIns::global_scope = new GlobalScope();
+Scope *BuiltIns::global_scope;
+Type *BuiltIns::void_type;
+Type *BuiltIns::int_type;
 
-StructSymbol *BuiltIns::int_struct = new StructSymbol("int", BuiltIns::global_scope, BuiltIns::global_scope -> getTemplateInfo());
+void BuiltIns::defineBuiltIns()
+{
+	Scope *global_scope = new GlobalScope();	
 
-const Type *ref_int       = TypeFactory::getReference(BuiltIns::int_struct);
-const Type *const_ref_int = TypeFactory::getConst(ref_int);
+	BuiltIns::global_scope = global_scope;
 
-FunctionSymbol *BuiltIns::int_assign = new FunctionSymbol("operator=",
-							  ref_int, 
-							  {ref_int, const_ref_int},
-							  BuiltIns::int_struct,
-							  {true, false, true}
-    );
+	StructSymbol *int_struct = new StructSymbol("int", global_scope, global_scope -> getTemplateInfo());
 
-FunctionSymbol *BuiltIns::int_plus = new FunctionSymbol("operator+",
-							BuiltIns::int_struct, 
-							{ref_int, BuiltIns::int_struct},
-							BuiltIns::int_struct,
-							{true, false, true}
-    );
+	BuiltIns::int_type = int_struct;
 
-FunctionSymbol *BuiltIns::int_minus = new FunctionSymbol("operator-",
-							 BuiltIns::int_struct, 
-							 {ref_int, BuiltIns::int_struct},
-							 BuiltIns::int_struct,
-							 {true, false, true}
-    );
+	const Type *ref_int       = TypeFactory::getReference(int_struct);
+	const Type *const_ref_int = TypeFactory::getConst(ref_int);
 
-FunctionSymbol *BuiltIns::int_mul = new FunctionSymbol("operator*",
-						       BuiltIns::int_struct, 
-							   {ref_int, BuiltIns::int_struct},
-						       BuiltIns::int_struct,
-						       {true, false, true}
-    );
-    
-FunctionSymbol *BuiltIns::int_eq = new FunctionSymbol("operator==",
-						       BuiltIns::int_struct, 
-							   {ref_int, BuiltIns::int_struct},
-						       BuiltIns::int_struct,
-						       {true, false, true}
-    );
+	StructSymbol *char_struct = new StructSymbol("char", global_scope, global_scope -> getTemplateInfo());
 
-FunctionSymbol *BuiltIns::int_neq = new FunctionSymbol("operator!=",
-						       BuiltIns::int_struct,
-							   {ref_int, BuiltIns::int_struct},
-						       BuiltIns::int_struct,
-						       {true, false, true}
-    );
+	const Type *ref_char       = TypeFactory::getReference(char_struct);
+	const Type *const_ref_char = TypeFactory::getConst(ref_char);
 
-FunctionSymbol *BuiltIns::int_div = new FunctionSymbol("operator/",
-						       BuiltIns::int_struct, 
-							   {ref_int, BuiltIns::int_struct},
-						       BuiltIns::int_struct,
-						       {true, false, true}
-    );
+	StructSymbol *ASCII_string = new StructSymbol("string", global_scope, global_scope -> getTemplateInfo());
 
-FunctionSymbol *BuiltIns::int_mod = new FunctionSymbol("operator%",
-						       BuiltIns::int_struct, 
-							   {ref_int, BuiltIns::int_struct},
-						       BuiltIns::int_struct,
-						       {true, false, true}
-    );
+	const Type *ref_ASCII_string       = TypeFactory::getReference(ASCII_string);
+	const Type *const_ref_ASCII_string = TypeFactory::getConst(ref_ASCII_string);
+		
+	global_scope -> define(int_struct);
+	global_scope -> define(ASCII_string);
+	global_scope -> define(char_struct);
+		
+	FunctionTraits simple_traits      = {false, false, false};
+	FunctionTraits method_traits      = {true, false, false};
+	FunctionTraits method_oper_traits = {true, false, true};
+	FunctionTraits constructor_traits = {true, true, false};
+
+	int_struct  -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~int", GlobalConfig::int_size), VariableSymbolType::FIELD));
+	char_struct -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~char", GlobalConfig::int_size), VariableSymbolType::FIELD));
+		
+	int_struct -> define(new FunctionSymbol("int", ref_int, {ref_int}, int_struct, constructor_traits));
+	int_struct -> define(new FunctionSymbol("int", ref_int, {ref_int, const_ref_int}, int_struct, constructor_traits));
 	
-FunctionSymbol *BuiltIns::int_and = new FunctionSymbol("operator&&",
-							   BuiltIns::int_struct,
-							   {ref_int, BuiltIns::int_struct},
-							   BuiltIns::int_struct,
-							   {true, false, true}
-		);
+	int_struct -> define(new FunctionSymbol("operator=" , ref_int, {ref_int, const_ref_int}, int_struct, method_oper_traits));
+	int_struct -> define(new FunctionSymbol("operator+" , int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
+	int_struct -> define(new FunctionSymbol("operator-" , int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
+	int_struct -> define(new FunctionSymbol("operator*" , int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
+	int_struct -> define(new FunctionSymbol("operator==", int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
+	int_struct -> define(new FunctionSymbol("operator!=", int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
+	int_struct -> define(new FunctionSymbol("operator/" , int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
+	int_struct -> define(new FunctionSymbol("operator%" , int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
+	int_struct -> define(new FunctionSymbol("operator&&", int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
+	int_struct -> define(new FunctionSymbol("operator||", int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
+		
+//	int_plus  -> is_constexpr = true;	
+//	int_minus -> is_constexpr = true;
 
-FunctionSymbol *BuiltIns::int_or = new FunctionSymbol("operator||",
-							   BuiltIns::int_struct,
-							   {ref_int, BuiltIns::int_struct},
-							   BuiltIns::int_struct,
-							   {true, false, true}
-		);
+	char_struct -> define(new FunctionSymbol("char", ref_char, {ref_char}, char_struct, constructor_traits));
+	char_struct -> define(new FunctionSymbol("char", ref_char, {ref_char, const_ref_char}, char_struct, constructor_traits));
+	char_struct -> define(new FunctionSymbol("char", ref_char, {ref_char, const_ref_int}, char_struct, constructor_traits));
+	char_struct -> define(new FunctionSymbol("operator=", ref_char, {ref_char, const_ref_char}, char_struct, method_oper_traits));
+		
+	int_struct -> define(new FunctionSymbol("int", ref_int, {ref_int, char_struct}, int_struct, constructor_traits));
 
-FunctionSymbol *BuiltIns::int_default_constructor = new FunctionSymbol("int", ref_int, {ref_int}, BuiltIns::int_struct, {true, true, false});
+	BuiltInTypeSymbol *void_type = new BuiltInTypeSymbol("void", 0);
 
-FunctionSymbol *BuiltIns::int_copy_constructor = new FunctionSymbol("int",
-									   ref_int, 
-									   {ref_int, const_ref_int},
-									   BuiltIns::int_struct,
-									   {true, true, false}
-		);
+	BuiltIns::void_type = void_type;
 
-BuiltInTypeSymbol *BuiltIns::void_type = new BuiltInTypeSymbol("void", 0);
-
-TemplateStructSymbol *BuiltIns::array_struct = new TemplateStructSymbol("array",
-																		BuiltIns::global_scope,
+	TemplateStructSymbol *array_struct = new TemplateStructSymbol("array", global_scope,
 																		{ {"T", TypeInfo("class", false, { }) }, 
 																		  { "size", TypeInfo("int", false, { }) }
 																		},
@@ -107,133 +85,41 @@ TemplateStructSymbol *BuiltIns::array_struct = new TemplateStructSymbol("array",
 																			}
 																		)
 		);
-	
-StructSymbol *BuiltIns::char_struct = new StructSymbol("char", BuiltIns::global_scope, BuiltIns::global_scope -> getTemplateInfo());
-
-const Type *ref_char       = TypeFactory::getReference(BuiltIns::char_struct);
-const Type *const_ref_char = TypeFactory::getConst(ref_char);
-
-FunctionSymbol *BuiltIns::char_assign = new FunctionSymbol("operator=",
-														   ref_char,
-														   {ref_char, const_ref_char},
-														   BuiltIns::char_struct,
-														   {true, false, true}
-		);
-
-FunctionSymbol *BuiltIns::char_default_constructor = new FunctionSymbol("char",
-																		ref_char,
-																		{ref_char},
-																		BuiltIns::char_struct,
-																		{true, true, false}
-	   );
-
-FunctionSymbol *BuiltIns::char_copy_constructor = new FunctionSymbol("char",
-																	 ref_char,
-																	 {ref_char, const_ref_char},
-																	 BuiltIns::char_struct,
-																	 {true, true, false}
-	  );
-
-FunctionSymbol *BuiltIns::char_int_constructor = new FunctionSymbol("char",
-																	 ref_char,
-																	 {ref_char, const_ref_int},
-																	 BuiltIns::char_struct,
-																	 {true, true, false}
-	  );
-
-FunctionSymbol *BuiltIns::putchar_func = new FunctionSymbol("putchar",
-							    BuiltIns::void_type, 
-								{BuiltIns::char_struct},
-							    BuiltIns::global_scope,
-							    {false, false, false}
-    );
-
-FunctionSymbol *BuiltIns::getchar_func = new FunctionSymbol("getchar",
-							    BuiltIns::int_struct,
-							   	{ },
-							    BuiltIns::global_scope,
-							    {false, false, false}
-    );
-
-StructSymbol *BuiltIns::ASCII_string = new StructSymbol("string", BuiltIns::global_scope, BuiltIns::global_scope -> getTemplateInfo());
-
-const Type *ref_ASCII_string       = TypeFactory::getReference(BuiltIns::ASCII_string);
-const Type *const_ref_ASCII_string = TypeFactory::getConst(ref_ASCII_string);
-
-FunctionSymbol *BuiltIns::ASCII_string_copy_constructor = new FunctionSymbol("string",
-										ref_ASCII_string,
-										{ref_ASCII_string, const_ref_ASCII_string},
-										BuiltIns::ASCII_string,
-										{true, true, false}
-		);
-
-FunctionSymbol *BuiltIns::ASCII_string_elem_operator = new FunctionSymbol("operator[]",
-										ref_char,
-										{ref_ASCII_string, BuiltIns::int_struct},
-										BuiltIns::ASCII_string,
-										{true, false, true}
-		);
-	
-FunctionSymbol *BuiltIns::ASCII_string_length_func = new FunctionSymbol("length",
-										BuiltIns::int_struct,
-										{ref_ASCII_string},
-										BuiltIns::ASCII_string,
-										{true, false, false}
-		);
-	
-FunctionSymbol *BuiltIns::ASCII_string_plus_operator = new FunctionSymbol("operator+",
-										BuiltIns::ASCII_string,
-										{ref_ASCII_string, const_ref_ASCII_string},
-										BuiltIns::ASCII_string,
-										{true, false, true}
-		);
-
-FunctionSymbol *BuiltIns::ASCII_string_assign_operator = new FunctionSymbol("operator=",
-										ref_ASCII_string,
-										{ref_ASCII_string, const_ref_ASCII_string},
-										BuiltIns::ASCII_string,
-										{true, false, true}
-		);
 		
+	global_scope -> define(const_cast<Symbol*>(BuiltIns::void_type -> getSymbol()));
+	global_scope -> define(new FunctionSymbol("putchar", void_type, {char_struct}, global_scope, simple_traits));
+	global_scope -> define(new FunctionSymbol("getchar", int_struct, { }, global_scope, simple_traits));
+		
+	array_struct -> holder -> scope = global_scope;
+	global_scope -> define(array_struct);
+		
+	ASCII_string -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~string", 256), VariableSymbolType::FIELD));
+
+	ASCII_string -> define(new FunctionSymbol("string", ref_ASCII_string, {ref_ASCII_string, const_ref_ASCII_string}, ASCII_string, constructor_traits));
+	ASCII_string -> define(new FunctionSymbol("operator[]", ref_char, {ref_ASCII_string, int_struct}, ASCII_string, method_oper_traits));
+	ASCII_string -> define(new FunctionSymbol("length", int_struct, {ref_ASCII_string}, ASCII_string, method_traits));
+	ASCII_string -> define(new FunctionSymbol("operator+", ASCII_string, {ref_ASCII_string, const_ref_ASCII_string}, ASCII_string, method_oper_traits));
+	ASCII_string -> define(new FunctionSymbol("operator=", ref_ASCII_string, {ref_ASCII_string, const_ref_ASCII_string}, ASCII_string, method_oper_traits));
 	
-FunctionSymbol *BuiltIns::print_ASCII_string_func = new FunctionSymbol("print",
-										BuiltIns::void_type,
-										{const_ref_ASCII_string},
-										BuiltIns::global_scope,
-										{false, false, false}
-		);										
-	
-FunctionSymbol *BuiltIns::__fopen_func = new FunctionSymbol("__fopen",
-	   									BuiltIns::int_struct,
-										{const_ref_ASCII_string, BuiltIns::int_struct, BuiltIns::int_struct},
-										BuiltIns::global_scope,
-										{false, false, false}
-		);
+	global_scope -> define(new FunctionSymbol("print", void_type, {const_ref_ASCII_string}, global_scope, simple_traits));
 
-FunctionSymbol *BuiltIns::__fclose_func = new FunctionSymbol("__fclose",
-	   									BuiltIns::void_type,
-										{BuiltIns::int_struct},
-										BuiltIns::global_scope,
-										{false, false, false}
-		);
+	global_scope -> define(new FunctionSymbol("__fopen", int_struct, {const_ref_ASCII_string, int_struct, int_struct}, global_scope, simple_traits));
+	global_scope -> define(new FunctionSymbol("__fclose", void_type, {int_struct}, global_scope, simple_traits));
+	global_scope -> define(new FunctionSymbol("__fwrite", int_struct, {int_struct, const_ref_ASCII_string, int_struct}, global_scope, simple_traits));
+	global_scope -> define(new FunctionSymbol("__fread", int_struct, {int_struct, ref_ASCII_string, int_struct}, global_scope, simple_traits));
+		
+	int_struct -> is_defined = true;
+	ASCII_string -> is_defined = true;
+	char_struct -> is_defined = true;
 
-FunctionSymbol *BuiltIns::__fwrite_func = new FunctionSymbol("__fwrite",
-	   									BuiltIns::int_struct,
-										{BuiltIns::int_struct, const_ref_ASCII_string, BuiltIns::int_struct},
-										BuiltIns::global_scope,
-										{false, false, false}
-		); 
+	global_scope -> resolve("putchar") -> is_defined = true;
+	global_scope -> resolve("getchar") -> is_defined = true;
+	global_scope -> resolve("print") -> is_defined   = true;
 
-FunctionSymbol *BuiltIns::__fread_func = new FunctionSymbol("__fread",
-	   									BuiltIns::int_struct,
-										{BuiltIns::int_struct, ref_ASCII_string, BuiltIns::int_struct},
-										BuiltIns::global_scope,
-										{false, false, false}
-		); 
+	global_scope -> resolve("__fopen") -> is_defined  = true;
+	global_scope -> resolve("__fclose") -> is_defined = true;
+	global_scope -> resolve("__fwrite") -> is_defined = true;
+	global_scope -> resolve("__fread") -> is_defined  = true;
+		
+}
 
-FunctionSymbol *BuiltIns::int_char_constructor = new FunctionSymbol("int",
-										ref_int,
-										{ref_int, BuiltIns::char_struct},
-										BuiltIns::int_struct,
-										{true, true, false}
-		);

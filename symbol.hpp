@@ -5,9 +5,8 @@
 
 #include "semanticerror.hpp"
 
-using std::string;
-
 class Scope;
+class ScopeVisitor;
 
 enum class SymbolType { FUNCTION, OVERLOADED_FUNCTION, VARIABLE, STRUCT, BUILTINTYPE, TEMPLATESTRUCT, CLASSVARIABLE };
 
@@ -16,8 +15,10 @@ class Symbol
 public:
 
     virtual ~Symbol();    
-    virtual string getName() const = 0;
+    virtual std::string getName() const = 0;
     virtual SymbolType getSymbolType() const = 0;
+
+	virtual ScopeVisitor* getScopeVisitor();
 
 	bool is_defined;
 };

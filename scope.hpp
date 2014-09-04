@@ -2,6 +2,7 @@
 #define _SCOPE_HPP_
 
 #include <string>
+#include <set>
 
 class Scope;
 class Symbol;
@@ -9,6 +10,7 @@ class ScopeVisitor;
 class VarAllocator;
 class TempAllocator;
 class VariableSymbol;
+class FunctionSymbol;
 struct TemplateInfo;
 
 class Scope
@@ -29,6 +31,8 @@ public:
 
 	virtual const TemplateInfo& getTemplateInfo() const = 0;
 	virtual bool isUnsafeBlock() const;
+
+	void define(Symbol *sym);
 };
 
 #endif

@@ -6,8 +6,6 @@
 #include "scope.hpp"
 #include "variablesymbol.hpp"
 
-using std::map;
-
 class ExprNode;
 
 class BaseScope : public Scope
@@ -18,10 +16,10 @@ public:
     friend class FunctionSymbolDefine;
     friend class SymbolDefine;
     
-    virtual Symbol* resolve(string name) const;
+    virtual Symbol* resolve(std::string name) const;
 
 public:
-    map<string, Symbol*> table;
+	std::map<std::string, Symbol*> table;
 };
 
 #endif

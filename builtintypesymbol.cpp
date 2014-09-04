@@ -1,6 +1,6 @@
 #include "builtintypesymbol.hpp"
 
-BuiltInTypeSymbol::BuiltInTypeSymbol(string name, int size) : name(name), size(size) 
+BuiltInTypeSymbol::BuiltInTypeSymbol(std::string name, int size) : name(name), size(size) 
 {
 
 }
@@ -38,4 +38,9 @@ boost::optional<int> BuiltInTypeSymbol::rankOfConversion(const Type *type) const
 FunctionSymbol* BuiltInTypeSymbol::getConversionTo(const Type *) const 
 {
 	return nullptr;
+}
+	
+const Symbol* BuiltInTypeSymbol::getSymbol() const
+{
+	return this;
 }

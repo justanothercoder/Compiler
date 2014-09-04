@@ -34,7 +34,7 @@ void AsmArrayNode::define()
 	}
 	else throw SemanticError("");
 
-	auto just_int = BuiltIns::int_struct;
+	auto just_int = BuiltIns::int_type;
 
 	auto arr = dynamic_cast<StructSymbol*>(scope);
 

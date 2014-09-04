@@ -1,5 +1,6 @@
 #include "functionsymbol.hpp"
 #include "scopevisitor.hpp"
+#include "functionsymboldefine.hpp"
 
 FunctionSymbol::FunctionSymbol(std::string name
 		                      , const Type *return_type
@@ -127,4 +128,9 @@ FunctionSymbol* FunctionSymbol::getConversionTo(const Type *) const
 const Symbol* FunctionSymbol::getSymbol() const
 {
 	return this;
+}
+	
+ScopeVisitor* FunctionSymbol::getScopeVisitor() 
+{
+	return new FunctionSymbolDefine(this);
 }
