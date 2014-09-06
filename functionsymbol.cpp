@@ -9,15 +9,14 @@ FunctionSymbol::FunctionSymbol(std::string name
 							  , FunctionTypeInfo function_type_info
 							  , Scope *enclosing_scope
 							  , FunctionTraits traits
-							  , boost::optional<CodeObject> code_obj) : code_obj(code_obj)
+							  , boost::optional<CodeObject> code_obj) : FunctionScope(enclosing_scope -> getScopeName() + "_" + (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name), enclosing_scope),
+								  code_obj(code_obj)
 													                  , return_type(return_type)
 													                  , function_type_info(function_type_info)
 															          , is_constexpr(false)
 													                  , name(name)
-													                  , enclosing_scope(enclosing_scope)
 													                  , traits(traits)
 {
-	scope_name = enclosing_scope->getScopeName() + "_" + (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
 
 	GlobalHelper::has_definition[this] = false;
 }
@@ -34,7 +33,7 @@ std::string FunctionSymbol::getTypedName() const
 
 std::string FunctionSymbol::getScopedTypedName() const
 {
-	auto res = scope_name;
+	auto res = getScopeName(); //scope_name;
 
 	auto& pt = function_type_info.params_types;
 
@@ -42,16 +41,6 @@ std::string FunctionSymbol::getScopedTypedName() const
 		res += "_" + type -> getName();
 
 	return res;
-}
-
-Scope* FunctionSymbol::getEnclosingScope() const 
-{ 
-	return enclosing_scope; 
-}
-
-std::string FunctionSymbol::getScopeName() const 
-{ 
-	return scope_name; 
 }
 
 bool FunctionSymbol::isOperator() const 
@@ -92,26 +81,6 @@ SymbolType FunctionSymbol::getSymbolType() const
 TypeKind FunctionSymbol::getTypeKind() const 
 { 
 	return TypeKind::FUNCTION; 
-}
-
-void FunctionSymbol::accept(ScopeVisitor *visitor) 
-{ 
-	visitor -> visit(this); 
-}
-	
-VarAllocator& FunctionSymbol::getVarAlloc() const 
-{ 
-	return var_alloc; 
-}
-
-TempAllocator& FunctionSymbol::getTempAlloc() const
-{ 
-	return temp_alloc; 
-}
-
-const TemplateInfo& FunctionSymbol::getTemplateInfo() const
-{
-	return template_info;
 }
 
 bool FunctionSymbol::isConvertableTo(const Type *) const 

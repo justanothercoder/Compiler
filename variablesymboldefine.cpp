@@ -26,7 +26,7 @@ void VariableSymbolDefine::visit(StructScope *sc)
 	sc -> type_size += sym -> getType() -> getSize();
 }
 
-void VariableSymbolDefine::visit(FunctionSymbol *sc)
+void VariableSymbolDefine::visit(FunctionScope *sc)
 {
 	sc -> table[sym -> getName()] = sym;
 	sc -> getVarAlloc().addVariable(sym);

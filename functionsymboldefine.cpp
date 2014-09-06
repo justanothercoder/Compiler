@@ -27,7 +27,7 @@ void FunctionSymbolDefine::visit(StructScope *sc)
    	visit(static_cast<BaseScope*>(sc)); 
 }
 
-void FunctionSymbolDefine::visit(FunctionSymbol *sc) 
+void FunctionSymbolDefine::visit(FunctionScope *sc) 
 {
    	visit(static_cast<BaseScope*>(sc)); 
 }

@@ -1,5 +1,7 @@
 #ifndef _STRUCTSYMBOL_HPP_
-#define _STRUCTSYMBOL_HPP_ #include <map>
+#define _STRUCTSYMBOL_HPP_ 
+
+#include <map>
 
 #include "symbol.hpp"
 #include "scope.hpp"
