@@ -30,9 +30,9 @@ bool operator==(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
 	return true;
 }
 
-string FunctionTypeInfo::toString() const
+std::string FunctionTypeInfo::toString() const
 {
-	string res;
+	std::string res;
 
 	res += "(";
 

@@ -2,15 +2,13 @@
 #define _NUMBERNODE_HPP_
 
 #include "exprnode.hpp"
-#include "globalconfig.hpp"
-#include "builtins.hpp"
 #include "codeobject.hpp"
 
 class NumberNode : public ExprNode
 {
 public:
 
-    NumberNode(string num);
+    NumberNode(std::string num);
 
     void check() override;
     CodeObject& gen() override;

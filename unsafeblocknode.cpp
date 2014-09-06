@@ -18,7 +18,7 @@ AST* UnsafeBlockNode::copyTree() const
     
 void UnsafeBlockNode::build_scope() 
 {
-	block -> scope         = new UnsafeScope(scope);
+	block -> scope = new UnsafeScope(scope);
 	block -> build_scope();
 }
 

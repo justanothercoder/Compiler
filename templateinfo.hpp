@@ -8,18 +8,15 @@
 
 #include "templateparam.hpp"
 
-class TemplateStructSymbol;
-
-using namespace std;
-
 class ExprNode;
+class TemplateStructSymbol;
 
 struct TemplateInfo
 {
 	TemplateInfo();
 	TemplateInfo(TemplateStructSymbol *sym, std::vector<TemplateParam> expr);
 
-	boost::optional<TemplateParam> getReplacement(string name) const;
+	boost::optional<TemplateParam> getReplacement(std::string name) const;
 
 	TemplateStructSymbol *sym;
 	std::vector<TemplateParam> expr;

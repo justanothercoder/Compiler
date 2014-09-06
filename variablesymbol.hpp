@@ -2,7 +2,8 @@
 #define _VARIABLESYMBOL_HPP_
 
 #include "symbol.hpp"
-#include "type.hpp"
+
+class Type;
 
 enum class VariableSymbolType { SIMPLE, PARAM, FIELD };
 

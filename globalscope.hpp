@@ -4,14 +4,9 @@
 #include <map>
 
 #include "basescope.hpp"
-#include "functionsymbol.hpp"
-#include "overloadedfunctiontypeinfo.hpp"
-#include "variablesymbol.hpp"
-#include "overloadedfunctionsymbol.hpp"
-
 #include "varallocator.hpp"
-
-using std::map;
+#include "tempallocator.hpp"
+#include "templateinfo.hpp"
 
 class GlobalScope : public BaseScope
 {

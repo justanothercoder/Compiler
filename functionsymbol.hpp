@@ -10,6 +10,9 @@
 #include "paramvarallocator.hpp"
 #include "templateinfo.hpp"
 #include "codeobject.hpp"
+#include "symbol.hpp"
+#include "type.hpp"
+#include "tempallocator.hpp"
 
 class VariableSymbol;
 

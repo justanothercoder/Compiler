@@ -1,6 +1,15 @@
 #include "ifnode.hpp"
+#include "localscope.hpp"
+#include "exprnode.hpp"
 
-IfNode::IfNode(ExprNode *cond, AST *stats_true, AST *stats_false) : cond(cond), stats_true(stats_true), stats_false(stats_false), if_scope(nullptr), else_scope(nullptr), code_obj() { } 
+IfNode::IfNode(ExprNode *cond, AST *stats_true, AST *stats_false) : cond(cond)
+																  , stats_true(stats_true)
+																  , stats_false(stats_false)
+																  , if_scope(nullptr)
+																  , else_scope(nullptr)
+{
+
+} 
 
 IfNode::~IfNode()
 {
@@ -42,7 +51,8 @@ CodeObject& IfNode::gen()
 {
     code_obj.emit(cond -> gen().getCode());
 
-    string false_label = IfNode::getNewLabel(), exit_label = IfNode::getNewLabel();
+	auto false_label = IfNode::getNewLabel();
+    auto exit_label  = IfNode::getNewLabel();
 
     code_obj.emit("cmp qword [rax], 0");
     code_obj.emit("jz " + false_label);
@@ -59,7 +69,7 @@ CodeObject& IfNode::gen()
 	return code_obj;
 }
 
-string IfNode::getNewLabel() 
+std::string IfNode::getNewLabel() 
 { 
 	static int label_num = 0;
 	return "@if_label" + std::to_string(++label_num); 
@@ -70,4 +80,7 @@ AST* IfNode::copyTree() const
 	return new IfNode(static_cast<ExprNode*>(cond -> copyTree()), stats_true -> copyTree(), stats_false -> copyTree()); 
 }
 	
-vector<AST*> IfNode::getChildren() const { return {cond, stats_true, stats_false}; }
+std::vector<AST*> IfNode::getChildren() const 
+{
+   	return {cond, stats_true, stats_false}; 
+}

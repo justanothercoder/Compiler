@@ -2,14 +2,15 @@
 #define _CLASSVARIABLESYMBOL_HPP_
 
 #include "variablesymbol.hpp"
-#include "structsymbol.hpp"
+
+class StructSymbol;
 
 class ClassVariableSymbol : public VariableSymbol
 {
 public:
     ClassVariableSymbol(StructSymbol *type);
 
-	virtual SymbolType getSymbolType() const;
+	SymbolType getSymbolType() const override;
 };
 
 #endif

@@ -1,11 +1,13 @@
 #ifndef _CALLHELPER_HPP_
 #define _CALLHELPER_HPP_
 
+#include <string>
 #include <vector>
 
-#include "exprnode.hpp"
 #include "callinfo.hpp"
 
+class Scope;
+class ExprNode;
 class StructSymbol;
 class OverloadedFunctionSymbol;
 

@@ -1,6 +1,12 @@
 #include "varallocator.hpp"
+#include "variablesymbol.hpp"
+#include "type.hpp"
+#include "globalconfig.hpp"
 
-VarAllocator::VarAllocator() : space_for_variables(0) { }
+VarAllocator::VarAllocator() : space_for_variables(0) 
+{
+
+}
 
 void VarAllocator::addVariable(VariableSymbol *var) 
 {

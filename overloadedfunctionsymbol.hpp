@@ -1,9 +1,9 @@
 #ifndef _OVERLOADEDFUNCTIONSYMBOL_HPP_
 #define _OVERLOADEDFUNCTIONSYMBOL_HPP_
 
+#include "type.hpp"
 #include "symbol.hpp"
 #include "overloadedfunctiontypeinfo.hpp"
-#include "globalconfig.hpp"
 #include "functiontraits.hpp"
 
 class OverloadedFunctionSymbol : public Symbol, public Type

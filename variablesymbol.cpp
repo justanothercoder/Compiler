@@ -1,5 +1,6 @@
 #include "variablesymbol.hpp"
 #include "variablesymboldefine.hpp"
+#include "type.hpp"
 
 VariableSymbol::VariableSymbol(std::string name, const Type *type, VariableSymbolType sym_type) : name(name)
 																						   , type(type)

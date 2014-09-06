@@ -1,6 +1,8 @@
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
 #include "typefactory.hpp"
+#include "exprnode.hpp"
+#include "structsymbol.hpp"
 
 CallInfo CallHelper::callCheck(std::string name, const Scope *sc, std::vector<ExprNode*> params)
 {
@@ -34,8 +36,8 @@ CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector
 	
 	auto params_types = CallHelper::extractTypes(params);
    
-	vector<ConversionInfo> conversions;
-	vector<const FunctionSymbol*> copy_constructors;
+	std::vector<ConversionInfo> conversions;
+	std::vector<const FunctionSymbol*> copy_constructors;
 
     int is_meth = (function_sym -> isMethod() ? 1 : 0);
    

@@ -1,6 +1,10 @@
 #include "fornode.hpp"
+#include "localscope.hpp"
 
-ForNode::ForNode(AST *init, ExprNode *cond, AST *step, AST *stats) : init(init), cond(cond), step(step), stats(stats), for_scope(nullptr) { }
+ForNode::ForNode(AST *init, ExprNode *cond, AST *step, AST *stats) : init(init), cond(cond), step(step), stats(stats), for_scope(nullptr) 
+{
+
+}
 
 ForNode::~ForNode() 
 {
@@ -60,9 +64,12 @@ AST* ForNode::copyTree() const
 	return new ForNode(init -> copyTree(), static_cast<ExprNode*>(cond -> copyTree()), step -> copyTree(), stats -> copyTree()); 
 }
 
-vector<AST*> ForNode::getChildren() const { return {init, cond, step, stats}; }
+std::vector<AST*> ForNode::getChildren() const 
+{
+   	return {init, cond, step, stats}; 
+}
 
-string ForNode::getNewLabel() 
+std::string ForNode::getNewLabel() 
 {
 	static int label_num = 0;
 	return "@for_label" + std::to_string(++label_num);

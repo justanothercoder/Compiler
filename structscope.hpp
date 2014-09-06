@@ -12,15 +12,15 @@ class StructScope : public BaseScope
 
 public:
 	
-	StructScope(string scope_name, Scope *enclosing_scope, const TemplateInfo& template_info);
+	StructScope(std::string scope_name, Scope *enclosing_scope, const TemplateInfo& template_info);
 	
 	VarAllocator& getVarAlloc() const override;
 	TempAllocator& getTempAlloc() const override;
 
     Scope* getEnclosingScope() const override;
 	
-    Symbol* resolveMember(string name) const;
-    Symbol* resolve(string name) const override;
+    Symbol* resolveMember(std::string name) const;
+    Symbol* resolve(std::string name) const override;
 
 	std::string getScopeName() const override;
 

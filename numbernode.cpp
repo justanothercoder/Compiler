@@ -1,8 +1,10 @@
 #include "numbernode.hpp"
-
+#include "globalconfig.hpp"
 #include "typefactory.hpp"
+#include "builtins.hpp"
+#include "globalhelper.hpp"
 
-NumberNode::NumberNode(string num) : num(num), code_obj() 
+NumberNode::NumberNode(std::string num) : num(num)
 {
 
 }

@@ -1,11 +1,15 @@
 #include "variablenode.hpp"
 #include "functionsymbol.hpp"
 #include "typehelper.hpp"
-#include "structsymbol.hpp"
-
+#include "templatestructsymbol.hpp"
 #include "numbernode.hpp"
+#include "classvariablesymbol.hpp"
+#include "builtins.hpp"
 
-VariableNode::VariableNode(string name) : name(name), variable(nullptr), template_num(nullptr) { }
+VariableNode::VariableNode(std::string name) : name(name), variable(nullptr), template_num(nullptr) 
+{
+
+}
 
 void VariableNode::check()
 {
@@ -125,7 +129,10 @@ const Type* VariableNode::getType() const
 	return variable -> getType();
 }
 
-bool VariableNode::isLeftValue() const { return true; }
+bool VariableNode::isLeftValue() const 
+{
+   	return true; 
+}
 
 void VariableNode::freeTempSpace()
 {

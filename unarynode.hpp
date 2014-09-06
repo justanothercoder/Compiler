@@ -17,7 +17,7 @@ public:
 	void check() override;
     CodeObject& gen() override;
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
 	AST* copyTree() const override;
 
 	std::string getOperatorName();

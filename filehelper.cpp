@@ -1,9 +1,13 @@
 #include "filehelper.hpp"
+#include "filenotfoundexception.hpp"
+#include "lexer.hpp"
+#include "parser.hpp"
+#include "ast.hpp"
 
-AST* FileHelper::parse(string filename) 
+AST* FileHelper::parse(std::string filename) 
 { 
-	return shared_ptr<AbstractParser>(new Parser(
-				shared_ptr<AbstractLexer>(new Lexer(
+	return std::shared_ptr<AbstractParser>(new Parser(
+				std::shared_ptr<AbstractLexer>(new Lexer(
 						extractContents(filename)
 						)
 					).get()
@@ -11,7 +15,7 @@ AST* FileHelper::parse(string filename)
 			)->parse(); 
 }
 	
-string FileHelper::extractContents(string filename)
+string FileHelper::extractContents(std::string filename)
 {
 	std::ifstream in(filename.c_str());
 

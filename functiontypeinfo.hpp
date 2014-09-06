@@ -3,8 +3,9 @@
 
 #include <initializer_list>
 #include <vector>
+#include <string>
 
-#include "type.hpp"
+class Type;
 
 struct FunctionTypeInfo
 {

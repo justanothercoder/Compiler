@@ -2,10 +2,6 @@
 #define _LOCALSCOPE_HPP_
 
 #include "basescope.hpp"
-#include "functionsymbol.hpp"
-#include "globalconfig.hpp"
-
-#include "globalscope.hpp"
 
 class LocalScope : public BaseScope
 {

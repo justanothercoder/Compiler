@@ -2,7 +2,6 @@
 #define _FUNCTIONSYMBOLDEFINE_HPP_
 
 #include "scopevisitor.hpp"
-#include "variablesymbol.hpp"
 
 class BaseScope;
 
@@ -12,10 +11,10 @@ public:
 
     FunctionSymbolDefine(FunctionSymbol *sym);
 
-    virtual void visit(GlobalScope *sc);
-    virtual void visit(LocalScope *sc);
-    virtual void visit(StructScope *sc);
-    virtual void visit(FunctionSymbol *sc);
+    void visit(GlobalScope *sc) override;
+    void visit(LocalScope *sc) override;
+    void visit(StructScope *sc) override;
+    void visit(FunctionSymbol *sc) override;
 
 	void visit(BaseScope *sc);
 

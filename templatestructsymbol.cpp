@@ -5,21 +5,26 @@
 #include "variablenode.hpp"
 #include "typehelper.hpp"
 
-TemplateStructSymbol::TemplateStructSymbol(string name, Scope *enclosing_scope, const vector< pair<string, TypeInfo> >& template_symbols, AST *holder) : 
-	StructSymbol(name, enclosing_scope, (*new TemplateInfo())),
-	template_symbols(template_symbols),
-	holder(holder)
+TemplateStructSymbol::TemplateStructSymbol(std::string name
+		                                 , Scope *enclosing_scope
+										 , std::vector< std::pair<std::string, TypeInfo> > template_symbols
+										 , AST *holder) : StructSymbol(name, enclosing_scope, (*new TemplateInfo()))
+														, template_symbols(template_symbols)
+														, holder(holder)
 {
 
 }
 
-SymbolType TemplateStructSymbol::getSymbolType() const { return SymbolType::TEMPLATESTRUCT; }
+SymbolType TemplateStructSymbol::getSymbolType() const 
+{
+   	return SymbolType::TEMPLATESTRUCT; 
+}
 
-bool TemplateStructSymbol::isIn(string name) const 
+bool TemplateStructSymbol::isIn(std::string name) const 
 { 
 	return std::find_if(std::begin(template_symbols),
 			std::end(template_symbols),
-			[&](const pair<string, TypeInfo>& p){ return name == p.first; }
+			[&](std::pair<std::string, TypeInfo> p){ return name == p.first; }
 			) != std::end(template_symbols);
 }
 
@@ -89,7 +94,7 @@ Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols) const
 
 	auto children = holder -> getChildren();
 
-	vector<AST*> vec;
+	std::vector<AST*> vec;
 
 	for ( auto t : children )
 		vec.push_back(t -> copyTree());

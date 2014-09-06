@@ -1,6 +1,6 @@
 #include "typehelper.hpp"
 #include "classvariablesymbol.hpp"
-
+#include "templatestructsymbol.hpp"
 #include "variablenode.hpp"
 #include "typefactory.hpp"
 
@@ -48,7 +48,7 @@ const Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const Tem
 	return type;
 }
 	
-Type* TypeHelper::resolveType(string name, Scope *sc)
+Type* TypeHelper::resolveType(std::string name, Scope *sc)
 {
 	auto scope = sc;
 

@@ -2,6 +2,10 @@
 #include "logger.hpp"
 #include "functionsymbol.hpp"
 #include "callhelper.hpp"
+#include "type.hpp"
+#include "builtins.hpp"
+#include "callinfo.hpp"
+#include "exprnode.hpp"
 
 void CodeObject::gen() const 
 { 
@@ -13,7 +17,7 @@ std::string CodeObject::getCode() const
 	return code; 
 }
 
-void CodeObject::emit(string text) 
+void CodeObject::emit(std::string text) 
 {
    	code += text + '\n'; 
 }

@@ -4,7 +4,10 @@
 #include "functionhelper.hpp"
 #include "functionsymbol.hpp"
 
-StructDeclarationNode::StructDeclarationNode(string name, const vector<AST*>& inner) : name(name), inner(inner), definedSymbol(nullptr) { }
+StructDeclarationNode::StructDeclarationNode(std::string name, std::vector<AST*> inner) : name(name), inner(inner), definedSymbol(nullptr) 
+{
+
+}
 
 StructDeclarationNode::~StructDeclarationNode() 
 { 
@@ -14,17 +17,20 @@ StructDeclarationNode::~StructDeclarationNode()
 		delete i;
 }
 
-Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
+Symbol* StructDeclarationNode::getDefinedSymbol() const 
+{ 
+	return definedSymbol; 
+}
 
 void StructDeclarationNode::build_scope()
 {
     definedSymbol = new StructSymbol(name, scope, scope -> getTemplateInfo());
 
-	scope -> accept(new SymbolDefine(definedSymbol));
+	scope -> define(definedSymbol);
 
 	for ( auto i : inner )
     {
-		i -> scope         = definedSymbol;
+		i -> scope = definedSymbol;
 		i -> build_scope();
     }
 }
@@ -42,21 +48,21 @@ void StructDeclarationNode::check()
 	if ( definedSymbol -> getDefaultConstructor() == nullptr )
 	{
 		auto default_constr = FunctionHelper::makeDefaultConstructor(definedSymbol);
-		definedSymbol -> accept(new FunctionSymbolDefine(default_constr));
+		definedSymbol -> define(default_constr);
 		default_constr_code = *default_constr->code_obj;
 	}
 
 	if ( definedSymbol -> getCopyConstructor() == nullptr )
 	{
 		auto copy_constr = FunctionHelper::makeDefaultCopyConstructor(definedSymbol);
-		definedSymbol->accept(new FunctionSymbolDefine(copy_constr));
+		definedSymbol -> define(copy_constr);
 		default_copy_constr_code = *copy_constr->code_obj;
 	}
 
 	for ( auto decl : inner )
 	{
 		if ( dynamic_cast<DeclarationNode*>(decl) )
-			static_cast<DeclarationNode*>(decl)->getDefinedSymbol()->is_defined = true;
+			static_cast<DeclarationNode*>(decl) -> getDefinedSymbol() -> is_defined = true;
 	}
 
 	for ( auto decl : inner )
@@ -68,15 +74,18 @@ CodeObject& StructDeclarationNode::gen()
 	code_obj.emit(default_constr_code.getCode());
 	code_obj.emit(default_copy_constr_code.getCode());
     for ( auto decl : inner )
-		code_obj.emit(decl->gen().getCode());
+		code_obj.emit(decl -> gen().getCode());
 	return code_obj;
 }
 
 AST* StructDeclarationNode::copyTree() const 
 { 
-	vector<AST*> in(inner.size());
-	std::transform(std::begin(inner), std::end(inner), std::begin(in), [&](AST *t) { return t->copyTree(); });
+	std::vector<AST*> in(inner.size());
+	std::transform(std::begin(inner), std::end(inner), std::begin(in), [&](AST *t) { return t -> copyTree(); });
 	return new StructDeclarationNode(name, in);
 }
 
-vector<AST*> StructDeclarationNode::getChildren() const { return inner; } 
+std::vector<AST*> StructDeclarationNode::getChildren() const 
+{
+   	return inner; 
+}	

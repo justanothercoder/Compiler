@@ -1,10 +1,14 @@
 #include "parser.hpp"
+#include "semanticerror.hpp"
 
-Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer) { }
+Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer) 
+{
+
+}
 
 AST* Parser::parse()
 {
-	vector<AST*> statements;
+	std::vector<AST*> statements;
 
 	while ( getTokenType(1) != TokenType::EOF_TYPE )
 		statements.push_back(statement());

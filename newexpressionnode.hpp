@@ -7,11 +7,12 @@
 
 #include "exprnode.hpp"
 #include "codeobject.hpp"
+#include "typeinfo.hpp"
 
 class NewExpressionNode : public ExprNode
 {
 public:
-    NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params);
+    NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params);
 	~NewExpressionNode() override;
 
 	void build_scope() override;

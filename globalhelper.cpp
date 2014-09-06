@@ -1,6 +1,7 @@
 #include "globalhelper.hpp"
 #include "scope.hpp"
 #include "varallocator.hpp"
+#include "globalconfig.hpp"
 	
 std::map<FunctionSymbol*, bool> GlobalHelper::has_definition;
 

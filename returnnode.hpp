@@ -3,6 +3,7 @@
 
 #include "codeobject.hpp"
 #include "callinfo.hpp"
+#include "ast.hpp"
 
 class ExprNode;
 class FunctionSymbol;

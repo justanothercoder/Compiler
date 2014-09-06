@@ -8,7 +8,7 @@ class StringNode : public ExprNode
 {
 public:
 
-	StringNode(string str);
+	StringNode(std::string str);
 
     void check() override;
     CodeObject& gen() override;

@@ -1,5 +1,11 @@
 #include "variabledeclarationnode.hpp"
 #include "classvariablesymbol.hpp"
+#include "typehelper.hpp"
+#include "callhelper.hpp"
+#include "exprnode.hpp"
+#include "scope.hpp"
+#include "templatestructsymbol.hpp"
+#include "builtins.hpp"
 
 VariableDeclarationNode::VariableDeclarationNode(std::string name
 		                                       , TypeInfo type_info
@@ -109,14 +115,14 @@ void VariableDeclarationNode::define()
 
 AST* VariableDeclarationNode::copyTree() const
 {
-    vector<ExprNode*> params(constructor_call_params.size());
+	std::vector<ExprNode*> params(constructor_call_params.size());
 
     std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::begin(params), [&] (ExprNode *expr) { return static_cast<ExprNode*>(expr -> copyTree()); });
     
     return new VariableDeclarationNode(name, type_info, is_field, params);
 }
 
-vector<AST*> VariableDeclarationNode::getChildren() const 
+std::vector<AST*> VariableDeclarationNode::getChildren() const 
 { 
-	return vector<AST*>(std::begin(constructor_call_params), std::end(constructor_call_params)); 
+	return std::vector<AST*>(std::begin(constructor_call_params), std::end(constructor_call_params)); 
 }

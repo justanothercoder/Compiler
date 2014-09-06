@@ -1,6 +1,9 @@
 #include "newexpressionnode.hpp"
 #include "functionsymbol.hpp"
 #include "typehelper.hpp"
+#include "callhelper.hpp"
+#include "structsymbol.hpp"
+#include "globalhelper.hpp"
 
 NewExpressionNode::NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params) : type_info(type_info), params(params)
 {
@@ -38,10 +41,10 @@ void NewExpressionNode::check()
 
 CodeObject& NewExpressionNode::gen()
 {
-    string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+    auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
    	scope -> getTempAlloc().claim(getType() -> getSize());
 
-	string addr2 = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	auto addr2 = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(GlobalConfig::int_size);
 
 	CodeObject new_place;
@@ -57,7 +60,7 @@ CodeObject& NewExpressionNode::gen()
 
 AST* NewExpressionNode::copyTree() const 
 {
-	vector<ExprNode*> vec(params.size());
+	std::vector<ExprNode*> vec(params.size());
 	std::transform(std::begin(params), std::end(params), std::begin(vec), [](ExprNode *e) { return static_cast<ExprNode*>(e -> copyTree()); });
 
 	return new NewExpressionNode(type_info, vec);

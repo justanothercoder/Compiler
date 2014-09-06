@@ -1,9 +1,10 @@
 #include "binaryoperatornode.hpp"
 #include "functionsymbol.hpp"
+#include "callhelper.hpp"
+#include "structsymbol.hpp"
+#include "globalhelper.hpp"
 
-BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs)
-																					   , rhs(rhs)
-																					   , op_type(op_type)
+BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type)
 {
 
 }
@@ -30,7 +31,7 @@ void BinaryOperatorNode::check()
 
 CodeObject& BinaryOperatorNode::gen()
 {
-	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	code_obj.emit("lea rax, " + addr);

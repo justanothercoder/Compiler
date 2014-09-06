@@ -1,12 +1,8 @@
 #ifndef _ASMARRAYNODE_HPP_
 #define _ASMARRAYNODE_HPP_
 
+#include "ast.hpp"
 #include "codeobject.hpp"
-#include "classvariablesymbol.hpp"
-#include "templatesymbol.hpp"
-#include "numbernode.hpp"
-#include "functionsymboldefine.hpp"
-#include "variablesymboldefine.hpp"
 
 class AsmArrayNode : public AST
 {

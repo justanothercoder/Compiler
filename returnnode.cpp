@@ -1,6 +1,9 @@
 #include "returnnode.hpp"
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
+#include "exprnode.hpp"
+#include "globalconfig.hpp"
+#include "structsymbol.hpp"
 
 ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), enclosing_func(nullptr) 
 {
@@ -63,8 +66,17 @@ void ReturnNode::check()
 	copy_call_info = CallHelper::callCheck(expr -> getType() -> getName(), static_cast<const StructSymbol*>(expr -> getType()), {expr});
 }
 	
-void ReturnNode::define() { expr -> define(); }
+void ReturnNode::define() 
+{
+   	expr -> define(); 
+}
 
-AST* ReturnNode::copyTree() const { return new ReturnNode(static_cast<ExprNode*>(expr -> copyTree())); }
+AST* ReturnNode::copyTree() const 
+{
+   	return new ReturnNode(static_cast<ExprNode*>(expr -> copyTree())); 
+}
 
-vector<AST*> ReturnNode::getChildren() const { return {expr}; }
+std::vector<AST*> ReturnNode::getChildren() const 
+{
+   	return {expr}; 
+}

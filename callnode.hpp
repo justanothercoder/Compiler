@@ -12,7 +12,7 @@ class CallNode : public ExprNode
 {
 public:
 
-    CallNode(ExprNode *caller, const vector<ExprNode*>& params);
+    CallNode(ExprNode *caller, std::vector<ExprNode*> params);
 	~CallNode() override;
     
     void check() override;

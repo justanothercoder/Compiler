@@ -1,9 +1,13 @@
 #include "functiondeclarationnode.hpp"
 
 #include "typefactory.hpp"
+#include "functionsymbol.hpp"
+#include "typehelper.hpp"
+#include "templatestructsymbol.hpp"
+#include "globalhelper.hpp"
 
-FunctionDeclarationNode::FunctionDeclarationNode(string name
-		                                       , vector< pair<string, TypeInfo> > params
+FunctionDeclarationNode::FunctionDeclarationNode(std::string name
+		                                       , std::vector< pair<std::string, TypeInfo> > params
 											   , TypeInfo return_type_info
 											   , AST *statements
 											   , FunctionTraits traits) : name(name)
@@ -61,7 +65,7 @@ void FunctionDeclarationNode::define()
 
     auto return_type = fromTypeInfo(return_type_info);
 
-	vector<const Type*> params_types;
+	std::vector<const Type*> params_types;
 
 	if ( traits.is_method )
 	{
@@ -71,7 +75,7 @@ void FunctionDeclarationNode::define()
 		auto _this_sym = new VariableSymbol("this", _this_type, VariableSymbolType::PARAM);
 
 		params_symbols.push_back(_this_sym);
-		definedSymbol -> accept(new VariableSymbolDefine(_this_sym));
+		definedSymbol -> define(_this_sym);
 	}
 
 	for ( auto i : params )
@@ -83,7 +87,7 @@ void FunctionDeclarationNode::define()
 		auto param_sym = new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM);
 
 		params_symbols.push_back(param_sym);
-		definedSymbol -> accept(new VariableSymbolDefine(param_sym));
+		definedSymbol -> define(param_sym);
 	}
 
 	FunctionTypeInfo function_type_info(params_types);
@@ -100,7 +104,7 @@ void FunctionDeclarationNode::define()
 
 CodeObject& FunctionDeclarationNode::gen()
 {    
-	string scoped_typed_name = definedSymbol -> getScopedTypedName();
+	std::string scoped_typed_name = definedSymbol -> getScopedTypedName();
 
 	code_obj.emit("jmp _~" + scoped_typed_name);
 	code_obj.emit(scoped_typed_name + ":");
@@ -143,4 +147,7 @@ AST* FunctionDeclarationNode::copyTree() const
 	return new FunctionDeclarationNode(name, params, return_type_info, statements -> copyTree(), traits); 
 }
 
-vector<AST*> FunctionDeclarationNode::getChildren() const { return {statements}; }
+std::vector<AST*> FunctionDeclarationNode::getChildren() const 
+{ 
+	return {statements}; 
+}

@@ -4,13 +4,13 @@
 #include <map>
 
 #include "typeinfo.hpp"
-#include "scope.hpp"
-#include "structsymbol.hpp"
-#include "functionhelper.hpp"
 #include "templateinfo.hpp"
-#include "callhelper.hpp"
 
-using std::map;
+class Type;
+class Scope;
+class StructSymbol;
+class FunctionSymbol;
+class OverloadedFunctionSymbol;
 
 class TypeHelper
 {
@@ -27,7 +27,7 @@ public:
 
 	static OverloadedFunctionSymbol* getOperatorCall(StructSymbol *sym);
 
-	static Type* resolveType(string name, Scope *sc);
+	static Type* resolveType(std::string name, Scope *sc);
 };
 
 #endif

@@ -7,15 +7,13 @@
 #include "codeobject.hpp"
 #include "functionsymboldefine.hpp"
 
-using std::vector;
-
 class StructSymbol;
 
 class StructDeclarationNode : public DeclarationNode
 {
 public:
 
-    StructDeclarationNode(string name, const vector<AST*>& inner);
+    StructDeclarationNode(std::string name, std::vector<AST*> inner);
 
     ~StructDeclarationNode() override;
 
@@ -30,12 +28,12 @@ public:
     
 	CodeObject& gen() override;
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
 
 protected:
 
-    string name;
-    vector<AST*> inner;
+	std::string name;
+	std::vector<AST*> inner;
 
     StructSymbol *definedSymbol;
 	CodeObject code_obj;

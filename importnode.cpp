@@ -1,8 +1,15 @@
 #include "importnode.hpp"
+#include "filehelper.hpp"
 
-ImportNode::ImportNode(string lib) : lib(lib), code_obj() { }
+ImportNode::ImportNode(std::string lib) : lib(lib) 
+{
 
-AST* ImportNode::copyTree() const { return new ImportNode(lib); }
+}
+
+AST* ImportNode::copyTree() const 
+{
+   	return new ImportNode(lib); 
+}
 
 void ImportNode::define() 
 {
@@ -16,6 +23,12 @@ void ImportNode::define()
 	code_obj.emit(root -> gen().getCode());
 }
 
-void ImportNode::check() { }
+void ImportNode::check() 
+{
 
-CodeObject& ImportNode::gen() { return code_obj; }
+}
+
+CodeObject& ImportNode::gen()
+{
+   	return code_obj; 
+}

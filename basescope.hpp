@@ -4,7 +4,6 @@
 #include <map>
 
 #include "scope.hpp"
-#include "variablesymbol.hpp"
 
 class ExprNode;
 
@@ -16,7 +15,7 @@ public:
     friend class FunctionSymbolDefine;
     friend class SymbolDefine;
     
-    virtual Symbol* resolve(std::string name) const;
+    Symbol* resolve(std::string name) const override;
 
 public:
 	std::map<std::string, Symbol*> table;

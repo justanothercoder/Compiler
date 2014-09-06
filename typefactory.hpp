@@ -3,7 +3,7 @@
 
 #include <map>
 
-#include "referencetype.hpp"
+class Type;
 
 class TypeFactory
 {

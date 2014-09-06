@@ -3,17 +3,34 @@
 #include "globalscope.hpp"
 #include "localscope.hpp"
 #include "structscope.hpp"
+#include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
+#include "overloadedfunctionsymbol.hpp"
 
 FunctionSymbolDefine::FunctionSymbolDefine(FunctionSymbol *sym) : sym(sym) 
 {
 
 }
 
-void FunctionSymbolDefine::visit(GlobalScope *sc) { visit(static_cast<BaseScope*>(sc)); }
-void FunctionSymbolDefine::visit(LocalScope *sc) { visit(static_cast<BaseScope*>(sc)); }
-void FunctionSymbolDefine::visit(StructScope *sc) { visit(static_cast<BaseScope*>(sc)); }
-void FunctionSymbolDefine::visit(FunctionSymbol *sc) { visit(static_cast<BaseScope*>(sc)); }
+void FunctionSymbolDefine::visit(GlobalScope *sc) 
+{
+   	visit(static_cast<BaseScope*>(sc)); 
+}
+
+void FunctionSymbolDefine::visit(LocalScope *sc) 
+{
+   	visit(static_cast<BaseScope*>(sc)); 
+}
+
+void FunctionSymbolDefine::visit(StructScope *sc)
+{
+   	visit(static_cast<BaseScope*>(sc)); 
+}
+
+void FunctionSymbolDefine::visit(FunctionSymbol *sc) 
+{
+   	visit(static_cast<BaseScope*>(sc)); 
+}
 
 void FunctionSymbolDefine::visit(BaseScope *sc)
 {
@@ -35,5 +52,5 @@ void FunctionSymbolDefine::visit(BaseScope *sc)
 	auto func_type_info = sym->function_type_info;
 
 	auto ofs = static_cast<const OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym)->getType());
-	ofs->addOverload(func_type_info, sym);
+	ofs -> addOverload(func_type_info, sym);
 }

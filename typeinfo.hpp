@@ -6,18 +6,15 @@
 
 class ExprNode;
 
-using std::string;
-using std::vector;
-
 class TypeInfo
 {
 public:   
     TypeInfo();
-    TypeInfo(string type_name, bool is_ref, bool is_const, vector<ExprNode*> template_params = { }, int pointer_depth = 0);
+    TypeInfo(std::string type_name, bool is_ref, bool is_const, std::vector<ExprNode*> template_params = { }, int pointer_depth = 0);
 
-    string type_name;
+	std::string type_name;
     bool is_ref, is_const;
-    vector<ExprNode*> template_params;
+	std::vector<ExprNode*> template_params;
 	int pointer_depth;
 };
 

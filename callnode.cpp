@@ -1,11 +1,18 @@
 #include "callnode.hpp"
-
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
+#include "structsymbol.hpp"
+#include "globalhelper.hpp"
 
-CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), call_info(), code_obj() { }
+CallNode::CallNode(ExprNode *caller, std::vector<ExprNode*> params) : caller(caller), params(params) 
+{
 
-CallNode::~CallNode() { delete caller; }
+}
+
+CallNode::~CallNode() 
+{
+   	delete caller; 
+}
     
 void CallNode::check()
 {
@@ -34,7 +41,7 @@ void CallNode::check()
 
 CodeObject& CallNode::gen()
 {  
-	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	code_obj.emit("lea rax, " + addr);
@@ -55,7 +62,7 @@ CodeObject& CallNode::gen()
 
 AST* CallNode::copyTree() const
 {
-    vector<ExprNode*> expr(params.size());
+	std::vector<ExprNode*> expr(params.size());
     std::transform(std::begin(params), std::end(params), std::begin(expr), [&] (ExprNode *ex) 
 	{ 
 		return static_cast<ExprNode*>(ex -> copyTree()); 
@@ -64,9 +71,9 @@ AST* CallNode::copyTree() const
     return new CallNode(static_cast<ExprNode*>(caller -> copyTree()), expr);
 }
 
-vector<AST*> CallNode::getChildren() const
+std::vector<AST*> CallNode::getChildren() const
 {
-	vector<AST*> vec { caller };
+	std::vector<AST*> vec { caller };
 	vec.insert(std::begin(vec), std::begin(params), std::end(params));
 	return vec;
 }

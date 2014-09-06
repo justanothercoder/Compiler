@@ -2,15 +2,10 @@
 #define _VARIABLENODE_HPP_
 
 #include "exprnode.hpp"
-#include "overloadedfunctiontypeinfo.hpp"
-#include "variablesymbol.hpp"
-#include "globalhelper.hpp"
-#include "templatestructsymbol.hpp"
-#include "classvariablesymbol.hpp"
-#include "templateinfo.hpp"
 #include "codeobject.hpp"
 
 class NumberNode;
+class VariableSymbol;
 
 class VariableNode : public ExprNode
 {
@@ -20,7 +15,7 @@ class VariableNode : public ExprNode
 
 public:
 
-    VariableNode(string name);
+    VariableNode(std::string name);
 
     void check() override;
     CodeObject& gen() override;
@@ -39,7 +34,7 @@ public:
 
 private:
 
-    string name;
+	std::string name;
     
     VariableSymbol *variable;
 

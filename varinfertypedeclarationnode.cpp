@@ -4,6 +4,7 @@
 #include "callhelper.hpp"
 #include "variablesymboldefine.hpp"
 #include "globalhelper.hpp"
+#include "exprnode.hpp"
 
 VarInferTypeDeclarationNode::VarInferTypeDeclarationNode(std::string name, ExprNode *expr) : name(name), expr(expr), definedSymbol(nullptr)
 {
@@ -42,7 +43,7 @@ void VarInferTypeDeclarationNode::check()
 
 CodeObject& VarInferTypeDeclarationNode::gen() 
 {
-	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(expr -> getType() -> getSize());
 
 	CodeObject var_code;

@@ -2,7 +2,12 @@
 #define _SYMBOLDEFINE_HPP_
 
 #include "scopevisitor.hpp"
-#include "variablesymbol.hpp"
+
+class Symbol;
+class GlobalScope;
+class LocalScope;
+class StructScope;
+class FunctionSymbol;
 
 class SymbolDefine : public ScopeVisitor
 {
@@ -10,10 +15,10 @@ public:
 
     SymbolDefine(Symbol *sym);
 
-    virtual void visit(GlobalScope *sc);
-    virtual void visit(LocalScope *sc);
-    virtual void visit(StructScope *sc);
-    virtual void visit(FunctionSymbol *sc);
+    void visit(GlobalScope *sc) override;
+    void visit(LocalScope *sc) override;
+    void visit(StructScope *sc) override;
+    void visit(FunctionSymbol *sc) override;
 
 private:
     Symbol *sym;

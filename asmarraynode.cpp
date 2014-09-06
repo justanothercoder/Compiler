@@ -1,11 +1,17 @@
 #include "asmarraynode.hpp"
 #include "templateinfo.hpp"
 #include "functionsymbol.hpp"
-
 #include "typehelper.hpp"
 #include "typefactory.hpp"
+#include "classvariablesymbol.hpp"
+#include "templatesymbol.hpp"
+#include "numbernode.hpp"
+#include "builtins.hpp"
 
-AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) { scope = BuiltIns::global_scope; }
+AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) 
+{ 
+	scope = BuiltIns::global_scope; 
+}
 
 void AsmArrayNode::define() 
 {
@@ -28,7 +34,7 @@ void AsmArrayNode::define()
 
 		type = TypeHelper::resolveType(boost::get<std::string>(*replace), scope);
 
-		ref_type = new ReferenceType(type);
+		ref_type = TypeFactory::getReference(type);
 
 		size_of_type = type -> getSize();
 	}
@@ -44,11 +50,11 @@ void AsmArrayNode::define()
 	auto array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, scope, {true, false, true});
 	auto array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , scope, {true, false, false});
 
-	scope -> accept(new FunctionSymbolDefine(array_constructor));
-	scope -> accept(new FunctionSymbolDefine(array_elem_operator));
-	scope -> accept(new FunctionSymbolDefine(array_size_func));
+	scope -> define(array_constructor);
+	scope -> define(array_elem_operator);
+	scope -> define(array_size_func);
 
-	scope -> accept(new VariableSymbolDefine(new VariableSymbol( "~~impl", new BuiltInTypeSymbol("~~array_impl", array_size * size_of_type))));
+	scope -> define(new VariableSymbol( "~~impl", new BuiltInTypeSymbol("~~array_impl", array_size * size_of_type)));
 }
 
 void AsmArrayNode::check() { }

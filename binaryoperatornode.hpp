@@ -2,7 +2,6 @@
 #define _BINARYOPERATORNODE_HPP_
 
 #include "exprnode.hpp"
-#include "functionhelper.hpp"
 #include "codeobject.hpp"
 
 enum class BinaryOp { ASSIGN, PLUS, MINUS, MUL, EQUALS, NEQUALS, AND, OR, DIV, MOD };

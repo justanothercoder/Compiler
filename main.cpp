@@ -6,10 +6,9 @@
 #include "lexer.hpp"
 #include "parser.hpp"
 #include "builtins.hpp"
-
-#include "symboldefine.hpp"
-#include "variablesymboldefine.hpp"
-#include "functionsymboldefine.hpp"
+#include "filehelper.hpp"
+#include "functionsymbol.hpp"
+#include "globalhelper.hpp"
 
 using std::shared_ptr;
 

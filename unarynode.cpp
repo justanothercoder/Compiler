@@ -1,7 +1,8 @@
 #include "unarynode.hpp"
-
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
+#include "structsymbol.hpp"
+#include "globalhelper.hpp"
 
 UnaryNode::UnaryNode(ExprNode *exp, UnaryOp op_type) : exp(exp), op_type(op_type) 
 {
@@ -23,7 +24,7 @@ void UnaryNode::check()
 
 CodeObject& UnaryNode::gen()
 {
-	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	code_obj.emit("lea rax, " + addr);

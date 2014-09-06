@@ -1,6 +1,7 @@
 #include "stringnode.hpp"
 #include "typehelper.hpp"
 #include "typefactory.hpp"
+#include "builtins.hpp"
 
 StringNode::StringNode(std::string str) : str(str) 
 {
@@ -14,11 +15,11 @@ void StringNode::check()
 
 CodeObject& StringNode::gen()
 {
-	string str_label = StringNode::getNewLabel();
+	auto str_label = StringNode::getNewLabel();
 
 	code_obj.emit("section .data");
 
-	string res = "0";
+	std::string res = "0";
 
 	for ( int i = str.length() - 1; i >= 0; --i )
 	{

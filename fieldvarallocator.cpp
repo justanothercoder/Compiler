@@ -1,6 +1,11 @@
 #include "fieldvarallocator.hpp"
+#include "variablesymbol.hpp"
+#include "type.hpp"
 
-FieldVarAllocator::FieldVarAllocator() : VarAllocator() { }
+FieldVarAllocator::FieldVarAllocator() : VarAllocator() 
+{
+
+}
 
 void FieldVarAllocator::addVariable(VariableSymbol *var) 
 {

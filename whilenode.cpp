@@ -1,6 +1,11 @@
 #include "whilenode.hpp"
+#include "exprnode.hpp"
+#include "localscope.hpp"
 
-WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats), while_scope(nullptr), code_obj() { }
+WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats), while_scope(nullptr)
+{
+
+}
 
 WhileNode::~WhileNode() 
 { 
@@ -30,7 +35,8 @@ void WhileNode::check()
 
 CodeObject& WhileNode::gen()
 {
-    string exit_label = WhileNode::getNewLabel(), cycle_label = WhileNode::getNewLabel();
+    auto exit_label  = WhileNode::getNewLabel();
+    auto cycle_label = WhileNode::getNewLabel();
     
     code_obj.emit(cycle_label + ":");
     code_obj.emit(cond -> gen().getCode());
@@ -43,12 +49,18 @@ CodeObject& WhileNode::gen()
 	return code_obj;
 }
 
-string WhileNode::getNewLabel() 
+std::string WhileNode::getNewLabel() 
 {
 	static int label_num = 0;
 	return "@while_label" + std::to_string(++label_num); 
 }
 
-AST* WhileNode::copyTree() const { return new WhileNode(static_cast<ExprNode*>(cond -> copyTree()), stats -> copyTree()); }
+AST* WhileNode::copyTree() const 
+{
+   	return new WhileNode(static_cast<ExprNode*>(cond -> copyTree()), stats -> copyTree()); 
+}
    	
-vector<AST*> WhileNode::getChildren() const { return {cond, stats}; }
+std::vector<AST*> WhileNode::getChildren() const 
+{
+   	return {cond, stats}; 
+}

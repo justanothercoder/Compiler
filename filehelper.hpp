@@ -5,22 +5,17 @@
 #include <fstream>
 #include <string>
 
-#include "filenotfoundexception.hpp"
-#include "lexer.hpp"
-#include "parser.hpp"
-#include "ast.hpp"
-
-using namespace std;
+class AST;
 
 class FileHelper
 {
 public:
 	
-	static AST* parse(string filename);
+	static AST* parse(std::string filename);
 
 private:
 
-	static string extractContents(string filename);
+	static std::string extractContents(std::string filename);
 };
 
 #endif

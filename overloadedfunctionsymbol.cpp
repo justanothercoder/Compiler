@@ -1,4 +1,5 @@
 #include "overloadedfunctionsymbol.hpp"
+#include "globalconfig.hpp"
 
 OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name
 		                                         , OverloadedFunctionTypeInfo type_info

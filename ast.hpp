@@ -3,8 +3,6 @@
 
 #include <vector>
 
-#include "globalhelper.hpp"
-
 class Scope;
 struct TemplateInfo;
 class CodeObject;

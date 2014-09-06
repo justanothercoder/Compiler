@@ -4,19 +4,10 @@
 #include <vector>
 
 #include "declarationnode.hpp"
-#include "variablesymbol.hpp"
 #include "codeobject.hpp"
 #include "typeinfo.hpp"
-#include "typehelper.hpp"
-#include "functionsymbol.hpp"
-#include "functionhelper.hpp"
-#include "overloadedfunctionsymbol.hpp"
-#include "structsymbol.hpp"
-#include "builtins.hpp"
-#include "callhelper.hpp"
-#include "templateinfo.hpp"
 
-#include "variablesymboldefine.hpp"
+class VariableSymbol;
 
 class VariableDeclarationNode : public DeclarationNode
 {
@@ -24,9 +15,9 @@ public:
 
     VariableDeclarationNode(std::string name, TypeInfo type_info, bool is_field = false, std::vector<ExprNode*> constructor_call_params = {});
 
-    virtual ~VariableDeclarationNode();
+    ~VariableDeclarationNode() override;
 
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
     
 	void build_scope() override;
     void define() override;
@@ -40,7 +31,7 @@ public:
 
 private:
 
-    string name;
+	std::string name;
     TypeInfo type_info;
 
     bool is_field;
