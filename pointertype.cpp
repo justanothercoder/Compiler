@@ -50,3 +50,13 @@ FunctionSymbol* PointerType::getConversionTo(const Type *) const
 {
 	return nullptr;
 }
+	
+const Symbol* PointerType::getSymbol() const
+{
+	return type -> getSymbol();
+}
+
+const Type* PointerType::getPointedType() const
+{
+	return type;
+}

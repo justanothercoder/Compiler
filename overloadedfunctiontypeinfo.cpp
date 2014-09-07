@@ -1,6 +1,9 @@
 #include "overloadedfunctiontypeinfo.hpp"
 	
-OverloadedFunctionTypeInfo::OverloadedFunctionTypeInfo(std::set<FunctionTypeInfo> overloads) : overloads(overloads) { }
+OverloadedFunctionTypeInfo::OverloadedFunctionTypeInfo(std::set<FunctionTypeInfo> overloads) : overloads(overloads) 
+{
+
+}
 	
 std::set<FunctionTypeInfo> OverloadedFunctionTypeInfo::getBestOverload(FunctionTypeInfo params_type) const
 {

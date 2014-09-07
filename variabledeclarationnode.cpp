@@ -52,13 +52,21 @@ void VariableDeclarationNode::check()
 		{
 			std::string type_name = type_info.type_name;
 
-			auto _ = TypeHelper::fromTypeInfo(type_info, scope, scope -> getTemplateInfo());
+			auto var_type = TypeHelper::fromTypeInfo(type_info, scope, scope -> getTemplateInfo());
 
-			if ( _ -> getSymbol() == nullptr || _ -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
+			if ( var_type -> getSymbol() == nullptr || var_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
 				throw SemanticError("No such struct " + type_name);
 
-			auto struct_symbol = static_cast<const StructSymbol*>(_ -> getSymbol());
-			call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, constructor_call_params);
+			if ( var_type -> getTypeKind() != TypeKind::POINTER )
+			{
+				auto struct_symbol = static_cast<const StructSymbol*>(var_type -> getSymbol());
+				call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, constructor_call_params);
+			}
+			else
+			{
+				for ( auto param : constructor_call_params )
+					param -> check();
+			}
 		}
 		else
 		{
@@ -77,9 +85,20 @@ CodeObject& VariableDeclarationNode::gen()
 		if ( type_info.is_ref )
 		{
 			for ( auto i : constructor_call_params )
-				i -> gen();
+				code_obj.emit(i -> gen().getCode());
 
 			code_obj.emit("mov [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(definedSymbol)) + "], rax");
+		}
+		else if ( type_info.pointer_depth > 0 )
+		{
+			if ( !constructor_call_params.empty() )
+			{
+				for ( auto i : constructor_call_params )
+					code_obj.emit(i -> gen().getCode());
+
+				code_obj.emit("mov rbx, [rax]");
+				code_obj.emit("mov [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(definedSymbol)) + "], rbx");
+			}
 		}
 		else
 		{

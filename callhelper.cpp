@@ -126,7 +126,8 @@ ConversionInfo CallHelper::getConversionInfo(const Type *lhs, const Type *rhs, b
 	auto _lhs = lhs -> getUnqualifiedType();
 	auto _rhs = rhs -> getUnqualifiedType();
 
-	auto conv = (_lhs == _rhs) ? nullptr : lhs -> getConversionTo(rhs);
+//	auto conv = (_lhs == _rhs) ? nullptr : lhs -> getConversionTo(rhs);
+	auto conv = (_lhs == _rhs) ? nullptr : _lhs -> getConversionTo(_rhs);
 
 	if ( _lhs != _rhs && conv == nullptr )
 		throw SemanticError("Invalid initialization of '" + rhs -> getName() + "' with type '" + lhs -> getName() + "'.");

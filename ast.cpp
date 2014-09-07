@@ -11,7 +11,7 @@ void AST::build_scope()
 
 	for ( auto child : children )
 	{
-		child -> scope         = scope;
+		child -> scope = scope;
 		child -> build_scope();
 	}
 }

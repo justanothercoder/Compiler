@@ -64,10 +64,14 @@ int main()
 //		std::cerr << e.what() << '\n';
 //		return 1;
 //	}
-	catch ( RecognitionError& e )
+//	catch ( RecognitionError& e )
+//	{
+//		std::cerr << e.what() << '\n';
+//		return 2;
+//	}
+	catch ( int x )
 	{
-		std::cerr << e.what() << '\n';
-		return 2;
+		return 1;
 	}
 
 	return 0;

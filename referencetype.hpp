@@ -23,7 +23,7 @@ public:
 	
 	const Type* getUnqualifiedType() const override;
 
-	const Symbol* getSymbol() const;
+	const Symbol* getSymbol() const override;
 
 private:
 

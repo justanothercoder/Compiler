@@ -344,16 +344,33 @@ ExprNode* Parser::unary_right()
 	return res;
 }
 
+ExprNode* Parser::addr_expr()
+{
+	if ( getTokenType(1) == TokenType::REF )
+	{
+		match(TokenType::REF);
+		return new AddrNode(unary_right(), AddrOp::REF);
+	}
+	else
+	{
+		match(TokenType::MUL);
+		return new AddrNode(unary_right(), AddrOp::DEREF);
+	}
+}
+
 ExprNode* Parser::unary_left()
 {
 	UnaryOp op;
 
 	switch ( getTokenType(1) )
 	{
-	case TokenType::PLUS: op = UnaryOp::PLUS; break;
+	case TokenType::PLUS : op = UnaryOp::PLUS ; break;
 	case TokenType::MINUS: op = UnaryOp::MINUS; break;
-	case TokenType::NOT: op = UnaryOp::NOT; break;
-	default: return unary_right();
+	case TokenType::NOT  : op = UnaryOp::NOT  ; break;
+
+	case TokenType::REF: return addr_expr(); 
+	case TokenType::MUL: return addr_expr();
+	default            : return unary_right();
 	}
 
 	match(getTokenType(1));

@@ -30,6 +30,7 @@
 #include "newexpressionnode.hpp"
 #include "bracketnode.hpp"
 #include "stringnode.hpp"
+#include "addrnode.hpp"
 
 #include "unsafeblocknode.hpp"
 
@@ -74,6 +75,7 @@ private:
     ExprNode* term();
     ExprNode* factor();
 	ExprNode* unary_left();
+	ExprNode* addr_expr();
     ExprNode* unary_right();    
     ExprNode* primary();
     ExprNode* new_expr();

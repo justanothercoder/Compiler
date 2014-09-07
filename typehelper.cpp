@@ -45,6 +45,9 @@ const Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const Tem
 	if ( type_info.is_const )
 		type = TypeFactory::getConst(type);
 
+	for ( int i = 0; i < type_info.pointer_depth; ++i )
+		type = TypeFactory::getPointer(type);
+	
 	return type;
 }
 	

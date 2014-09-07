@@ -21,6 +21,10 @@ public:
 
 	FunctionSymbol* getConversionTo(const Type *t) const override;
 
+	const Symbol* getSymbol() const override;
+
+	const Type* getPointedType() const;
+
 private:
 
 	const Type *type;

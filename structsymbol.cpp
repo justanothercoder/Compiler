@@ -77,8 +77,10 @@ FunctionSymbol* StructSymbol::getConversionOperator(const StructSymbol *st) cons
 
 FunctionSymbol* StructSymbol::getConversionTo(const Type *type) const
 {
-	if ( type -> getTypeKind() != TypeKind::STRUCT )
-		return nullptr;
+//	if ( type -> getTypeKind() != TypeKind::STRUCT )
+//		return nullptr;
+
+	type = type -> getUnqualifiedType();
 
 	auto st = static_cast<const StructSymbol*>(type);
 
@@ -115,9 +117,11 @@ boost::optional<int> StructSymbol::rankOfConversion(const Type *type) const
 	if ( !isConvertableTo(type) )
 		return boost::none;
 
+	type = type -> getUnqualifiedType();
+
 	auto st = static_cast<const StructSymbol*>(type);
 
-	return (this == st) ? 0 : 1;
+	return (this == st) ? 0 : 3;
 }
 	
 FunctionSymbol* StructSymbol::methodWith(std::string name, FunctionTypeInfo ft) const
