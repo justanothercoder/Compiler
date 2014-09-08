@@ -12,6 +12,9 @@ const Type* TypeHelper::fromTypeInfo(TypeInfo type_info, Scope *scope, const Tem
 		type_name = boost::get<std::string>(*template_info.getReplacement(type_name));
 
 	const Type *type = TypeHelper::resolveType(type_name, scope);
+
+	if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )
+		throw SemanticError("Using pointer type in safe block.");
 	
 	if ( type == nullptr )
 		throw SemanticError(type_name + " is not a type");

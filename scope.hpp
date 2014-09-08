@@ -4,6 +4,7 @@
 #include <string>
 #include <set>
 
+class Type;
 class Scope;
 class Symbol;
 class ScopeVisitor;
