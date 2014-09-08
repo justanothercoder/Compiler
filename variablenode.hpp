@@ -11,7 +11,7 @@ class VariableNode : public ExprNode
 {
 
 	friend class TemplateStructSymbol;
-	friend class TypeHelper;
+	friend class Scope;
 
 public:
 

@@ -1,7 +1,6 @@
 #include "asmarraynode.hpp"
 #include "templateinfo.hpp"
 #include "functionsymbol.hpp"
-#include "typehelper.hpp"
 #include "typefactory.hpp"
 #include "classvariablesymbol.hpp"
 #include "templatesymbol.hpp"
@@ -32,7 +31,7 @@ void AsmArrayNode::define()
 	{
 		auto replace = template_info.getReplacement("T");
 
-		type = TypeHelper::resolveType(boost::get<std::string>(*replace), scope);
+		type = scope -> resolveType(boost::get<std::string>(*replace));
 
 		ref_type = TypeFactory::getReference(type);
 

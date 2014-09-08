@@ -4,6 +4,8 @@
 #include <string>
 #include <set>
 
+#include "typeinfo.hpp"
+
 class Type;
 class Scope;
 class Symbol;
@@ -34,6 +36,10 @@ public:
 	virtual bool isUnsafeBlock() const;
 
 	void define(Symbol *sym);
+
+	const Type* resolveType(std::string name);
+	const Type* fromTypeInfo(TypeInfo type_info);
+	const Type* fromTypeInfo(TypeInfo type_info, const TemplateInfo& template_info);
 };
 
 #endif

@@ -1,5 +1,4 @@
 #include "stringnode.hpp"
-#include "typehelper.hpp"
 #include "typefactory.hpp"
 #include "builtins.hpp"
 
@@ -59,7 +58,7 @@ std::string StringNode::getNewLabel()
 
 const Type* StringNode::getType() const 
 {
-	static const Type *type = TypeHelper::resolveType("string", BuiltIns::global_scope);
+	static const Type *type = BuiltIns::global_scope -> resolveType("string");
 
 	return TypeFactory::getConst(type);
 }

@@ -1,6 +1,5 @@
 #include "variablenode.hpp"
 #include "functionsymbol.hpp"
-#include "typehelper.hpp"
 #include "templatestructsymbol.hpp"
 #include "numbernode.hpp"
 #include "classvariablesymbol.hpp"
@@ -123,7 +122,7 @@ const Type* VariableNode::getType() const
 
 		auto replace = template_info.getReplacement(name);
 
-		return TypeHelper::resolveType("int", BuiltIns::global_scope);
+		return BuiltIns::global_scope -> resolveType("int");
 	}
 
 	return variable -> getType();

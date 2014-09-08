@@ -1,6 +1,5 @@
 #include "newexpressionnode.hpp"
 #include "functionsymbol.hpp"
-#include "typehelper.hpp"
 #include "callhelper.hpp"
 #include "structsymbol.hpp"
 #include "globalhelper.hpp"
@@ -31,7 +30,7 @@ void NewExpressionNode::check()
 	for ( auto param : type_info.template_params )
 		param -> check();
 
-	auto type = static_cast<const StructSymbol*>(TypeHelper::fromTypeInfo(type_info, scope, scope -> getTemplateInfo()));
+	auto type = static_cast<const StructSymbol*>(scope -> fromTypeInfo(type_info));
 
 	call_info = CallHelper::callCheck(type -> getName(), type, params); 
 

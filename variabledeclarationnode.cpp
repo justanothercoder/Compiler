@@ -1,6 +1,5 @@
 #include "variabledeclarationnode.hpp"
 #include "classvariablesymbol.hpp"
-#include "typehelper.hpp"
 #include "callhelper.hpp"
 #include "exprnode.hpp"
 #include "scope.hpp"
@@ -52,7 +51,7 @@ void VariableDeclarationNode::check()
 		{
 			std::string type_name = type_info.type_name;
 
-			auto var_type = TypeHelper::fromTypeInfo(type_info, scope, scope -> getTemplateInfo());
+			auto var_type = scope -> fromTypeInfo(type_info);
 
 			if ( var_type -> getSymbol() == nullptr || var_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
 				throw SemanticError("No such struct " + type_name);
@@ -123,7 +122,7 @@ void VariableDeclarationNode::define()
 		type_info.type_name = boost::get<std::string>(*replace);
     }
     
-    auto var_type = TypeHelper::fromTypeInfo(type_info, scope, template_info);
+    auto var_type = scope -> fromTypeInfo(type_info);
     
     if ( var_type == BuiltIns::void_type )
 		throw SemanticError("can't declare a variable of 'void' type.");

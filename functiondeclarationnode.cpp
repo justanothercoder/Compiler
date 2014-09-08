@@ -2,7 +2,6 @@
 
 #include "typefactory.hpp"
 #include "functionsymbol.hpp"
-#include "typehelper.hpp"
 #include "templatestructsymbol.hpp"
 #include "globalhelper.hpp"
 
@@ -60,7 +59,7 @@ void FunctionDeclarationNode::define()
 
 			return type;
 		}
-		return TypeHelper::fromTypeInfo(type_info, scope, template_info);
+		return scope -> fromTypeInfo(type_info);
 	};
 
     auto return_type = fromTypeInfo(return_type_info);
