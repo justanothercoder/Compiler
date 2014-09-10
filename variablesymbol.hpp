@@ -25,6 +25,8 @@ public:
     virtual SymbolType getSymbolType() const;
 
 	ScopeVisitor* getScopeVisitor() override;
+	
+	bool is_unsafe;
     
 private:
 

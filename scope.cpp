@@ -4,7 +4,6 @@
 #include "templateinfo.hpp"
 #include "templatestructsymbol.hpp"
 #include "variablenode.hpp"
-#include "classvariablesymbol.hpp"
 #include "typefactory.hpp"
 
 Scope::~Scope() 

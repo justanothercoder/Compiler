@@ -2,7 +2,6 @@
 #include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
 #include "numbernode.hpp"
-#include "classvariablesymbol.hpp"
 #include "builtins.hpp"
 
 VariableNode::VariableNode(std::string name) : name(name), variable(nullptr), template_num(nullptr) 
@@ -34,16 +33,8 @@ void VariableNode::check()
 	if ( sym == nullptr || !sym -> is_defined )
 		throw SemanticError("No such symbol '" + name + "'.");
 
-	if ( sym -> getSymbolType() == SymbolType::STRUCT )
-	{
-		variable = new ClassVariableSymbol(static_cast<StructSymbol*>(sym));
-		return;
-	}
-	else
-	{
-		if ( sym -> getSymbolType() != SymbolType::VARIABLE )
-			throw SemanticError("'" + name + "' is not a variable.");
-	}
+	if ( sym -> getSymbolType() != SymbolType::VARIABLE )
+		throw SemanticError("'" + name + "' is not a variable.");
 
 	variable = static_cast<VariableSymbol*>(sym);
 }
@@ -144,8 +135,6 @@ bool VariableNode::isCompileTimeExpr() const
 
 	if ( template_info.sym != nullptr && template_info.sym -> isIn(name) )
 		return true;
-	else if ( dynamic_cast<ClassVariableSymbol*>(variable) )
-		return true;
 	else
 		return false;
 }
@@ -156,8 +145,6 @@ boost::optional<int> VariableNode::getCompileTimeValue() const
 
 	if ( template_info.sym != nullptr && template_info.sym -> isIn(name) )
 		return boost::get<int>(*template_info.getReplacement(name));
-	if ( dynamic_cast<ClassVariableSymbol*>(variable) )
-		return std::hash<std::string>()(variable -> getName());
 	else
 		return boost::none;
 }

@@ -1,5 +1,4 @@
 #include "variabledeclarationnode.hpp"
-#include "classvariablesymbol.hpp"
 #include "callhelper.hpp"
 #include "exprnode.hpp"
 #include "scope.hpp"

@@ -40,6 +40,7 @@ public:
     FunctionTypeInfo function_type_info;	
 	
 	bool is_constexpr;
+	bool is_unsafe;
 
 	bool isConvertableTo(const Type *type) const override;
 	boost::optional<int> rankOfConversion(const Type *type) const override;

@@ -2,7 +2,6 @@
 #include "templateinfo.hpp"
 #include "functionsymbol.hpp"
 #include "typefactory.hpp"
-#include "classvariablesymbol.hpp"
 #include "templatesymbol.hpp"
 #include "numbernode.hpp"
 #include "builtins.hpp"
