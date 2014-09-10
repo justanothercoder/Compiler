@@ -58,7 +58,7 @@ const Type* Scope::fromTypeInfo(TypeInfo type_info, const TemplateInfo& template
 	const Type *type = resolveType(type_name);
 
 	if ( type_info.pointer_depth > 0 && !isUnsafeBlock() )
-		throw SemanticError("Using pointer type in safe block.");
+		throw SemanticError("Using pointer type in safe block " + getScopeName() + ".");
 	
 	if ( type == nullptr )
 		throw SemanticError(type_name + " is not a type");
@@ -73,7 +73,7 @@ const Type* Scope::fromTypeInfo(TypeInfo type_info, const TemplateInfo& template
 		auto getTemplateParam = [] ( TemplateParamInfo tp_info )
 		{
 			if ( tp_info.which() == 1 )
-				return TemplateParam(boost::get<TypeInfo>(tp_info).type_name);
+				return TemplateParam(boost::get<TypeInfo>(tp_info));
 			else
 				return TemplateParam(*boost::get<ExprNode*>(tp_info) -> getCompileTimeValue());
 		};

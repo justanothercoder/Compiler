@@ -32,7 +32,8 @@ void AsmArrayNode::define()
 	{
 		auto replace = template_info.getReplacement("T");
 
-		type = scope -> resolveType(boost::get<std::string>(*replace));
+//		type = scope -> resolveType(boost::get<std::string>(*replace));
+		type = scope -> fromTypeInfo(boost::get<TypeInfo>(*replace));
 
 		ref_type = TypeFactory::getReference(type);
 

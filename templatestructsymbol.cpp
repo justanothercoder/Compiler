@@ -36,7 +36,7 @@ Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols) const
 		for ( size_t i = 0; i < vec.size(); ++i )
 		{
 			if ( vec[i].which() == 0 )
-				ans += static_cast<int>(std::hash<std::string>()(boost::get<std::string>(vec[i])) * pow);
+				ans += static_cast<int>(std::hash<std::string>()(boost::get<TypeInfo>(vec[i]).type_name) * pow);
 			else
 				ans += static_cast<int>(boost::get<int>(vec[i])) * pow;
 
