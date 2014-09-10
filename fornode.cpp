@@ -74,3 +74,8 @@ std::string ForNode::getNewLabel()
 	static int label_num = 0;
 	return "@for_label" + std::to_string(++label_num);
 }
+	
+std::string ForNode::toString() const 
+{
+	return "for (" + init -> toString() + "; " + cond -> toString() + "; " + step -> toString() + ")\n" + stats -> toString();
+}

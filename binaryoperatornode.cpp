@@ -139,3 +139,27 @@ boost::optional<int> BinaryOperatorNode::getCompileTimeValue() const
 	default: return boost::none;
 	}	
 }
+
+std::string BinaryOperatorNode::toString() const
+{
+	std::string lhs_str = lhs -> toString();
+	std::string rhs_str = rhs -> toString();
+
+	std::string oper;
+
+	switch ( op_type )
+	{
+	case BinaryOp::ASSIGN : oper = "=" ; break;
+	case BinaryOp::PLUS   : oper = "+" ; break;
+	case BinaryOp::MINUS  : oper = "-" ; break;
+	case BinaryOp::MUL    : oper = "*" ; break;
+	case BinaryOp::EQUALS : oper = "=="; break;
+	case BinaryOp::NEQUALS: oper = "!="; break;
+	case BinaryOp::AND    : oper = "&&"; break;
+	case BinaryOp::OR     : oper = "||"; break;
+	case BinaryOp::DIV    : oper = "/" ; break;
+	case BinaryOp::MOD    : oper = "%" ; break;
+	}
+
+	return lhs_str + " " + oper + " " + rhs_str;
+}

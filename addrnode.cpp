@@ -100,3 +100,8 @@ std::vector<AST*> AddrNode::getChildren() const
 {
 	return {expr};
 }
+
+std::string AddrNode::toString() const
+{
+	return (op == AddrOp::REF ? std::string("&") : std::string("*")) + expr -> toString();
+}

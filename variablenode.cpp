@@ -161,3 +161,8 @@ boost::optional<int> VariableNode::getCompileTimeValue() const
 	else
 		return boost::none;
 }
+
+std::string VariableNode::toString() const
+{
+	return name;
+}

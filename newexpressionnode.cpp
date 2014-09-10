@@ -20,15 +20,21 @@ void NewExpressionNode::build_scope()
 	AST::build_scope();
 	for ( auto param : type_info.template_params )
 	{
-		param -> scope = scope;
-		param -> build_scope();
+		if ( param.which() == 0 )
+		{
+			boost::get<ExprNode*>(param) -> scope = scope;
+			boost::get<ExprNode*>(param) -> build_scope();
+		}
 	}
 }
 
 void NewExpressionNode::check()
 {
 	for ( auto param : type_info.template_params )
-		param -> check();
+	{
+		if ( param.which() == 0 )
+			boost::get<ExprNode*>(param) -> check();
+	}
 
 	auto type = static_cast<const StructSymbol*>(scope -> fromTypeInfo(type_info));
 
@@ -93,4 +99,23 @@ bool NewExpressionNode::isCompileTimeExpr() const
 boost::optional<int> NewExpressionNode::getCompileTimeValue() const
 {
 	return boost::none;
+}
+	
+std::string NewExpressionNode::toString() const 
+{
+	std::string res = "new " + type_info.toString();
+
+	if ( !params.empty() )
+	{
+		res += "(";
+
+		auto it = std::begin(params);
+		res += (*it) -> toString();
+
+		for ( ++it; it != std::end(params); ++it )
+			res += ", " + (*it) -> toString();
+
+		res += ")";
+	}
+	return res;
 }

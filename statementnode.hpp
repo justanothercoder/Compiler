@@ -22,6 +22,8 @@ public:
     CodeObject& gen() override;
 
 	virtual std::vector<AST*> getChildren() const;
+	
+	std::string toString() const override;
 
 private:
 

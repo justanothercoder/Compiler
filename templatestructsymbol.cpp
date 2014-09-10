@@ -29,14 +29,6 @@ bool TemplateStructSymbol::isIn(std::string name) const
 
 Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols) const
 {
-	for ( auto param : symbols )
-	{
-		if ( param.which() == 0 ) 
-			std::cerr << "Debug: " << boost::get<std::string>(param) << '\n';
-		else	
-			std::cerr << "Debug: " << boost::get<int>(param) << '\n';
-	}
-	
 	auto hash_func = [](std::vector<TemplateParam> vec)
 	{
 		unsigned long long P = 31, pow = 1, ans = 0;
@@ -69,13 +61,12 @@ Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols) const
 
 	StructDeclarationNode *decl = new StructDeclarationNode(this -> getName() + "~hash" + std::to_string(hash_), vec);
 
-	decl -> scope = new StructSymbol(getName(), holder -> scope -> getEnclosingScope(), *(new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)));
+	decl -> scope = new StructSymbol(getName(), holder -> scope, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)));
 	decl -> build_scope();
 
 	decl -> define();
 	decl -> check();
 	decl -> gen().gen();
 
-//	return (specs[symbols] = static_cast<StructSymbol*>(decl -> getDefinedSymbol()));
 	return (specs[hash_] = static_cast<StructSymbol*>(decl -> getDefinedSymbol()));
 }

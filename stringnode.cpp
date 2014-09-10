@@ -82,3 +82,8 @@ boost::optional<int> StringNode::getCompileTimeValue() const
 {
 	return boost::none;
 }
+	
+std::string StringNode::toString() const 
+{
+	return '"' + str + '"'; 
+}

@@ -73,18 +73,14 @@ void BuiltIns::defineBuiltIns()
 
 	BuiltIns::void_type = void_type;
 
-	TemplateStructSymbol *array_struct = new TemplateStructSymbol("array", global_scope,
-																		{ {"T", TypeInfo("class", false, { }) }, 
-																		  { "size", TypeInfo("int", false, { }) }
-																		},
-																		new TemplateStructDeclarationNode(
-																			"array",
-																			{new AsmArrayNode()},
-																			{ {"T", TypeInfo("class", false, { }) }, 
-																			  { "size", TypeInfo("int", false, { }) }
-																			}
-																		)
-		);
+	std::vector< std::pair<std::string, TypeInfo> > array_tp = { {"T", TypeInfo("class", false, { }) }, 
+																 { "size", TypeInfo("int", false, { }) }
+															   };
+																		
+	auto array_decl = new TemplateStructDeclarationNode("array", {new AsmArrayNode()}, array_tp);
+	array_decl -> scope = global_scope;
+
+	TemplateStructSymbol *array_struct = new TemplateStructSymbol("array", global_scope, array_tp, array_decl);
 		
 	global_scope -> define(const_cast<Symbol*>(BuiltIns::void_type -> getSymbol()));
 	global_scope -> define(new FunctionSymbol("putchar", void_type, {char_struct}, global_scope, simple_traits));

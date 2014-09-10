@@ -60,3 +60,8 @@ boost::optional<int> NumberNode::getCompileTimeValue() const
 {
 	return boost::optional<int>(std::stoi(num));
 }
+	
+std::string NumberNode::toString() const
+{
+	return num;
+}

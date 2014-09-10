@@ -89,3 +89,14 @@ std::vector<AST*> StructDeclarationNode::getChildren() const
 {
    	return inner; 
 }	
+
+std::string StructDeclarationNode::toString() const
+{
+	std::string res = "struct " + name + "\n{\n";
+	
+	for ( auto decl : inner )
+		res += decl -> toString() + '\n';
+
+	res += "}";
+	return res;
+}

@@ -4,14 +4,18 @@
 #include "exprnode.hpp"
 #include "structsymbol.hpp"
 
-CallInfo CallHelper::callCheck(std::string name, const Scope *sc, std::vector<ExprNode*> params)
+#include "logger.hpp"
+
+CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector<ExprNode*> params)
 {
     for ( auto i : params )
 		i -> check();
 
 	auto params_types = CallHelper::extractTypes(params);
 
-	auto function_sym = CallHelper::resolveOverload(name, sc, params_types);
+	auto function_sym = CallHelper::resolveOverload(name, scope, params_types);
+
+	Logger::log("Debug: " + (scope == nullptr ? "null" : scope -> getScopeName()));
 	
 	if ( function_sym == nullptr )
 		throw SemanticError("No viable overload of '" + name + "'.");

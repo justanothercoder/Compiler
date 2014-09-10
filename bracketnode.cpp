@@ -76,3 +76,8 @@ boost::optional<int> BracketNode::getCompileTimeValue() const
 {
 	return boost::none;
 }
+	
+std::string BracketNode::toString() const
+{
+	return base -> toString() + "[" + expr -> toString() + "]";
+}

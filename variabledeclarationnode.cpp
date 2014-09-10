@@ -30,8 +30,11 @@ void VariableDeclarationNode::build_scope()
 	AST::build_scope();
 	for ( auto param : type_info.template_params )
 	{
-		param -> scope         = scope;
-		param -> build_scope();
+		if ( param.which() == 0 )
+		{
+			boost::get<ExprNode*>(param) -> scope = scope;
+			boost::get<ExprNode*>(param) -> build_scope();
+		}
 	}
 }
 
@@ -43,7 +46,10 @@ Symbol* VariableDeclarationNode::getDefinedSymbol() const
 void VariableDeclarationNode::check()
 {	
 	for ( auto param : type_info.template_params )
-		param -> check();
+	{
+		if ( param.which() == 0 )
+			boost::get<ExprNode*>(param) -> check();
+	}
 
 	if ( !is_field )
 	{
@@ -143,4 +149,9 @@ AST* VariableDeclarationNode::copyTree() const
 std::vector<AST*> VariableDeclarationNode::getChildren() const 
 { 
 	return std::vector<AST*>(std::begin(constructor_call_params), std::end(constructor_call_params)); 
+}
+	
+std::string VariableDeclarationNode::toString() const
+{
+	return type_info.toString() + " " + name + ";";
 }

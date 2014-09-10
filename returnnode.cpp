@@ -80,3 +80,8 @@ std::vector<AST*> ReturnNode::getChildren() const
 {
    	return {expr}; 
 }
+
+std::string ReturnNode::toString() const
+{
+	return "return " + expr -> toString() + ";";
+}

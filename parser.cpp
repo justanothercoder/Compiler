@@ -598,7 +598,7 @@ TypeInfo Parser::typeInfo()
 
 	bool is_ref = false;
 
-	vector<ExprNode*> template_params { };
+	std::vector<TemplateParamInfo> template_params { };
 
 	if ( getTokenType(1) == TokenType::LESS )
 	{
@@ -606,11 +606,18 @@ TypeInfo Parser::typeInfo()
 
 		if ( getTokenType(1) != TokenType::GREATER )
 		{
-			template_params.push_back(expression());
+			if ( tryTypeInfo() )
+				template_params.push_back(typeInfo());
+			else
+				template_params.push_back(expression());
+
 			while ( getTokenType(1) == TokenType::COMMA )
 			{
 				match(TokenType::COMMA);
-				template_params.push_back(expression());
+				if ( tryTypeInfo() )
+					template_params.push_back(typeInfo());
+				else
+					template_params.push_back(expression());
 			}
 		}
 

@@ -1,4 +1,5 @@
 #include "typeinfo.hpp"
+#include "exprnode.hpp"
 
 TypeInfo::TypeInfo() 
 {
@@ -8,7 +9,7 @@ TypeInfo::TypeInfo()
 TypeInfo::TypeInfo(std::string type_name
 		         , bool is_ref
 				 , bool is_const
-				 , std::vector<ExprNode*> template_params
+				 , std::vector<TemplateParamInfo> template_params
 				 , int pointer_depth) : type_name(type_name)
 									  , is_ref(is_ref)
 									  , is_const(is_const)
@@ -16,4 +17,45 @@ TypeInfo::TypeInfo(std::string type_name
 									  , pointer_depth(pointer_depth)
 {
 
+}
+
+std::string TypeInfo::toString() const
+{
+	std::string res = type_name;
+	
+	if ( is_const )
+		res = "const " + res;
+
+	if ( !template_params.empty() )
+	{
+		res += "<";
+
+		auto it = std::begin(template_params);
+
+		if ( it -> which() == 0 )
+			res += boost::get<ExprNode*>(*it) -> toString();
+		else
+			res += boost::get<TypeInfo>(*it).toString();
+
+		for ( ++it; it != std::end(template_params); ++it )
+		{
+			const auto& tp = *it;
+
+			res += ", ";
+			if ( tp.which() == 0 )
+				res += boost::get<ExprNode*>(tp) -> toString();
+			else
+				res += boost::get<TypeInfo>(tp).toString();
+		}
+
+		res += ">";
+	}
+
+	for ( int i = 0; i < pointer_depth; ++i )
+		res += "*";
+
+	if ( is_ref )
+		res += "&";
+
+	return res;
 }

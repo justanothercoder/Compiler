@@ -15,6 +15,7 @@ public:
     void check() override;
 
     CodeObject& gen() override;
+	std::string toString() const override;
 
 private:
 

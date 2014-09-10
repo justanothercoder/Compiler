@@ -25,6 +25,8 @@ public:
 	bool isCompileTimeExpr() const override;
 	boost::optional<int> getCompileTimeValue() const override;
 
+	std::string toString() const override;
+
 private:
 
 	ExprNode *base, *expr;

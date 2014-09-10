@@ -16,6 +16,8 @@ public:
 	CodeObject& gen() override;
 	
 	AST* copyTree() const override;
+	
+	std::string toString() const override;
 
 private:
 	

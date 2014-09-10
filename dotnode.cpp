@@ -91,3 +91,8 @@ boost::optional<int> DotNode::getCompileTimeValue() const
 {
 	return boost::none;
 }
+	
+std::string DotNode::toString() const 
+{
+	return base -> toString() + "." + member_name;
+}

@@ -105,3 +105,23 @@ boost::optional<int> CallNode::getCompileTimeValue() const
 {
 	return boost::none;
 }
+	
+std::string CallNode::toString() const 
+{
+	std::string res = caller -> toString();
+   
+	res += "(";
+
+	if ( !params.empty() )
+	{
+		auto it = std::begin(params);
+		res += (*it) -> toString();
+
+		for ( ++it; it != std::end(params); ++it )
+			res += ", " + (*it) -> toString();
+	}
+
+	res += ")";
+
+	return res;
+}

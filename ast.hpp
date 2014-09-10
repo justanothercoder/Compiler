@@ -2,6 +2,7 @@
 #define _AST_HPP_
 
 #include <vector>
+#include <string>
 
 class Scope;
 struct TemplateInfo;
@@ -22,6 +23,8 @@ public:
 	virtual CodeObject& gen() = 0;
 
 	virtual std::vector<AST*> getChildren() const;	
+
+	virtual std::string toString() const = 0;
 
 	Scope *scope;
 };

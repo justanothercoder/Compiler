@@ -84,3 +84,19 @@ boost::optional<int> UnaryNode::getCompileTimeValue() const
 {
 	return boost::none;
 }
+	
+std::string UnaryNode::toString() const 
+{
+	std::string res = exp -> toString();
+
+	std::string oper;
+
+	switch ( op_type )
+	{
+		case UnaryOp::PLUS : oper = "+"; break;
+		case UnaryOp::MINUS: oper = "-"; break;
+		case UnaryOp::NOT  : oper = "!"; break;
+	}
+
+	return oper + res;
+}

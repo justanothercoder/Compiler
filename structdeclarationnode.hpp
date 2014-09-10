@@ -30,6 +30,8 @@ public:
 
 	std::vector<AST*> getChildren() const override;
 
+	std::string toString() const override;
+
 protected:
 
 	std::string name;

@@ -41,3 +41,8 @@ std::vector<AST*> UnsafeBlockNode::getChildren() const
 {
 	return block -> getChildren();
 }
+	
+std::string UnsafeBlockNode::toString() const 
+{
+	return "unsafe\n" + block -> toString();
+}

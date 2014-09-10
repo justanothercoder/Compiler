@@ -63,3 +63,8 @@ std::vector<AST*> VarInferTypeDeclarationNode::getChildren() const
 {
 	return {expr};
 }
+	
+std::string VarInferTypeDeclarationNode::toString() const 
+{
+	return "var " + name + " = " + expr -> toString() + ";";
+}

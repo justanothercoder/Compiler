@@ -62,6 +62,8 @@ FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 
 	auto constr = new FunctionSymbol(struc -> getName(), ref_struc, {ref_struc}, struc, {true, true, false});
 
+	GlobalHelper::has_definition[constr] = true;
+
 	boost::optional<CodeObject> func_code = CodeObject();
 
 	func_code -> emit("jmp _~" + constr -> getScopedTypedName());

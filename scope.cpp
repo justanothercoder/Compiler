@@ -70,13 +70,12 @@ const Type* Scope::fromTypeInfo(TypeInfo type_info, const TemplateInfo& template
 		if ( type_info.template_params.size() != tmpl -> template_symbols.size() )
 			throw SemanticError("Wrong number of template parameters");
 
-		auto getTemplateParam = [] ( ExprNode *expr )
+		auto getTemplateParam = [] ( TemplateParamInfo tp_info )
 		{
-			if ( dynamic_cast<VariableNode*>(expr) != nullptr 
-			  && dynamic_cast<ClassVariableSymbol*>(static_cast<VariableNode*>(expr) -> variable) != nullptr )
-				return TemplateParam(static_cast<ClassVariableSymbol*>(static_cast<VariableNode*>(expr) -> variable) -> getName());
+			if ( tp_info.which() == 1 )
+				return TemplateParam(boost::get<TypeInfo>(tp_info).type_name);
 			else
-				return TemplateParam(*expr -> getCompileTimeValue());
+				return TemplateParam(*boost::get<ExprNode*>(tp_info) -> getCompileTimeValue());
 		};
 
 		std::vector<TemplateParam> tmpl_params(type_info.template_params.size());

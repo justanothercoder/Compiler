@@ -4,6 +4,7 @@
 #include <memory>
 #include <fstream>
 #include <boost/optional.hpp>
+#include <boost/variant.hpp>
 
 #include "abstractparser.hpp"
 

@@ -84,3 +84,15 @@ std::vector<AST*> IfNode::getChildren() const
 {
    	return {cond, stats_true, stats_false}; 
 }
+	
+std::string IfNode::toString() const
+{
+	std::string res = "if (" + cond -> toString() + ")\n";
+	
+	res += stats_true -> toString();
+
+	if ( stats_false )
+		res += "else\n" + stats_false -> toString();
+
+	return res;
+}

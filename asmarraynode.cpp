@@ -6,10 +6,11 @@
 #include "templatesymbol.hpp"
 #include "numbernode.hpp"
 #include "builtins.hpp"
+#include "globalhelper.hpp"
 
 AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) 
 { 
-	scope = BuiltIns::global_scope; 
+//	scope = BuiltIns::global_scope; 
 }
 
 void AsmArrayNode::define() 
@@ -48,6 +49,10 @@ void AsmArrayNode::define()
 	auto array_constructor   = new FunctionSymbol("array"     , ref_arr , {ref_arr}          , scope, {true, true, false});
 	auto array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, scope, {true, false, true});
 	auto array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , scope, {true, false, false});
+
+	GlobalHelper::has_definition[array_constructor]   = true;
+	GlobalHelper::has_definition[array_elem_operator] = true;
+	GlobalHelper::has_definition[array_size_func]     = true;
 
 	scope -> define(array_constructor);
 	scope -> define(array_elem_operator);
@@ -112,4 +117,12 @@ CodeObject& AsmArrayNode::gen()
 	return code_obj;
 }
 	
-AST* AsmArrayNode::copyTree() const { return new AsmArrayNode(*this); }
+AST* AsmArrayNode::copyTree() const 
+{
+   	return new AsmArrayNode(*this); 
+}
+	
+std::string AsmArrayNode::toString() const
+{
+	return "";
+}

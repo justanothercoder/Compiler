@@ -10,7 +10,8 @@ PointerType::PointerType(const Type *type) : type(type)
 
 std::string PointerType::getName() const
 {
-	return type -> getName() + "*";
+//	return type -> getName() + "*";
+	return type -> getName() + "~ptr";
 }
 
 size_t PointerType::getSize() const

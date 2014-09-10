@@ -64,3 +64,8 @@ std::vector<AST*> WhileNode::getChildren() const
 {
    	return {cond, stats}; 
 }
+	
+std::string WhileNode::toString() const 
+{
+	return "while (" + cond -> toString() + ")\n" + stats -> toString();
+}

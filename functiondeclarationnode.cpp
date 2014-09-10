@@ -150,3 +150,23 @@ std::vector<AST*> FunctionDeclarationNode::getChildren() const
 { 
 	return {statements}; 
 }
+	
+std::string FunctionDeclarationNode::toString() const
+{
+	std::string res = return_type_info.toString() + " " + name + "(";
+	
+	if ( !params.empty() )
+	{
+		auto it = std::begin(params);
+
+		res += it -> second.toString() + " " + it -> first;
+
+		for ( ++it; it != std::end(params); ++it )
+			res += ", " + it -> second.toString() + " " + it -> first;
+	}
+
+	res += ")";
+	res += statements -> toString();
+
+	return res;
+}
