@@ -4,7 +4,11 @@
 #include "functionhelper.hpp"
 #include "functionsymbol.hpp"
 
-StructDeclarationNode::StructDeclarationNode(std::string name, std::vector<AST*> inner) : name(name), inner(inner), definedSymbol(nullptr) 
+StructDeclarationNode::StructDeclarationNode(std::string name, std::vector<AST*> inner, boost::optional<TemplateInfo> template_info) 
+																	: name(name)
+																	, inner(inner)
+																	, template_info(template_info)
+																	, definedSymbol(nullptr)
 {
 
 }
@@ -24,7 +28,10 @@ Symbol* StructDeclarationNode::getDefinedSymbol() const
 
 void StructDeclarationNode::build_scope()
 {
-    definedSymbol = new StructSymbol(name, scope, scope -> getTemplateInfo());
+	if ( !template_info )
+	    definedSymbol = new StructSymbol(name, scope, scope -> getTemplateInfo());
+	else
+	    definedSymbol = new StructSymbol(name, scope, *template_info);
 
 	scope -> define(definedSymbol);
 
@@ -82,7 +89,7 @@ AST* StructDeclarationNode::copyTree() const
 { 
 	std::vector<AST*> in(inner.size());
 	std::transform(std::begin(inner), std::end(inner), std::begin(in), [&](AST *t) { return t -> copyTree(); });
-	return new StructDeclarationNode(name, in);
+	return new StructDeclarationNode(name, in, template_info);
 }
 
 std::vector<AST*> StructDeclarationNode::getChildren() const 

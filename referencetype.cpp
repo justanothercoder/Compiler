@@ -25,7 +25,7 @@ TypeKind ReferenceType::getTypeKind() const
 
 bool ReferenceType::isConvertableTo(const Type *t) const 
 {
-	return type -> isConvertableTo(t);
+	return (this == t) || type -> isConvertableTo(t);
 }
 
 boost::optional<int> ReferenceType::rankOfConversion(const Type *t) const 

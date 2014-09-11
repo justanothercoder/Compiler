@@ -21,7 +21,7 @@ public:
 
     bool isIn(std::string name) const;
     
-    Symbol* getSpec(std::vector<TemplateParam> symbols) const override;
+    Symbol* getSpec(std::vector<TemplateParam> symbols, Scope *inst_scope) const override;
     
 public:
 

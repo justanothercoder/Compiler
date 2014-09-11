@@ -76,8 +76,11 @@ void BuiltIns::defineBuiltIns()
 	std::vector< std::pair<std::string, TypeInfo> > array_tp = { {"T", TypeInfo("class", false, { }) }, 
 																 { "size", TypeInfo("int", false, { }) }
 															   };
-																		
-	auto array_decl = new TemplateStructDeclarationNode("array", {new AsmArrayNode()}, array_tp);
+																
+	auto arr_node = new AsmArrayNode();
+	arr_node -> scope = global_scope;
+
+	auto array_decl = new TemplateStructDeclarationNode("array", {arr_node}, array_tp);
 	array_decl -> scope = global_scope;
 
 	TemplateStructSymbol *array_struct = new TemplateStructSymbol("array", global_scope, array_tp, array_decl);

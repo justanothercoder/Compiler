@@ -33,7 +33,8 @@ const Type* AddrNode::getType() const
 
 bool AddrNode::isLeftValue() const
 {
-	return false;
+//	return false;
+	return (op == AddrOp::DEREF);
 }
 
 void AddrNode::freeTempSpace() 
@@ -90,6 +91,8 @@ CodeObject& AddrNode::gen()
 	}
 	else
 	{
+		if ( expr -> getType() -> isReference() )
+			code_obj.emit("mov rax, [rax]");
 		code_obj.emit("mov rax, [rax]");
 	}
 

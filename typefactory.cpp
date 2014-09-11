@@ -23,7 +23,8 @@ const Type* TypeFactory::getPointer(const Type *type)
 		const auto& tp = pointers[type];
 		auto tp_ref = getReference(tp);
 
-		auto pointer_assign = new FunctionSymbol("operator=", tp_ref, {tp_ref, tp}, BuiltIns::global_scope, {true, false, true});
+//		auto pointer_assign = new FunctionSymbol("operator=", tp_ref, {tp_ref, tp}, BuiltIns::global_scope, {false, false, true});
+		auto pointer_assign = new FunctionSymbol("operator=", tp_ref, {tp_ref, getConst(tp_ref)}, BuiltIns::global_scope, {false, false, true});
 		GlobalHelper::has_definition[pointer_assign] = true;
 		
 		CodeObject assign_code;

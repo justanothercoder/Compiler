@@ -13,21 +13,19 @@ public:
 
     VariableSymbol(std::string name, const Type *type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
 
-    virtual const Type* getType() const;
+    const Type* getType() const;
 
     void setType(const Type *t);
 
-    virtual std::string getName() const;
+    std::string getName() const override;
 
     bool isParam() const;
     bool isField() const;
 
-    virtual SymbolType getSymbolType() const;
+    SymbolType getSymbolType() const override;
 
 	ScopeVisitor* getScopeVisitor() override;
 	
-	bool is_unsafe;
-    
 private:
 
 	std::string name;

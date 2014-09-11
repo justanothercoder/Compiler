@@ -21,6 +21,7 @@ public:
 	virtual ScopeVisitor* getScopeVisitor();
 
 	bool is_defined;
+	bool is_unsafe;
 };
 
 #endif

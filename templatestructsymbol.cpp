@@ -27,7 +27,7 @@ bool TemplateStructSymbol::isIn(std::string name) const
 			) != std::end(template_symbols);
 }
 
-Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols) const
+Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols, Scope *inst_scope) const
 {
 	auto hash_func = [](std::vector<TemplateParam> vec)
 	{
@@ -59,9 +59,12 @@ Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols) const
 	for ( auto t : children )
 		vec.push_back(t -> copyTree());
 
-	StructDeclarationNode *decl = new StructDeclarationNode(this -> getName() + "~hash" + std::to_string(hash_), vec);
+	StructDeclarationNode *decl = new StructDeclarationNode(this -> getName() + "~hash" + std::to_string(hash_), vec, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)));
 
-	decl -> scope = new StructSymbol(getName(), holder -> scope, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)));
+//	decl -> scope = new StructSymbol(getName(), holder -> scope, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)));
+	decl -> scope = inst_scope;
+//	decl -> definedSymbol = new StructSymbol(getName(), inst_scope, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)));
+
 	decl -> build_scope();
 
 	decl -> define();

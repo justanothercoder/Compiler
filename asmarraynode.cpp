@@ -27,22 +27,19 @@ void AsmArrayNode::define()
 	}
 	else throw SemanticError("");
 
+	auto arr = dynamic_cast<StructSymbol*>(scope);
+	arr -> is_unsafe = true;
+
 	if ( template_info.sym -> isIn("T") )
 	{
 		auto replace = template_info.getReplacement("T");
-
-//		type = scope -> resolveType(boost::get<std::string>(*replace));
-		type = scope -> fromTypeInfo(boost::get<TypeInfo>(*replace));
-
-		ref_type = TypeFactory::getReference(type);
-
+		type         = scope -> fromTypeInfo(boost::get<TypeInfo>(*replace));
+		ref_type     = TypeFactory::getReference(type);
 		size_of_type = type -> getSize();
 	}
 	else throw SemanticError("");
 
 	auto just_int = BuiltIns::int_type;
-
-	auto arr = dynamic_cast<StructSymbol*>(scope);
 
 	auto ref_arr = TypeFactory::getReference(arr);
 
@@ -53,6 +50,10 @@ void AsmArrayNode::define()
 	GlobalHelper::has_definition[array_constructor]   = true;
 	GlobalHelper::has_definition[array_elem_operator] = true;
 	GlobalHelper::has_definition[array_size_func]     = true;
+
+	array_constructor   -> is_unsafe = true;
+	array_elem_operator -> is_unsafe = true;
+	array_size_func     -> is_unsafe = true;
 
 	scope -> define(array_constructor);
 	scope -> define(array_elem_operator);

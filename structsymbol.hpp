@@ -45,6 +45,8 @@ public:
 
 	const Symbol* getSymbol() const override;
 
+	bool isUnsafeBlock() const override;
+
 private:
 
 	std::string name;

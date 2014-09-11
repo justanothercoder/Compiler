@@ -141,3 +141,8 @@ const Symbol* StructSymbol::getSymbol() const
 {
 	return this;
 }
+	
+bool StructSymbol::isUnsafeBlock() const 
+{
+	return is_unsafe;
+}

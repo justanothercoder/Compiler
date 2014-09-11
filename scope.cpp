@@ -80,7 +80,7 @@ const Type* Scope::fromTypeInfo(TypeInfo type_info, const TemplateInfo& template
 		std::vector<TemplateParam> tmpl_params(type_info.template_params.size());
 		std::transform(std::begin(type_info.template_params), std::end(type_info.template_params), std::begin(tmpl_params), getTemplateParam);
 
-		auto sym = tmpl -> getSpec(tmpl_params);	
+		auto sym = tmpl -> getSpec(tmpl_params, this);	
 		type = dynamic_cast<Type*>(sym);
 	}
 

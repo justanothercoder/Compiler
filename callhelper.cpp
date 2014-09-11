@@ -3,22 +3,19 @@
 #include "typefactory.hpp"
 #include "exprnode.hpp"
 #include "structsymbol.hpp"
-
-#include "logger.hpp"
+#include "noviableoverloaderror.hpp"
 
 CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector<ExprNode*> params)
 {
     for ( auto i : params )
 		i -> check();
 
-	auto params_types = CallHelper::extractTypes(params);
+	auto params_types = extractTypes(params);
 
-	auto function_sym = CallHelper::resolveOverload(name, scope, params_types);
+	auto function_sym = resolveOverload(name, scope, params_types);
 
-	Logger::log("Debug: " + (scope == nullptr ? "null" : scope -> getScopeName()));
-	
 	if ( function_sym == nullptr )
-		throw SemanticError("No viable overload of '" + name + "'.");
+		throw NoViableOverloadError(name, params_types);
 
     auto function_info = function_sym -> function_type_info;
     
@@ -27,7 +24,7 @@ CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector
 	for ( int i = function_info.params_types.size() - 1; i >= is_meth; --i )
     {
 		auto t = function_info.params_types.at(i);
-		if ( t -> isReference() && !params.at(i - is_meth) -> isLeftValue() && !t -> isConst() )
+		if ( t -> isReference() && (!params.at(i - is_meth) -> isLeftValue() && !params.at(i - is_meth) -> getType() -> isReference()) && !t -> isConst() )
 			throw SemanticError("parameter is not an lvalue.");
     }
 
