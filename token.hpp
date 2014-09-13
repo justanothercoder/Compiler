@@ -13,7 +13,7 @@ enum class TokenType { EOF_TYPE,
 	LBRACKET, RBRACKET, OPERATOR,
 	FOR, CONST, STRING, EQUALS,
 	NEQUALS, NOT, AND, OR, IMPORT,
-	MOD, VAR, UNSAFE
+	MOD, VAR, UNSAFE, NULLTOKEN
 	};
 
 std::string to_string(TokenType tt);

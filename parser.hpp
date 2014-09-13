@@ -32,6 +32,7 @@
 #include "bracketnode.hpp"
 #include "stringnode.hpp"
 #include "addrnode.hpp"
+#include "nullnode.hpp"
 
 #include "unsafeblocknode.hpp"
 
@@ -84,6 +85,7 @@ private:
     ExprNode* literal();
     ExprNode* number();
    	ExprNode* get_string();
+	ExprNode* null();
 
     bool tryAssignment();
     bool tryVarDecl();

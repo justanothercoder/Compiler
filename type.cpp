@@ -24,4 +24,3 @@ bool Type::isConst() const
 {
 	return false;
 }
-

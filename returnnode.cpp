@@ -36,7 +36,8 @@ CodeObject& ReturnNode::gen()
 
 		return_place.emit("mov rax, [rbp + " + std::to_string(addr) + "]");
 
-		code_obj.genCallCode(copy_call_info, {expr}, return_place, false);
+		if ( expr -> getType() -> getTypeKind() != TypeKind::POINTER )
+			code_obj.genCallCode(copy_call_info, {expr}, return_place, false);
 	}
 
 	if ( !enclosing_func -> return_type -> isReference() )
@@ -63,7 +64,8 @@ void ReturnNode::check()
     expr -> check();
 
 //	copy_call_info = CallHelper::callCheck(expr -> getType() -> getTypeName(), static_cast<const StructSymbol*>(expr -> getType().type), {expr});
-	copy_call_info = CallHelper::callCheck(expr -> getType() -> getName(), static_cast<const StructSymbol*>(expr -> getType()), {expr});
+	if ( expr -> getType() -> getTypeKind() != TypeKind::POINTER )
+		copy_call_info = CallHelper::callCheck(expr -> getType() -> getName(), static_cast<const StructSymbol*>(expr -> getType()), {expr});
 }
 	
 void ReturnNode::define() 

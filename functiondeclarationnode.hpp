@@ -17,7 +17,12 @@ class FunctionDeclarationNode : public DeclarationNode
 {
 public:
 
-    FunctionDeclarationNode(std::string name, std::vector< pair<std::string, TypeInfo> > params, TypeInfo return_type_info, AST *statements, FunctionTraits traits);
+    FunctionDeclarationNode(std::string name
+			              , std::vector< pair<std::string, TypeInfo> > params
+						  , TypeInfo return_type_info
+						  , AST *statements
+						  , FunctionTraits traits
+						  , bool is_unsafe = false);
 
     ~FunctionDeclarationNode() override;
     
@@ -50,6 +55,8 @@ private:
 	std::vector<VariableSymbol*> params_symbols;
 
 	CodeObject code_obj;
+
+	bool is_unsafe;
 };
 
 #endif

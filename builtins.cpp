@@ -108,7 +108,7 @@ void BuiltIns::defineBuiltIns()
 	global_scope -> define(new FunctionSymbol("__fwrite", int_struct, {int_struct, const_ref_ASCII_string, int_struct}, global_scope, simple_traits));
 	global_scope -> define(new FunctionSymbol("__fread", int_struct, {int_struct, ref_ASCII_string, int_struct}, global_scope, simple_traits));
 
-	global_scope -> define(new FunctionSymbol("__brk", void_ptr, {int_struct}, global_scope, simple_traits));
+	global_scope -> define(new FunctionSymbol("__brk", void_ptr, {void_ptr}, global_scope, simple_traits));
 		
 	int_struct -> is_defined = true;
 	ASCII_string -> is_defined = true;

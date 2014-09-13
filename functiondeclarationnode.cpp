@@ -9,12 +9,14 @@ FunctionDeclarationNode::FunctionDeclarationNode(std::string name
 		                                       , std::vector< pair<std::string, TypeInfo> > params
 											   , TypeInfo return_type_info
 											   , AST *statements
-											   , FunctionTraits traits) : name(name)
-																		, params(params)
-																		, return_type_info(return_type_info)
-																		, statements(statements)
-																		, traits(traits)
-																		, definedSymbol(nullptr) 
+											   , FunctionTraits traits
+											   , bool is_unsafe) : name(name)
+																 , params(params)
+																 , return_type_info(return_type_info)
+																 , statements(statements)
+																 , traits(traits)
+																 , definedSymbol(nullptr) 
+																 , is_unsafe(is_unsafe)
 {
 
 }
@@ -28,6 +30,7 @@ FunctionDeclarationNode::~FunctionDeclarationNode()
 void FunctionDeclarationNode::build_scope()
 {
 	definedSymbol = new FunctionSymbol(traits.is_constructor ? static_cast<StructSymbol*>(scope) -> getName() : name, nullptr, { }, scope, traits);
+	definedSymbol -> is_unsafe = is_unsafe;
 
 	statements -> scope         = definedSymbol;
 	statements -> build_scope();
@@ -59,7 +62,8 @@ void FunctionDeclarationNode::define()
 
 			return type;
 		}
-		return scope -> fromTypeInfo(type_info);
+//		return scope -> fromTypeInfo(type_info);
+		return definedSymbol -> fromTypeInfo(type_info);
 	};
 
     auto return_type = fromTypeInfo(return_type_info);

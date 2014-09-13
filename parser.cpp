@@ -190,6 +190,14 @@ DeclarationNode* Parser::functionDecl(boost::optional<string> struct_name)
 {
 	match(TokenType::DEF);
 
+	bool is_unsafe = false;
+
+	if ( getTokenType(1) == TokenType::UNSAFE )
+	{
+		is_unsafe = true;
+		match(TokenType::UNSAFE);
+	}
+
 	bool is_operator = getTokenType(1) == TokenType::OPERATOR; 
 
 	string function_name = (is_operator ? operator_name() : id());
@@ -236,7 +244,7 @@ DeclarationNode* Parser::functionDecl(boost::optional<string> struct_name)
 
 	AST *statements = block();
 
-	return new FunctionDeclarationNode(function_name, params, return_type, statements, {bool(struct_name), is_constructor, is_operator});
+	return new FunctionDeclarationNode(function_name, params, return_type, statements, {bool(struct_name), is_constructor, is_operator}, is_unsafe);
 }
 
 string Parser::id()
@@ -299,6 +307,12 @@ ExprNode* Parser::number()
 	return new NumberNode(num);
 }
 
+ExprNode* Parser::null()
+{
+	match(TokenType::NULLTOKEN);
+	return new NullNode();
+}
+
 ExprNode* Parser::primary()
 {
 	if ( getTokenType(1) == TokenType::NUMBER || getTokenType(1) == TokenType::STRING )
@@ -312,6 +326,8 @@ ExprNode* Parser::primary()
 	}
 	else if ( getTokenType(1) == TokenType::NEW )
 		return new_expr();
+	else if ( getTokenType(1) == TokenType::NULLTOKEN )
+		return null();
 	else
 		return variable();        
 }
