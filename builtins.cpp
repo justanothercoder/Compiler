@@ -70,8 +70,9 @@ void BuiltIns::defineBuiltIns()
 	int_struct -> define(new FunctionSymbol("int", ref_int, {ref_int, char_struct}, int_struct, constructor_traits));
 
 	BuiltInTypeSymbol *void_type = new BuiltInTypeSymbol("void", 0);
+	auto void_ptr = TypeFactory::getPointer(void_type);
 
-	BuiltIns::void_type = void_type;
+	BuiltIns::void_type = void_type;	
 
 	std::vector< std::pair<std::string, TypeInfo> > array_tp = { {"T", TypeInfo("class", false, { }) }, 
 																 { "size", TypeInfo("int", false, { }) }
@@ -106,6 +107,8 @@ void BuiltIns::defineBuiltIns()
 	global_scope -> define(new FunctionSymbol("__fclose", void_type, {int_struct}, global_scope, simple_traits));
 	global_scope -> define(new FunctionSymbol("__fwrite", int_struct, {int_struct, const_ref_ASCII_string, int_struct}, global_scope, simple_traits));
 	global_scope -> define(new FunctionSymbol("__fread", int_struct, {int_struct, ref_ASCII_string, int_struct}, global_scope, simple_traits));
+
+	global_scope -> define(new FunctionSymbol("__brk", void_ptr, {int_struct}, global_scope, simple_traits));
 		
 	int_struct -> is_defined = true;
 	ASCII_string -> is_defined = true;
@@ -120,5 +123,6 @@ void BuiltIns::defineBuiltIns()
 	global_scope -> resolve("__fwrite") -> is_defined = true;
 	global_scope -> resolve("__fread") -> is_defined  = true;
 		
+	global_scope -> resolve("__brk") -> is_defined  = true;
 }
 

@@ -713,3 +713,19 @@ _int_int_int~ref_char:
 	mov rsp, rbp
 	pop rbp
 	ret
+
+___brk_int:
+	push rbp
+	mov rbp, rsp
+
+	mov rax, 12
+	mov rdi, [rbp + 16]
+	syscall
+
+	mov rbx, rax
+	mov rax, [rbp + 24]
+	mov [rax], rbx
+
+	mov rsp, rbp
+	pop rbp
+	ret
