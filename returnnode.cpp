@@ -35,7 +35,7 @@ CodeObject& ReturnNode::gen()
 			return acc += type -> getSize();
 		}) + 2 * GlobalConfig::int_size; // expr -> getType().getSize();
 
-//		return_place.emit("mov rax, [rbp + " + std::to_string(addr) + "]");
+		return_place.emit("mov rax, [rbp + " + std::to_string(addr) + "]");
 
 		if ( expr -> getType() -> getTypeKind() != TypeKind::POINTER )
 			code_obj.genCallCode(copy_call_info, {expr}, return_place, false);
