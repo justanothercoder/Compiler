@@ -19,9 +19,10 @@ void CopyTypeVisitor::visit(const PointerType *)
 {
 	code_obj = *(new CodeObject());	
 
-	code_obj.emit("mov r14, [" + from + "]");
+	code_obj.emit("lea r14, [" + from + "]");
 	code_obj.emit("lea r15, [" + to + "]");
-	code_obj.emit("mov [r15], r14");
+	code_obj.emit("mov r13, [r14]");
+	code_obj.emit("mov [r15], r13");
 }
 
 void CopyTypeVisitor::visit(const StructSymbol *tp)
@@ -46,7 +47,7 @@ void CopyTypeVisitor::visit(const ReferenceType *)
 {
 	code_obj = *(new CodeObject());	
 
-	code_obj.emit("mov r14, [" + from + "]");
+	code_obj.emit("lea r14, [" + from + "]");
 	code_obj.emit("lea r15, [" + to + "]");
 	code_obj.emit("mov [r15], r14");
 }

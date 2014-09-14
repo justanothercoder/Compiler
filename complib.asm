@@ -39,6 +39,8 @@
 	
 	global _int_int_int~ref_char:function
 
+	global ___brk_void~ptr:function
+
 _int_operatorassign_int~ref_const~int~ref:
 	push rbp
 	mov rbp, rsp
@@ -714,7 +716,7 @@ _int_int_int~ref_char:
 	pop rbp
 	ret
 
-___brk_int:
+___brk_void~ptr:
 	push rbp
 	mov rbp, rsp
 

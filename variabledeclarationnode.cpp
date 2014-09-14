@@ -58,8 +58,8 @@ void VariableDeclarationNode::check()
 
 			auto var_type = scope -> fromTypeInfo(type_info);
 
-			if ( var_type -> getSymbol() == nullptr || var_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
-				throw SemanticError("No such struct " + type_name);
+//			if ( var_type -> getSymbol() == nullptr || var_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
+//				throw SemanticError("No such struct '" + type_name + "'");
 
 			if ( var_type -> getTypeKind() != TypeKind::POINTER )
 			{
