@@ -112,3 +112,8 @@ bool FunctionSymbol::isUnsafeBlock() const
 {
 	return is_unsafe;
 }
+	
+void FunctionSymbol::accept(TypeVisitor *visitor) const 
+{
+	visitor -> visit(this);
+}

@@ -44,3 +44,8 @@ const Symbol* BuiltInTypeSymbol::getSymbol() const
 {
 	return this;
 }
+	
+void BuiltInTypeSymbol::accept(TypeVisitor *visitor) const 
+{
+	visitor -> visit(this);
+}

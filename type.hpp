@@ -3,6 +3,7 @@
 
 #include <string>
 #include <boost/optional.hpp>
+#include "typevisitor.hpp"
 
 class Symbol;
 class FunctionSymbol;
@@ -14,6 +15,8 @@ class Type
 public:
 
 	virtual ~Type();
+
+	virtual void accept(TypeVisitor* visitor) const = 0;
 
     virtual std::string getName() const = 0;
     virtual size_t getSize() const = 0;

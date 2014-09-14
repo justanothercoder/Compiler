@@ -19,7 +19,9 @@ public:
 
     FunctionSymbol(std::string name, const Type *return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, boost::optional<CodeObject> code_obj = boost::none);
 
-    std::string getTypedName() const;
+	void accept(TypeVisitor *visitor) const override;
+    
+	std::string getTypedName() const;
 	std::string getScopedTypedName() const;
     
     bool isOperator() const;

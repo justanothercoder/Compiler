@@ -19,7 +19,10 @@ void BinaryOperatorNode::check()
 	lhs -> check();
 	try
 	{
-		call_info = CallHelper::callCheck(getOperatorName(), static_cast<const StructSymbol*>(lhs -> getType() -> getSymbol()), {rhs});
+		if ( lhs -> getType() -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT )
+			call_info = CallHelper::callCheck(getOperatorName(), static_cast<const StructSymbol*>(lhs -> getType() -> getSymbol()), {rhs});
+		else
+			throw SemanticError("");
 	}
 	catch ( SemanticError& e )
 	{

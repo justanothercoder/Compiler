@@ -61,3 +61,8 @@ const Type* PointerType::getPointedType() const
 {
 	return type;
 }
+	
+void PointerType::accept(TypeVisitor *visitor) const 
+{
+	visitor -> visit(this);
+}

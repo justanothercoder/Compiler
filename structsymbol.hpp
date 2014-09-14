@@ -18,6 +18,8 @@ public:
 
     StructSymbol(std::string name, Scope *enclosing_scope, const TemplateInfo& template_info);
 
+	void accept(TypeVisitor *visitor) const override;
+
     SymbolType getSymbolType() const override;
 	std::string getName() const override;
 

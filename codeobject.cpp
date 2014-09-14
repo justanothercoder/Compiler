@@ -7,6 +7,8 @@
 #include "callinfo.hpp"
 #include "exprnode.hpp"
 
+#include "copytypevisitor.hpp"
+
 void CodeObject::gen() const 
 { 
 	std::cout << code; 
@@ -86,7 +88,7 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, const Funct
 
 			if ( param -> getType() -> isReference() )
 				emit("mov rax, [rax]");
-
+/*
 			emit("mov [rsp - " + std::to_string(GlobalConfig::int_size) + "], rax");
 			emit("sub rsp, " + std::to_string(GlobalConfig::int_size));		
 
@@ -97,6 +99,11 @@ void CodeObject::genParam(ExprNode *param, ConversionInfo conv_info, const Funct
 			emit("add rsp, " + std::to_string(4 * GlobalConfig::int_size + conv_info.desired_type -> getSize() )); //offset + params 
 
 			emit("sub rsp, " + std::to_string(conv_info.desired_type -> getSize()));
+*/
+			CopyTypeVisitor visitor("rax", "r8");
+			emit(visitor.getCopyCode(conv_info.desired_type).getCode());
+
+			emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
 		}
 	}
 }
