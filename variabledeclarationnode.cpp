@@ -124,7 +124,8 @@ void VariableDeclarationNode::define()
     {
 		auto replace = template_info.getReplacement(type_info.type_name);
 
-		type_info.type_name = boost::get<std::string>(*replace);
+//		type_info.type_name = boost::get<std::string>(*replace);
+		type_info = boost::get<TypeInfo>(*replace);
     }
     
     auto var_type = scope -> fromTypeInfo(type_info);

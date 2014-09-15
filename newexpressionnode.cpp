@@ -106,17 +106,18 @@ std::string NewExpressionNode::toString() const
 {
 	std::string res = "new " + type_info.toString();
 
+	res += "(";
+
 	if ( !params.empty() )
 	{
-		res += "(";
-
 		auto it = std::begin(params);
 		res += (*it) -> toString();
 
 		for ( ++it; it != std::end(params); ++it )
 			res += ", " + (*it) -> toString();
 
-		res += ")";
 	}
+	res += ")";
+	
 	return res;
 }

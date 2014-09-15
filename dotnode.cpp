@@ -19,10 +19,10 @@ void DotNode::check()
 
 	auto _base_type = base -> getType();
 
-	base_type = dynamic_cast<const StructSymbol*>(_base_type);
+	base_type = dynamic_cast<const StructSymbol*>(_base_type -> getUnqualifiedType());
 
 	if ( base_type == nullptr )
-		throw SemanticError("left side of '.' is not an instance of struct.");
+		throw SemanticError("'" + base -> toString() + "' is not an instance of struct.");
 
 	member = dynamic_cast<VariableSymbol*>(base_type -> resolveMember(member_name));
 
@@ -52,7 +52,11 @@ CodeObject& DotNode::gen()
 			member = new VariableSymbol(ov_func -> getName(), std::begin(ov_func_type_info.symbols) -> second);
 	}
 	else
+	{
+		if ( base -> getType() -> isReference() )
+			code_obj -> emit("mov rax, [rax]");
 		code_obj -> emit("lea rax, [rax - " + std::to_string(const_cast<StructSymbol*>(base_type) -> getVarAlloc().getAddress(member)) + "]");
+	}
 
 	return *code_obj;
 }

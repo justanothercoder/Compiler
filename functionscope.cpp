@@ -1,7 +1,9 @@
 #include "functionscope.hpp"
 #include "scopevisitor.hpp"
 
-FunctionScope::FunctionScope(std::string scope_name, Scope *enclosing_scope) : scope_name(scope_name), enclosing_scope(enclosing_scope)
+FunctionScope::FunctionScope(std::string scope_name, Scope *enclosing_scope) : scope_name(scope_name)
+																			 , enclosing_scope(enclosing_scope)
+																		     , template_info(enclosing_scope -> getTemplateInfo())
 {
 
 }

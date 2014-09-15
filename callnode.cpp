@@ -22,10 +22,11 @@ void CallNode::check()
 
     if ( caller_type -> getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	{
-		if ( caller_type -> getTypeKind() != TypeKind::STRUCT )
-			throw SemanticError("caller is not a function.");
+//		if ( caller_type -> getTypeKind() != TypeKind::STRUCT )
+		if ( caller_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
+			throw SemanticError("caller '" + caller -> toString() + "' is not a function.");
 
-		call_info = CallHelper::callCheck("operator()", static_cast<const StructSymbol*>(caller_type), params);
+		call_info = CallHelper::callCheck("operator()", static_cast<const StructSymbol*>(caller_type -> getSymbol()), params);
 	}
 	else
 	{
