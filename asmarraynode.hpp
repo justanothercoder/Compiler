@@ -24,6 +24,10 @@ private:
 	int size_of_type;
 	int array_size;
 	CodeObject code_obj;
+	
+	FunctionSymbol *array_constructor;
+	FunctionSymbol *array_elem_operator;
+	FunctionSymbol *array_size_func;
 };
 
 #endif

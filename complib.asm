@@ -556,9 +556,12 @@ _string_operatorelem_string~ref_int:
 
 	sub rsi, rbx
 
-	mov r9, [rbp]
-	mov [r9 - 8], rsi
-	lea rax, [r9 - 8]
+;	mov r9, [rbp]
+;	mov [r9 - 8], rsi
+;	lea rax, [r9 - 8]
+
+	mov rax, [rbp + 32]
+	mov [rax], rsi
 
 	mov rsp, rbp
 	pop rbp
@@ -708,9 +711,9 @@ _int_int_int~ref_char:
 	mov rax, [rbp + 16]
 	mov [rax], rbx
 
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]
+;	mov r9, [rbp]
+;	mov [r9 - 8], rax
+;	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp

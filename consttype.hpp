@@ -5,7 +5,7 @@
 
 class ConstType : public Type
 {
-	friend CopyTypeVisitor;
+	friend class CopyTypeVisitor;
 
 public:
 	

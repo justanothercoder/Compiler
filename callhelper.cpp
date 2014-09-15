@@ -83,7 +83,7 @@ const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope 
 	while ( scope != nullptr )
 	{
 		const OverloadedFunctionSymbol *ov_func = nullptr;
-	  
+
 		try { ov_func = CallHelper::getOverloadedFunc(name, scope); }
 		catch ( SemanticError& e ) { return nullptr; }
 

@@ -43,9 +43,9 @@ void AsmArrayNode::define()
 
 	auto ref_arr = TypeFactory::getReference(arr);
 
-	auto array_constructor   = new FunctionSymbol("array"     , ref_arr , {ref_arr}          , scope, {true, true, false});
-	auto array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, scope, {true, false, true});
-	auto array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , scope, {true, false, false});
+	array_constructor   = new FunctionSymbol("array"     , ref_arr , {ref_arr}          , scope, {true, true, false});
+	array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, scope, {true, false, true});
+	array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , scope, {true, false, false});
 
 	GlobalHelper::has_definition[array_constructor]   = true;
 	GlobalHelper::has_definition[array_elem_operator] = true;
@@ -68,15 +68,15 @@ CodeObject& AsmArrayNode::gen()
 {
 	auto arr = dynamic_cast<StructSymbol*>(scope);
 
-	code_obj.emit("jmp _~_"+arr -> getName()+"_array_"+arr -> getName()+"~ref");
-	code_obj.emit("_"+arr -> getName()+"_array_"+arr -> getName()+"~ref:");
+	code_obj.emit("jmp _~" + array_constructor -> getScopedTypedName());
+	code_obj.emit(array_constructor -> getScopedTypedName() + ":");
 	code_obj.emit("ret");
-	code_obj.emit("_~_"+arr -> getName()+"_array_"+arr -> getName()+"~ref:");
+	code_obj.emit("_~" + array_constructor -> getScopedTypedName() + ":");
 
 
 /////////////////////////////////////////////////////////////////////////////
-	code_obj.emit("jmp _~_"+arr -> getName()+"_size_"+arr -> getName()+"~ref");
-	code_obj.emit("_"+arr -> getName()+"_size_"+arr -> getName()+"~ref:");
+	code_obj.emit("jmp _~"  + array_size_func -> getScopedTypedName());
+	code_obj.emit(array_size_func -> getScopedTypedName() + ":");
 
 	code_obj.emit("push rbp");
 	code_obj.emit("mov rbp, rsp");
@@ -90,12 +90,13 @@ CodeObject& AsmArrayNode::gen()
 	code_obj.emit("pop rbp");
 	code_obj.emit("ret");
 
-	code_obj.emit("_~_"+arr -> getName()+"_size_"+arr -> getName()+"~ref:");
+	code_obj.emit("_~" + array_size_func -> getScopedTypedName() + ":");
 ///////////////////////////////////////////////////////////////////////////////
 
 
-	code_obj.emit("jmp _~_"+arr -> getName()+"_operatorelem_"+arr -> getName()+"~ref_int");
-	code_obj.emit("_"+arr -> getName()+"_operatorelem_"+arr -> getName()+"~ref_int:");
+	code_obj.emit("jmp _~" + array_elem_operator -> getScopedTypedName());
+	code_obj.emit(array_elem_operator -> getScopedTypedName() + ":");
+
 	code_obj.emit("push rbp");
 	code_obj.emit("mov rbp, rsp");
 	code_obj.emit("mov rbx, [rbp + " + std::to_string(3 * GlobalConfig::int_size) + "]");
@@ -113,7 +114,7 @@ CodeObject& AsmArrayNode::gen()
 	code_obj.emit("pop rbp");
 	code_obj.emit("ret");
 
-	code_obj.emit("_~_"+arr -> getName()+"_operatorelem_"+arr -> getName()+"~ref_int:");
+	code_obj.emit("_~" + array_elem_operator -> getScopedTypedName() + ":");
 
 	return code_obj;
 }

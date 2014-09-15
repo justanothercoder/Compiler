@@ -74,7 +74,8 @@ void ReturnNode::check()
 
 //	copy_call_info = CallHelper::callCheck(expr -> getType() -> getTypeName(), static_cast<const StructSymbol*>(expr -> getType().type), {expr});
 	if ( expr -> getType() -> getTypeKind() != TypeKind::POINTER )
-		copy_call_info = CallHelper::callCheck(expr -> getType() -> getName(), static_cast<const StructSymbol*>(expr -> getType()), {expr});
+//		copy_call_info = CallHelper::callCheck(expr -> getType() -> getName(), static_cast<const StructSymbol*>(expr -> getType()), {expr});
+		copy_call_info = CallHelper::callCheck(expr -> getType() -> getUnqualifiedType() -> getName(), static_cast<const StructSymbol*>(expr -> getType() -> getSymbol()), {expr});
 }
 	
 void ReturnNode::define() 

@@ -18,7 +18,7 @@ void BracketNode::check()
 {
 	base -> check();
 
-	auto base_type = dynamic_cast<const StructSymbol*>(base -> getType());
+	auto base_type = dynamic_cast<const StructSymbol*>(base -> getType() -> getSymbol());
 
 	call_info = CallHelper::callCheck("operator[]", base_type, {this -> expr});
 	

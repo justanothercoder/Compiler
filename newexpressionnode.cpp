@@ -57,6 +57,7 @@ CodeObject& NewExpressionNode::gen()
 
 	code_obj.genCallCode(call_info, params, new_place, false);
 
+	code_obj.emit("lea rax, " + addr);
 	code_obj.emit("mov " + addr2 + ", rax");
 	code_obj.emit("lea rax, " + addr2);
 
