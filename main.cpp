@@ -22,7 +22,7 @@ int main()
 
 		BuiltIns::defineBuiltIns();
 
-		root -> scope         = BuiltIns::global_scope;
+		root -> scope = BuiltIns::global_scope;
 
 		root -> build_scope();
 		root -> define();

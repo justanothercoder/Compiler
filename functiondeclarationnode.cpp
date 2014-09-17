@@ -32,7 +32,7 @@ void FunctionDeclarationNode::build_scope()
 	definedSymbol = new FunctionSymbol(traits.is_constructor ? static_cast<StructSymbol*>(scope) -> getName() : name, nullptr, { }, scope, traits);
 	definedSymbol -> is_unsafe = is_unsafe;
 
-	statements -> scope         = definedSymbol;
+	statements -> scope = definedSymbol;
 	statements -> build_scope();
 }
 

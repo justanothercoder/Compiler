@@ -20,7 +20,7 @@ void ForNode::build_scope()
 
 	for ( auto child : getChildren() )
 	{
-		child -> scope         = for_scope;
+		child -> scope = for_scope;
 		child -> build_scope();
 	}
 }

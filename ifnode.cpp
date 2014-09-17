@@ -25,13 +25,13 @@ void IfNode::build_scope()
     if_scope   = new LocalScope(scope);
     else_scope = new LocalScope(scope);
     
-    cond -> scope         = scope;
+    cond -> scope = scope;
     cond -> build_scope();
 
-    stats_true -> scope         = if_scope;
+    stats_true -> scope = if_scope;
     stats_true -> build_scope();
 
-    stats_false -> scope         = else_scope;
+    stats_false -> scope = else_scope;
     stats_false -> build_scope();
 }
 

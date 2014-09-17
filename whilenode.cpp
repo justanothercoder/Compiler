@@ -18,10 +18,10 @@ void WhileNode::build_scope()
 {
     while_scope = new LocalScope(scope);
 
-    cond -> scope         = scope;
+    cond -> scope = scope;
     cond -> build_scope();
 
-    stats -> scope         = while_scope;
+    stats -> scope = while_scope;
     stats -> build_scope();
 }
 

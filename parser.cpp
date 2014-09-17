@@ -25,9 +25,9 @@ AST* Parser::statement()
 	}
 	else if ( getTokenType(1) == TokenType::STRUCT 
 		   || getTokenType(1) == TokenType::DEF 
-		   || tryVarDecl() 
 		   || getTokenType(1) == TokenType::TEMPLATE 
 		   || getTokenType(1) == TokenType::VAR
+		   || tryVarDecl() 
 		   )
 		return declaration();
 	else if ( getTokenType(1) == TokenType::RETURN ) return return_stat();
