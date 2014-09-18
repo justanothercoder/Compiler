@@ -21,6 +21,8 @@ public:
 	std::vector<AST*> getChildren() const override;
 	
 	std::string toString() const override;
+	
+	void accept(ASTVisitor *visitor) override;
 
 private:
 

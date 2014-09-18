@@ -97,3 +97,8 @@ std::string ReturnNode::toString() const
 {
 	return "return " + expr -> toString() + ";";
 }
+
+void ReturnNode::accept(ASTVisitor *visitor)
+{
+	visitor -> visit(this);
+}

@@ -107,3 +107,8 @@ std::string StructDeclarationNode::toString() const
 	res += "}";
 	return res;
 }
+
+void StructDeclarationNode::accept(ASTVisitor *visitor)
+{
+	visitor -> visit(this);
+}

@@ -24,6 +24,8 @@ public:
 
 	bool isCompileTimeExpr() const override;
 	boost::optional<int> getCompileTimeValue() const override;
+	
+	void accept(ASTVisitor *visitor) override;
 
 private:
 

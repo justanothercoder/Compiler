@@ -68,3 +68,8 @@ std::string VarInferTypeDeclarationNode::toString() const
 {
 	return "var " + name + " = " + expr -> toString() + ";";
 }
+
+void VarInferTypeDeclarationNode::accept(ASTVisitor *visitor)
+{
+	visitor -> visit(this);
+}

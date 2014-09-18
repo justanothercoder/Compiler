@@ -81,3 +81,8 @@ std::string BracketNode::toString() const
 {
 	return base -> toString() + "[" + expr -> toString() + "]";
 }
+
+void BracketNode::accept(ASTVisitor *visitor)
+{
+	visitor -> visit(this);
+}

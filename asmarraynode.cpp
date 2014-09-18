@@ -128,3 +128,8 @@ std::string AsmArrayNode::toString() const
 {
 	return "";
 }
+
+void AsmArrayNode::accept(ASTVisitor *visitor)
+{
+	visitor -> visit(this);
+}

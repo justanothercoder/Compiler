@@ -100,3 +100,8 @@ std::string DotNode::toString() const
 {
 	return base -> toString() + "." + member_name;
 }
+
+void DotNode::accept(ASTVisitor *visitor)
+{
+	visitor -> visit(this);
+}

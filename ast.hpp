@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include "astvisitor.hpp"
+
 class Scope;
 struct TemplateInfo;
 class CodeObject;
@@ -25,6 +27,8 @@ public:
 	virtual std::vector<AST*> getChildren() const;	
 
 	virtual std::string toString() const = 0;
+
+	virtual void accept(ASTVisitor *visitor) = 0;
 
 	Scope *scope;
 };

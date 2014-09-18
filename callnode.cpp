@@ -126,3 +126,8 @@ std::string CallNode::toString() const
 
 	return res;
 }
+
+void CallNode::accept(ASTVisitor *visitor)
+{
+	visitor -> visit(this);
+}

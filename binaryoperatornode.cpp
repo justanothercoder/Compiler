@@ -166,3 +166,8 @@ std::string BinaryOperatorNode::toString() const
 
 	return lhs_str + " " + oper + " " + rhs_str;
 }
+	
+void BinaryOperatorNode::accept(ASTVisitor *visitor)
+{
+	visitor -> visit(this);
+}

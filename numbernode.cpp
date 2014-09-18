@@ -65,3 +65,8 @@ std::string NumberNode::toString() const
 {
 	return num;
 }
+
+void NumberNode::accept(ASTVisitor *visitor)
+{
+	visitor -> visit(this);
+}

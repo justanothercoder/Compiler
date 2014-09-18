@@ -87,3 +87,8 @@ std::string StringNode::toString() const
 {
 	return '"' + str + '"'; 
 }
+
+void StringNode::accept(ASTVisitor *visitor)
+{
+	visitor -> visit(this);
+}

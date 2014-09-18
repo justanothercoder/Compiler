@@ -46,3 +46,8 @@ std::string UnsafeBlockNode::toString() const
 {
 	return "unsafe\n" + block -> toString();
 }
+
+void UnsafeBlockNode::accept(ASTVisitor *visitor)
+{
+	visitor -> visit(this);
+}
