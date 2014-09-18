@@ -29,6 +29,8 @@ public:
 	
 	void accept(ASTVisitor *visitor) override;
 
+	int getNumId() const;
+
 private:
 
 	std::string num;

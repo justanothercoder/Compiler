@@ -10,6 +10,8 @@
 #include "functionsymbol.hpp"
 #include "globalhelper.hpp"
 
+#include "genssavisitor.hpp"
+
 using std::shared_ptr;
 
 int main()
@@ -27,7 +29,11 @@ int main()
 		root -> build_scope();
 		root -> define();
 		root -> check ();
-	
+
+		GenSSAVisitor visitor;
+		root -> accept(&visitor);
+		std::cerr << visitor.toString() << '\n';
+
 		CodeObject main_code;
 		
 		main_code.emit("section .text");

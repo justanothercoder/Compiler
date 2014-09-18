@@ -9,6 +9,8 @@
 
 class StatementNode : public AST
 {       
+	friend class GenSSAVisitor;
+
 public:
 
     StatementNode(std::vector<AST*> statements);

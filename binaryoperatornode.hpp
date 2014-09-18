@@ -8,6 +8,8 @@ enum class BinaryOp { ASSIGN, PLUS, MINUS, MUL, EQUALS, NEQUALS, AND, OR, DIV, M
 
 class BinaryOperatorNode : public ExprNode
 {
+	friend class GenSSAVisitor;
+
 public:
 
     BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type);

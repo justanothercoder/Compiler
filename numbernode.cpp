@@ -6,7 +6,12 @@
 
 NumberNode::NumberNode(std::string num) : num(num)
 {
+	int num_value = std::stoi(num);
 
+	auto& table = GlobalHelper::const_num_id;
+
+	if ( table.find(num_value) == std::end(table) )
+		GlobalHelper::addConst(num_value);
 }
 
 void NumberNode::check() 
@@ -69,4 +74,9 @@ std::string NumberNode::toString() const
 void NumberNode::accept(ASTVisitor *visitor)
 {
 	visitor -> visit(this);
+}
+
+int NumberNode::getNumId() const
+{
+	return GlobalHelper::const_num_id[std::stoi(num)];
 }

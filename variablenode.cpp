@@ -3,6 +3,7 @@
 #include "templatestructsymbol.hpp"
 #include "numbernode.hpp"
 #include "builtins.hpp"
+#include "globalhelper.hpp"
 
 VariableNode::VariableNode(std::string name) : name(name), variable(nullptr), template_num(nullptr) 
 {
@@ -157,4 +158,9 @@ std::string VariableNode::toString() const
 void VariableNode::accept(ASTVisitor *visitor)
 {
 	visitor -> visit(this);
+}
+	
+int VariableNode::getVarId() const
+{
+	return GlobalHelper::var_id[variable];
 }
