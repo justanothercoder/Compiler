@@ -43,7 +43,7 @@ const Type* TypeFactory::getPointer(const Type *type)
 		assign_code.emit("ret");
 
 		pointer_assign -> code_obj = assign_code;
-		assign_code.gen();
+//		assign_code.gen();
 
 		BuiltIns::global_scope -> define(pointer_assign);
 
@@ -67,7 +67,7 @@ const Type* TypeFactory::getPointer(const Type *type)
 		add_code.emit("ret");
 
 		pointer_add -> code_obj = add_code;
-		add_code.gen();
+//		add_code.gen();
 
 		BuiltIns::global_scope -> define(pointer_add);
 	}

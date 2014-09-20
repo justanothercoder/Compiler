@@ -10,6 +10,9 @@
 
 class CallNode : public ExprNode
 {
+
+	friend class GenSSAVisitor;
+
 public:
 
     CallNode(ExprNode *caller, std::vector<ExprNode*> params);

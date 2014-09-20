@@ -23,7 +23,10 @@ public:
 	static std::map<FunctionSymbol*, bool> has_definition;
 
 	static std::map<int, int> const_num_id;
+	static std::map<int, int> id_to_num;
+
 	static std::map<VariableSymbol*, int> var_id;
+	static std::map<int, VariableSymbol*> id_to_var;
 
 	static void addConst(int value);
 	static void addVar(VariableSymbol *var);

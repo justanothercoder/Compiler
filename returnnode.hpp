@@ -10,6 +10,9 @@ class FunctionSymbol;
 
 class ReturnNode : public AST
 {
+
+	friend class GenSSAVisitor;
+
 public:
 
     ReturnNode(ExprNode *expr);

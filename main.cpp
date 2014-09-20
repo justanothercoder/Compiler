@@ -63,7 +63,7 @@ int main()
 		main_code.emit("mov rdi, 0");
 		main_code.emit("syscall");
 
-		main_code.gen();
+//		main_code.gen();
 	}
 //	catch ( SemanticError& e )
 //	{

@@ -4,8 +4,12 @@
 #include "globalconfig.hpp"
 	
 std::map<FunctionSymbol*, bool> GlobalHelper::has_definition;
+
 std::map<int, int> GlobalHelper::const_num_id;
+std::map<int, int> GlobalHelper::id_to_num;
+
 std::map<VariableSymbol*, int> GlobalHelper::var_id;
+std::map<int, VariableSymbol*> GlobalHelper::id_to_var;
 
 std::string GlobalHelper::getCodeOperatorName(std::string op)
 {
@@ -34,11 +38,16 @@ int GlobalHelper::transformAddress(Scope *scope, int addr)
 void GlobalHelper::addConst(int value)
 {
 	static int num_value_id = 0;
-	const_num_id[value] = ++num_value_id;
+
+	++num_value_id;
+	const_num_id[value] = num_value_id;
+	id_to_num[num_value_id] = value;
 }
 	
 void GlobalHelper::addVar(VariableSymbol *var)
 {
 	static int variable_id = 0;
-	var_id[var] = ++variable_id;
+	++variable_id;
+	var_id[var] = variable_id;
+	id_to_var[variable_id] = var;
 }
