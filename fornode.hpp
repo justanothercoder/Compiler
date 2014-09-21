@@ -8,6 +8,9 @@
 
 class ForNode : public AST
 {
+
+	friend class GenSSAVisitor;
+
 public:
 
 	ForNode(AST *init, ExprNode *cond, AST *step, AST *stats);

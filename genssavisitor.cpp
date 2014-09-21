@@ -11,6 +11,7 @@
 #include "bracketnode.hpp"
 #include "ifnode.hpp"
 #include "whilenode.hpp"
+#include "fornode.hpp"
 
 GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
 {
@@ -96,9 +97,29 @@ void GenSSAVisitor::visit(IfNode *node)
 	add(Command(SSAOp::LABEL, exit_label));
 }
 
-void GenSSAVisitor::visit(ForNode *)
+void GenSSAVisitor::visit(ForNode *node)
 {
+	auto cycle_label = newLabel();
+	auto exit_label  = newLabel();
 
+	node -> init -> accept(this);
+	add(Command(SSAOp::LABEL, cycle_label));
+
+	auto cond = getArg(node -> cond);
+
+	GlobalHelper::addConst(0);
+	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0]);
+
+	add(Command(SSAOp::EQUALS, cond, zero));
+	auto temp = Arg(IdType::COMMAND, commands.size() - 1);
+
+	add(Command(SSAOp::IFFALSE, temp, exit_label));
+
+	node -> stats -> accept(this);
+	node -> step  -> accept(this);
+
+	add(Command(SSAOp::GOTO, cycle_label));
+	add(Command(SSAOp::LABEL, exit_label));
 }
 
 void GenSSAVisitor::visit(WhileNode *node)
