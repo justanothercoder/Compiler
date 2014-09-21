@@ -28,8 +28,14 @@ public:
 	static std::map<VariableSymbol*, int> var_id;
 	static std::map<int, VariableSymbol*> id_to_var;
 
+	static std::map<int, std::string> label_name;
+
+	static std::map<const FunctionSymbol*, int> id_by_func;
+	static std::map<int, const FunctionSymbol*> func_by_id;
+
 	static void addConst(int value);
 	static void addVar(VariableSymbol *var);
+	static void addFunc(const FunctionSymbol *func);
 	
 private:
 

@@ -19,6 +19,7 @@ FunctionSymbol::FunctionSymbol(std::string name
 {
 
 	GlobalHelper::has_definition[this] = false;
+	GlobalHelper::addFunc(this);
 }
 
 std::string FunctionSymbol::getTypedName() const

@@ -5,6 +5,7 @@
 #include <string>
 #include "astvisitor.hpp"
 #include "globalhelper.hpp"
+#include "functionsymbol.hpp"
 
 /* list of SSA commands
  *
@@ -39,7 +40,7 @@
  */
 
 enum class SSAOp { PLUS, MINUS, MUL, DIV, MOD, ELEM, DEREF, ADDR, ASSIGN, PARAM, CALL, LABEL, RETURN };
-enum class IdType { NOID, NUMBER, STRING, VARIABLE, TEMP, COMMAND, LABEL };
+enum class IdType { NOID, NUMBER, STRING, VARIABLE, TEMP, COMMAND, LABEL, PROCEDURE };
 
 struct Arg
 {
@@ -57,7 +58,9 @@ struct Arg
 		else if ( type == IdType::COMMAND )
 			return "command_" + std::to_string(id);
 		else if ( type == IdType::LABEL )
-			return "label_" + std::to_string(id) + ":";
+			return GlobalHelper::label_name[id] + ":";
+		else if ( type == IdType::PROCEDURE )
+			return GlobalHelper::func_by_id[id] -> getScopedTypedName();
 		else
 			return "var_" + std::to_string(id);
 	}
@@ -139,7 +142,7 @@ private:
 
 	void add(Command command);
 	Arg newTemp();
-	Arg newLabel();
+	Arg newLabel(std::string label = "");
 
 	Arg _arg;
 };

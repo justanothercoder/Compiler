@@ -10,6 +10,11 @@ std::map<int, int> GlobalHelper::id_to_num;
 
 std::map<VariableSymbol*, int> GlobalHelper::var_id;
 std::map<int, VariableSymbol*> GlobalHelper::id_to_var;
+	
+std::map<int, std::string> GlobalHelper::label_name;
+	
+std::map<const FunctionSymbol*, int> GlobalHelper::id_by_func;
+std::map<int, const FunctionSymbol*> GlobalHelper::func_by_id;
 
 std::string GlobalHelper::getCodeOperatorName(std::string op)
 {
@@ -38,8 +43,8 @@ int GlobalHelper::transformAddress(Scope *scope, int addr)
 void GlobalHelper::addConst(int value)
 {
 	static int num_value_id = 0;
-
 	++num_value_id;
+
 	const_num_id[value] = num_value_id;
 	id_to_num[num_value_id] = value;
 }
@@ -48,6 +53,16 @@ void GlobalHelper::addVar(VariableSymbol *var)
 {
 	static int variable_id = 0;
 	++variable_id;
+
 	var_id[var] = variable_id;
 	id_to_var[variable_id] = var;
+}
+
+void GlobalHelper::addFunc(const FunctionSymbol *func)
+{
+	static int func_id = 0;
+	++func_id;
+
+	func_by_id[func_id] = func;
+	id_by_func[func] = func_id;
 }

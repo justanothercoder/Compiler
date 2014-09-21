@@ -5,6 +5,9 @@
 
 class UnsafeBlockNode : public AST
 {
+
+	friend class GenSSAVisitor;
+
 public:
 
 	UnsafeBlockNode(StatementNode *block);
