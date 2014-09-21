@@ -43,7 +43,11 @@ int GlobalHelper::transformAddress(Scope *scope, int addr)
 void GlobalHelper::addConst(int value)
 {
 	static int num_value_id = 0;
-	++num_value_id;
+
+	if ( const_num_id.find(value) != std::end(const_num_id) )
+		return;
+
+	++num_value_id;	
 
 	const_num_id[value] = num_value_id;
 	id_to_num[num_value_id] = value;
@@ -52,6 +56,10 @@ void GlobalHelper::addConst(int value)
 void GlobalHelper::addVar(VariableSymbol *var)
 {
 	static int variable_id = 0;
+
+	if ( var_id.find(var) != std::end(var_id) )
+		return;
+
 	++variable_id;
 
 	var_id[var] = variable_id;
@@ -61,6 +69,10 @@ void GlobalHelper::addVar(VariableSymbol *var)
 void GlobalHelper::addFunc(const FunctionSymbol *func)
 {
 	static int func_id = 0;
+
+	if ( id_by_func.find(func) != std::end(id_by_func) )
+		return;
+
 	++func_id;
 
 	func_by_id[func_id] = func;

@@ -6,6 +6,8 @@
 
 class BracketNode : public ExprNode
 {
+	friend class GenSSAVisitor;
+
 public:
 	
 	BracketNode(ExprNode *base, ExprNode *expr);

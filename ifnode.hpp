@@ -9,6 +9,8 @@ class ExprNode;
 
 class IfNode : public AST
 {
+	friend class GenSSAVisitor;
+
 public:
 
     IfNode(ExprNode *cond, AST *stats_true, AST *stats_false);

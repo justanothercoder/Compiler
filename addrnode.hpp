@@ -8,6 +8,9 @@ enum class AddrOp { REF, DEREF };
 
 class AddrNode : public ExprNode
 {
+
+	friend class GenSSAVisitor;
+
 public:
 
 	AddrNode(ExprNode* expr, AddrOp op);

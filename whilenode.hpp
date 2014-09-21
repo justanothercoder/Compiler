@@ -9,6 +9,9 @@ class ExprNode;
 
 class WhileNode : public AST
 {
+
+	friend class GenSSAVisitor;
+
 public:
 
     WhileNode(ExprNode *cond, AST *stats);

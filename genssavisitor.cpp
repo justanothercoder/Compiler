@@ -7,6 +7,10 @@
 #include "functiondeclarationnode.hpp"
 #include "returnnode.hpp"
 #include "unsafeblocknode.hpp"
+#include "addrnode.hpp"
+#include "bracketnode.hpp"
+#include "ifnode.hpp"
+#include "whilenode.hpp"
 
 GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
 {
@@ -56,7 +60,7 @@ std::string GenSSAVisitor::toString()
 	return res;
 }
 	
-Arg GenSSAVisitor::getArg(AST* node)
+Arg GenSSAVisitor::getArg(AST *node)
 {
 	node -> accept(this);
 	return _arg;
@@ -67,9 +71,29 @@ void GenSSAVisitor::visit(ImportNode *)
 	
 }
 
-void GenSSAVisitor::visit(IfNode *)
+void GenSSAVisitor::visit(IfNode *node)
 {
+	auto false_label = newLabel();
+	auto exit_label  = newLabel();	
 
+	auto expr = getArg(node -> cond);
+
+	GlobalHelper::addConst(0);
+	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0]);
+
+	add(Command(SSAOp::EQUALS, expr, zero));
+	auto temp = Arg(IdType::COMMAND, commands.size() - 1);
+
+	add(Command(SSAOp::IFFALSE, temp, false_label));
+
+	node -> stats_true -> accept(this);	
+
+	add(Command(SSAOp::GOTO, exit_label));
+	add(Command(SSAOp::LABEL, false_label));
+
+	node -> stats_false -> accept(this);
+
+	add(Command(SSAOp::LABEL, exit_label));
 }
 
 void GenSSAVisitor::visit(ForNode *)
@@ -77,14 +101,36 @@ void GenSSAVisitor::visit(ForNode *)
 
 }
 
-void GenSSAVisitor::visit(WhileNode *)
+void GenSSAVisitor::visit(WhileNode *node)
 {
+	auto exit_label  = newLabel();
+	auto cycle_label = newLabel();
 
+	add(Command(SSAOp::LABEL, cycle_label));
+	
+	auto cond = getArg(node -> cond);
+	
+	GlobalHelper::addConst(0);
+	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0]);
+
+	add(Command(SSAOp::EQUALS, cond, zero));
+	auto temp = Arg(IdType::COMMAND, commands.size() - 1);
+
+	add(Command(SSAOp::IFFALSE, temp, exit_label));
+
+	node -> stats -> accept(this);	
+
+	add(Command(SSAOp::GOTO, cycle_label));
+	add(Command(SSAOp::LABEL, exit_label));
 }
 
 void GenSSAVisitor::visit(BracketNode *node)
 {
-
+	add(Command(SSAOp::PARAM, getArg(node -> expr)));
+	add(Command(SSAOp::PARAM, getArg(node -> base)));
+	
+	add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), Arg(IdType::NOID, 2)));
+	_arg = Arg(IdType::COMMAND, commands.size() - 1);
 }
 
 void GenSSAVisitor::visit(UnaryNode *)
@@ -141,9 +187,10 @@ void GenSSAVisitor::visit(VariableDeclarationNode *)
 
 }
 
-void GenSSAVisitor::visit(AddrNode *)
+void GenSSAVisitor::visit(AddrNode *node)
 {
-
+	add(Command(SSAOp::ADDR, getArg(node -> expr)));
+	_arg = Arg(IdType::COMMAND, commands.size() - 1);
 }
 
 void GenSSAVisitor::visit(NullNode *)
@@ -182,7 +229,6 @@ void GenSSAVisitor::visit(CallNode *node)
 	for ( auto param = node -> params.rbegin(); param != node -> params.rend(); ++param )
 		add(Command(SSAOp::PARAM, getArg(*param)));
 
-//	add(Command(SSAOp::CALL, getArg(node -> caller), Arg(IdType::NOID, node -> params.size())));
 	add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), Arg(IdType::NOID, node -> params.size())));
 	_arg = Arg(IdType::COMMAND, commands.size() - 1);
 }

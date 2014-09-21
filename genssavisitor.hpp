@@ -12,34 +12,40 @@
  * I use three address code (TAC) as low-level IR.
  * It will be implemented with indirect triples.
  *
- * +-----------+------+------+-------+
- * |  command  | arg1 | arg2 |  op   |
- * +-----------+------+------+-------+
- * |   a + b   |  a   |  b   |   +   |
- * +-----------+------+------+-------+
- * |   a - b   |  a   |  b   |   -   |
- * +-----------+------+------+-------+
- * |   a * b   |  a   |  b   |   *   |
- * +-----------+------+------+-------+
- * |   a / b   |  a   |  b   |   /   |
- * +-----------+------+------+-------+
- * |   a % b   |  a   |  b   |   %   |
- * +-----------+------+------+-------+
- * |   a[i]    |  a   |  i   |  []   |
- * +-----------+------+------+-------+
- * |   *a      |  a   |      |  (*)  |
- * +-----------+------+------+-------+
- * |   &a      |  a   |      |   &   |
- * +-----------+------+------+-------+
- * |   a = b   |  a   |  b   |   =   |
- * +-----------+------+------+-------+
- * |  param a  |  a   |      | param |
- * +-----------+------+------+-------+
- * | call p n  |  p   |  n   | call  |
- * +-----------+------+------+-------+
+ * +------------------+------+------+---------+
+ * |      command     | arg1 | arg2 |   op    |
+ * +------------------+------+------+---------+
+ * |      a + b       |  a   |  b   |    +    |
+ * +------------------+------+------+---------+
+ * |      a - b       |  a   |  b   |    -    |
+ * +------------------+------+------+---------+
+ * |      a * b       |  a   |  b   |    *    |
+ * +------------------+------+------+---------+
+ * |      a / b       |  a   |  b   |    /    |
+ * +------------------+------+------+---------+
+ * |      a % b       |  a   |  b   |    %    |
+ * +------------------+------+------+---------+
+ * |       a[i]       |  a   |  i   |   []    |
+ * +------------------+------+------+---------+
+ * |        *a        |  a   |      |   (*)   |
+ * +------------------+------+------+---------+
+ * |        &a        |  a   |      |    &    |
+ * +------------------+------+------+---------+
+ * |      a = b       |  a   |  b   |    =    |
+ * +------------------+------+------+---------+
+ * |     param a      |  a   |      |  param  |
+ * +------------------+------+------+---------+
+ * |     call p n     |  p   |  n   |  call   |
+ * +------------------+------+------+---------+
+ * |      goto L      |  L   |      |  goto   |
+ * +------------------+------+------+---------+
+ * |   if x goto L    |  x   |  L   |   if    |
+ * +------------------+------+------+---------+
+ * | ifFalse x goto L |  x   |  L   | ifFalse |
+ * +------------------+------+------+---------+
  */
 
-enum class SSAOp { PLUS, MINUS, MUL, DIV, MOD, ELEM, DEREF, ADDR, ASSIGN, PARAM, CALL, LABEL, RETURN };
+enum class SSAOp { PLUS, MINUS, MUL, DIV, MOD, ELEM, DEREF, ADDR, ASSIGN, PARAM, CALL, LABEL, RETURN, IF, IFFALSE, GOTO, EQUALS };
 enum class IdType { NOID, NUMBER, STRING, VARIABLE, TEMP, COMMAND, LABEL, PROCEDURE };
 
 struct Arg
@@ -80,19 +86,24 @@ struct Command
 	{
 		switch ( op )
 		{
-		case SSAOp::ASSIGN: return arg1.toString() + " = " + arg2.toString();
-		case SSAOp::PLUS  : return arg1.toString() + " + " + arg2.toString();
-		case SSAOp::MINUS : return arg1.toString() + " - " + arg2.toString();
-		case SSAOp::MUL   : return arg1.toString() + " * " + arg2.toString();
-		case SSAOp::DIV   : return arg1.toString() + " / " + arg2.toString();
-		case SSAOp::MOD   : return arg1.toString() + " % " + arg2.toString();
-		case SSAOp::ELEM  : return arg1.toString() + "[" + arg2.toString() + "]";
-		case SSAOp::DEREF : return "*" + arg1.toString();
-		case SSAOp::ADDR  : return "&" + arg1.toString();
-		case SSAOp::PARAM : return "param " + arg1.toString();
-		case SSAOp::CALL  : return "call " + arg1.toString() + ' ' + std::to_string(arg2.id);
-		case SSAOp::LABEL : return arg1.toString();
-		case SSAOp::RETURN: return "return " + arg1.toString();
+		case SSAOp::ASSIGN : return arg1.toString() + " = "  + arg2.toString();
+		case SSAOp::PLUS   : return arg1.toString() + " + "  + arg2.toString();
+		case SSAOp::MINUS  : return arg1.toString() + " - "  + arg2.toString();
+		case SSAOp::MUL    : return arg1.toString() + " * "  + arg2.toString();
+		case SSAOp::DIV    : return arg1.toString() + " / "  + arg2.toString();
+		case SSAOp::MOD    : return arg1.toString() + " % "  + arg2.toString();
+		case SSAOp::EQUALS : return arg1.toString() + " == " + arg2.toString();
+		case SSAOp::ELEM   : return arg1.toString() + "[" + arg2.toString() + "]";
+		case SSAOp::DEREF  : return "*" + arg1.toString();
+		case SSAOp::ADDR   : return "&" + arg1.toString();
+		case SSAOp::PARAM  : return "param " + arg1.toString();
+		case SSAOp::CALL   : return "call " + arg1.toString() + ' ' + std::to_string(arg2.id);
+		case SSAOp::LABEL  : return arg1.toString();
+		case SSAOp::RETURN : return "return " + arg1.toString();
+		case SSAOp::IF     : return "if " + arg1.toString() + " goto " + arg2.toString();
+		case SSAOp::IFFALSE: return "ifFalse " + arg1.toString() + " goto " + arg2.toString();
+		case SSAOp::GOTO   : return "goto " + arg1.toString(); 
+		default: throw std::logic_error("not all SSAOp catched in toString");
 		}
 	}
 
