@@ -9,6 +9,9 @@ enum class UnaryOp { PLUS, MINUS, NOT };
 
 class UnaryNode : public ExprNode
 {
+
+	friend class GenSSAVisitor;
+
 public:
 	
 	UnaryNode(ExprNode *exp, UnaryOp op_type);

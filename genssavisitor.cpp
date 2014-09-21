@@ -9,6 +9,7 @@
 #include "unsafeblocknode.hpp"
 #include "addrnode.hpp"
 #include "bracketnode.hpp"
+#include "unarynode.hpp"
 #include "ifnode.hpp"
 #include "whilenode.hpp"
 #include "fornode.hpp"
@@ -154,9 +155,12 @@ void GenSSAVisitor::visit(BracketNode *node)
 	_arg = Arg(IdType::COMMAND, commands.size() - 1);
 }
 
-void GenSSAVisitor::visit(UnaryNode *)
+void GenSSAVisitor::visit(UnaryNode *node)
 {
-
+	add(Command(SSAOp::PARAM, getArg(node -> exp)));
+	
+	add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), Arg(IdType::NOID, 1)));
+	_arg = Arg(IdType::COMMAND, commands.size() - 1);
 }
 
 void GenSSAVisitor::visit(NewExpressionNode *)
