@@ -71,9 +71,9 @@ std::string NumberNode::toString() const
 	return num;
 }
 
-void NumberNode::accept(ASTVisitor *visitor)
+void NumberNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }
 
 int NumberNode::getNumId() const

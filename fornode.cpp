@@ -80,7 +80,7 @@ std::string ForNode::toString() const
 	return "for (" + init -> toString() + "; " + cond -> toString() + "; " + step -> toString() + ")\n" + stats -> toString();
 }
 
-void ForNode::accept(ASTVisitor *visitor)
+void ForNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

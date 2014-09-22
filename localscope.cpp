@@ -16,9 +16,9 @@ std::string LocalScope::getScopeName() const
    	return ""; 
 }
 
-void LocalScope::accept(ScopeVisitor *visitor) 
+void LocalScope::accept(ScopeVisitor& visitor) 
 {
-   	visitor -> visit(this); 
+   	visitor.visit(this); 
 }
 
 VarAllocator& LocalScope::getVarAlloc() const

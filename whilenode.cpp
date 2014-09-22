@@ -70,7 +70,7 @@ std::string WhileNode::toString() const
 	return "while (" + cond -> toString() + ")\n" + stats -> toString();
 }
 
-void WhileNode::accept(ASTVisitor *visitor)
+void WhileNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

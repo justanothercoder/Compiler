@@ -31,12 +31,12 @@ int main()
 		root -> define();
 
 		CheckVisitor check_visitor;
-		root -> accept(&check_visitor);
+		root -> accept(check_visitor);
 
 //		root -> check ();
 
 		GenSSAVisitor visitor;
-		root -> accept(&visitor);
+		root -> accept(visitor);
 		std::cerr << visitor.getString() << '\n';
 
 		CodeObject main_code;

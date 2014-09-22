@@ -88,9 +88,9 @@ std::string StringNode::toString() const
 	return '"' + str + '"'; 
 }
 
-void StringNode::accept(ASTVisitor *visitor)
+void StringNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }
 	
 int StringNode::getStrId() const

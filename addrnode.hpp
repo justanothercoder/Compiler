@@ -33,7 +33,7 @@ public:
 
 	std::string toString() const override;
 	
-	void accept(ASTVisitor *visitor) override;
+	void accept(ASTVisitor& visitor) override;
 
 private:
 

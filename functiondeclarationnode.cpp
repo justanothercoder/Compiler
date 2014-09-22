@@ -169,7 +169,7 @@ std::string FunctionDeclarationNode::toString() const
 	return res;
 }
 
-void FunctionDeclarationNode::accept(ASTVisitor *visitor)
+void FunctionDeclarationNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

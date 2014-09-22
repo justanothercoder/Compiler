@@ -122,7 +122,7 @@ std::string NewExpressionNode::toString() const
 	return res;
 }
 	
-void NewExpressionNode::accept(ASTVisitor *visitor)
+void NewExpressionNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

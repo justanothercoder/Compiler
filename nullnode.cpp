@@ -61,7 +61,7 @@ boost::optional<int> NullNode::getCompileTimeValue() const
 	return boost::none;
 }
 
-void NullNode::accept(ASTVisitor *visitor)
+void NullNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

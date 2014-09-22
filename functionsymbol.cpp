@@ -104,9 +104,9 @@ const Symbol* FunctionSymbol::getSymbol() const
 	return this;
 }
 	
-ScopeVisitor* FunctionSymbol::getScopeVisitor() 
+ScopeVisitor& FunctionSymbol::getScopeVisitor() 
 {
-	return new FunctionSymbolDefine(this);
+	return *(new FunctionSymbolDefine(this));
 }
 	
 bool FunctionSymbol::isUnsafeBlock() const
@@ -114,7 +114,7 @@ bool FunctionSymbol::isUnsafeBlock() const
 	return is_unsafe;
 }
 	
-void FunctionSymbol::accept(TypeVisitor *visitor) const 
+void FunctionSymbol::accept(TypeVisitor& visitor) const 
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

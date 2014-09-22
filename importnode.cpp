@@ -38,7 +38,7 @@ std::string ImportNode::toString() const
 	return "import " + lib + ";";
 }
 
-void ImportNode::accept(ASTVisitor *visitor)
+void ImportNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

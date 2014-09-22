@@ -28,7 +28,7 @@ void VarInferTypeDeclarationNode::define()
 
 	definedSymbol = new VariableSymbol(name, expr -> getType());
 
-	scope -> accept(new VariableSymbolDefine(definedSymbol));
+	scope -> accept(*(new VariableSymbolDefine(definedSymbol)));
 }
 	
 void VarInferTypeDeclarationNode::check() 
@@ -69,7 +69,7 @@ std::string VarInferTypeDeclarationNode::toString() const
 	return "var " + name + " = " + expr -> toString() + ";";
 }
 
-void VarInferTypeDeclarationNode::accept(ASTVisitor *visitor)
+void VarInferTypeDeclarationNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

@@ -28,7 +28,7 @@ public:
 
 	virtual std::string toString() const = 0;
 
-	virtual void accept(ASTVisitor *visitor) = 0;
+	virtual void accept(ASTVisitor& visitor) = 0;
 
 	Scope *scope;
 };

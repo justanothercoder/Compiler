@@ -66,7 +66,7 @@ void AsmArrayNode::check() { }
 
 CodeObject& AsmArrayNode::gen()
 {
-	auto arr = dynamic_cast<StructSymbol*>(scope);
+//	auto arr = dynamic_cast<StructSymbol*>(scope);
 
 	code_obj.emit("jmp _~" + array_constructor -> getScopedTypedName());
 	code_obj.emit(array_constructor -> getScopedTypedName() + ":");
@@ -129,7 +129,7 @@ std::string AsmArrayNode::toString() const
 	return "";
 }
 
-void AsmArrayNode::accept(ASTVisitor *visitor)
+void AsmArrayNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

@@ -32,24 +32,24 @@ void CheckVisitor::visit(ImportNode *)
 void CheckVisitor::visit(IfNode *node) 
 {
 	for ( auto child : node -> getChildren() )
-		child -> accept(this);
+		child -> accept(*this);
 }
 
 void CheckVisitor::visit(ForNode *node) 
 {
 	for ( auto child : node -> getChildren() )
-		child -> accept(this);
+		child -> accept(*this);
 }
 
 void CheckVisitor::visit(WhileNode *node) 
 {
 	for ( auto child : node -> getChildren() )
-		child -> accept(this);
+		child -> accept(*this);
 }
 
 void CheckVisitor::visit(BracketNode *node) 
 {
-	node -> base -> accept(this);
+	node -> base -> accept(*this);
 
 	auto base_type = dynamic_cast<const StructSymbol*>(node -> base -> getType() -> getSymbol());
 
@@ -68,7 +68,7 @@ void CheckVisitor::visit(NewExpressionNode *node)
 	for ( auto param : node -> type_info.template_params )
 	{
 		if ( param.which() == 0 )
-			boost::get<ExprNode*>(param) -> accept(this);
+			boost::get<ExprNode*>(param) -> accept(*this);
 	}
 
 	auto type = static_cast<const StructSymbol*>(node -> scope -> fromTypeInfo(node -> type_info));
@@ -78,7 +78,7 @@ void CheckVisitor::visit(NewExpressionNode *node)
 
 void CheckVisitor::visit(BinaryOperatorNode *node) 
 {
-	node -> lhs -> accept(this);
+	node -> lhs -> accept(*this);
 	try
 	{
 		if ( node -> lhs -> getType() -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT )
@@ -132,7 +132,7 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 	for ( auto param : node -> type_info.template_params )
 	{
 		if ( param.which() == 0 )
-			boost::get<ExprNode*>(param) -> accept(this);
+			boost::get<ExprNode*>(param) -> accept(*this);
 	}
 
 	if ( !node -> is_field )
@@ -230,7 +230,7 @@ void CheckVisitor::visit(VariableNode *node)
 		node -> template_num -> scope = node -> scope;
 		node -> template_num -> build_scope();
 
-		node -> template_num -> accept(this);
+		node -> template_num -> accept(*this);
 		return;
 	}
 
@@ -289,7 +289,7 @@ void CheckVisitor::visit(ReturnNode *node)
 
 	node -> enclosing_func = dynamic_cast<FunctionSymbol*>(_scope);
 
-    node -> expr -> accept(this);
+    node -> expr -> accept(*this);
 
 	if ( node -> expr -> getType() -> getTypeKind() != TypeKind::POINTER )
 		CallHelper::callCheck(node -> expr -> getType() -> getUnqualifiedType() -> getName(), static_cast<const StructSymbol*>(node -> expr -> getType() -> getSymbol()), {node -> expr});
@@ -298,7 +298,7 @@ void CheckVisitor::visit(ReturnNode *node)
 
 void CheckVisitor::visit(UnsafeBlockNode *node)
 {
-	node -> block -> accept(this);
+	node -> block -> accept(*this);
 }
 
 void CheckVisitor::visit(AsmArrayNode *)

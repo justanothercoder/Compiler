@@ -6,7 +6,7 @@ Symbol::~Symbol()
 
 }
 
-ScopeVisitor* Symbol::getScopeVisitor() 
+ScopeVisitor& Symbol::getScopeVisitor() 
 {
-	return new SymbolDefine(this); 
+	return *(new SymbolDefine(this));
 }

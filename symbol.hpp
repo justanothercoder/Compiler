@@ -18,7 +18,7 @@ public:
     virtual std::string getName() const = 0;
     virtual SymbolType getSymbolType() const = 0;
 
-	virtual ScopeVisitor* getScopeVisitor();
+	virtual ScopeVisitor& getScopeVisitor();
 
 	bool is_defined;
 	bool is_unsafe;

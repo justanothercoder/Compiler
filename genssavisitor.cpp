@@ -23,7 +23,7 @@ GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
 
 Arg GenSSAVisitor::getArg(AST *node)
 {
-	node -> accept(this);
+	node -> accept(*this);
 	return _arg;
 }
 
@@ -46,12 +46,12 @@ void GenSSAVisitor::visit(IfNode *node)
 
 	code.add(Command(SSAOp::IFFALSE, temp, false_label));
 
-	node -> stats_true -> accept(this);	
+	node -> stats_true -> accept(*this);	
 
 	code.add(Command(SSAOp::GOTO, exit_label));
 	code.add(Command(SSAOp::LABEL, false_label));
 
-	node -> stats_false -> accept(this);
+	node -> stats_false -> accept(*this);
 
 	code.add(Command(SSAOp::LABEL, exit_label));
 }
@@ -61,7 +61,7 @@ void GenSSAVisitor::visit(ForNode *node)
 	auto cycle_label = code.newLabel();
 	auto exit_label  = code.newLabel();
 
-	node -> init -> accept(this);
+	node -> init -> accept(*this);
 	code.add(Command(SSAOp::LABEL, cycle_label));
 
 	auto cond = getArg(node -> cond);
@@ -73,8 +73,8 @@ void GenSSAVisitor::visit(ForNode *node)
 
 	code.add(Command(SSAOp::IFFALSE, temp, exit_label));
 
-	node -> stats -> accept(this);
-	node -> step  -> accept(this);
+	node -> stats -> accept(*this);
+	node -> step  -> accept(*this);
 
 	code.add(Command(SSAOp::GOTO, cycle_label));
 	code.add(Command(SSAOp::LABEL, exit_label));
@@ -96,7 +96,7 @@ void GenSSAVisitor::visit(WhileNode *node)
 
 	code.add(Command(SSAOp::IFFALSE, temp, exit_label));
 
-	node -> stats -> accept(this);	
+	node -> stats -> accept(*this);	
 
 	code.add(Command(SSAOp::GOTO, cycle_label));
 	code.add(Command(SSAOp::LABEL, exit_label));
@@ -157,7 +157,7 @@ void GenSSAVisitor::visit(StructDeclarationNode *)
 void GenSSAVisitor::visit(FunctionDeclarationNode *node)
 {
 	code.add(Command(SSAOp::LABEL, code.newLabel(node -> definedSymbol -> getScopedTypedName())));
-	node -> statements -> accept(this);	
+	node -> statements -> accept(*this);	
 }
 
 void GenSSAVisitor::visit(VariableDeclarationNode *)
@@ -185,7 +185,7 @@ void GenSSAVisitor::visit(DotNode *node)
 void GenSSAVisitor::visit(StatementNode *node)
 {
 	for ( auto stat : node -> statements )
-		stat -> accept(this);
+		stat -> accept(*this);
 }
 
 void GenSSAVisitor::visit(VariableNode *node)
@@ -221,7 +221,7 @@ void GenSSAVisitor::visit(ReturnNode *node)
 
 void GenSSAVisitor::visit(UnsafeBlockNode *node)
 {
-	node -> block -> accept(this);
+	node -> block -> accept(*this);
 }
 
 void GenSSAVisitor::visit(AsmArrayNode *)

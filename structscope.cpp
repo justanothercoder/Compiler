@@ -45,9 +45,9 @@ Symbol* StructScope::resolveMember(std::string name) const
 	return it -> second;    
 }
 
-void StructScope::accept(ScopeVisitor *visitor) 
+void StructScope::accept(ScopeVisitor& visitor) 
 {
-   	visitor -> visit(this); 
+   	visitor.visit(this);
 }
 
 std::string StructScope::getScopeName() const 

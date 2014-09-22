@@ -16,7 +16,7 @@ public:
 
 	virtual ~Type();
 
-	virtual void accept(TypeVisitor* visitor) const = 0;
+	virtual void accept(TypeVisitor& visitor) const = 0;
 
     virtual std::string getName() const = 0;
     virtual size_t getSize() const = 0;

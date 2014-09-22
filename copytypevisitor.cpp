@@ -12,7 +12,7 @@ CopyTypeVisitor::CopyTypeVisitor(std::string from, std::string to) : from(from),
 
 void CopyTypeVisitor::visit(const ConstType *tp)
 {
-	tp -> type -> accept(this);
+	tp -> type -> accept(*this);
 }
 
 void CopyTypeVisitor::visit(const PointerType *) 
@@ -80,6 +80,6 @@ void CopyTypeVisitor::visit(const OverloadedFunctionSymbol *)
 
 CodeObject CopyTypeVisitor::getCopyCode(const Type *type)
 {
-	type -> accept(this);
+	type -> accept(*this);
 	return code_obj;
 }

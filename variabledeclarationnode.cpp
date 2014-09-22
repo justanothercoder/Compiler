@@ -148,7 +148,7 @@ std::string VariableDeclarationNode::toString() const
 	return type_info.toString() + " " + name + ";";
 }
 
-void VariableDeclarationNode::accept(ASTVisitor *visitor)
+void VariableDeclarationNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

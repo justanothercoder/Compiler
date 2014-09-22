@@ -40,7 +40,7 @@ SymbolType VariableSymbol::getSymbolType() const
    	return SymbolType::VARIABLE; 
 }
 	
-ScopeVisitor* VariableSymbol::getScopeVisitor() 
+ScopeVisitor& VariableSymbol::getScopeVisitor() 
 {
-	return new VariableSymbolDefine(this);
+	return *(new VariableSymbolDefine(this));
 }

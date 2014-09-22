@@ -109,7 +109,7 @@ std::string AddrNode::toString() const
 	return (op == AddrOp::REF ? std::string("&") : std::string("*")) + expr -> toString();
 }
 
-void AddrNode::accept(ASTVisitor *visitor)
+void AddrNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

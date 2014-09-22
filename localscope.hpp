@@ -9,7 +9,7 @@ public:
 
     LocalScope(Scope *enclosing_scope);
 
-    void accept(ScopeVisitor *visitor) override;
+    void accept(ScopeVisitor& visitor) override;
 
     Scope* getEnclosingScope() const override;
 	std::string getScopeName() const override;

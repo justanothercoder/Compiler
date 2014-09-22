@@ -16,7 +16,7 @@ public:
 	
 	std::string getScopeName() const override;
     Scope* getEnclosingScope() const override;
-    void accept(ScopeVisitor *visitor) override;
+    void accept(ScopeVisitor& visitor) override;
 
 	VarAllocator& getVarAlloc() const override;
 	TempAllocator& getTempAlloc() const override;

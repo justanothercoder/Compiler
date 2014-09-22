@@ -19,7 +19,9 @@ public:
 
     FunctionSymbol(std::string name, const Type *return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, boost::optional<CodeObject> code_obj = boost::none);
 
-	void accept(TypeVisitor *visitor) const override;
+	using FunctionScope::accept; //to suppress compiler's warning
+
+	void accept(TypeVisitor& visitor) const override;
     
 	std::string getTypedName() const;
 	std::string getScopedTypedName() const;
@@ -50,7 +52,7 @@ public:
 
 	const Symbol* getSymbol() const override;
 
-	ScopeVisitor* getScopeVisitor() override;
+	ScopeVisitor& getScopeVisitor() override;
 
 
 	bool isUnsafeBlock() const override;

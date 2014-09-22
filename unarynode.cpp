@@ -101,7 +101,7 @@ std::string UnaryNode::toString() const
 	return oper + res;
 }
 
-void UnaryNode::accept(ASTVisitor *visitor)
+void UnaryNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

@@ -25,7 +25,7 @@ void TemplateStructDeclarationNode::build_scope()
 
 void TemplateStructDeclarationNode::define() 
 {
-   	scope -> accept(new SymbolDefine(definedSymbol));
+   	scope -> accept(*(new SymbolDefine(definedSymbol)));
 }
 
 void TemplateStructDeclarationNode::check() 

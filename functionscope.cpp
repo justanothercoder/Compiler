@@ -18,9 +18,9 @@ std::string FunctionScope::getScopeName() const
 	return scope_name; 
 }
 
-void FunctionScope::accept(ScopeVisitor *visitor) 
+void FunctionScope::accept(ScopeVisitor& visitor) 
 { 
-	visitor -> visit(this); 
+	visitor.visit(this); 
 }
 	
 VarAllocator& FunctionScope::getVarAlloc() const 

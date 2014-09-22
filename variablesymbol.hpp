@@ -24,7 +24,7 @@ public:
 
     SymbolType getSymbolType() const override;
 
-	ScopeVisitor* getScopeVisitor() override;
+	ScopeVisitor& getScopeVisitor() override;
 	
 private:
 

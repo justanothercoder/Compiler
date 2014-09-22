@@ -155,9 +155,9 @@ std::string VariableNode::toString() const
 	return name;
 }
 	
-void VariableNode::accept(ASTVisitor *visitor)
+void VariableNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }
 	
 int VariableNode::getVarId() const

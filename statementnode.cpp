@@ -56,7 +56,7 @@ std::string StatementNode::toString() const
 	return res;
 }
 
-void StatementNode::accept(ASTVisitor *visitor)
+void StatementNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

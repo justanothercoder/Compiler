@@ -97,7 +97,7 @@ std::string IfNode::toString() const
 	return res;
 }
 
-void IfNode::accept(ASTVisitor *visitor)
+void IfNode::accept(ASTVisitor& visitor)
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

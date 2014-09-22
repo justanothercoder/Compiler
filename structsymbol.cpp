@@ -147,7 +147,7 @@ bool StructSymbol::isUnsafeBlock() const
 	return is_unsafe;
 }
 	
-void StructSymbol::accept(TypeVisitor *visitor) const 
+void StructSymbol::accept(TypeVisitor& visitor) const 
 {
-	visitor -> visit(this);
+	visitor.visit(this);
 }

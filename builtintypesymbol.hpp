@@ -10,7 +10,7 @@ public:
 
     BuiltInTypeSymbol(std::string name, int size);
     
-	void accept(TypeVisitor *visitor) const override;
+	void accept(TypeVisitor& visitor) const override;
 	
 	std::string getName() const override;
     size_t getSize() const override;

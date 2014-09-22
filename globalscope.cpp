@@ -16,9 +16,9 @@ std::string GlobalScope::getScopeName() const
    	return ""; 
 }
 
-void GlobalScope::accept(ScopeVisitor *visitor)
+void GlobalScope::accept(ScopeVisitor& visitor)
 {
-   	visitor -> visit(this); 
+   	visitor.visit(this); 
 }
 
 VarAllocator& GlobalScope::getVarAlloc() const 
