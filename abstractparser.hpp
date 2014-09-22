@@ -7,8 +7,6 @@
 
 class AST;
 
-using std::vector;
-
 class AbstractParser
 {
 public:
@@ -37,8 +35,8 @@ protected:
 
 protected:
 
-    vector<Token> lookahead;
-    vector<int> markers;
+	std::vector<Token> lookahead;
+	std::vector<int> markers;
 
     AbstractLexer *input;
     int pos;    

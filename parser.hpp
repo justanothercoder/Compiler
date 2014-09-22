@@ -46,10 +46,10 @@ public:
 
 private:
 
-    string id();
-	string operator_name();
+	std::string id();
+	std::string operator_name();
     TypeInfo typeInfo();
-    vector<ExprNode*> call_params_list();
+	std::vector<ExprNode*> call_params_list();
   
     DeclarationNode* declaration(boost::optional<string> struct_name = boost::none);
     DeclarationNode* templateStructDecl();

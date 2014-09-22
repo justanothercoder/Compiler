@@ -18,7 +18,7 @@ public:
 
     StructSymbol(std::string name, Scope *enclosing_scope, const TemplateInfo& template_info);
 
-	using StructScope::accept;
+	using StructScope::accept; // to suppress compiler's warning
 
 	void accept(TypeVisitor& visitor) const override;
 
