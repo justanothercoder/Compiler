@@ -12,7 +12,7 @@ class UnsafeBlockNode : public AST
 public:
 
 	UnsafeBlockNode(StatementNode *block);
-	~UnsafeBlockNode();
+	~UnsafeBlockNode() override;
 
 	AST* copyTree() const override;
     

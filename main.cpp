@@ -85,5 +85,7 @@ int main()
 		return 1;
 	}
 
+	delete BuiltIns::global_scope;
+
 	return 0;
 }

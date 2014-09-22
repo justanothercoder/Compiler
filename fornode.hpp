@@ -14,7 +14,6 @@ class ForNode : public AST
 public:
 
 	ForNode(AST *init, ExprNode *cond, AST *step, AST *stats);
-
 	~ForNode() override;
 
 	void build_scope() override;

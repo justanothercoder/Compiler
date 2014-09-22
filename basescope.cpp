@@ -1,6 +1,6 @@
 #include "basescope.hpp"
 #include "symbol.hpp"
-	
+
 BaseScope::~BaseScope()
 {
 	for ( auto name_and_sym : table )

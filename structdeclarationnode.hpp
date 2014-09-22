@@ -23,8 +23,6 @@ public:
 
     StructDeclarationNode(std::string name, std::vector<AST*> inner, boost::optional<TemplateInfo> template_info = boost::none);
 
-    ~StructDeclarationNode() override;
-
     AST* copyTree() const override;
     
     void build_scope();    

@@ -16,14 +16,6 @@ VariableDeclarationNode::VariableDeclarationNode(std::string name
     definedSymbol = new VariableSymbol(name, nullptr, (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE));
 }
 
-VariableDeclarationNode::~VariableDeclarationNode() 
-{ 
-	delete definedSymbol; 
-
-	for ( auto i : constructor_call_params )
-		delete i;
-}
-
 void VariableDeclarationNode::build_scope()
 {
 	AST::build_scope();

@@ -13,14 +13,6 @@ StructDeclarationNode::StructDeclarationNode(std::string name, std::vector<AST*>
 
 }
 
-StructDeclarationNode::~StructDeclarationNode() 
-{ 
-	delete definedSymbol; 
-
-	for ( auto i : inner )
-		delete i;
-}
-
 Symbol* StructDeclarationNode::getDefinedSymbol() const 
 { 
 	return definedSymbol; 

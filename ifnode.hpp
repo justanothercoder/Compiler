@@ -14,7 +14,6 @@ class IfNode : public AST
 public:
 
     IfNode(ExprNode *cond, AST *stats_true, AST *stats_false);
-
 	~IfNode() override;
 
     AST* copyTree() const override;

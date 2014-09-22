@@ -28,8 +28,6 @@ public:
 						  , FunctionTraits traits
 						  , bool is_unsafe = false);
 
-    ~FunctionDeclarationNode() override;
-    
     AST* copyTree() const override;
 
     void build_scope() override;

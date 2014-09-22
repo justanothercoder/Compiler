@@ -21,12 +21,6 @@ FunctionDeclarationNode::FunctionDeclarationNode(std::string name
 
 }
 
-FunctionDeclarationNode::~FunctionDeclarationNode() 
-{ 
-	delete definedSymbol; 
-	delete statements;	
-}   
-
 void FunctionDeclarationNode::build_scope()
 {
 	definedSymbol = new FunctionSymbol(traits.is_constructor ? static_cast<StructSymbol*>(scope) -> getName() : name, nullptr, { }, scope, traits);

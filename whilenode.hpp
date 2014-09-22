@@ -15,7 +15,6 @@ class WhileNode : public AST
 public:
 
     WhileNode(ExprNode *cond, AST *stats);
-
 	~WhileNode() override;
 
     AST* copyTree() const override;

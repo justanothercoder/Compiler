@@ -19,8 +19,6 @@ public:
 
     VariableDeclarationNode(std::string name, TypeInfo type_info, bool is_field = false, std::vector<ExprNode*> constructor_call_params = {});
 
-    ~VariableDeclarationNode() override;
-
     AST* copyTree() const override;
     
 	void build_scope() override;
