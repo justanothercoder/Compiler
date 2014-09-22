@@ -25,6 +25,8 @@
  * +------------------+------+------+---------+
  * |      a % b       |  a   |  b   |    %    |
  * +------------------+------+------+---------+
+ * |      a == b      |  a   |  b   |   ==    |
+ * +------------------+------+------+---------+
  * |       a[i]       |  a   |  i   |   []    |
  * +------------------+------+------+---------+
  * |        *a        |  a   |      |   (*)   |
@@ -43,9 +45,11 @@
  * +------------------+------+------+---------+
  * | ifFalse x goto L |  x   |  L   | ifFalse |
  * +------------------+------+------+---------+
+ * |        a.b       |  a   |  b   |    .    |
+ * +------------------+------+------+---------+
  */
 
-enum class SSAOp { PLUS, MINUS, MUL, DIV, MOD, ELEM, DEREF, ADDR, ASSIGN, PARAM, CALL, LABEL, RETURN, IF, IFFALSE, GOTO, EQUALS };
+enum class SSAOp { PLUS, MINUS, MUL, DIV, MOD, ELEM, DEREF, ADDR, ASSIGN, PARAM, CALL, LABEL, RETURN, IF, IFFALSE, GOTO, EQUALS, DOT };
 enum class IdType { NOID, NUMBER, STRING, VARIABLE, TEMP, COMMAND, LABEL, PROCEDURE };
 
 struct Arg
@@ -94,6 +98,7 @@ struct Command
 		case SSAOp::MOD    : return arg1.toString() + " % "  + arg2.toString();
 		case SSAOp::EQUALS : return arg1.toString() + " == " + arg2.toString();
 		case SSAOp::ELEM   : return arg1.toString() + "[" + arg2.toString() + "]";
+		case SSAOp::DOT    : return arg1.toString() + "." + arg2.toString();
 		case SSAOp::DEREF  : return "*" + arg1.toString();
 		case SSAOp::ADDR   : return "&" + arg1.toString();
 		case SSAOp::PARAM  : return "param " + arg1.toString();

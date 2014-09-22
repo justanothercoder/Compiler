@@ -9,6 +9,9 @@ class VariableSymbol;
 
 class DotNode : public ExprNode
 {
+
+	friend class GenSSAVisitor;
+
 public:
 
     DotNode(ExprNode *base, std::string member_name);   

@@ -13,6 +13,7 @@
 #include "ifnode.hpp"
 #include "whilenode.hpp"
 #include "fornode.hpp"
+#include "dotnode.hpp"
 
 GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
 {
@@ -220,12 +221,15 @@ void GenSSAVisitor::visit(AddrNode *node)
 
 void GenSSAVisitor::visit(NullNode *)
 {
+	GlobalHelper::addConst(0);
 
+	_arg = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0]);
 }
 
-void GenSSAVisitor::visit(DotNode *)
+void GenSSAVisitor::visit(DotNode *node)
 {
-
+	add(Command(SSAOp::DOT, getArg(node -> base), Arg(IdType::VARIABLE, GlobalHelper::var_id[node -> member])));
+	_arg = Arg(IdType::COMMAND, commands.size() - 1);
 }
 
 void GenSSAVisitor::visit(StatementNode *node)
