@@ -2,7 +2,8 @@
 
 AST::~AST() 
 {
-
+	for ( auto child : getChildren() )
+		delete child;
 }
  
 void AST::build_scope()

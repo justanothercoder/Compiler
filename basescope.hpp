@@ -15,6 +15,8 @@ public:
     friend class FunctionSymbolDefine;
     friend class SymbolDefine;
     
+	~BaseScope() override;
+
     Symbol* resolve(std::string name) const override;
 
 public:

@@ -12,7 +12,7 @@ AddrNode::AddrNode(ExprNode *expr, AddrOp op) : expr(expr), op(op)
 {
 
 }
-    
+	
 const Type* AddrNode::getType() const
 {
 	if ( op == AddrOp::REF )

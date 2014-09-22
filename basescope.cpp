@@ -1,4 +1,11 @@
 #include "basescope.hpp"
+#include "symbol.hpp"
+	
+BaseScope::~BaseScope()
+{
+	for ( auto name_and_sym : table )
+		delete name_and_sym.second;
+}
 
 Symbol* BaseScope::resolve(std::string name) const
 {
