@@ -4,14 +4,9 @@
 #include <map>
 
 #include "basescope.hpp"
-#include "functionsymbol.hpp"
-#include "overloadedfunctiontypeinfo.hpp"
-#include "variablesymbol.hpp"
-#include "overloadedfunctionsymbol.hpp"
-
 #include "varallocator.hpp"
-
-using std::map;
+#include "tempallocator.hpp"
+#include "templateinfo.hpp"
 
 class GlobalScope : public BaseScope
 {
@@ -22,15 +17,20 @@ public:
     void accept(ScopeVisitor *visitor) override;
 
     Scope* getEnclosingScope() const override;
-    string getScopeName() const override;
+	std::string getScopeName() const override;
 	
-	VarAllocator& getVarAlloc() override;
-	TempAllocator& getTempAlloc() override;
+	VarAllocator& getVarAlloc() const override;
+	TempAllocator& getTempAlloc() const override;
 
+	const TemplateInfo& getTemplateInfo() const override;
+	bool isUnsafeBlock() const override;
+	
 private:
 
-	VarAllocator var_alloc;
-	TempAllocator temp_alloc;
+	mutable VarAllocator var_alloc;
+	mutable TempAllocator temp_alloc;
+
+	TemplateInfo template_info;
 };
 
 #endif

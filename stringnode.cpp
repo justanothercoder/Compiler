@@ -1,17 +1,24 @@
 #include "stringnode.hpp"
-#include "typehelper.hpp"
+#include "typefactory.hpp"
+#include "builtins.hpp"
 
-StringNode::StringNode(string str) : str(str) { }
+StringNode::StringNode(std::string str) : str(str) 
+{
 
-void StringNode::check() {  }
+}
+
+void StringNode::check() 
+{
+
+}
 
 CodeObject& StringNode::gen()
 {
-	string str_label = StringNode::getNewLabel();
+	auto str_label = StringNode::getNewLabel();
 
 	code_obj.emit("section .data");
 
-	string res = "0";
+	std::string res = "0";
 
 	for ( int i = str.length() - 1; i >= 0; --i )
 	{
@@ -33,25 +40,33 @@ CodeObject& StringNode::gen()
 	return code_obj;
 }
 	
-AST* StringNode::copyTree() const { return new StringNode(str); }
+AST* StringNode::copyTree() const 
+{
+   	return new StringNode(str); 
+}
 	
-string StringNode::getStr() const { return str; }
+std::string StringNode::getStr() const 
+{
+   	return str; 
+}
 
-string StringNode::getNewLabel()
+std::string StringNode::getNewLabel()
 {
 	static int label_num = 0;
 	return "@string_label" + std::to_string(++label_num);
 }
 
-
-VariableType StringNode::getType() const 
+const Type* StringNode::getType() const 
 {
-	static Type *type = TypeHelper::resolveType("string", BuiltIns::global_scope);
+	static const Type *type = BuiltIns::global_scope -> resolveType("string");
 
-	return VariableType(type, false, true); 
+	return TypeFactory::getConst(type);
 }
 
-bool StringNode::isLeftValue() const { return false; }
+bool StringNode::isLeftValue() const 
+{
+   	return false; 
+}
 
 void StringNode::freeTempSpace()
 {
@@ -63,7 +78,12 @@ bool StringNode::isCompileTimeExpr() const
 	return false;
 }
 
-optional<int> StringNode::getCompileTimeValue() const
+boost::optional<int> StringNode::getCompileTimeValue() const
 {
-	return optional<int>::empty();
+	return boost::none;
+}
+	
+std::string StringNode::toString() const 
+{
+	return '"' + str + '"'; 
 }

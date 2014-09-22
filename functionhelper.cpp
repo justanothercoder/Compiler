@@ -1,16 +1,20 @@
 #include "functionhelper.hpp"
 #include "functionsymbol.hpp"
+#include "structsymbol.hpp"
+#include "typefactory.hpp"
+#include "globalhelper.hpp"
+#include "builtintypesymbol.hpp"
 
 FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 {
-	auto copy_constr = new FunctionSymbol(struc -> getName(),
-		 								  VariableType(struc, true),
-										  {VariableType(struc, true), VariableType(struc, true, true)},
-										  struc,
-										  {true, true, false}
-	);
+	auto ref_struc       = TypeFactory::getReference(struc);
+	auto const_ref_struc = TypeFactory::getConst(ref_struc);
 
-	optional<CodeObject> func_code = CodeObject();
+	auto copy_constr = new FunctionSymbol(struc -> getName(), ref_struc, {ref_struc, const_ref_struc}, struc, {true, true, false});
+
+	GlobalHelper::has_definition[copy_constr] = true;
+
+	boost::optional<CodeObject> func_code = CodeObject();
 
 	func_code -> emit("jmp _~" + copy_constr -> getScopedTypedName());
 	func_code -> emit(copy_constr -> getScopedTypedName() + ":");
@@ -19,15 +23,16 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 
 	for ( auto member : struc -> table )
 	{
-		if ( dynamic_cast<VariableSymbol*>(member.second) )
+//		if ( dynamic_cast<VariableSymbol*>(member.second) )
+		if ( member.second -> getSymbolType() == SymbolType::VARIABLE )		
 		{	
-			auto var = dynamic_cast<VariableSymbol*>(member.second); 
+			auto var = static_cast<VariableSymbol*>(member.second); 
 			auto var_type = var -> getType();
 
-			if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type.type) || dynamic_cast<BuiltInTypeSymbol*>(var_type.type) )
+			if ( dynamic_cast<const OverloadedFunctionSymbol*>(var_type) || dynamic_cast<const BuiltInTypeSymbol*>(var_type) )
 				continue;
 
-			auto member_copy = static_cast<StructSymbol*>(var_type.type) -> getCopyConstructor();
+			auto member_copy = static_cast<const StructSymbol*>(var_type) -> getCopyConstructor();
 
 			CodeObject param;
 			param.emit("mov rax, [rbp + " + std::to_string(3 * GlobalConfig::int_size) + "]");
@@ -53,14 +58,13 @@ FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 
 FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 {
-	auto constr = new FunctionSymbol(struc -> getName(),
-		 						     VariableType(struc, true),
-									 {VariableType(struc, true)},
-                                     struc,
-									 {true, true, false}
-	);
+	auto ref_struc = TypeFactory::getReference(struc);
 
-	optional<CodeObject> func_code = CodeObject();
+	auto constr = new FunctionSymbol(struc -> getName(), ref_struc, {ref_struc}, struc, {true, true, false});
+
+	GlobalHelper::has_definition[constr] = true;
+
+	boost::optional<CodeObject> func_code = CodeObject();
 
 	func_code -> emit("jmp _~" + constr -> getScopedTypedName());
 	func_code -> emit(constr -> getScopedTypedName() + ":");
@@ -69,18 +73,19 @@ FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 
 	for ( auto member : struc -> table )
 	{
-		if ( dynamic_cast<VariableSymbol*>(member.second) )
+//		if ( dynamic_cast<VariableSymbol*>(member.second) )
+		if ( member.second -> getSymbolType() == SymbolType::VARIABLE )
 		{	
-			auto var = dynamic_cast<VariableSymbol*>(member.second); 
+			auto var = static_cast<VariableSymbol*>(member.second); 
 			auto var_type = var -> getType();
 
-			if ( dynamic_cast<OverloadedFunctionSymbol*>(var_type.type) || dynamic_cast<BuiltInTypeSymbol*>(var_type.type) )
+			if ( dynamic_cast<const OverloadedFunctionSymbol*>(var_type) || dynamic_cast<const BuiltInTypeSymbol*>(var_type) )
 				continue;
 
-			auto member_default = static_cast<StructSymbol*>(var_type.type) -> getDefaultConstructor();
+			auto member_default = static_cast<const StructSymbol*>(var_type) -> getDefaultConstructor();
 
 			if ( member_default == nullptr )
-				throw SemanticError(var_type.getName() + " doesn't have default constructor");
+				throw SemanticError(var_type -> getName() + " doesn't have default constructor");
 
 			CodeObject genThis;
 			genThis.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");

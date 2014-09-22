@@ -1,5 +1,7 @@
 #ifndef _STRUCTSYMBOL_HPP_
-#define _STRUCTSYMBOL_HPP_ #include <map>
+#define _STRUCTSYMBOL_HPP_ 
+
+#include <map>
 
 #include "symbol.hpp"
 #include "scope.hpp"
@@ -8,65 +10,48 @@
 #include "overloadedfunctionsymbol.hpp"
 #include "fieldvarallocator.hpp"
 
-#include "basescope.hpp"
+#include "structscope.hpp"
 
-using std::map;
-
-class StructSymbol : public Symbol, public BaseScope, public Type
+class StructSymbol : public Symbol, public StructScope, public Type
 {
 public:
 
-    friend class VariableSymbolDefine;
+    StructSymbol(std::string name, Scope *enclosing_scope, const TemplateInfo& template_info);
 
-    void accept(ScopeVisitor *visitor) override;
-    
-    StructSymbol(string name, Scope *enclosing_scope);
+	void accept(TypeVisitor *visitor) const override;
 
     SymbolType getSymbolType() const override;
-    string getName() const override;
+	std::string getName() const override;
 
-    int getSize() const override;
+    size_t getSize() const override;
     TypeKind getTypeKind() const override;
-	
-    Symbol* resolveMember(string name) const;
 
-    Scope* getEnclosingScope() const override;
-    Symbol* resolve(string name) const override;
+	FunctionSymbol* getConversionTo(const Type *type) const;
 
-    string getScopeName() const override;
+	bool isConvertableTo(const Type *type) const override;
 
-	VarAllocator& getVarAlloc() override;
+	boost::optional<int> rankOfConversion(const Type *type) const override;
 
-	FunctionSymbol* getConversionTo(StructSymbol *st);
-	bool isConvertableTo(StructSymbol *st);
+	FunctionSymbol* getConversionConstructor(const StructSymbol *st) const;
+	bool hasConversionConstructor(const StructSymbol *st) const;
 
-	int rankOfConversion(StructSymbol *st);
+	FunctionSymbol* getConversionOperator(const StructSymbol *st) const;
+	bool hasConversionOperator(const StructSymbol *st) const;
 
-	FunctionSymbol* getConversionConstructor(StructSymbol *st);
-	bool hasConversionConstructor(StructSymbol *st);
+	FunctionSymbol* getCopyConstructor() const;
+	FunctionSymbol* getDefaultConstructor() const;
 
-	FunctionSymbol* getConversionOperator(StructSymbol *st);
-	bool hasConversionOperator(StructSymbol *st);
+	FunctionSymbol* constructorWith(FunctionTypeInfo ft) const;
 
-	FunctionSymbol* getCopyConstructor();
-	FunctionSymbol* getDefaultConstructor();
+	FunctionSymbol* methodWith(std::string name, FunctionTypeInfo ft) const;
 
-	FunctionSymbol* constructorWith(FunctionTypeInfo ft);
+	const Symbol* getSymbol() const override;
 
-	TempAllocator& getTempAlloc() override;
+	bool isUnsafeBlock() const override;
 
 private:
 
-    string name;
-    
-    Scope *enclosing_scope;
-    
-    int type_size;
-
-    string scope_name;
-
-	FieldVarAllocator var_alloc;
-	TempAllocator temp_alloc;
+	std::string name;
 };
 		     
 #endif

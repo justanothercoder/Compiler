@@ -5,9 +5,6 @@
 
 #include "exprnode.hpp"
 #include "codeobject.hpp"
-#include "localscope.hpp"
-
-using std::vector;
 
 class ForNode : public AST
 {
@@ -26,18 +23,19 @@ public:
 
 	AST* copyTree() const override;
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
+	std::string toString() const override;
 
 private:
 	
-	static string getNewLabel();
+	static std::string getNewLabel();
 
 	AST *init;
 	ExprNode *cond;
 	AST *step;
     AST	*stats;
 
-	LocalScope *for_scope;
+	Scope *for_scope;
 	CodeObject code_obj;
 };
 

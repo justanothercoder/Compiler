@@ -1,9 +1,11 @@
 #ifndef _IFNODE_HPP_
 #define _IFNODE_HPP_
 
-#include "exprnode.hpp"
-#include "localscope.hpp"
+#include "ast.hpp"
 #include "codeobject.hpp"
+
+class Scope;
+class ExprNode;
 
 class IfNode : public AST
 {
@@ -22,18 +24,21 @@ public:
 
     CodeObject& gen() override;
 	
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
+
+	std::string toString() const override;
 
 private:
 
     ExprNode *cond;
     AST *stats_true, *stats_false;
 
-    LocalScope *if_scope, *else_scope;
+    Scope *if_scope;
+	Scope *else_scope;
 
 	CodeObject code_obj;
 
-    static string getNewLabel();
+    static std::string getNewLabel();
 };
 
 #endif

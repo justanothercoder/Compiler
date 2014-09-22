@@ -6,39 +6,36 @@
 #include <algorithm>
 
 #include "exprnode.hpp"
-#include "scope.hpp"
-#include "structsymbol.hpp"
-#include "typehelper.hpp"
 #include "codeobject.hpp"
-#include "callhelper.hpp"
-
-using std::vector;
-using std::string;
+#include "typeinfo.hpp"
 
 class NewExpressionNode : public ExprNode
 {
 public:
-    NewExpressionNode(TypeInfo type_info, vector<ExprNode*> params);
+    NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params);
 	~NewExpressionNode() override;
 
+	void build_scope() override;
     void check() override;
     CodeObject& gen() override;
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
     AST* copyTree() const override;
 
-    VariableType getType() const override;
+    const Type* getType() const override;
 	bool isLeftValue() const override;
 
 	void freeTempSpace() override;
 
 	bool isCompileTimeExpr() const override; 
-	optional<int> getCompileTimeValue() const override;
+	boost::optional<int> getCompileTimeValue() const override;
+	
+	std::string toString() const override;
 
 private:
 
     TypeInfo type_info;
-    vector<ExprNode*> params;
+	std::vector<ExprNode*> params;
     CallInfo call_info;
 	CodeObject code_obj;
 };

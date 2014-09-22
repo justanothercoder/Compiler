@@ -39,6 +39,8 @@
 	
 	global _int_int_int~ref_char:function
 
+	global ___brk_void~ptr:function
+
 _int_operatorassign_int~ref_const~int~ref:
 	push rbp
 	mov rbp, rsp
@@ -61,16 +63,8 @@ _int_operatorplus_int~ref_int:
 	mov rax, [rax]
 	add rax, [rbp + 24]
 
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
-
-;	mov [rbp + 32], rax
-;	lea rax, [rbp + 32]
-	
 	mov rbx, rax
-	lea rax, [rbp + 32]
-	mov rax, [rax]
+	mov rax, [rbp + 32]
 	mov [rax], rbx
 
 	mov rsp, rbp
@@ -85,13 +79,8 @@ _int_operatorminus_int~ref_int:
 	mov rax, [rax]
 	sub rax, [rbp + 24]
 
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
-	
 	mov rbx, rax
-	lea rax, [rbp + 32]
-	mov rax, [rax]
+	mov rax, [rbp + 32]
 	mov [rax], rbx
 
 	mov rsp, rbp
@@ -106,9 +95,9 @@ _int_operatormul_int~ref_int:
 	mov rax, [rax]
 	imul qword [rbp + 24]
 
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]
+	mov rbx, rax
+	mov rax, [rbp + 32]
+	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp
@@ -133,10 +122,6 @@ _int_int_int~ref_const~int~ref:
 	mov rbx, [rbx]
 	mov rax, [rbp + 16]	
 	mov [rax], rbx
-
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp
@@ -176,7 +161,9 @@ _getchar:
 	mov rdx, 1
 	syscall
 
-	lea rax, [rbp - 40]
+	mov rbx, [rbp - 40]
+	mov rax, [rbp + 16]
+	mov [rax], rbx
 	
 	mov rsp, rbp
 	pop rbp
@@ -192,18 +179,17 @@ _int_operatoreq_int~ref_int:
 	cmp rax, qword [rbp + 24]
 	jz .equal
 
-	mov r9, [rbp]
-	mov qword [r9 - 8], 0
-	lea rax, [r9 - 8]
+	mov rax, [rbp + 32]
+	mov qword [rax], 0
 
 	mov rsp, rbp
 	pop rbp
 	ret
 
 .equal:
-	mov r9, [rbp]
-	mov qword [r9 - 8], 1
-	lea rax, [r9 - 8]
+	mov rax, [rbp + 32]
+	mov qword [rax], 1
+
 	mov rsp, rbp
 	pop rbp
 	ret
@@ -218,17 +204,17 @@ _int_operatorneq_int~ref_int:
 	cmp rax, qword [rbp + 24]
 	je .equal
 
-	mov r9, [rbp]
-	mov qword [r9 - 8], 1
-	lea rax, [r9 - 8]
+	mov rax, [rbp + 32]
+	mov qword [rax], 1
+
 	mov rsp, rbp
 	pop rbp
 	ret
 
 .equal:
-	mov r9, [rbp]
-	mov qword [r9 - 8], 0
-	lea rax, [r9 - 8]
+	mov rax, [rbp + 32]
+	mov qword [rax], 0
+
 	mov rsp, rbp
 	pop rbp
 	ret
@@ -335,9 +321,9 @@ ___fopen_const~string~ref_int_int:
 	mov rdx, [rbp + 32]
 	syscall
 
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]
+	mov rbx, rax
+	mov rax, [rbp + 40]
+	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp
@@ -404,6 +390,10 @@ ___fread_int_string~ref_int:
 	lea rsi, [rbp - 256]
 	mov rdx, [rbp + 32]
 	syscall
+
+	mov rbx, rax
+	mov rax, [rbp + 40]
+	mov [rax], rbx
 
 	lea rsi, [rbp - 256]
 	mov rdi, [rbp + 24]
@@ -497,18 +487,6 @@ _char_char_char~ref_const~char~ref:
 	mov rax, [rbp + 16]
 	mov byte [rax], bl
 
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
-
-;	mov [rbp + 32], rax
-;	lea rax, [rbp + 32]
-
-;;	mov rbx, rax
-;;	lea rax, [rbp + 32]
-;;	mov rax, [rax]
-;;	mov [rax], rbx
-
 	mov rsp, rbp
 	pop rbp
 	ret 
@@ -536,18 +514,6 @@ _char_char_char~ref_const~int~ref:
 
 	mov rax, [rbp + 16]
 	mov byte [rax], bl
-	
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
-
-;	mov [rbp + 32], rax
-;	lea rax, [rbp + 32]
-
-;;	mov rbx, rax
-;;	lea rax, [rbp + 32]
-;;	mov rax, [rax]
-;;	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp
@@ -577,13 +543,6 @@ _string_string_string~ref_const~string~ref:
 
 	mov byte [rsi], 0
 
-	mov r9, [rbp]
-	lea r9, [r9 - 8]
-
-	mov rax, [rbp + 16]
-	mov [r9], rax
-	lea rax, [r9]
-
 	mov rsp, rbp
 	pop rbp
 	ret
@@ -597,9 +556,12 @@ _string_operatorelem_string~ref_int:
 
 	sub rsi, rbx
 
-	mov r9, [rbp]
-	mov [r9 - 8], rsi
-	lea rax, [r9 - 8]
+;	mov r9, [rbp]
+;	mov [r9 - 8], rsi
+;	lea rax, [r9 - 8]
+
+	mov rax, [rbp + 32]
+	mov [rax], rsi
 
 	mov rsp, rbp
 	pop rbp
@@ -625,9 +587,13 @@ _string_length_string~ref:
 
 .end:
 
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]	
+	mov rbx, rax
+	mov rax, [rbp + 24]
+	mov [rax], rbx
+
+;	mov r9, [rbp]
+;	mov [r9 - 8], rax
+;	lea rax, [r9 - 8]	
 
 	mov rsp, rbp
 	pop rbp
@@ -664,11 +630,9 @@ _string_operatorplus_string~ref_const~string~ref:
 	push rbp
 	mov rbp, rsp
 
-	mov r9, [rbp]
-	lea rax, [r9 - 8]
+	mov rax, [rbp + 32]
+	mov rdi, rax
 
-	lea rdi, [r9 - 8]
-	
 	mov rsi, [rbp + 16]
 
 .floop:
@@ -747,9 +711,25 @@ _int_int_int~ref_char:
 	mov rax, [rbp + 16]
 	mov [rax], rbx
 
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]
+;	mov r9, [rbp]
+;	mov [r9 - 8], rax
+;	lea rax, [r9 - 8]
+
+	mov rsp, rbp
+	pop rbp
+	ret
+
+___brk_void~ptr:
+	push rbp
+	mov rbp, rsp
+
+	mov rax, 12
+	mov rdi, [rbp + 16]
+	syscall
+
+	mov rbx, rax
+	mov rax, [rbp + 24]
+	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp

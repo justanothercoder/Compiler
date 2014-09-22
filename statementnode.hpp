@@ -7,27 +7,27 @@
 #include "ast.hpp"
 #include "codeobject.hpp"
 
-using std::vector;
-
 class StatementNode : public AST
 {       
 public:
 
-    StatementNode(vector<AST*> statements);
+    StatementNode(std::vector<AST*> statements);
 
     virtual ~StatementNode();
 
     virtual AST* copyTree() const;
     
-    virtual void define();
-    virtual void check();
-    virtual CodeObject& gen();
+    void define() override;
+    void check() override;
+    CodeObject& gen() override;
 
-	virtual vector<AST*> getChildren() const;
+	virtual std::vector<AST*> getChildren() const;
+	
+	std::string toString() const override;
 
 private:
 
-    vector<AST*> statements;
+	std::vector<AST*> statements;
 	CodeObject code_obj;    
 };
 

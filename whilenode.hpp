@@ -1,9 +1,11 @@
 #ifndef _WHILENODE_HPP_
 #define _WHILENODE_HPP_
 
-#include "exprnode.hpp"
-#include "localscope.hpp"
+#include "ast.hpp"
 #include "codeobject.hpp"
+
+class Scope;
+class ExprNode;
 
 class WhileNode : public AST
 {
@@ -22,18 +24,20 @@ public:
 
     CodeObject& gen() override;
    
-   	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
+
+	std::string toString() const override;
     
 private:
 
     ExprNode *cond;
     AST *stats;
 
-    LocalScope *while_scope;
+    Scope *while_scope;
 
 	CodeObject code_obj;
 
-    static string getNewLabel();
+    static std::string getNewLabel();
 };
 
 #endif

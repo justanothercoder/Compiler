@@ -1,8 +1,11 @@
 #include "token.hpp"
 
-Token::Token(TokenType type, string text, int line, int symbol) : type(type), text(text), line(line), symbol(symbol) { }
+Token::Token(TokenType type, std::string text, int line, int symbol) : type(type), text(text), line(line), symbol(symbol) 
+{
 
-string to_string(TokenType tt)
+}
+
+std::string to_string(TokenType tt)
 {
     switch ( tt )
     {
@@ -22,6 +25,9 @@ string to_string(TokenType tt)
 	case TokenType::CONST:     return "const";
 	case TokenType::STRING:    return "string";
 	case TokenType::IMPORT:    return "import";
+	case TokenType::VAR:       return "var";
+	case TokenType::UNSAFE:    return "unsafe";
+    case TokenType::NULLTOKEN: return "null";
  	case TokenType::LPAREN:    return "(";
     case TokenType::RPAREN:    return ")";
     case TokenType::LBRACE:    return "{";

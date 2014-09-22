@@ -2,7 +2,6 @@
 #define _PARAMVARALLOCATOR_HPP_
 
 #include "varallocator.hpp"
-#include "globalconfig.hpp"
 
 class ParamVarAllocator : public VarAllocator
 {
@@ -10,7 +9,7 @@ public:
 
 	ParamVarAllocator();
 
-	virtual void addVariable(VariableSymbol *var);
+	void addVariable(VariableSymbol *var) override;
 
 	int getSpaceForParams() const;
 

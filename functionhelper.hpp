@@ -1,15 +1,8 @@
 #ifndef _FUNCTIONHELPER_HPP_
 #define _FUNCTIONHELPER_HPP_
 
-#include <set>
-#include <iostream>
-
-#include "typehelper.hpp"
-#include "functiontypeinfo.hpp"
-
-#include "codeobject.hpp"
-
-using std::set;
+class FunctionSymbol; 
+class StructSymbol; 
 
 class FunctionHelper
 {

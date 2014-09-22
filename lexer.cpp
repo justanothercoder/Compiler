@@ -135,6 +135,9 @@ Token Lexer::getToken()
 			else if ( buf == "for"      ) token_type = TokenType::FOR;
 			else if ( buf == "const"    ) token_type = TokenType::CONST;
 			else if ( buf == "import"   ) token_type = TokenType::IMPORT;
+			else if ( buf == "var"      ) token_type = TokenType::VAR;
+			else if ( buf == "unsafe"   ) token_type = TokenType::UNSAFE;
+			else if ( buf == "null"     ) token_type = TokenType::NULLTOKEN;
 			else                          token_type = TokenType::ID;
 
 			return Token(token_type, buf, l, s);

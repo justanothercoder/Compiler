@@ -1,10 +1,14 @@
 #include "parser.hpp"
+#include "semanticerror.hpp"
 
-Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer) { }
+Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer) 
+{
+
+}
 
 AST* Parser::parse()
 {
-	vector<AST*> statements;
+	std::vector<AST*> statements;
 
 	while ( getTokenType(1) != TokenType::EOF_TYPE )
 		statements.push_back(statement());
@@ -19,7 +23,12 @@ AST* Parser::statement()
 		match(TokenType::SEMICOLON);
 		return new StatementNode({ });
 	}
-	else if ( getTokenType(1) == TokenType::STRUCT || getTokenType(1) == TokenType::DEF || tryVarDecl() || getTokenType(1) == TokenType::TEMPLATE )
+	else if ( getTokenType(1) == TokenType::STRUCT 
+		   || getTokenType(1) == TokenType::DEF 
+		   || getTokenType(1) == TokenType::TEMPLATE 
+		   || getTokenType(1) == TokenType::VAR
+		   || tryVarDecl() 
+		   )
 		return declaration();
 	else if ( getTokenType(1) == TokenType::RETURN ) return return_stat();
 	else if ( getTokenType(1) == TokenType::IF     ) return if_stat();
@@ -28,6 +37,7 @@ AST* Parser::statement()
 	else if ( tryAssignment() )                      return assignment();
 	else if ( getTokenType(1) == TokenType::LBRACE ) return block();
 	else if ( getTokenType(1) == TokenType::IMPORT ) return import_stat(); 
+	else if ( getTokenType(1) == TokenType::UNSAFE ) return unsafe_block();
 	else                                             return expression();
 }
 
@@ -45,11 +55,12 @@ AST* Parser::block()
 	return new StatementNode(statements);
 }
 
-DeclarationNode* Parser::declaration(optional<string> struct_name)
+DeclarationNode* Parser::declaration(boost::optional<string> struct_name)
 {
 	if      ( getTokenType(1) == TokenType::STRUCT )   return structDecl();
 	else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateStructDecl();
 	else if ( getTokenType(1) == TokenType::DEF )      return functionDecl(struct_name);
+	else if ( getTokenType(1) == TokenType::VAR )      return varInferDecl(struct_name);
 	else if ( tryVarDecl() )                           return variableDecl(struct_name);
 	else                                               throw RecognitionError("Declaration expected.");
 }
@@ -68,7 +79,7 @@ bool Parser::tryVarDecl()
 	return success;
 }
 
-DeclarationNode* Parser::variableDecl(optional<string> struct_name)
+DeclarationNode* Parser::variableDecl(boost::optional<string> struct_name)
 {
 	auto type_info = typeInfo();
 	string var_name  = id();
@@ -105,9 +116,9 @@ DeclarationNode* Parser::structDecl()
 		if ( getTokenType(1) != TokenType::RBRACE )
 		{
 			if ( getTokenType(1) == TokenType::DEF )
-				functions.push_back(functionDecl(make_optional(string(struct_name))));
+				functions.push_back(functionDecl(boost::make_optional(string(struct_name))));
 			else		
-				struct_in.push_back(declaration(make_optional(string(struct_name))));
+				struct_in.push_back(declaration(boost::make_optional(string(struct_name))));
 		}
 	}
 
@@ -149,6 +160,15 @@ DeclarationNode* Parser::templateStructDecl()
 
 	string struct_name = id();
 
+	if ( getTokenType(1) == TokenType::LESS )
+	{
+		match(TokenType::LESS);
+
+				
+
+		match(TokenType::GREATER);
+	}
+
 	vector<AST*> struct_in;    
 	match(TokenType::LBRACE);
 
@@ -158,7 +178,7 @@ DeclarationNode* Parser::templateStructDecl()
 			match(TokenType::SEMICOLON);
 
 		if ( getTokenType(1) != TokenType::RBRACE )
-			struct_in.push_back(declaration(make_optional(string(struct_name))));
+			struct_in.push_back(declaration(boost::make_optional(string(struct_name))));
 	}
 
 	match(TokenType::RBRACE);
@@ -166,9 +186,17 @@ DeclarationNode* Parser::templateStructDecl()
 	return new TemplateStructDeclarationNode(struct_name, struct_in, template_params);
 }
 
-DeclarationNode* Parser::functionDecl(optional<string> struct_name)
+DeclarationNode* Parser::functionDecl(boost::optional<string> struct_name)
 {
 	match(TokenType::DEF);
+
+	bool is_unsafe = false;
+
+	if ( getTokenType(1) == TokenType::UNSAFE )
+	{
+		is_unsafe = true;
+		match(TokenType::UNSAFE);
+	}
 
 	bool is_operator = getTokenType(1) == TokenType::OPERATOR; 
 
@@ -216,7 +244,7 @@ DeclarationNode* Parser::functionDecl(optional<string> struct_name)
 
 	AST *statements = block();
 
-	return new FunctionDeclarationNode(function_name, params, return_type, statements, {bool(struct_name), is_constructor, is_operator});
+	return new FunctionDeclarationNode(function_name, params, return_type, statements, {bool(struct_name), is_constructor, is_operator}, is_unsafe);
 }
 
 string Parser::id()
@@ -279,6 +307,12 @@ ExprNode* Parser::number()
 	return new NumberNode(num);
 }
 
+ExprNode* Parser::null()
+{
+	match(TokenType::NULLTOKEN);
+	return new NullNode();
+}
+
 ExprNode* Parser::primary()
 {
 	if ( getTokenType(1) == TokenType::NUMBER || getTokenType(1) == TokenType::STRING )
@@ -292,6 +326,8 @@ ExprNode* Parser::primary()
 	}
 	else if ( getTokenType(1) == TokenType::NEW )
 		return new_expr();
+	else if ( getTokenType(1) == TokenType::NULLTOKEN )
+		return null();
 	else
 		return variable();        
 }
@@ -324,16 +360,33 @@ ExprNode* Parser::unary_right()
 	return res;
 }
 
+ExprNode* Parser::addr_expr()
+{
+	if ( getTokenType(1) == TokenType::REF )
+	{
+		match(TokenType::REF);
+		return new AddrNode(unary_right(), AddrOp::REF);
+	}
+	else
+	{
+		match(TokenType::MUL);
+		return new AddrNode(unary_right(), AddrOp::DEREF);
+	}
+}
+
 ExprNode* Parser::unary_left()
 {
 	UnaryOp op;
 
 	switch ( getTokenType(1) )
 	{
-	case TokenType::PLUS: op = UnaryOp::PLUS; break;
+	case TokenType::PLUS : op = UnaryOp::PLUS ; break;
 	case TokenType::MINUS: op = UnaryOp::MINUS; break;
-	case TokenType::NOT: op = UnaryOp::NOT; break;
-	default: return unary_right();
+	case TokenType::NOT  : op = UnaryOp::NOT  ; break;
+
+	case TokenType::REF: return addr_expr(); 
+	case TokenType::MUL: return addr_expr();
+	default            : return unary_right();
 	}
 
 	match(getTokenType(1));
@@ -561,7 +614,7 @@ TypeInfo Parser::typeInfo()
 
 	bool is_ref = false;
 
-	vector<ExprNode*> template_params { };
+	std::vector<TemplateParamInfo> template_params { };
 
 	if ( getTokenType(1) == TokenType::LESS )
 	{
@@ -569,15 +622,30 @@ TypeInfo Parser::typeInfo()
 
 		if ( getTokenType(1) != TokenType::GREATER )
 		{
-			template_params.push_back(expression());
+			if ( tryTypeInfo() )
+				template_params.push_back(typeInfo());
+			else
+				template_params.push_back(expression());
+
 			while ( getTokenType(1) == TokenType::COMMA )
 			{
 				match(TokenType::COMMA);
-				template_params.push_back(expression());
+				if ( tryTypeInfo() )
+					template_params.push_back(typeInfo());
+				else
+					template_params.push_back(expression());
 			}
 		}
 
 		match(TokenType::GREATER);
+	}
+
+	int pointer_depth = 0;
+
+	while ( getTokenType(1) == TokenType::MUL )
+	{
+		match(TokenType::MUL);
+		++pointer_depth;	
 	}
 
 	if ( getTokenType(1) == TokenType::REF )
@@ -586,7 +654,7 @@ TypeInfo Parser::typeInfo()
 		match(TokenType::REF);
 	}
 
-	return TypeInfo(type_name, is_ref, is_const, template_params);
+	return TypeInfo(type_name, is_ref, is_const, template_params, pointer_depth);
 }
 
 vector<ExprNode*> Parser::call_params_list()
@@ -642,4 +710,24 @@ bool Parser::tryTypeInfo()
 	release();
 
 	return success;
+}
+    
+DeclarationNode* Parser::varInferDecl(boost::optional<string>)
+{
+	match(TokenType::VAR);
+	
+	string name = id();
+
+	match(TokenType::ASSIGN);
+	
+	auto expr = expression();
+	
+	return new VarInferTypeDeclarationNode(name, expr);
+}
+
+AST* Parser::unsafe_block()
+{
+	match(TokenType::UNSAFE);
+
+	return new UnsafeBlockNode(static_cast<StatementNode*>(block()));
 }

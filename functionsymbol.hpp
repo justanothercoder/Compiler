@@ -2,72 +2,64 @@
 #define _FUNCTIONSYMBOL_HPP_
 
 #include <map>
+#include <boost/optional.hpp>
 
-#include "basescope.hpp"
-#include "globalconfig.hpp"
+#include "functionscope.hpp"
 #include "functiontraits.hpp"
 #include "functiontypeinfo.hpp"
-
-#include "overloadedfunctionsymbol.hpp"
-#include "paramvarallocator.hpp"
-
 #include "codeobject.hpp"
-#include "optional.hpp"
+#include "symbol.hpp"
+#include "type.hpp"
 
 class VariableSymbol;
 
-using std::map;
-using std::pair;
-
-class FunctionSymbol : public Symbol, public BaseScope, public Type
+class FunctionSymbol : public Symbol, public FunctionScope, public Type
 {
-    friend class VariableSymbolDefine;
 public:
 
-    FunctionSymbol(string name, VariableType return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, optional<CodeObject> code_obj = optional<CodeObject>::empty());
+    FunctionSymbol(std::string name, const Type *return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, boost::optional<CodeObject> code_obj = boost::none);
 
-    string getTypedName() const;
-    string getScopedTypedName() const;
+	void accept(TypeVisitor *visitor) const override;
+    
+	std::string getTypedName() const;
+	std::string getScopedTypedName() const;
     
     bool isOperator() const;
     bool isMethod() const;
     bool isConstructor() const;
 
-    string getScopeName() const override;
-    Scope* getEnclosingScope() const override;
-    void accept(ScopeVisitor *visitor) override;
-
-    string getName() const override;
+	std::string getName() const override;
 	SymbolType getSymbolType() const override;
     
     FunctionTraits getTraits() const;
     
     TypeKind getTypeKind() const override;
-    int getSize() const override;
+    size_t getSize() const override;
 
-	VarAllocator& getVarAlloc() override;
-	TempAllocator& getTempAlloc() override;
+	boost::optional<CodeObject> code_obj;
 
-	optional<CodeObject> code_obj;
-
-	VariableType return_type;
+	const Type *return_type;
     FunctionTypeInfo function_type_info;	
 	
 	bool is_constexpr;
 
+	bool isConvertableTo(const Type *type) const override;
+	boost::optional<int> rankOfConversion(const Type *type) const override;
+	
+	FunctionSymbol* getConversionTo(const Type *type) const override;
+
+	const Symbol* getSymbol() const override;
+
+	ScopeVisitor* getScopeVisitor() override;
+
+
+	bool isUnsafeBlock() const override;
+	
 private:
 
-    string name;
+	std::string name;
     
-    Scope *enclosing_scope;
-
-    string scope_name;
-
     FunctionTraits traits;
-
-	ParamVarAllocator var_alloc;
-
-	TempAllocator temp_alloc;
 };
 
 #endif

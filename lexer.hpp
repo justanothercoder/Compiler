@@ -6,15 +6,13 @@
 
 #include "abstractlexer.hpp"
 
-using std::string;
-
 class Lexer : public AbstractLexer
 {
 public:
 
-    Lexer(string input);
+    Lexer(std::string input);
     
-    virtual Token getToken();
+    Token getToken() override;
     
 };
 

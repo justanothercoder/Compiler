@@ -2,34 +2,34 @@
 #define _NUMBERNODE_HPP_
 
 #include "exprnode.hpp"
-#include "globalconfig.hpp"
-#include "builtins.hpp"
 #include "codeobject.hpp"
 
 class NumberNode : public ExprNode
 {
 public:
 
-    NumberNode(string num);
+    NumberNode(std::string num);
 
-    virtual void check();
-    virtual CodeObject& gen();
+    void check() override;
+    CodeObject& gen() override;
 
-    virtual AST* copyTree() const;
+    AST* copyTree() const override;
 
-	string getNum() const;
+	std::string getNum() const;
     
-	virtual VariableType getType() const;
-	virtual bool isLeftValue() const;
+	const Type* getType() const override;
+	bool isLeftValue() const override;
 
-	virtual void freeTempSpace();
+	void freeTempSpace() override;
 	
 	bool isCompileTimeExpr() const override;
-	optional<int> getCompileTimeValue() const override;
+	boost::optional<int> getCompileTimeValue() const override;
+
+	std::string toString() const override;
 
 private:
 
-    string num;
+	std::string num;
 	CodeObject code_obj;    
 };
     

@@ -3,8 +3,6 @@
 
 #include <string>
 
-using string = std::string;
-
 enum class TokenType { EOF_TYPE,
 	ID, NUMBER, LPAREN, RPAREN,
 	LBRACE, RBRACE, COMMA, STRUCT,
@@ -15,17 +13,17 @@ enum class TokenType { EOF_TYPE,
 	LBRACKET, RBRACKET, OPERATOR,
 	FOR, CONST, STRING, EQUALS,
 	NEQUALS, NOT, AND, OR, IMPORT,
-	MOD
+	MOD, VAR, UNSAFE, NULLTOKEN
 	};
 
-string to_string(TokenType tt);
+std::string to_string(TokenType tt);
 
 struct Token
 {
-    Token(TokenType type, string text, int line, int symbol);
+    Token(TokenType type, std::string text, int line, int symbol);
 
     TokenType type;
-    string text;
+	std::string text;
 
     int line, symbol;
 };

@@ -1,11 +1,12 @@
 #ifndef _EXPRNODE_HPP_
 #define _EXPRNODE_HPP_
 
-#include "ast.hpp"
-#include "variabletype.hpp"
+#include <boost/optional.hpp>
 
+#include "ast.hpp"
 #include "logger.hpp"
-#include "optional.hpp"
+
+class Type;
 
 class ExprNode : public AST
 {
@@ -13,17 +14,17 @@ public:
 
 	ExprNode();
 
-    virtual void define();
+    void define() override;
     
-    virtual VariableType getType() const = 0;
+    virtual const Type* getType() const = 0;
 	virtual bool isLeftValue() const = 0;
 
 	virtual void freeTempSpace() = 0;
 
 	virtual bool isCompileTimeExpr() const = 0;
-	virtual optional<int> getCompileTimeValue() const = 0;
+	virtual boost::optional<int> getCompileTimeValue() const = 0;
 
-	Type *type_hint;
+	const Type *type_hint;
 };
 
 #endif

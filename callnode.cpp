@@ -1,44 +1,55 @@
 #include "callnode.hpp"
+#include "callhelper.hpp"
+#include "functionsymbol.hpp"
+#include "structsymbol.hpp"
+#include "globalhelper.hpp"
 
-CallNode::CallNode(ExprNode *caller, const vector<ExprNode*>& params) : caller(caller), params(params), call_info(), code_obj() { }
+CallNode::CallNode(ExprNode *caller, std::vector<ExprNode*> params) : caller(caller), params(params) 
+{
 
-CallNode::~CallNode() { delete caller; }
+}
+
+CallNode::~CallNode() 
+{
+   	delete caller; 
+}
     
 void CallNode::check()
 {
     caller -> check();
 
-    auto caller_type = caller -> getType().type;
+    auto caller_type = caller -> getType();
 
     if ( caller_type -> getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
 	{
-		if ( caller_type -> getTypeKind() != TypeKind::STRUCT )
-			throw SemanticError("caller is not a function.");
+//		if ( caller_type -> getTypeKind() != TypeKind::STRUCT )
+		if ( caller_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
+			throw SemanticError("caller '" + caller -> toString() + "' is not a function.");
 
-		call_info = CallHelper::callCheck("operator()", static_cast<StructSymbol*>(caller_type), params);
+		call_info = CallHelper::callCheck("operator()", static_cast<const StructSymbol*>(caller_type -> getSymbol()), params);
 	}
 	else
 	{
-		auto ov_func = static_cast<OverloadedFunctionSymbol*>(caller_type);
-		auto _scope = ov_func -> isMethod() ? static_cast<StructSymbol*>(ov_func -> getBaseType().type) : scope;
+		auto ov_func = static_cast<const OverloadedFunctionSymbol*>(caller_type);
+		auto _scope = ov_func -> isMethod() ? static_cast<const StructSymbol*>(ov_func -> getBaseType() -> getSymbol()) : scope;
 		call_info = CallHelper::callCheck(ov_func -> getName(), _scope, params);
 	}
 
 	caller -> type_hint = call_info.callee;
 	
-	scope -> getTempAlloc().add(getType().getSize());
+	scope -> getTempAlloc().add(getType() -> getSize());
 }
 
 CodeObject& CallNode::gen()
 {  
-	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType().getSize());
+	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	code_obj.emit("lea rax, " + addr);
 	code_obj.emit("push rax");
 
   	if ( call_info.callee -> isMethod() )
-		code_obj.genCallCode(call_info, params, caller -> gen(), caller -> getType().is_ref);
+		code_obj.genCallCode(call_info, params, caller -> gen(), caller -> getType() -> isReference());
 	else
 	{
 		CodeObject empty;
@@ -52,7 +63,7 @@ CodeObject& CallNode::gen()
 
 AST* CallNode::copyTree() const
 {
-    vector<ExprNode*> expr(params.size());
+	std::vector<ExprNode*> expr(params.size());
     std::transform(std::begin(params), std::end(params), std::begin(expr), [&] (ExprNode *ex) 
 	{ 
 		return static_cast<ExprNode*>(ex -> copyTree()); 
@@ -61,15 +72,22 @@ AST* CallNode::copyTree() const
     return new CallNode(static_cast<ExprNode*>(caller -> copyTree()), expr);
 }
 
-vector<AST*> CallNode::getChildren() const
+std::vector<AST*> CallNode::getChildren() const
 {
-	vector<AST*> vec { caller };
+	std::vector<AST*> vec { caller };
 	vec.insert(std::begin(vec), std::begin(params), std::end(params));
 	return vec;
 }
 
-VariableType CallNode::getType() const { return call_info.callee -> return_type; }
-bool CallNode::isLeftValue() const { return false; }
+const Type* CallNode::getType() const 
+{
+   	return call_info.callee -> return_type; 
+}
+
+bool CallNode::isLeftValue() const 
+{
+   	return false; 
+}
 
 void CallNode::freeTempSpace()
 {
@@ -84,7 +102,27 @@ bool CallNode::isCompileTimeExpr() const
 	});
 }
 
-optional<int> CallNode::getCompileTimeValue() const
+boost::optional<int> CallNode::getCompileTimeValue() const
 {
-	return optional<int>::empty();
+	return boost::none;
+}
+	
+std::string CallNode::toString() const 
+{
+	std::string res = caller -> toString();
+   
+	res += "(";
+
+	if ( !params.empty() )
+	{
+		auto it = std::begin(params);
+		res += (*it) -> toString();
+
+		for ( ++it; it != std::end(params); ++it )
+			res += ", " + (*it) -> toString();
+	}
+
+	res += ")";
+
+	return res;
 }

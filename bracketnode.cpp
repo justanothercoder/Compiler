@@ -1,29 +1,39 @@
 #include "bracketnode.hpp"
+#include "callhelper.hpp"
+#include "functionsymbol.hpp"
+#include "structsymbol.hpp"
+#include "globalhelper.hpp"
 
-BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr), call_info(), code_obj() { }
+BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr) 
+{
 
-BracketNode::~BracketNode() { delete expr; }
+}
+
+BracketNode::~BracketNode() 
+{
+   	delete expr; 
+}
 
 void BracketNode::check()
 {
 	base -> check();
 
-	auto base_type = dynamic_cast<StructSymbol*>(base -> getType().type);
+	auto base_type = dynamic_cast<const StructSymbol*>(base -> getType() -> getSymbol());
 
 	call_info = CallHelper::callCheck("operator[]", base_type, {this -> expr});
 	
-	scope -> getTempAlloc().add(getType().getSize());
+	scope -> getTempAlloc().add(getType() -> getSize());
 }
 
 CodeObject& BracketNode::gen()
 {
-	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType().getSize());
+	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	code_obj.emit("lea rax, " + addr);
 	code_obj.emit("push rax");
 
-    code_obj.genCallCode(call_info, {this -> expr}, base -> gen(), base -> getType().is_ref);
+    code_obj.genCallCode(call_info, {this -> expr}, base -> gen(), base -> getType() -> isReference());
 	code_obj.emit("pop rax");
 
 	return code_obj;
@@ -37,17 +47,20 @@ AST* BracketNode::copyTree() const
 						  ); 
 }
 
-vector<AST*> BracketNode::getChildren() const 
+std::vector<AST*> BracketNode::getChildren() const 
 { 
 	return {base, expr}; 
 }
 
-VariableType BracketNode::getType() const 
+const Type* BracketNode::getType() const 
 { 
 	return call_info.callee -> return_type; 
 }
 
-bool BracketNode::isLeftValue() const { return false; }
+bool BracketNode::isLeftValue() const 
+{ 
+	return false; 
+}
 
 void BracketNode::freeTempSpace()
 {
@@ -59,7 +72,12 @@ bool BracketNode::isCompileTimeExpr() const
 	return base -> isCompileTimeExpr() && expr -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
 }
 
-optional<int> BracketNode::getCompileTimeValue() const
+boost::optional<int> BracketNode::getCompileTimeValue() const
 {
-	return optional<int>::empty();
+	return boost::none;
+}
+	
+std::string BracketNode::toString() const
+{
+	return base -> toString() + "[" + expr -> toString() + "]";
 }

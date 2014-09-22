@@ -2,94 +2,88 @@
 
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
+#include "typefactory.hpp"
 
-StructSymbol::StructSymbol(string name, Scope *enclosing_scope) : name(name), enclosing_scope(enclosing_scope)
+StructSymbol::StructSymbol(std::string name
+		                 , Scope *enclosing_scope
+						 , const TemplateInfo& template_info) : StructScope(name, enclosing_scope, template_info)
+															  , name(name)
 {
-	type_size = 0;
 
-	scope_name = getEnclosingScope() -> getScopeName() + "_" + name;
 }
 
-Scope* StructSymbol::getEnclosingScope() const { return enclosing_scope; }
-
-Symbol* StructSymbol::resolve(string name) const
-{
-	auto it = table.find(name);
-	if ( it == std::end(table) )
-	{
-		if ( getEnclosingScope() )
-			return getEnclosingScope() -> resolve(name);
-		return nullptr;
-	}
-	return it -> second;
+size_t StructSymbol::getSize() const 
+{ 
+	return type_size; 
 }
 
-Symbol* StructSymbol::resolveMember(string name) const
-{
-	auto it = table.find(name);
-	if ( it == std::end(table) )
-		return nullptr;
-	return it -> second;    
+std::string StructSymbol::getName() const 
+{ 
+	return name; 
 }
 
-int StructSymbol::getSize() const { return type_size; }
-string StructSymbol::getName() const { return name; }
-string StructSymbol::getScopeName() const { return scope_name; }
+SymbolType StructSymbol::getSymbolType() const 
+{ 
+	return SymbolType::STRUCT; 
+}
 
-SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }
-TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }
-
-void StructSymbol::accept(ScopeVisitor *visitor) { visitor -> visit(this); }
-
-VarAllocator& StructSymbol::getVarAlloc() { return var_alloc; }
-	
-bool StructSymbol::isConvertableTo(StructSymbol *st)
+TypeKind StructSymbol::getTypeKind() const
 {
+   	return TypeKind::STRUCT; 
+}
+
+bool StructSymbol::isConvertableTo(const Type *type) const
+{
+	type = type -> getUnqualifiedType();
+
+	if ( type -> getTypeKind() != this -> getTypeKind() )
+		return false;
+
+	auto st = static_cast<const StructSymbol*>(type);
+
 	return this == st || this -> hasConversionOperator(st) || st -> hasConversionConstructor(this);
 }
 	
-bool StructSymbol::hasConversionConstructor(StructSymbol *st)
+bool StructSymbol::hasConversionConstructor(const StructSymbol *st) const
 {
 	return getConversionConstructor(st) != nullptr;
 }
 
-bool StructSymbol::hasConversionOperator(StructSymbol *st)
+bool StructSymbol::hasConversionOperator(const StructSymbol *st) const
 {
 	return getConversionOperator(st) != nullptr;
 }
 
-FunctionSymbol* StructSymbol::getConversionConstructor(StructSymbol *st)
+FunctionSymbol* StructSymbol::getConversionConstructor(const StructSymbol *st) const
 {
-	auto constr_const_ref = constructorWith({VariableType(this, true), VariableType(st, true, true)});
+	auto ref_this     = TypeFactory::getReference(this);
+	auto ref_st       = TypeFactory::getReference(st);
+	auto const_ref_st = TypeFactory::getConst(ref_st);
+
+	auto constr_const_ref = constructorWith({ref_this, const_ref_st});
 
 	if ( constr_const_ref )
 		return constr_const_ref;
 
-	auto constr_ref = constructorWith({VariableType(this, true), VariableType(st, true)});
+	auto constr_ref = constructorWith({ref_this, ref_st});
 	
-	return constr_ref ? constr_ref : constructorWith({VariableType(this, true), VariableType(st)});
+	return constr_ref ? constr_ref : constructorWith({ref_this, st});
 }
 
-FunctionSymbol* StructSymbol::getConversionOperator(StructSymbol *st)
+FunctionSymbol* StructSymbol::getConversionOperator(const StructSymbol *st) const
 {
-	string cast_operator_name = "operator " + st -> getName();
-
-	auto func_sym = resolveMember(cast_operator_name);
-
-	if ( func_sym == nullptr )
-		return nullptr;
-
-	auto conv_oper = dynamic_cast<OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(func_sym) -> getType().type);
-
-	auto info = conv_oper -> getTypeInfo();
-
-	auto it = info.symbols.find({ });
-
-	return it == std::end(info.symbols) ? nullptr : it -> second;
+	return methodWith("operator " + st -> getName(), {TypeFactory::getReference(this)});
 }
 
-FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
+FunctionSymbol* StructSymbol::getConversionTo(const Type *type) const
 {
+//	if ( type -> getTypeKind() != TypeKind::STRUCT )
+//		return nullptr;
+
+	type = type -> getUnqualifiedType();
+
+	auto st = static_cast<const StructSymbol*>(type);
+
 	auto conv_operator = getConversionOperator(st);
 
 	if ( conv_operator != nullptr )
@@ -100,38 +94,60 @@ FunctionSymbol* StructSymbol::getConversionTo(StructSymbol *st)
 	return conv_constr;
 }
 	
-FunctionSymbol* StructSymbol::getCopyConstructor()
+FunctionSymbol* StructSymbol::getCopyConstructor() const
 {
-	return constructorWith({VariableType(this, true), VariableType(this, true, true)});
+	auto ref_this       = TypeFactory::getReference(this);
+	auto const_ref_this = TypeFactory::getConst(ref_this);
+
+	return constructorWith({ref_this, const_ref_this});
 }
 
-FunctionSymbol* StructSymbol::getDefaultConstructor()
+FunctionSymbol* StructSymbol::getDefaultConstructor() const
 {
-	return constructorWith({VariableType(this, true)});
+	return constructorWith({TypeFactory::getReference(this)});
 }
 	
-FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft)
+FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft) const
 {
-	string constructor_name = getName();
+	return methodWith(getName(), ft);
+}
+	
+boost::optional<int> StructSymbol::rankOfConversion(const Type *type) const
+{
+	if ( !isConvertableTo(type) )
+		return boost::none;
 
-	auto member = dynamic_cast<VariableSymbol*>(resolveMember(constructor_name));
+	type = type -> getUnqualifiedType();
 
+	auto st = static_cast<const StructSymbol*>(type);
+
+	return (this == st) ? 0 : 3;
+}
+	
+FunctionSymbol* StructSymbol::methodWith(std::string name, FunctionTypeInfo ft) const
+{
+	auto member = dynamic_cast<VariableSymbol*>(resolveMember(name));
 	if ( member == nullptr )
 		return nullptr;
 
-	auto func = dynamic_cast<OverloadedFunctionSymbol*>(member -> getType().type);
+	auto func = dynamic_cast<const OverloadedFunctionSymbol*>(member -> getType());
 	auto info = func -> getTypeInfo();
 
 	auto it = info.symbols.find(ft);
 	return it == std::end(info.symbols) ? nullptr : it -> second;
 }
-	
-TempAllocator& StructSymbol::getTempAlloc() 
+
+const Symbol* StructSymbol::getSymbol() const
 {
-	return temp_alloc;
+	return this;
 }
 	
-int StructSymbol::rankOfConversion(StructSymbol *st)
+bool StructSymbol::isUnsafeBlock() const 
 {
-	return (this == st) ? 0 : 1;
+	return is_unsafe;
+}
+	
+void StructSymbol::accept(TypeVisitor *visitor) const 
+{
+	visitor -> visit(this);
 }

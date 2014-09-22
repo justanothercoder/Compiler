@@ -1,6 +1,9 @@
 #include "statementnode.hpp"
 
-StatementNode::StatementNode(vector<AST*> statements) : statements(statements), code_obj() { }
+StatementNode::StatementNode(std::vector<AST*> statements) : statements(statements) 
+{
+
+}
 
 StatementNode::~StatementNode()
 {
@@ -22,7 +25,7 @@ void StatementNode::check()
 
 AST* StatementNode::copyTree() const
 {
-	vector<AST*> stats(statements.size());
+	std::vector<AST*> stats(statements.size());
 
 	std::transform(std::begin(statements), std::end(statements), std::begin(stats), [&](AST *t) { return t -> copyTree(); });
 
@@ -36,4 +39,19 @@ CodeObject& StatementNode::gen()
 	return code_obj;
 }
 
-vector<AST*> StatementNode::getChildren() const { return statements; }
+std::vector<AST*> StatementNode::getChildren() const 
+{
+   	return statements; 
+}
+	
+std::string StatementNode::toString() const
+{
+	std::string res = "{\n";
+
+	for ( auto statement : statements )
+		res += statement -> toString() + '\n';
+
+	res += "}";
+
+	return res;
+}

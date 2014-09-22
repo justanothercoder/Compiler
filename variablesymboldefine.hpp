@@ -3,10 +3,6 @@
 
 #include "scopevisitor.hpp"
 #include "variablesymbol.hpp"
-#include "globalscope.hpp"
-#include "localscope.hpp"
-#include "structsymbol.hpp"
-#include "functionsymbol.hpp"
 
 class VariableSymbolDefine : public ScopeVisitor
 {
@@ -14,10 +10,10 @@ public:
 
     VariableSymbolDefine(VariableSymbol *sym);
 
-    virtual void visit(GlobalScope *sc);
-    virtual void visit(LocalScope *sc);
-    virtual void visit(StructSymbol *sc);
-    virtual void visit(FunctionSymbol *sc);
+    void visit(GlobalScope *sc) override;
+    void visit(LocalScope *sc) override;
+    void visit(StructScope *sc) override;
+    void visit(FunctionScope *sc) override;
 
 private:
     VariableSymbol *sym;

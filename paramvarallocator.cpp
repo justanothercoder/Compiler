@@ -1,16 +1,25 @@
 #include "paramvarallocator.hpp"
+#include "globalconfig.hpp"
+#include "variablesymbol.hpp"
+#include "type.hpp"
 
-ParamVarAllocator::ParamVarAllocator() : VarAllocator(), space_for_params(0) { }
+ParamVarAllocator::ParamVarAllocator() : VarAllocator(), space_for_params(0) 
+{
+
+}
 
 void ParamVarAllocator::addVariable(VariableSymbol *var)
 {
-	if ( var->isParam() )
+	if ( var -> isParam() )
 	{
-		space_for_params += var->getType().getSize();
+		space_for_params += var -> getType() -> getSize();
 		var_addresses[var] = -(GlobalConfig::int_size + space_for_params);
 	}
 	else
-		this->VarAllocator::addVariable(var);
+		this -> VarAllocator::addVariable(var);
 }
 	
-int ParamVarAllocator::getSpaceForParams() const { return space_for_params; }
+int ParamVarAllocator::getSpaceForParams() const 
+{
+   	return space_for_params; 
+}

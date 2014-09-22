@@ -2,20 +2,23 @@
 #define _STRUCTDECLARATIONNODE_HPP_
 
 #include <vector>
+#include <boost/optional.hpp>
 
 #include "declarationnode.hpp"
 #include "codeobject.hpp"
 #include "functionsymboldefine.hpp"
-
-using std::vector;
+#include "templateinfo.hpp"
 
 class StructSymbol;
 
 class StructDeclarationNode : public DeclarationNode
 {
+
+	friend class TemplateStructSymbol;
+
 public:
 
-    StructDeclarationNode(string name, const vector<AST*>& inner);
+    StructDeclarationNode(std::string name, std::vector<AST*> inner, boost::optional<TemplateInfo> template_info = boost::none);
 
     ~StructDeclarationNode() override;
 
@@ -30,12 +33,16 @@ public:
     
 	CodeObject& gen() override;
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
+
+	std::string toString() const override;
 
 protected:
 
-    string name;
-    vector<AST*> inner;
+	std::string name;
+	std::vector<AST*> inner;
+
+	boost::optional<TemplateInfo> template_info;
 
     StructSymbol *definedSymbol;
 	CodeObject code_obj;

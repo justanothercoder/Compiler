@@ -4,25 +4,25 @@
 #include <vector>
 
 #include "declarationnode.hpp"
-#include "functionsymbol.hpp"
-#include "structsymbol.hpp"
-#include "typehelper.hpp"
-
-#include "variablesymbol.hpp"
-
-#include "variablesymboldefine.hpp"
-#include "functionsymboldefine.hpp"
-
 #include "codeobject.hpp"
+#include "functiontraits.hpp"
+#include "typeinfo.hpp"
 
-using std::vector;
+class FunctionSymbol;
+class VariableSymbol;
+
 using std::pair;
 
 class FunctionDeclarationNode : public DeclarationNode
 {
 public:
 
-    FunctionDeclarationNode(string name, vector< pair<string, TypeInfo> > params, TypeInfo return_type_info, AST *statements, FunctionTraits traits);
+    FunctionDeclarationNode(std::string name
+			              , std::vector< pair<std::string, TypeInfo> > params
+						  , TypeInfo return_type_info
+						  , AST *statements
+						  , FunctionTraits traits
+						  , bool is_unsafe = false);
 
     ~FunctionDeclarationNode() override;
     
@@ -37,12 +37,14 @@ public:
 
     CodeObject& gen() override;
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
+
+	std::string toString() const override;
     
 private:
 
-    string name;
-    vector< pair<string, TypeInfo> > params;
+	std::string name;
+	std::vector< pair<std::string, TypeInfo> > params;
     TypeInfo return_type_info;
     AST *statements;
 
@@ -50,9 +52,11 @@ private:
 
     FunctionSymbol *definedSymbol;
 
-	vector<VariableSymbol*> params_symbols;
+	std::vector<VariableSymbol*> params_symbols;
 
 	CodeObject code_obj;
+
+	bool is_unsafe;
 };
 
 #endif

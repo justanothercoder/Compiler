@@ -1,12 +1,8 @@
 #ifndef _ASMARRAYNODE_HPP_
 #define _ASMARRAYNODE_HPP_
 
+#include "ast.hpp"
 #include "codeobject.hpp"
-#include "classvariablesymbol.hpp"
-#include "templatesymbol.hpp"
-#include "numbernode.hpp"
-#include "functionsymboldefine.hpp"
-#include "variablesymboldefine.hpp"
 
 class AsmArrayNode : public AST
 {
@@ -20,12 +16,18 @@ public:
 	CodeObject& gen() override;
 	
 	AST* copyTree() const override;
+	
+	std::string toString() const override;
 
 private:
 	
 	int size_of_type;
 	int array_size;
 	CodeObject code_obj;
+	
+	FunctionSymbol *array_constructor;
+	FunctionSymbol *array_elem_operator;
+	FunctionSymbol *array_size_func;
 };
 
 #endif

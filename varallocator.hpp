@@ -4,10 +4,7 @@
 #include <iostream>
 #include <map>
 
-#include "variablesymbol.hpp"
-#include "globalconfig.hpp"
-
-#include "exprnode.hpp"
+class VariableSymbol;
 
 class VarAllocator
 {

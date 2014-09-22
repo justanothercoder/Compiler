@@ -1,24 +1,31 @@
 #include "variablenode.hpp"
 #include "functionsymbol.hpp"
-#include "typehelper.hpp"
-#include "structsymbol.hpp"
+#include "templatestructsymbol.hpp"
+#include "numbernode.hpp"
+#include "builtins.hpp"
 
-VariableNode::VariableNode(string name) : name(name), variable(nullptr) { }
+VariableNode::VariableNode(std::string name) : name(name), variable(nullptr), template_num(nullptr) 
+{
+
+}
 
 void VariableNode::check()
 {
-	if ( template_info -> sym && template_info -> sym -> isIn(name) )
-//		return;
+	const auto& template_info = scope -> getTemplateInfo();
+
+	if ( template_info.sym && template_info.sym -> isIn(name) )
 	{
-		auto replace = template_info -> getReplacement(name);
-	
-		if ( dynamic_cast<VariableNode*>(replace) != nullptr )
-			if ( dynamic_cast<VariableNode*>(replace) -> variable -> getSymbolType() == SymbolType::CLASSVARIABLE )
-				throw SemanticError(name + " is typename");
+		auto replace = template_info.getReplacement(name);
 
-		replace -> scope = scope;
+		if ( replace -> which() == 0 )
+			throw SemanticError(name + " is typename");
 
-		return replace -> check();
+		template_num = new NumberNode(std::to_string(boost::get<int>(*replace)));
+		template_num -> scope = scope;
+		template_num -> build_scope();
+
+		template_num -> check();
+		return;
 	}
 
 	auto sym = scope -> resolve(name);
@@ -26,44 +33,30 @@ void VariableNode::check()
 	if ( sym == nullptr || !sym -> is_defined )
 		throw SemanticError("No such symbol '" + name + "'.");
 
-	if ( sym -> getSymbolType() == SymbolType::STRUCT )
-	{
-		variable = new ClassVariableSymbol(static_cast<StructSymbol*>(sym));
-		return;
-	}
-	else
-	{
-		if ( sym -> getSymbolType() != SymbolType::VARIABLE )
-			throw SemanticError("'" + name + "' is not a variable.");
-	}
+	if ( sym -> getSymbolType() != SymbolType::VARIABLE )
+		throw SemanticError("'" + name + "' is not a variable.");
 
 	variable = static_cast<VariableSymbol*>(sym);
 }
 
 CodeObject& VariableNode::gen()
 {
-	if ( template_info -> sym && template_info -> sym -> isIn(name) )
-	{
-		auto replace = template_info -> getReplacement(name);
-	
-//		if ( dynamic_cast<VariableNode*>(replace) != nullptr )
-//			if ( dynamic_cast<VariableNode*>(replace) -> variable -> getSymbolType() == SymbolType::CLASSVARIABLE )
-//				throw SemanticError(name + " is typename");
+	const auto& template_info = scope -> getTemplateInfo();
 
-		return replace -> gen();
-	}
+	if ( template_info.sym && template_info.sym -> isIn(name) )
+		return template_num -> gen();
 
 	auto var_type = variable -> getType();
 
-	if ( var_type.type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
+	if ( var_type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
 	{
-		auto function = static_cast<OverloadedFunctionSymbol*>(var_type.type);
+		auto function = static_cast<const OverloadedFunctionSymbol*>(var_type);
 
 		auto function_info = function -> getTypeInfo();
 
 		if ( function_info.overloads.size() > 1 )
 		{
-			auto hint_type = static_cast<FunctionSymbol*>(this -> type_hint);
+			auto hint_type = static_cast<const FunctionSymbol*>(this -> type_hint);
 			if ( hint_type == nullptr )
 				throw SemanticError("multiple overloads of '" + name + "'.");
 
@@ -72,15 +65,15 @@ CodeObject& VariableNode::gen()
 			if ( function_info.symbols.find(type_info) == std::end(function_info.symbols) )
 			{
 				auto sym = function -> getViableOverload(type_info);
-				variable = new VariableSymbol(function -> getName(), VariableType(sym));
+				variable = new VariableSymbol(function -> getName(), sym);
 			}
 			else
-				variable = new VariableSymbol(function -> getName(), VariableType(function_info.symbols[type_info]));
+				variable = new VariableSymbol(function -> getName(), function_info.symbols[type_info]);
 		}
 		else
-			variable = new VariableSymbol(function -> getName(), VariableType(std::begin(function_info.symbols) -> second));
+			variable = new VariableSymbol(function -> getName(), std::begin(function_info.symbols) -> second);
 
-		code_obj.emit("lea rax, [" + static_cast<FunctionSymbol*>(variable -> getType().type) -> getScopedTypedName() + "]");
+		code_obj.emit("lea rax, [" + static_cast<const FunctionSymbol*>(variable -> getType()) -> getScopedTypedName() + "]");
 	}
 	else
 	{
@@ -90,7 +83,7 @@ CodeObject& VariableNode::gen()
 
 			auto sym = static_cast<VariableSymbol*>(_this);
 
-			auto struc_scope = static_cast<StructSymbol*>(sym -> getType().type);
+			auto struc_scope = static_cast<const StructSymbol*>(sym -> getType() -> getSymbol());
 
 			code_obj.emit("mov rax, [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(sym)) + "]");
 			code_obj.emit("lea rax, [rax - " + std::to_string(struc_scope -> getVarAlloc().getAddress(variable)) + "]");
@@ -104,22 +97,32 @@ CodeObject& VariableNode::gen()
 	return code_obj;
 }
 
-bool VariableNode::isTemplateParam() const { return template_info -> sym != nullptr; }
+bool VariableNode::isTemplateParam() const 
+{ 
+	const auto& template_info = scope -> getTemplateInfo();
+	return template_info.sym != nullptr && template_info.sym -> isIn(name); 
+}
 	
 AST* VariableNode::copyTree() const { return new VariableNode(name); }
 
-VariableType VariableNode::getType() const
+const Type* VariableNode::getType() const
 {
 	if ( isTemplateParam() )
 	{
-		auto replace = template_info -> getReplacement(name);
-		return replace -> getType();
+		const auto& template_info = scope -> getTemplateInfo();
+
+		auto replace = template_info.getReplacement(name);
+
+		return BuiltIns::global_scope -> resolveType("int");
 	}
 
 	return variable -> getType();
 }
 
-bool VariableNode::isLeftValue() const { return true; }
+bool VariableNode::isLeftValue() const 
+{
+   	return true; 
+}
 
 void VariableNode::freeTempSpace()
 {
@@ -128,13 +131,25 @@ void VariableNode::freeTempSpace()
 
 bool VariableNode::isCompileTimeExpr() const
 {
-	return false;
+	const auto& template_info = scope -> getTemplateInfo();
+
+	if ( template_info.sym != nullptr && template_info.sym -> isIn(name) )
+		return true;
+	else
+		return false;
 }
 
-optional<int> VariableNode::getCompileTimeValue() const
+boost::optional<int> VariableNode::getCompileTimeValue() const
 {
-	if ( dynamic_cast<ClassVariableSymbol*>(variable) )
-		return std::hash<std::string>()(variable -> getName());
+	const auto& template_info = scope -> getTemplateInfo();
+
+	if ( template_info.sym != nullptr && template_info.sym -> isIn(name) )
+		return boost::get<int>(*template_info.getReplacement(name));
 	else
-		return optional<int>::empty();
+		return boost::none;
+}
+
+std::string VariableNode::toString() const
+{
+	return name;
 }

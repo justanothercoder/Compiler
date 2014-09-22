@@ -1,12 +1,13 @@
 #ifndef _IMPORTNODE_HPP_
 #define _IMPORTNODE_HPP_
 
-#include "filehelper.hpp"
+#include "ast.hpp"
+#include "codeobject.hpp"
 
 class ImportNode : public AST
 {
 public:
-	ImportNode(string lib);
+	ImportNode(std::string lib);
 
     AST* copyTree() const override;
 	
@@ -14,10 +15,11 @@ public:
     void check() override;
 
     CodeObject& gen() override;
+	std::string toString() const override;
 
 private:
 
-	string lib;
+	std::string lib;
 	CodeObject code_obj;
 };
 

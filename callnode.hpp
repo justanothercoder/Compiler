@@ -5,42 +5,36 @@
 #include <algorithm>
 
 #include "exprnode.hpp"
-#include "functionhelper.hpp"
-#include "overloadedfunctiontypeinfo.hpp"
-#include "overloadedfunctionsymbol.hpp"
-#include "globalhelper.hpp"
-#include "functionsymbol.hpp"
 #include "codeobject.hpp"
-#include "callhelper.hpp"
 #include "callinfo.hpp"
-
-using std::vector;
 
 class CallNode : public ExprNode
 {
 public:
 
-    CallNode(ExprNode *caller, const vector<ExprNode*>& params);
+    CallNode(ExprNode *caller, std::vector<ExprNode*> params);
 	~CallNode() override;
     
     void check() override;
     CodeObject& gen() override;
 
-	vector<AST*> getChildren() const override;
+	std::vector<AST*> getChildren() const override;
     AST* copyTree() const override;
 
-    VariableType getType() const override;
+    const Type* getType() const override;
 	bool isLeftValue() const override;
 
 	void freeTempSpace() override;
     
 	bool isCompileTimeExpr() const override;
-	optional<int> getCompileTimeValue() const override;
+	boost::optional<int> getCompileTimeValue() const override;
+
+	std::string toString() const override;
 
 private:
 
     ExprNode *caller;
-    vector<ExprNode*> params;
+	std::vector<ExprNode*> params;
 
     CallInfo call_info;
 	CodeObject code_obj;

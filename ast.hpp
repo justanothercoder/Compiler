@@ -2,8 +2,7 @@
 #define _AST_HPP_
 
 #include <vector>
-
-#include "globalhelper.hpp"
+#include <string>
 
 class Scope;
 struct TemplateInfo;
@@ -25,8 +24,9 @@ public:
 
 	virtual std::vector<AST*> getChildren() const;	
 
+	virtual std::string toString() const = 0;
+
 	Scope *scope;
-	TemplateInfo *template_info;
 };
 
 #endif

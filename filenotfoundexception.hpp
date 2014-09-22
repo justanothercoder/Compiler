@@ -1,24 +1,14 @@
 #ifndef _FILENOTFOUNDEXCEPTION_HPP_
 #define _FILENOTFOUNDEXCEPTION_HPP_
 
-#include <exception>
+#include <stdexcept>
 #include <string>
 
-using std::string;
-using std::exception;
-
-class FileNotFoundException : public exception
+class FileNotFoundException : public std::logic_error
 {
 public:
 
-    FileNotFoundException(string filename);
-    
-    virtual ~FileNotFoundException() noexcept;
-    virtual const char* what() const noexcept;
-    
-private:
-
-    string filename;
+    FileNotFoundException(std::string filename);
     
 };
 

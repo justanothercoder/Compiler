@@ -3,23 +3,22 @@
 
 #include "structdeclarationnode.hpp"
 #include "typeinfo.hpp"
-#include "templatestructsymbol.hpp"
 
 class TemplateStructDeclarationNode : public StructDeclarationNode
 {
 public:
 
-    TemplateStructDeclarationNode(string name, const vector<AST*>& inner, const vector< pair<string, TypeInfo> >& template_params);
+    TemplateStructDeclarationNode(std::string name, std::vector<AST*> inner, std::vector< std::pair<std::string, TypeInfo> > template_params);
 
-    virtual void build_scope();
+    void build_scope() override;
 	    
-    virtual void define();
-    virtual void check();
-    virtual CodeObject& gen();
+    void define() override;
+    void check() override;
+    CodeObject& gen() override;
 
 private:
 
-    vector< pair<string, TypeInfo> > template_params;
+	std::vector< std::pair<std::string, TypeInfo> > template_params;
 };
 
 #endif

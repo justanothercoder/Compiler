@@ -1,12 +1,12 @@
 #include "functiontypeinfo.hpp"
 #include "structsymbol.hpp"
 
-FunctionTypeInfo::FunctionTypeInfo(std::vector<VariableType> params_types) : params_types(params_types) 
+FunctionTypeInfo::FunctionTypeInfo(std::vector<const Type*> params_types) : params_types(params_types) 
 {
 
 }
 	
-FunctionTypeInfo::FunctionTypeInfo(std::initializer_list<VariableType> init_list) : params_types(init_list)
+FunctionTypeInfo::FunctionTypeInfo(std::initializer_list<const Type*> init_list) : params_types(init_list)
 {
 
 }
@@ -30,9 +30,9 @@ bool operator==(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
 	return true;
 }
 
-string FunctionTypeInfo::toString() const
+std::string FunctionTypeInfo::toString() const
 {
-	string res;
+	std::string res;
 
 	res += "(";
 
@@ -40,9 +40,9 @@ string FunctionTypeInfo::toString() const
 	{
 		auto it = std::begin(params_types);
 
-		res += (*it).getName();
+		res += (*it) -> getName();
 		for ( ++it; it != std::end(params_types); ++it )
-			res += ", " + (*it).getName();
+			res += ", " + (*it) -> getName();
 	}
 
 	res += ")";
@@ -57,10 +57,10 @@ long long FunctionTypeInfo::hash_func() const
 	std::hash<std::string> hash_fn;
 
 	for ( auto type : params_types )
-		res += hash_fn(type.getName());
+		res += hash_fn(type -> getName());
 
 	return res;
-};
+}
 	
 bool FunctionTypeInfo::isCompatibleWith(const FunctionTypeInfo& info) const
 {
@@ -69,7 +69,7 @@ bool FunctionTypeInfo::isCompatibleWith(const FunctionTypeInfo& info) const
 
 	for ( size_t i = 0; i < info.params_types.size(); ++i )
 	{
-		if ( !static_cast<StructSymbol*>(info.params_types[i].type)  ->  isConvertableTo(static_cast<StructSymbol*>(params_types[i].type)) )
+		if ( !info.params_types[i] -> isConvertableTo(params_types[i]) )
 			return false;
 	}
 
@@ -81,7 +81,7 @@ int FunctionTypeInfo::rankOfConversion(const FunctionTypeInfo& info) const
 	int rank = 0;
 
 	for ( int i = 0; i < static_cast<int>(params_types.size()); ++i )
-		rank += static_cast<StructSymbol*>(info.params_types[i].type) -> rankOfConversion(static_cast<StructSymbol*>(params_types[i].type));
+		rank += *(info.params_types[i] -> rankOfConversion(params_types[i]));
 
 	return rank;
 }

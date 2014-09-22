@@ -4,9 +4,6 @@
 #include <map>
 
 #include "scope.hpp"
-#include "variablesymbol.hpp"
-
-using std::map;
 
 class ExprNode;
 
@@ -18,10 +15,10 @@ public:
     friend class FunctionSymbolDefine;
     friend class SymbolDefine;
     
-    virtual Symbol* resolve(string name) const;
+    Symbol* resolve(std::string name) const override;
 
 public:
-    map<string, Symbol*> table;
+	std::map<std::string, Symbol*> table;
 };
 
 #endif

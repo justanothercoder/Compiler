@@ -4,24 +4,24 @@
 #include <vector>
 
 #include "conversioninfo.hpp"
-#include "variabletype.hpp"
 
+class Type;
 class FunctionSymbol;
 
 struct CallInfo
 {
 	CallInfo();
 
-	CallInfo(FunctionSymbol *callee, std::vector<VariableType> actual_params, 
-									 std::vector<ConversionInfo> conversions,
-									 std::vector<FunctionSymbol*> copy_constructors
+	CallInfo(const FunctionSymbol *callee, std::vector<const Type*> actual_params, 
+									       std::vector<ConversionInfo> conversions,
+									       std::vector<const FunctionSymbol*> copy_constructors
 								);
 
-	FunctionSymbol *callee;
+	const FunctionSymbol *callee;
 
-	std::vector<VariableType> actual_params;
+	std::vector<const Type*> actual_params;
 	std::vector<ConversionInfo> conversions;
-	std::vector<FunctionSymbol*> copy_constructors;
+	std::vector<const FunctionSymbol*> copy_constructors;
 };
 
 #endif

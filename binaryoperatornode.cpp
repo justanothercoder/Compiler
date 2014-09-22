@@ -1,34 +1,47 @@
 #include "binaryoperatornode.hpp"
+#include "functionsymbol.hpp"
+#include "callhelper.hpp"
+#include "structsymbol.hpp"
+#include "globalhelper.hpp"
 
-BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type), call_info(), code_obj() { }
+BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type)
+{
 
-BinaryOperatorNode::~BinaryOperatorNode() { delete lhs; delete rhs; }
+}
+
+BinaryOperatorNode::~BinaryOperatorNode() 
+{
+   	delete lhs; delete rhs; 
+}
 
 void BinaryOperatorNode::check()
 {
 	lhs -> check();
 	try
 	{
-		call_info = CallHelper::callCheck(getOperatorName(), static_cast<StructSymbol*>(lhs -> getType().type), {rhs});
+		if ( lhs -> getType() -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT )
+			call_info = CallHelper::callCheck(getOperatorName(), static_cast<const StructSymbol*>(lhs -> getType() -> getSymbol()), {rhs});
+		else
+			throw SemanticError("");
 	}
 	catch ( SemanticError& e )
 	{
 		call_info = CallHelper::callCheck(getOperatorName(), scope, {lhs, rhs});
 	}
 	
-	scope -> getTempAlloc().add(getType().getSize());
+	scope -> getTempAlloc().add(getType() -> getSize());
 }
 
 CodeObject& BinaryOperatorNode::gen()
 {
-	string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType().getSize());
+	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	code_obj.emit("lea rax, " + addr);
 	code_obj.emit("push rax");
 
 	if ( call_info.callee -> isMethod() )
-		code_obj.genCallCode(call_info, {rhs}, lhs -> gen(), lhs -> getType().is_ref);
+		code_obj.genCallCode(call_info, {rhs}, lhs -> gen(), lhs -> getType() -> isReference());
 	else
 	{
 		CodeObject empty;
@@ -40,7 +53,7 @@ CodeObject& BinaryOperatorNode::gen()
 	return code_obj;
 }
 
-string BinaryOperatorNode::getOperatorName()
+std::string BinaryOperatorNode::getOperatorName()
 {
     switch ( op_type )
     {
@@ -57,7 +70,7 @@ string BinaryOperatorNode::getOperatorName()
     }    
 }
 
-string BinaryOperatorNode::getCodeOperatorName()
+std::string BinaryOperatorNode::getCodeOperatorName()
 {
     switch ( op_type )
     {
@@ -82,10 +95,20 @@ AST* BinaryOperatorNode::copyTree() const
 	return new BinaryOperatorNode(lhs_copy, rhs_copy, op_type);
 }
 
-vector<AST*> BinaryOperatorNode::getChildren() const { return {lhs, rhs}; }
+std::vector<AST*> BinaryOperatorNode::getChildren() const 
+{
+   	return {lhs, rhs}; 
+}
 
-VariableType BinaryOperatorNode::getType() const { return call_info.callee -> return_type; }
-bool BinaryOperatorNode::isLeftValue() const { return false; }
+const Type* BinaryOperatorNode::getType() const 
+{
+   	return call_info.callee -> return_type; 
+}
+
+bool BinaryOperatorNode::isLeftValue() const 
+{
+   	return false; 
+}
 
 void BinaryOperatorNode::freeTempSpace()
 {
@@ -99,13 +122,13 @@ bool BinaryOperatorNode::isCompileTimeExpr() const
 	return lhs -> isCompileTimeExpr() && rhs -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
 }
 
-optional<int> BinaryOperatorNode::getCompileTimeValue() const
+boost::optional<int> BinaryOperatorNode::getCompileTimeValue() const
 {
 	if ( !isCompileTimeExpr() )
-		return optional<int>::empty();
+		return boost::none;
 
-	int lhs_value = static_cast<int>(lhs -> getCompileTimeValue());
-	int rhs_value = static_cast<int>(rhs -> getCompileTimeValue());
+	int lhs_value = *lhs -> getCompileTimeValue();
+	int rhs_value = *rhs -> getCompileTimeValue();
 
 	switch ( op_type )
 	{
@@ -116,6 +139,30 @@ optional<int> BinaryOperatorNode::getCompileTimeValue() const
 	case BinaryOp::MOD    : return lhs_value % rhs_value;
 	case BinaryOp::EQUALS : return lhs_value == rhs_value;
 	case BinaryOp::NEQUALS: return lhs_value != rhs_value;
-	default: return optional<int>::empty();
+	default: return boost::none;
 	}	
+}
+
+std::string BinaryOperatorNode::toString() const
+{
+	std::string lhs_str = lhs -> toString();
+	std::string rhs_str = rhs -> toString();
+
+	std::string oper;
+
+	switch ( op_type )
+	{
+	case BinaryOp::ASSIGN : oper = "=" ; break;
+	case BinaryOp::PLUS   : oper = "+" ; break;
+	case BinaryOp::MINUS  : oper = "-" ; break;
+	case BinaryOp::MUL    : oper = "*" ; break;
+	case BinaryOp::EQUALS : oper = "=="; break;
+	case BinaryOp::NEQUALS: oper = "!="; break;
+	case BinaryOp::AND    : oper = "&&"; break;
+	case BinaryOp::OR     : oper = "||"; break;
+	case BinaryOp::DIV    : oper = "/" ; break;
+	case BinaryOp::MOD    : oper = "%" ; break;
+	}
+
+	return lhs_str + " " + oper + " " + rhs_str;
 }

@@ -1,25 +1,25 @@
 #ifndef _TEMPLATEINFO_HPP_
 #define _TEMPLATEINFO_HPP_
 
+#include <boost/optional.hpp>
+
 #include <vector>
 #include <string>
 
-//#include "templatestructsymbol.hpp"
-class TemplateStructSymbol;
-
-using namespace std;
+#include "templateparam.hpp"
 
 class ExprNode;
+class TemplateStructSymbol;
 
 struct TemplateInfo
 {
 	TemplateInfo();
-	TemplateInfo(TemplateStructSymbol *sym, std::vector<ExprNode*> expr);
+	TemplateInfo(TemplateStructSymbol *sym, std::vector<TemplateParam> expr);
 
-	ExprNode* getReplacement(string name) const;
+	boost::optional<TemplateParam> getReplacement(std::string name) const;
 
 	TemplateStructSymbol *sym;
-	std::vector<ExprNode*> expr;
+	std::vector<TemplateParam> expr;
 };
 
 #endif

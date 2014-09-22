@@ -3,21 +3,25 @@
 
 #include <string>
 #include <vector>
+#include <boost/variant.hpp>
 
 class ExprNode;
+class TypeInfo;
 
-using std::string;
-using std::vector;
+using TemplateParamInfo = boost::variant<ExprNode*, TypeInfo>;
 
 class TypeInfo
 {
 public:   
     TypeInfo();
-    TypeInfo(string type_name, bool is_ref, bool is_const, vector<ExprNode*> template_params = { });
+    TypeInfo(std::string type_name, bool is_ref, bool is_const, std::vector<TemplateParamInfo> template_params = { }, int pointer_depth = 0);
 
-    string type_name;
+	std::string toString() const;
+
+	std::string type_name;
     bool is_ref, is_const;
-    vector<ExprNode*> template_params;
+	std::vector<TemplateParamInfo> template_params;
+	int pointer_depth;
 };
 
 #endif

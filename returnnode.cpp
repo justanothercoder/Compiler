@@ -1,16 +1,27 @@
 #include "returnnode.hpp"
 #include "callhelper.hpp"
+#include "functionsymbol.hpp"
+#include "exprnode.hpp"
+#include "globalconfig.hpp"
+#include "structsymbol.hpp"
+#include "copytypevisitor.hpp"
 
-ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), copy_call_info(), enclosing_func(nullptr), code_obj() { }
+ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), enclosing_func(nullptr) 
+{
 
-ReturnNode::~ReturnNode() { delete expr; }
+}
+
+ReturnNode::~ReturnNode() 
+{ 
+	delete expr; 
+}
 
 CodeObject& ReturnNode::gen()
 {
-	if ( enclosing_func -> return_type.is_ref )
+	if ( enclosing_func -> return_type -> isReference() )
 	{
 		if ( !expr -> isLeftValue() )
-			throw SemanticError("cannot initialize " + enclosing_func -> return_type.getName() + " with value of type " + expr -> getType().getName());
+			throw SemanticError("cannot initialize " + enclosing_func -> return_type -> getName() + " with value of type " + expr -> getType() -> getName());
 
 		code_obj.emit(expr -> gen().getCode());
 	}
@@ -18,21 +29,27 @@ CodeObject& ReturnNode::gen()
 	{
 		CodeObject return_place;
 
-//		return_place.emit("mov r9, [rbp]");
-//	   	return_place.emit("lea rax, [r9 - " + std::to_string(GlobalConfig::int_size) + "]");
-
 		auto& params_types = enclosing_func -> function_type_info.params_types;
-		int addr = std::accumulate(std::begin(params_types), std::end(params_types), 0, [](int acc, VariableType type)
+		int addr = std::accumulate(std::begin(params_types), std::end(params_types), 0, [](int acc, const Type *type)
 		{
-			return acc += type.getSize();
+			return acc += type -> getSize();
 		}) + 2 * GlobalConfig::int_size; // expr -> getType().getSize();
 
 		return_place.emit("mov rax, [rbp + " + std::to_string(addr) + "]");
 
-		code_obj.genCallCode(copy_call_info, {expr}, return_place, false);
+		if ( expr -> getType() -> getTypeKind() != TypeKind::POINTER )
+			code_obj.genCallCode(copy_call_info, {expr}, return_place, false);
+		else
+		{
+			code_obj.emit(expr -> gen().getCode());
+//			code_obj.emit("mov rbx, [rax]");
+			code_obj.emit("lea rbx, [rax]");
+			code_obj.emit("mov rax, [rbp + " + std::to_string(addr) + "]");
+			code_obj.emit(CopyTypeVisitor("rbx", "rax").getCopyCode(expr -> getType()).getCode());
+		}
 	}
 
-	if ( !enclosing_func -> return_type.is_ref )
+	if ( !enclosing_func -> return_type -> isReference() )
 		code_obj.emit("mov rax, [rax]");
 
     code_obj.emit("mov rsp, rbp");
@@ -55,11 +72,28 @@ void ReturnNode::check()
 
     expr -> check();
 
-	copy_call_info = CallHelper::callCheck(expr -> getType().getTypeName(), static_cast<StructSymbol*>(expr -> getType().type), {expr});
+//	copy_call_info = CallHelper::callCheck(expr -> getType() -> getTypeName(), static_cast<const StructSymbol*>(expr -> getType().type), {expr});
+	if ( expr -> getType() -> getTypeKind() != TypeKind::POINTER )
+//		copy_call_info = CallHelper::callCheck(expr -> getType() -> getName(), static_cast<const StructSymbol*>(expr -> getType()), {expr});
+		copy_call_info = CallHelper::callCheck(expr -> getType() -> getUnqualifiedType() -> getName(), static_cast<const StructSymbol*>(expr -> getType() -> getSymbol()), {expr});
 }
 	
-void ReturnNode::define() { expr -> define(); }
+void ReturnNode::define() 
+{
+   	expr -> define(); 
+}
 
-AST* ReturnNode::copyTree() const { return new ReturnNode(static_cast<ExprNode*>(expr -> copyTree())); }
+AST* ReturnNode::copyTree() const 
+{
+   	return new ReturnNode(static_cast<ExprNode*>(expr -> copyTree())); 
+}
 
-vector<AST*> ReturnNode::getChildren() const { return {expr}; }
+std::vector<AST*> ReturnNode::getChildren() const 
+{
+   	return {expr}; 
+}
+
+std::string ReturnNode::toString() const
+{
+	return "return " + expr -> toString() + ";";
+}

@@ -1,6 +1,9 @@
 #include "ast.hpp"
 
-AST::~AST() { }
+AST::~AST() 
+{
+
+}
  
 void AST::build_scope()
 {
@@ -8,12 +11,12 @@ void AST::build_scope()
 
 	for ( auto child : children )
 	{
-		child -> scope         = scope;
-		child -> template_info = template_info;
-
+		child -> scope = scope;
 		child -> build_scope();
 	}
 }
 	
-std::vector<AST*> AST::getChildren() const { return { }; } 
-
+std::vector<AST*> AST::getChildren() const 
+{
+   	return { }; 
+}

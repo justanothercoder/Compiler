@@ -1,56 +1,65 @@
 #include "asmarraynode.hpp"
 #include "templateinfo.hpp"
+#include "functionsymbol.hpp"
+#include "typefactory.hpp"
+#include "templatesymbol.hpp"
+#include "numbernode.hpp"
+#include "builtins.hpp"
+#include "globalhelper.hpp"
 
-AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) { scope = BuiltIns::global_scope; }
+AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) 
+{ 
+//	scope = BuiltIns::global_scope; 
+}
 
 void AsmArrayNode::define() 
 {
-	VariableType type, ref_type;
+	const Type *type;
+    const Type *ref_type;
 
-	if ( template_info -> sym -> isIn("size") )
+	const auto& template_info = scope -> getTemplateInfo(); 
+
+	if ( template_info.sym -> isIn("size") )
 	{
-		auto replace = template_info -> getReplacement("size");
+		auto replace = template_info.getReplacement("size");
 		
-		array_size = std::stoi(dynamic_cast<NumberNode*>(replace) -> getNum());
+		array_size = boost::get<int>(*replace);
 	}
 	else throw SemanticError("");
 
-	if ( template_info -> sym -> isIn("T") )
+	auto arr = dynamic_cast<StructSymbol*>(scope);
+	arr -> is_unsafe = true;
+
+	if ( template_info.sym -> isIn("T") )
 	{
-		auto replace = template_info -> getReplacement("T");
-
-		type = replace -> getType();
-		type.is_ref = false;
-
-		ref_type = type;
-		ref_type.is_ref = true;
-
-		size_of_type = type.getSize();
+		auto replace = template_info.getReplacement("T");
+		type         = scope -> fromTypeInfo(boost::get<TypeInfo>(*replace));
+		ref_type     = TypeFactory::getReference(type);
+		size_of_type = type -> getSize();
 	}
 	else throw SemanticError("");
 
-	auto just_int = VariableType(BuiltIns::int_struct);
+	auto just_int = BuiltIns::int_type;
 
-	auto arr = VariableType(dynamic_cast<StructSymbol*>(scope));
+	auto ref_arr = TypeFactory::getReference(arr);
 
-	auto ref_arr = arr;
-	ref_arr.is_ref = true;
+	array_constructor   = new FunctionSymbol("array"     , ref_arr , {ref_arr}          , scope, {true, true, false});
+	array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, scope, {true, false, true});
+	array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , scope, {true, false, false});
 
-	auto array_constructor   = new FunctionSymbol("array"     , ref_arr , {ref_arr}          , scope, {true, true, false});
-	auto array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, scope, {true, false, true});
-	auto array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , scope, {true, false, false});
+	GlobalHelper::has_definition[array_constructor]   = true;
+	GlobalHelper::has_definition[array_elem_operator] = true;
+	GlobalHelper::has_definition[array_size_func]     = true;
 
-	scope -> accept(new FunctionSymbolDefine(array_constructor));
-	scope -> accept(new FunctionSymbolDefine(array_elem_operator));
-	scope -> accept(new FunctionSymbolDefine(array_size_func));
+	array_constructor   -> is_unsafe = true;
+	array_elem_operator -> is_unsafe = true;
+	array_size_func     -> is_unsafe = true;
 
-	scope -> accept(new VariableSymbolDefine(
-								new VariableSymbol(
-									"~~impl",
-									VariableType(new BuiltInTypeSymbol("~~array_impl", array_size * size_of_type))
-									)
-				)
-			);
+	scope -> define(array_constructor);
+	scope -> define(array_elem_operator);
+	scope -> define(array_size_func);
+
+	scope -> define(new VariableSymbol( "~~impl", new BuiltInTypeSymbol("~~array_impl", array_size * size_of_type)));
 }
 
 void AsmArrayNode::check() { }
@@ -59,15 +68,15 @@ CodeObject& AsmArrayNode::gen()
 {
 	auto arr = dynamic_cast<StructSymbol*>(scope);
 
-	code_obj.emit("jmp _~_"+arr -> getName()+"_array_"+arr -> getName()+"~ref");
-	code_obj.emit("_"+arr -> getName()+"_array_"+arr -> getName()+"~ref:");
+	code_obj.emit("jmp _~" + array_constructor -> getScopedTypedName());
+	code_obj.emit(array_constructor -> getScopedTypedName() + ":");
 	code_obj.emit("ret");
-	code_obj.emit("_~_"+arr -> getName()+"_array_"+arr -> getName()+"~ref:");
+	code_obj.emit("_~" + array_constructor -> getScopedTypedName() + ":");
 
 
 /////////////////////////////////////////////////////////////////////////////
-	code_obj.emit("jmp _~_"+arr -> getName()+"_size_"+arr -> getName()+"~ref");
-	code_obj.emit("_"+arr -> getName()+"_size_"+arr -> getName()+"~ref:");
+	code_obj.emit("jmp _~"  + array_size_func -> getScopedTypedName());
+	code_obj.emit(array_size_func -> getScopedTypedName() + ":");
 
 	code_obj.emit("push rbp");
 	code_obj.emit("mov rbp, rsp");
@@ -81,12 +90,13 @@ CodeObject& AsmArrayNode::gen()
 	code_obj.emit("pop rbp");
 	code_obj.emit("ret");
 
-	code_obj.emit("_~_"+arr -> getName()+"_size_"+arr -> getName()+"~ref:");
+	code_obj.emit("_~" + array_size_func -> getScopedTypedName() + ":");
 ///////////////////////////////////////////////////////////////////////////////
 
 
-	code_obj.emit("jmp _~_"+arr -> getName()+"_operatorelem_"+arr -> getName()+"~ref_int");
-	code_obj.emit("_"+arr -> getName()+"_operatorelem_"+arr -> getName()+"~ref_int:");
+	code_obj.emit("jmp _~" + array_elem_operator -> getScopedTypedName());
+	code_obj.emit(array_elem_operator -> getScopedTypedName() + ":");
+
 	code_obj.emit("push rbp");
 	code_obj.emit("mov rbp, rsp");
 	code_obj.emit("mov rbx, [rbp + " + std::to_string(3 * GlobalConfig::int_size) + "]");
@@ -96,21 +106,25 @@ CodeObject& AsmArrayNode::gen()
 
 	code_obj.emit("sub rax, rbx");
 
-//	code_obj.emit("mov r9, [rbp]");	
-//	code_obj.emit("mov [r9 - 8], rax");
-//	code_obj.emit("lea rax, [r9 - 8]");
-
 	code_obj.emit("mov rbx, rax");
-	code_obj.emit("mov rax, [rbp + 32]");
+	code_obj.emit("mov rax, [rbp + " + std::to_string(4 * GlobalConfig::int_size) + "]");
 	code_obj.emit("mov [rax], rbx");
 
 	code_obj.emit("mov rsp, rbp");
 	code_obj.emit("pop rbp");
 	code_obj.emit("ret");
 
-	code_obj.emit("_~_"+arr -> getName()+"_operatorelem_"+arr -> getName()+"~ref_int:");
+	code_obj.emit("_~" + array_elem_operator -> getScopedTypedName() + ":");
 
 	return code_obj;
 }
 	
-AST* AsmArrayNode::copyTree() const { return new AsmArrayNode(*this); }
+AST* AsmArrayNode::copyTree() const 
+{
+   	return new AsmArrayNode(*this); 
+}
+	
+std::string AsmArrayNode::toString() const
+{
+	return "";
+}
