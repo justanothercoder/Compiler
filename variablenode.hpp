@@ -13,6 +13,9 @@ class VariableNode : public ExprNode
 	friend class TemplateStructSymbol;
 	friend class Scope;
 
+	friend class GenSSAVisitor;
+	friend class CheckVisitor;
+
 public:
 
     VariableNode(std::string name);

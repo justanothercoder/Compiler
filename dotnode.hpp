@@ -11,6 +11,7 @@ class DotNode : public ExprNode
 {
 
 	friend class GenSSAVisitor;
+	friend class CheckVisitor;
 
 public:
 

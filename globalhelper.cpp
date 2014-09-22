@@ -15,6 +15,9 @@ std::map<int, std::string> GlobalHelper::label_name;
 	
 std::map<const FunctionSymbol*, int> GlobalHelper::id_by_func;
 std::map<int, const FunctionSymbol*> GlobalHelper::func_by_id;
+	
+std::map<std::string, int> GlobalHelper::string_to_id;
+std::map<int, std::string> GlobalHelper::id_to_string;
 
 std::string GlobalHelper::getCodeOperatorName(std::string op)
 {
@@ -77,4 +80,17 @@ void GlobalHelper::addFunc(const FunctionSymbol *func)
 
 	func_by_id[func_id] = func;
 	id_by_func[func] = func_id;
+}
+	
+void GlobalHelper::addStr(std::string s)
+{
+	static int str_id = 0;
+
+	if ( string_to_id.find(s) != std::end(string_to_id) )
+		return;
+
+	++str_id;
+
+	id_to_string[str_id] = s;
+	string_to_id[s] = str_id;
 }

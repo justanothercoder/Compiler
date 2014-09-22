@@ -3,6 +3,7 @@
 
 #include "exprnode.hpp"
 #include "codeobject.hpp"
+#include "globalhelper.hpp"
 
 class StringNode : public ExprNode
 {
@@ -29,6 +30,8 @@ public:
 	std::string toString() const override;
 	
 	void accept(ASTVisitor *visitor) override;
+
+	int getStrId() const;
 
 private:
 	

@@ -15,7 +15,9 @@ using std::pair;
 
 class FunctionDeclarationNode : public DeclarationNode
 {
+
 	friend class GenSSAVisitor;
+	friend class CheckVisitor;
 
 public:
 

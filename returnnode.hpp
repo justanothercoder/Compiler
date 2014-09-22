@@ -12,6 +12,7 @@ class ReturnNode : public AST
 {
 
 	friend class GenSSAVisitor;
+	friend class CheckVisitor;
 
 public:
 

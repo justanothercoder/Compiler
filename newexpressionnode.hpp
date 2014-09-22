@@ -11,6 +11,10 @@
 
 class NewExpressionNode : public ExprNode
 {
+
+	friend class GenSSAVisitor;
+	friend class CheckVisitor;
+
 public:
     NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params);
 	~NewExpressionNode() override;

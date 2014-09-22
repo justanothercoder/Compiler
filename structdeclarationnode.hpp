@@ -15,6 +15,9 @@ class StructDeclarationNode : public DeclarationNode
 {
 
 	friend class TemplateStructSymbol;
+	
+	friend class GenSSAVisitor;
+	friend class CheckVisitor;
 
 public:
 

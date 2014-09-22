@@ -4,7 +4,7 @@
 
 StringNode::StringNode(std::string str) : str(str) 
 {
-
+	GlobalHelper::addStr(str);
 }
 
 void StringNode::check() 
@@ -91,4 +91,9 @@ std::string StringNode::toString() const
 void StringNode::accept(ASTVisitor *visitor)
 {
 	visitor -> visit(this);
+}
+	
+int StringNode::getStrId() const
+{
+	return GlobalHelper::string_to_id[str];
 }

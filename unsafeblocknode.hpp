@@ -7,6 +7,7 @@ class UnsafeBlockNode : public AST
 {
 
 	friend class GenSSAVisitor;
+	friend class CheckVisitor;
 
 public:
 

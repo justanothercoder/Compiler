@@ -11,6 +11,7 @@ class UnaryNode : public ExprNode
 {
 
 	friend class GenSSAVisitor;
+	friend class CheckVisitor;
 
 public:
 	

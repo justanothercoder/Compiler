@@ -9,6 +9,7 @@ enum class BinaryOp { ASSIGN, PLUS, MINUS, MUL, EQUALS, NEQUALS, AND, OR, DIV, M
 class BinaryOperatorNode : public ExprNode
 {
 	friend class GenSSAVisitor;
+	friend class CheckVisitor;
 
 public:
 

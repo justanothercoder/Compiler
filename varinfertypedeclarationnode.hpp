@@ -10,6 +10,10 @@ class VariableSymbol;
 
 class VarInferTypeDeclarationNode : public DeclarationNode
 {
+
+	friend class GenSSAVisitor;
+	friend class CheckVisitor;
+
 public:
 
 	VarInferTypeDeclarationNode(std::string name, ExprNode *expr);
