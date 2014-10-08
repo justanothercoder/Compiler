@@ -238,3 +238,8 @@ std::string GenSSAVisitor::getString()
 {
 	return code.toString();
 }
+	
+const ThreeAddressCode& GenSSAVisitor::getCode() const
+{
+	return code;
+}

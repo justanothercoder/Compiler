@@ -23,6 +23,7 @@
 #include "returnnode.hpp"
 #include "unsafeblocknode.hpp"
 #include "varinfertypedeclarationnode.hpp"
+#include "nullnode.hpp"
 
 void CheckVisitor::visit(ImportNode *) 
 {
@@ -53,14 +54,18 @@ void CheckVisitor::visit(BracketNode *node)
 
 	auto base_type = dynamic_cast<const StructSymbol*>(node -> base -> getType() -> getSymbol());
 
-	CallHelper::callCheck("operator[]", base_type, {node -> expr});
+	node -> call_info = CallHelper::callCheck("operator[]", base_type, {node -> expr});
+	
+	node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
 
 void CheckVisitor::visit(UnaryNode *node) 
 {
 	node -> exp -> check();
 
-	CallHelper::callCheck(node -> getOperatorName(), static_cast<const StructSymbol*>(node -> exp -> getType() -> getSymbol()), { });
+	node -> call_info = CallHelper::callCheck(node -> getOperatorName(), static_cast<const StructSymbol*>(node -> exp -> getType() -> getSymbol()), { });
+
+	node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
 
 void CheckVisitor::visit(NewExpressionNode *node) 
@@ -73,7 +78,10 @@ void CheckVisitor::visit(NewExpressionNode *node)
 
 	auto type = static_cast<const StructSymbol*>(node -> scope -> fromTypeInfo(node -> type_info));
 
-	CallHelper::callCheck(type -> getName(), type, node -> params); 
+	node -> call_info = CallHelper::callCheck(type -> getName(), type, node -> params); 
+	
+	node -> scope -> getTempAlloc().add(type -> getSize());      //place for object itself
+	node -> scope -> getTempAlloc().add(GlobalConfig::int_size); //place for reference to it
 }
 
 void CheckVisitor::visit(BinaryOperatorNode *node) 
@@ -82,14 +90,16 @@ void CheckVisitor::visit(BinaryOperatorNode *node)
 	try
 	{
 		if ( node -> lhs -> getType() -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT )
-			CallHelper::callCheck(node -> getOperatorName(), static_cast<const StructSymbol*>(node -> lhs -> getType() -> getSymbol()), {node -> rhs});
+			node -> call_info = CallHelper::callCheck(node -> getOperatorName(), static_cast<const StructSymbol*>(node -> lhs -> getType() -> getSymbol()), {node -> rhs});
 		else
 			throw SemanticError("");
 	}
 	catch ( SemanticError& e )
 	{
-		CallHelper::callCheck(node -> getOperatorName(), node -> scope, {node -> lhs, node -> rhs});
+		node -> call_info = CallHelper::callCheck(node -> getOperatorName(), node -> scope, {node -> lhs, node -> rhs});
 	}
+	
+	node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
 
 void CheckVisitor::visit(StructDeclarationNode *node)
@@ -149,7 +159,7 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 			if ( var_type -> getTypeKind() != TypeKind::POINTER )
 			{
 				auto struct_symbol = static_cast<const StructSymbol*>(var_type -> getSymbol());
-				CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, node -> constructor_call_params);
+				node -> call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, node -> constructor_call_params);
 			}
 			else
 			{
@@ -187,9 +197,9 @@ void CheckVisitor::visit(AddrNode *node)
 	}
 }
 
-void CheckVisitor::visit(NullNode *)
+void CheckVisitor::visit(NullNode *node)
 {
-
+	node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
 
 void CheckVisitor::visit(DotNode *node)
@@ -266,7 +276,7 @@ void CheckVisitor::visit(CallNode *node)
 		if ( caller_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
 			throw SemanticError("caller '" + node -> caller -> toString() + "' is not a function.");
 
-		CallHelper::callCheck("operator()", static_cast<const StructSymbol*>(caller_type -> getSymbol()), node -> params);
+		node -> call_info = CallHelper::callCheck("operator()", static_cast<const StructSymbol*>(caller_type -> getSymbol()), node -> params);
 	}
 	else
 	{
@@ -276,6 +286,8 @@ void CheckVisitor::visit(CallNode *node)
 	}
 
 	node -> caller -> type_hint = node -> call_info.callee;
+	
+	node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
 
 void CheckVisitor::visit(ReturnNode *node)
@@ -308,9 +320,10 @@ void CheckVisitor::visit(AsmArrayNode *)
 
 void CheckVisitor::visit(VarInferTypeDeclarationNode *node) 
 {
+	node -> scope -> getTempAlloc().add(node -> expr -> getType() -> getSize());	
 	node -> getDefinedSymbol() -> is_defined = true;
 
 	auto type = node -> expr -> getType();
 
-	CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {node -> expr});
+	node -> call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {node -> expr});
 }

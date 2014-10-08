@@ -3,9 +3,11 @@
 
 #include <string>
 #include <vector>
+#include <stack>
 
 #include "globalhelper.hpp"
 #include "functionsymbol.hpp"
+#include "codeobject.hpp"
 
 /* list of SSA commands
  *
@@ -125,7 +127,18 @@ public:
 
 	std::string toString();
 
+	void pushScope(VarAllocator alloc);
+	void popScope();
+
+	CodeObject genAsm() const;
+
 private:
+
+	std::stack<VarAllocator> var_alloc;
+	std::stack<TempAllocator> temp_alloc;
+
+	std::string genArg(Arg arg) const;
+	std::string genCommand(Command command) const;
 
 	std::vector<Command> commands;
 	std::vector<int> code;

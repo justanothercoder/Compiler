@@ -37,6 +37,8 @@ public:
 	void visit(VarInferTypeDeclarationNode *node) override;
 
 	std::string getString();
+
+	const ThreeAddressCode& getCode() const;
 	
 private:
 
