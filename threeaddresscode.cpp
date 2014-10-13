@@ -52,11 +52,12 @@ std::string ThreeAddressCode::toString()
 	res += '\n';
 	res += "code:\n";
 
-	for ( auto i : code )
-		res += std::to_string(i) + '\n'; 
+//	for ( auto i : code )
+//		res += std::to_string(i) + '\n'; 
 
-//	for ( auto command : code )
-//		res += commands[command].toString() + "\n";
+	for ( auto command : code )
+		res += commands[command].toString() + "\n";
+
 	return res;
 }
 		
@@ -102,16 +103,16 @@ std::string ThreeAddressCode::genArg(Arg arg) const
 		}
 		case IdType::NUMBER:
 		{
-			auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-			return std::string("mov qword ").append(addr).append(", ").append(arg.toString() + '\n').append("lea rax, ").append(addr);
+//			auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+//			return std::string("mov qword ").append(addr).append(", ").append(arg.toString() + '\n').append("lea rax, ").append(addr);
 		}
 		case IdType::TEMP:
 		{
-			auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-			std::string ans = genCommand(commands[arg.id]);
-
-			ans.append("\nmov ").append(addr).append(", rax\n").append("lea rax, ").append(addr);
-			return ans;
+//			auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+//			std::string ans = genCommand(commands[arg.id]);
+//
+//			ans.append("\nmov ").append(addr).append(", rax\n").append("lea rax, ").append(addr);
+//			return ans;
 		}
 	}
 }
@@ -130,13 +131,13 @@ std::string ThreeAddressCode::genCommand(Command command) const
 		}
 		case SSAOp::DOT:
 		{
-			std::string res;
-			res.append(genArg(command.arg1));
-			
-			auto member = GlobalHelper::id_to_var[command.arg2.id];
-
-			res.append("lea rax, [rax - " + std::to_string(GlobalHelper::getOffset(member)) + "]");
-			return res;
+//			std::string res;
+//			res.append(genArg(command.arg1));
+//			
+//			auto member = GlobalHelper::id_to_var[command.arg2.id];
+//
+//			res.append("lea rax, [rax - " + std::to_string(GlobalHelper::getOffset(member)) + "]");
+//			return res;
 		}
 		default: //PLUS, MINUS, MUL, DIV, MOD, EQUALS, ELEM
 		{
@@ -149,15 +150,13 @@ std::string ThreeAddressCode::genCommand(Command command) const
 	}	
 }
 	
-void ThreeAddressCode::pushScope(VarAllocator alloc)
+void ThreeAddressCode::pushScope(Scope& sc)
 {
-	var_alloc.push(alloc);
-	temp_alloc.push(TempAllocator());
+    scopes.push(sc);
 }
 
 void ThreeAddressCode::popScope()
 {
-	var_alloc.pop();
-	temp_alloc.pop();
+    scopes.pop();
 }
 

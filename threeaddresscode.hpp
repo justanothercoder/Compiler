@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <stack>
+#include <list>
 
 #include "globalhelper.hpp"
 #include "functionsymbol.hpp"
@@ -17,37 +18,37 @@
  * +------------------+------+------+---------+
  * |      command     | arg1 | arg2 |   op    |
  * +------------------+------+------+---------+
- * |      a + b       |  a   |  b   |    +    |
+ * |    t = a + b     |  a   |  b   |    +    |
  * +------------------+------+------+---------+
- * |      a - b       |  a   |  b   |    -    |
+ * |    t = a - b     |  a   |  b   |    -    |
  * +------------------+------+------+---------+
- * |      a * b       |  a   |  b   |    *    |
+ * |    t = a * b     |  a   |  b   |    *    |
  * +------------------+------+------+---------+
- * |      a / b       |  a   |  b   |    /    |
+ * |    t = a / b     |  a   |  b   |    /    |
  * +------------------+------+------+---------+
- * |      a % b       |  a   |  b   |    %    |
+ * |    t = a % b     |  a   |  b   |    %    |
  * +------------------+------+------+---------+
- * |      a == b      |  a   |  b   |   ==    |
+ * |    t = a == b    |  a   |  b   |   ==    |
  * +------------------+------+------+---------+
- * |       a[i]       |  a   |  i   |   []    |
+ * |    t = a[i]      |  a   |  i   |   []    |
  * +------------------+------+------+---------+
- * |        *a        |  a   |      |   (*)   |
+ * |    t = *a        |  a   |      |   (*)   |
  * +------------------+------+------+---------+
- * |        &a        |  a   |      |    &    |
+ * |    t = &a        |  a   |      |    &    |
  * +------------------+------+------+---------+
- * |      a = b       |  a   |  b   |    =    |
+ * |    a = b         |  a   |  b   |    =    |
  * +------------------+------+------+---------+
- * |     param a      |  a   |      |  param  |
+ * |    param a       |  a   |      |  param  |
  * +------------------+------+------+---------+
- * |     call p n     |  p   |  n   |  call   |
+ * |    call p n      |  p   |  n   |  call   |
  * +------------------+------+------+---------+
- * |      goto L      |  L   |      |  goto   |
+ * |    goto L        |  L   |      |  goto   |
  * +------------------+------+------+---------+
  * |   if x goto L    |  x   |  L   |   if    |
  * +------------------+------+------+---------+
  * | ifFalse x goto L |  x   |  L   | ifFalse |
  * +------------------+------+------+---------+
- * |        a.b       |  a   |  b   |    .    |
+ * |    t = a.b       |  a   |  b   |    .    |
  * +------------------+------+------+---------+
  */
 
@@ -112,6 +113,19 @@ struct Command
 		}
 	}
 
+    bool isExpr() const
+    {
+        switch ( op )
+        {
+            case SSAOp::GOTO  : case SSAOp::IFFALSE: case SSAOp::IF   :
+            case SSAOp::RETURN: case SSAOp::LABEL  : case SSAOp::PARAM:
+            case SSAOp::ASSIGN:
+                return false;
+            default:
+                return true;            
+        }
+    }
+
 	SSAOp op;
 	Arg arg1;
 	Arg arg2;
@@ -119,6 +133,8 @@ struct Command
 
 class ThreeAddressCode
 {
+    friend class Optimizer;
+
 public:
 
 	Arg add(Command command);
@@ -127,21 +143,20 @@ public:
 
 	std::string toString();
 
-	void pushScope(VarAllocator alloc);
+	void pushScope(Scope& sc);
 	void popScope();
 
 	CodeObject genAsm() const;
 
 private:
 
-	std::stack<VarAllocator> var_alloc;
-	std::stack<TempAllocator> temp_alloc;
+	std::stack<Scope&> scopes;
 
 	std::string genArg(Arg arg) const;
 	std::string genCommand(Command command) const;
 
 	std::vector<Command> commands;
-	std::vector<int> code;
+	std::list<int> code;
 
 };
 

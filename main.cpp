@@ -37,7 +37,11 @@ int main()
 
 		GenSSAVisitor visitor;
 		root -> accept(visitor);
-		std::cerr << visitor.getString() << '\n';
+		std::cerr << "code:\n" << visitor.getString() << '\n';
+
+        visitor.optimize();
+		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
+
 
 		CodeObject main_code;
 		

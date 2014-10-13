@@ -15,6 +15,8 @@
 #include "fornode.hpp"
 #include "dotnode.hpp"
 #include "stringnode.hpp"
+#include "builtins.hpp"
+#include "optimizer.hpp"
 
 GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
 {
@@ -124,29 +126,33 @@ void GenSSAVisitor::visit(NewExpressionNode *)
 
 void GenSSAVisitor::visit(BinaryOperatorNode *node)
 {
-/*
-	auto rhs = getArg(node -> rhs);
-	auto lhs = getArg(node -> lhs);
+    if ( node -> lhs -> getType() -> getUnqualifiedType() == BuiltIns::int_type 
+      && node -> rhs -> getType() -> getUnqualifiedType() == BuiltIns::int_type )
+    {
+        auto rhs = getArg(node -> rhs);
+        auto lhs = getArg(node -> lhs);
 
-	SSAOp op;
-	switch ( node -> op_type )
-	{
-		case BinaryOp::PLUS  : op = SSAOp::PLUS  ; break;
-		case BinaryOp::MINUS : op = SSAOp::MINUS ; break;
-		case BinaryOp::MUL   : op = SSAOp::MUL   ; break;
-		case BinaryOp::DIV   : op = SSAOp::DIV   ; break;
-		case BinaryOp::MOD   : op = SSAOp::MOD   ; break;
-		case BinaryOp::ASSIGN: op = SSAOp::ASSIGN; break;
-	}
+        SSAOp op;
+        switch ( node -> op_type )
+        {
+            case BinaryOp::PLUS  : op = SSAOp::PLUS  ; break;
+            case BinaryOp::MINUS : op = SSAOp::MINUS ; break;
+            case BinaryOp::MUL   : op = SSAOp::MUL   ; break;
+            case BinaryOp::DIV   : op = SSAOp::DIV   ; break;
+            case BinaryOp::MOD   : op = SSAOp::MOD   ; break;
+            case BinaryOp::ASSIGN: op = SSAOp::ASSIGN; break;
+            default: throw std::logic_error("internal error");
+        }
 
-	add(Command(op, lhs, rhs));
-	_arg = Arg(IdType::COMMAND, commands.size() - 1);
-*/
-	
-	code.add(Command(SSAOp::PARAM, getArg(node -> rhs)));
-	code.add(Command(SSAOp::PARAM, getArg(node -> lhs)));
-	
-	_arg = code.add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), Arg(IdType::NOID, 2)));
+        _arg = code.add(Command(op, lhs, rhs));
+    }
+    else
+    {
+        code.add(Command(SSAOp::PARAM, getArg(node -> rhs)));
+        code.add(Command(SSAOp::PARAM, getArg(node -> lhs)));
+        
+        _arg = code.add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), Arg(IdType::NOID, 2)));
+    }
 }
 
 void GenSSAVisitor::visit(StructDeclarationNode *)
@@ -157,7 +163,7 @@ void GenSSAVisitor::visit(StructDeclarationNode *)
 void GenSSAVisitor::visit(FunctionDeclarationNode *node)
 {
 	code.add(Command(SSAOp::LABEL, code.newLabel(node -> definedSymbol -> getScopedTypedName())));
-	node -> statements -> accept(*this);	
+	node -> statements -> accept(*this);
 }
 
 void GenSSAVisitor::visit(VariableDeclarationNode *)
@@ -184,8 +190,12 @@ void GenSSAVisitor::visit(DotNode *node)
 
 void GenSSAVisitor::visit(StatementNode *node)
 {
+    code.pushScope(node -> scope);
+
 	for ( auto stat : node -> statements )
 		stat -> accept(*this);
+
+    code.popScope();
 }
 
 void GenSSAVisitor::visit(VariableNode *node)
@@ -242,4 +252,10 @@ std::string GenSSAVisitor::getString()
 const ThreeAddressCode& GenSSAVisitor::getCode() const
 {
 	return code;
+}
+
+void GenSSAVisitor::optimize()
+{
+    Optimizer optimizer(code);
+    optimizer.optimize();
 }

@@ -6,6 +6,9 @@
 
 class GenSSAVisitor : public ASTVisitor
 {
+
+    friend class Optimizer;
+
 public:
 	
 	GenSSAVisitor();
@@ -39,7 +42,9 @@ public:
 	std::string getString();
 
 	const ThreeAddressCode& getCode() const;
-	
+
+    void optimize();
+
 private:
 
 	Arg _arg;
