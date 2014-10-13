@@ -67,7 +67,7 @@ struct Arg
 		switch ( type )
 		{
 		case IdType::NOID     : return "noid";
-		case IdType::STRING   : return '"' + GlobalHelper::id_to_string[id] + '"';
+		case IdType::STRING   : return '"' + GlobalHelper::string_by_id[id] + '"';
 		case IdType::NUMBER   : return std::to_string(GlobalHelper::id_to_num[id]);
 		case IdType::TEMP     : return "temp_" + std::to_string(id);
 		case IdType::LABEL    : return GlobalHelper::label_name[id] + ":";
@@ -131,6 +131,23 @@ struct Command
 	Arg arg2;
 };
 
+struct Block
+{
+    Block(Scope& scope);
+
+    void genAsm(CodeObject& code_obj);
+
+    void genArg(Arg arg, CodeObject& code_obj) const;
+    void genCommand(Command command, CodeObject& code_obj) const;
+
+    std::string toString();
+
+    std::list<int> code;
+    Scope& scope;
+
+    std::vector<Command> commands;
+};
+
 class ThreeAddressCode
 {
     friend class Optimizer;
@@ -143,21 +160,20 @@ public:
 
 	std::string toString();
 
-	void pushScope(Scope& sc);
-	void popScope();
-
 	CodeObject genAsm() const;
+
+    void newBlock(Scope& scope);
+    void popBlock();
 
 private:
 
-	std::stack<Scope&> scopes;
+//	std::string genArg(Arg arg) const;
+//	std::string genCommand(Command command) const;
 
-	std::string genArg(Arg arg) const;
-	std::string genCommand(Command command) const;
+//	std::vector<Command> commands;
+    std::vector<Block> blocks;
 
-	std::vector<Command> commands;
-	std::list<int> code;
-
+    std::stack<int> blockStack;
 };
 
 #endif

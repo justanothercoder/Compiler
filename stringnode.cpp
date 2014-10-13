@@ -95,5 +95,5 @@ void StringNode::accept(ASTVisitor& visitor)
 	
 int StringNode::getStrId() const
 {
-	return GlobalHelper::string_to_id[str];
+	return GlobalHelper::id_by_string[str];
 }

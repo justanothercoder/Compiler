@@ -162,5 +162,5 @@ void VariableNode::accept(ASTVisitor& visitor)
 	
 int VariableNode::getVarId() const
 {
-	return GlobalHelper::var_id[variable];
+	return GlobalHelper::id_by_var[variable];
 }

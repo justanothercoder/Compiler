@@ -42,6 +42,9 @@ int main()
         visitor.optimize();
 		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
 
+        std::cerr << "\nasm code:\n";
+        visitor.getCode().genAsm().gen();
+
 
 		CodeObject main_code;
 		

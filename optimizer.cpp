@@ -1,5 +1,4 @@
 #include "optimizer.hpp"
-#include "range.hpp"
 
 Optimizer::Optimizer(ThreeAddressCode& code) : code(code)
 {
@@ -14,78 +13,87 @@ void Optimizer::optimize()
     
 void Optimizer::constantPropagation()
 {
-    for ( auto it = std::begin(code.code); it != std::end(code.code); ++it )
+    for ( auto block : code.blocks )
     {
-        int command_id = *it;
-        auto& command = code.commands[command_id];
-
-        if ( command.arg1.type == IdType::NUMBER && command.arg2.type == IdType::NUMBER )
+        for ( auto it = std::begin(block.code); it != std::end(block.code); ++it )
         {
-            int n1 = GlobalHelper::id_to_num[command.arg1.id];
-            int n2 = GlobalHelper::id_to_num[command.arg2.id];
+            int command_id = *it;
+//            auto& command = code.commands[command_id];
+            auto& command = block.commands[command_id];
 
-            int n3;
-
-            switch ( command.op )
+            if ( command.arg1.type == IdType::NUMBER && command.arg2.type == IdType::NUMBER )
             {
-                case SSAOp::PLUS : n3 = n1 + n2; break;
-                case SSAOp::MINUS: n3 = n1 - n2; break;
-                case SSAOp::MUL  : n3 = n1 * n2; break;
-                case SSAOp::DIV  : n3 = n1 / n2; break;
-                case SSAOp::MOD  : n3 = n1 % n2; break;
-                default: throw std::logic_error("internal error.");
-            } 
-           
-            GlobalHelper::addConst(n3);
-    
-            auto it2 = it;          
+                int n1 = GlobalHelper::id_to_num[command.arg1.id];
+                int n2 = GlobalHelper::id_to_num[command.arg2.id];
 
-            for ( ++it2; it2 != std::end(code.code); ++it2 )            
-            {
-                int next_command_id = *it2;
-                auto& command = code.commands[next_command_id];
+                int n3;
 
-                if ( command.arg1.type == IdType::TEMP && command.arg1.id == command_id )
+                switch ( command.op )
                 {
-                    command.arg1.type = IdType::NUMBER;
-                    command.arg1.id   = GlobalHelper::const_num_id[n3];
-                }
-                if ( command.arg2.type == IdType::TEMP && command.arg2.id == command_id )
+                    case SSAOp::PLUS : n3 = n1 + n2; break;
+                    case SSAOp::MINUS: n3 = n1 - n2; break;
+                    case SSAOp::MUL  : n3 = n1 * n2; break;
+                    case SSAOp::DIV  : n3 = n1 / n2; break;
+                    case SSAOp::MOD  : n3 = n1 % n2; break;
+                    default: throw std::logic_error("internal error.");
+                } 
+               
+                GlobalHelper::addConst(n3);
+        
+                auto it2 = it;          
+
+                for ( ++it2; it2 != std::end(block.code); ++it2 )            
                 {
-                    command.arg2.type = IdType::NUMBER;
-                    command.arg2.id   = GlobalHelper::const_num_id[n3];
-                }
-            } 
+                    int next_command_id = *it2;
+//                    auto& command = code.commands[next_command_id];
+                    auto& command = block.commands[next_command_id];
+
+                    if ( command.arg1.type == IdType::TEMP && command.arg1.id == command_id )
+                    {
+                        command.arg1.type = IdType::NUMBER;
+                        command.arg1.id   = GlobalHelper::const_num_id[n3];
+                    }
+                    if ( command.arg2.type == IdType::TEMP && command.arg2.id == command_id )
+                    {
+                        command.arg2.type = IdType::NUMBER;
+                        command.arg2.id   = GlobalHelper::const_num_id[n3];
+                    }
+                } 
+            }
         }
     }
 }
 
 void Optimizer::eliminateUnusedTemporaries()
 {
-    std::vector<int> is_used(code.code.size(), 0);
-
-    for ( auto command_id : code.code )
+    for ( auto block : code.blocks )
     {
-        auto& command = code.commands[command_id];
+        std::vector<int> is_used(block.code.size(), 0);
 
-        if ( !command.isExpr() || command.op == SSAOp::CALL ) 
-            is_used[command_id] = 1;
+        for ( auto command_id : block.code )
+        {
+//            auto& command = code.commands[command_id];
+            auto& command = block.commands[command_id];
 
-        if ( command.arg1.type == IdType::TEMP )
-            is_used[command.arg1.id] = 1;
-        
-        if ( command.arg2.type == IdType::TEMP )
-            is_used[command.arg2.id] = 1;
-    }
+            if ( !command.isExpr() || command.op == SSAOp::CALL ) 
+                is_used[command_id] = 1;
 
-    int i = 0;
-    for ( auto it = std::begin(code.code); it != std::end(code.code); ++i )
-    {
-        int command_id = *it;
+            if ( command.arg1.type == IdType::TEMP )
+                is_used[command.arg1.id] = 1;
+            
+            if ( command.arg2.type == IdType::TEMP )
+                is_used[command.arg2.id] = 1;
+        }
 
-        if ( !is_used[command_id] )
-            it = code.code.erase(it);
-        else
-            ++it;
+        int i = 0;
+        for ( auto it = std::begin(block.code); it != std::end(block.code); ++i )
+        {
+            int command_id = *it;
+
+            if ( !is_used[command_id] )
+                it = block.code.erase(it);
+            else
+                ++it;
+        }
     }
 }

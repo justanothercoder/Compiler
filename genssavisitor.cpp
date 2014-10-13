@@ -20,7 +20,7 @@
 
 GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
 {
-
+    code.newBlock(*BuiltIns::global_scope);
 }
 
 Arg GenSSAVisitor::getArg(AST *node)
@@ -162,8 +162,12 @@ void GenSSAVisitor::visit(StructDeclarationNode *)
 
 void GenSSAVisitor::visit(FunctionDeclarationNode *node)
 {
+    code.newBlock(*node -> definedSymbol);
 	code.add(Command(SSAOp::LABEL, code.newLabel(node -> definedSymbol -> getScopedTypedName())));
+
 	node -> statements -> accept(*this);
+
+    code.popBlock();
 }
 
 void GenSSAVisitor::visit(VariableDeclarationNode *)
@@ -185,17 +189,13 @@ void GenSSAVisitor::visit(NullNode *)
 
 void GenSSAVisitor::visit(DotNode *node)
 {
-	_arg = code.add(Command(SSAOp::DOT, getArg(node -> base), Arg(IdType::VARIABLE, GlobalHelper::var_id[node -> member])));
+	_arg = code.add(Command(SSAOp::DOT, getArg(node -> base), Arg(IdType::VARIABLE, GlobalHelper::id_by_var[node -> member])));
 }
 
 void GenSSAVisitor::visit(StatementNode *node)
 {
-    code.pushScope(node -> scope);
-
 	for ( auto stat : node -> statements )
 		stat -> accept(*this);
-
-    code.popScope();
 }
 
 void GenSSAVisitor::visit(VariableNode *node)

@@ -25,16 +25,16 @@ public:
 	static std::map<int, int> const_num_id;
 	static std::map<int, int> id_to_num;
 
-	static std::map<VariableSymbol*, int> var_id;
-	static std::map<int, VariableSymbol*> id_to_var;
+	static std::map<VariableSymbol*, int> id_by_var;
+	static std::map<int, VariableSymbol*> var_by_id;
 
 	static std::map<int, std::string> label_name;
 
 	static std::map<const FunctionSymbol*, int> id_by_func;
 	static std::map<int, const FunctionSymbol*> func_by_id;
 
-	static std::map<std::string, int> string_to_id;
-	static std::map<int, std::string> id_to_string;
+	static std::map<std::string, int> id_by_string;
+	static std::map<int, std::string> string_by_id;
 
 	static void addConst(int value);
 	static void addVar(VariableSymbol *var);
