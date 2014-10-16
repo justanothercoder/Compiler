@@ -45,7 +45,6 @@ int main()
         std::cerr << "\nasm code:\n";
         visitor.getCode().genAsm().gen();
 
-
 		CodeObject main_code;
 		
 		main_code.emit("section .text");

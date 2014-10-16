@@ -1,6 +1,8 @@
 #include "optimizer.hpp"
 #include "globalhelper.hpp"
 
+#include <iostream>
+
 Optimizer::Optimizer(ThreeAddressCode& code) : code(code)
 {
 
@@ -14,12 +16,12 @@ void Optimizer::optimize()
     
 void Optimizer::constantPropagation()
 {
-    for ( auto block : code.blocks )
+    for ( auto& block : code.blocks )
     {
         for ( auto it = std::begin(block.code); it != std::end(block.code); ++it )
         {
             int command_id = *it;
-            auto& command = block.commands[command_id];
+            auto& command = block.commands[command_id];            
 
             if ( command.arg1.type == IdType::NUMBER && command.arg2.type == IdType::NUMBER )
             {
@@ -45,27 +47,29 @@ void Optimizer::constantPropagation()
                 for ( ++it2; it2 != std::end(block.code); ++it2 )            
                 {
                     int next_command_id = *it2;
-                    auto& command = block.commands[next_command_id];
+                    auto& next_command = block.commands[next_command_id];
 
-                    if ( command.arg1.type == IdType::TEMP && command.arg1.id == command_id )
+                    if ( next_command.arg1.type == IdType::TEMP && next_command.arg1.id == command_id )
                     {
-                        command.arg1.type = IdType::NUMBER;
-                        command.arg1.id   = GlobalHelper::const_num_id[n3];
+                        next_command.arg1.type = IdType::NUMBER;
+                        next_command.arg1.id   = GlobalHelper::const_num_id[n3];
                     }
-                    if ( command.arg2.type == IdType::TEMP && command.arg2.id == command_id )
+                    if ( next_command.arg2.type == IdType::TEMP && next_command.arg2.id == command_id )
                     {
-                        command.arg2.type = IdType::NUMBER;
-                        command.arg2.id   = GlobalHelper::const_num_id[n3];
+                        next_command.arg2.type = IdType::NUMBER;
+                        next_command.arg2.id   = GlobalHelper::const_num_id[n3];
                     }
                 } 
             }
+
+            std::cerr << code.toString() << '\n';
         }
     }
 }
 
 void Optimizer::eliminateUnusedTemporaries()
 {
-    for ( auto block : code.blocks )
+    for ( auto& block : code.blocks )
     {
         std::vector<int> is_used(block.code.size(), 0);
 
