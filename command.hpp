@@ -14,10 +14,26 @@ struct Command
 
     bool isExpr() const;
 
+    bool operator==(const Command& c) const;
+
 	SSAOp op;
 	Arg arg1;
 	Arg arg2;
 };
 
+namespace std
+{
+    template<>
+    struct hash<Command>
+    {
+        typedef Command argument_type;
+        typedef std::size_t result_type;
+
+        result_type operator() (const argument_type& s) const
+        {
+            return reinterpret_cast<std::size_t>(&s);
+        }
+    };
+}
 
 #endif

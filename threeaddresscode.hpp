@@ -5,6 +5,7 @@
 #include <stack>
 
 #include "block.hpp"
+#include "codeobject.hpp"
 
 /* list of SSA commands
  *
@@ -47,6 +48,8 @@
  * |    t = a.b       |  a   |  b   |    .    |
  * +------------------+------+------+---------+
  */
+
+class Scope;
 
 class ThreeAddressCode
 {

@@ -1,4 +1,5 @@
 #include "threeaddresscode.hpp"
+#include "globalhelper.hpp"
 
 Arg ThreeAddressCode::newTemp()
 {

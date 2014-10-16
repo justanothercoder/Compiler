@@ -17,6 +17,7 @@
 #include "stringnode.hpp"
 #include "builtins.hpp"
 #include "optimizer.hpp"
+#include "functionsymbol.hpp"
 
 GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
 {

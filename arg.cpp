@@ -20,3 +20,8 @@ std::string Arg::toString()
     case IdType::VARIABLE : return "var_" + std::to_string(id);
     }
 }
+
+bool Arg::operator==(const Arg& a) const
+{
+    return type == a.type && id == a.id;
+}

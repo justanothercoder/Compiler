@@ -1,4 +1,5 @@
 #include "optimizer.hpp"
+#include "globalhelper.hpp"
 
 Optimizer::Optimizer(ThreeAddressCode& code) : code(code)
 {
@@ -18,7 +19,6 @@ void Optimizer::constantPropagation()
         for ( auto it = std::begin(block.code); it != std::end(block.code); ++it )
         {
             int command_id = *it;
-//            auto& command = code.commands[command_id];
             auto& command = block.commands[command_id];
 
             if ( command.arg1.type == IdType::NUMBER && command.arg2.type == IdType::NUMBER )
@@ -45,7 +45,6 @@ void Optimizer::constantPropagation()
                 for ( ++it2; it2 != std::end(block.code); ++it2 )            
                 {
                     int next_command_id = *it2;
-//                    auto& command = code.commands[next_command_id];
                     auto& command = block.commands[next_command_id];
 
                     if ( command.arg1.type == IdType::TEMP && command.arg1.id == command_id )
@@ -72,7 +71,6 @@ void Optimizer::eliminateUnusedTemporaries()
 
         for ( auto command_id : block.code )
         {
-//            auto& command = code.commands[command_id];
             auto& command = block.commands[command_id];
 
             if ( !command.isExpr() || command.op == SSAOp::CALL ) 

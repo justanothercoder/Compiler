@@ -4,6 +4,8 @@
 #include "astvisitor.hpp"
 #include "threeaddresscode.hpp"
 
+class AST;
+
 class GenSSAVisitor : public ASTVisitor
 {
 

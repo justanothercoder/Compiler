@@ -3,6 +3,7 @@
 
 #include <list>
 #include <vector>
+#include <unordered_map>
 
 #include "command.hpp"
 
@@ -23,8 +24,9 @@ struct Block
     std::list<int> code;
     Scope& scope;
 
-    std::vector<Command> commands;    
-    std::vector<int> command_offsets;
+    std::vector<Command> commands;
+
+    mutable std::unordered_map<Command, int> command_offsets;
 };
 
 

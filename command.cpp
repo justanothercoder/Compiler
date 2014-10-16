@@ -43,3 +43,8 @@ bool Command::isExpr() const
             return true;            
     }
 }
+    
+bool Command::operator==(const Command& c) const
+{
+    return op == c.op && arg1 == c.arg1 && arg2 == c.arg2;
+}

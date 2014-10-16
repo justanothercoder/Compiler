@@ -11,6 +11,8 @@ struct Arg
 
 	std::string toString();
 
+    bool operator==(const Arg& a) const;
+
 	IdType type;
 	int id;
 };

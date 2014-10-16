@@ -75,11 +75,13 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
     }
     case IdType::TEMP:
     {
-        auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
-        genCommand(commands[arg.id], code_obj);
+//        auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
+//        genCommand(commands[arg.id], code_obj);
 
-        code_obj.emit("mov " + addr + ", rax");
-        code_obj.emit("lea rax, " + addr);
+//        code_obj.emit("mov " + addr + ", rax");
+//        code_obj.emit("lea rax, " + addr);
+
+          code_obj.emit("lea rax, [rbp - " + std::to_string(command_offsets[commands[arg.id]]) + "]");
 
         return;
     }
@@ -137,6 +139,7 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     }
     case SSAOp::ADDR:
     {
+        command_offsets[command] = scope.getTempAlloc().getOffset();
 		auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
 		scope.getTempAlloc().claim(GlobalConfig::int_size);
 
