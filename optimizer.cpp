@@ -1,8 +1,6 @@
 #include "optimizer.hpp"
 #include "globalhelper.hpp"
 
-#include <iostream>
-
 Optimizer::Optimizer(ThreeAddressCode& code) : code(code)
 {
 
@@ -61,8 +59,6 @@ void Optimizer::constantPropagation()
                     }
                 } 
             }
-
-            std::cerr << code.toString() << '\n';
         }
     }
 }

@@ -153,6 +153,27 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     }
     case SSAOp::CALL:
     {
+        auto callee = GlobalHelper::func_by_id[command.arg1.id];
+
+        auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
+        scope.getTempAlloc().claim(callee -> return_type -> getSize());
+
+        code_obj.emit("lea rax, " + addr);
+        code_obj.emit("push rax");
+
+        code_obj.emit("call " + callee -> getScopedTypedName());
+//        code_obj.emit("add rsp, " +  
+/*
+        if ( callee -> isMethod() )
+            code_obj.genCallCode(call_info, params, caller -> gen(), caller -> getType() -> isReference());
+        else
+        {
+            CodeObject empty;
+            code_obj.genCallCode(call_info, params, empty, false);
+        }
+
+        code_obj.emit("pop rax");
+*/
         return;
     }
     case SSAOp::LABEL:
