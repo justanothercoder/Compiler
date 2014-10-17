@@ -2,12 +2,12 @@
 #include "globalhelper.hpp"
 #include "functionsymbol.hpp"
 
-Arg::Arg(IdType type, int id) : type(type), id(id)
+Arg::Arg(IdType type, int id, const Type *expr_type) : type(type), id(id), expr_type(expr_type)
 {
 
 }
 	
-std::string Arg::toString()
+std::string Arg::toString() const
 {
     switch ( type )
     {

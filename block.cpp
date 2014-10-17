@@ -146,6 +146,17 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
 	{
     case SSAOp::DOT:
     {
+        genArg(command.arg1, code_obj);
+
+        auto base_type = command.arg1.expr_type;
+        auto base_sym = base_type -> getUnqualifiedType() -> getSymbol();
+
+        auto member = GlobalHelper::var_by_id[command.arg2.id];
+
+        if ( base_type -> isReference() )
+			code_obj.emit("mov rax, [rax]");
+		code_obj.emit("lea rax, [rax - " + std::to_string(static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member)) + "]");
+
         return;
     }
     case SSAOp::DEREF:
@@ -172,21 +183,23 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     {
         genArg(command.arg1, code_obj);
 
-        if ( commands[command.arg1.id].type -> getUnqualifiedType() == BuiltIns::int_type )
+        const Type *param_type = command.arg1.expr_type;
+
+        if ( param_type -> getUnqualifiedType() == BuiltIns::int_type )
         {
-            code_obj.emit("push [rax]");            
+            code_obj.emit("push qword [rax]");            
         }
         else
         {            
             code_obj.emit("push rax");
             code_obj.emit("mov rbx, rsp");
-            code_obj.emit("sub rsp, ");
+            code_obj.emit("sub rsp, " + std::to_string(param_type -> getSize()));
 
             code_obj.emit("push rax");
             code_obj.emit("push rbx");
-
             
-            code_obj.emit("call "); 
+            code_obj.emit("call " + static_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
+            code_obj.emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size + param_type -> getSize()));
         }
 
         return;
@@ -261,7 +274,7 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
 		scope.getTempAlloc().claim(GlobalConfig::int_size);
         
         genArg(command.arg2, code_obj);
-        code_obj.emit("push [rax]");
+        code_obj.emit("push qword [rax]");
 
         genArg(command.arg1, code_obj);
         code_obj.emit("pop rbx");

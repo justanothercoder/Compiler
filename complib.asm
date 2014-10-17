@@ -136,7 +136,8 @@ _putchar_char:
 	push rdi
 	push rdx
 
-	lea rsi, [rbp + 16]
+;	lea rsi, [rbp + 16]
+	lea rsi, [rbp + 24]
 	mov rax, 1
 	mov rdi, 1
 	mov rdx, 1

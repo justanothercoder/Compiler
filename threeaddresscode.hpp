@@ -58,7 +58,6 @@ class ThreeAddressCode
 public:
 
 	Arg add(Command command);
-	Arg newTemp();
 	Arg newLabel(std::string label = "");
 
 	std::string toString();

@@ -43,7 +43,7 @@ void GenSSAVisitor::visit(IfNode *node)
 	auto expr = getArg(node -> cond);
 
 	GlobalHelper::addConst(0);
-	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0]);
+	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0], BuiltIns::int_type);
 
 	auto temp = code.add(Command(SSAOp::EQUALS, expr, zero));
 
@@ -70,7 +70,7 @@ void GenSSAVisitor::visit(ForNode *node)
 	auto cond = getArg(node -> cond);
 
 	GlobalHelper::addConst(0);
-	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0]);
+	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0], BuiltIns::int_type);
 
 	auto temp = code.add(Command(SSAOp::EQUALS, cond, zero));
 
@@ -93,7 +93,7 @@ void GenSSAVisitor::visit(WhileNode *node)
 	auto cond = getArg(node -> cond);
 	
 	GlobalHelper::addConst(0);
-	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0]);
+	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0], BuiltIns::int_type);
 
 	auto temp = code.add(Command(SSAOp::EQUALS, cond, zero));
 
@@ -190,12 +190,17 @@ void GenSSAVisitor::visit(NullNode *)
 {
 	GlobalHelper::addConst(0);
 
-	_arg = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0]);
+	_arg = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0], BuiltIns::int_type);
 }
 
 void GenSSAVisitor::visit(DotNode *node)
 {
-	_arg = code.add(Command(SSAOp::DOT, getArg(node -> base), Arg(IdType::VARIABLE, GlobalHelper::id_by_var[node -> member])));
+    _arg = code.add(
+            Command(SSAOp::DOT, 
+                getArg(node -> base), 
+                Arg(IdType::VARIABLE, GlobalHelper::id_by_var[node -> member], node -> member -> getType())
+            )
+    );
 }
 
 void GenSSAVisitor::visit(StatementNode *node)
@@ -206,7 +211,7 @@ void GenSSAVisitor::visit(StatementNode *node)
 
 void GenSSAVisitor::visit(VariableNode *node)
 {
-	_arg = Arg(IdType::VARIABLE, node -> getVarId());
+	_arg = Arg(IdType::VARIABLE, node -> getVarId(), node -> variable -> getType());
 }
 
 void GenSSAVisitor::visit(StringNode *node)
@@ -216,7 +221,7 @@ void GenSSAVisitor::visit(StringNode *node)
 
 void GenSSAVisitor::visit(NumberNode *node)
 {
-	_arg = Arg(IdType::NUMBER, node -> getNumId());
+	_arg = Arg(IdType::NUMBER, node -> getNumId(), BuiltIns::int_type);
 }
 
 void GenSSAVisitor::visit(CallNode *node)

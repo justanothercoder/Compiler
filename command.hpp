@@ -11,9 +11,8 @@ class Type;
 struct Command
 {
 	Command(SSAOp op, Arg arg1, Arg arg2 = Arg(IdType::NOID, -1));
-	Command(Type *type, SSAOp op, Arg arg1, Arg arg2 = Arg(IdType::NOID, -1));
 
-	std::string toString();
+	std::string toString() const;
 
     bool isExpr() const;
 
@@ -22,8 +21,6 @@ struct Command
 	SSAOp op;
 	Arg arg1;
 	Arg arg2;
-
-    Type *type;
 };
 
 namespace std
