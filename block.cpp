@@ -7,8 +7,9 @@
 #include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
 #include "structsymbol.hpp"
+#include "builtins.hpp"
 
-Block::Block(Scope& scope) : scope(scope)
+Block::Block(Scope& scope, std::string block_name) : scope(scope), block_name(block_name)
 {
 
 }
@@ -25,12 +26,32 @@ std::string Block::toString()
     
 void Block::genAsm(CodeObject& code_obj)
 {
-	if ( scope.getVarAlloc().getSpace() > 0 )
-		code_obj.emit("sub rsp, " + std::to_string(scope.getVarAlloc().getSpace()));
-	code_obj.emit("sub rsp, " + std::to_string(scope.getTempAlloc().getSpaceNeeded()));
+    auto it = std::begin(code);
+
+    code_obj.emit("jmp _~" + block_name);
+
+    if ( commands[*it].op == SSAOp::LABEL )
+    {
+        genCommand(commands[*it], code_obj);
+        ++it;
+    }
+
+    code_obj.emit("push rbp");
+    code_obj.emit("mov rbp, rsp");
+        
+    if ( scope.getVarAlloc().getSpace() > 0 )
+        code_obj.emit("sub rsp, " + std::to_string(scope.getVarAlloc().getSpace()));
+    code_obj.emit("sub rsp, " + std::to_string(scope.getTempAlloc().getSpaceNeeded()));
+        
     
-    for ( auto command_id : code )
-        genCommand(commands[command_id], code_obj);
+    for ( ; it != std::end(code); ++it )
+        genCommand(commands[*it], code_obj);
+
+    code_obj.emit("mov rsp, rbp");
+    code_obj.emit("pop rbp");
+    code_obj.emit("ret");
+
+    code_obj.emit("_~" + block_name + ":");
 }
 
 void Block::genArg(Arg arg, CodeObject& code_obj) const
@@ -149,6 +170,25 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     }
     case SSAOp::PARAM:
     {
+        genArg(command.arg1, code_obj);
+
+        if ( commands[command.arg1.id].type -> getUnqualifiedType() == BuiltIns::int_type )
+        {
+            code_obj.emit("push [rax]");            
+        }
+        else
+        {            
+            code_obj.emit("push rax");
+            code_obj.emit("mov rbx, rsp");
+            code_obj.emit("sub rsp, ");
+
+            code_obj.emit("push rax");
+            code_obj.emit("push rbx");
+
+            
+            code_obj.emit("call "); 
+        }
+
         return;
     }
     case SSAOp::CALL:
@@ -162,7 +202,9 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         code_obj.emit("push rax");
 
         code_obj.emit("call " + callee -> getScopedTypedName());
-//        code_obj.emit("add rsp, " +  
+        code_obj.emit("add rsp, " +  std::to_string(command.arg2.id));
+
+        code_obj.emit("pop rax");
 /*
         if ( callee -> isMethod() )
             code_obj.genCallCode(call_info, params, caller -> gen(), caller -> getType() -> isReference());

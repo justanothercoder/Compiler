@@ -63,7 +63,7 @@ public:
 
 	std::string toString();
 
-	CodeObject genAsm() const;
+	void genAsm(CodeObject& code_obj) const;
 
     void newBlock(Scope& scope);
     void popBlock();

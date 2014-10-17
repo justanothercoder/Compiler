@@ -12,7 +12,7 @@ class CodeObject;
 
 struct Block
 {
-    Block(Scope& scope);
+    Block(Scope& scope, std::string block_name = "");
 
     void genAsm(CodeObject& code_obj);
 
@@ -27,6 +27,8 @@ struct Block
     std::vector<Command> commands;
 
     mutable std::unordered_map<Command, int> command_offsets;
+    
+    std::string block_name;
 };
 
 

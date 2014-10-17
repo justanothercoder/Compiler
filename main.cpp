@@ -37,16 +37,20 @@ int main()
 
 		GenSSAVisitor visitor;
 		root -> accept(visitor);
-		std::cerr << "code:\n" << visitor.getString() << '\n';
+//		std::cerr << "code:\n" << visitor.getString() << '\n';
 
         visitor.optimize();
-		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
+//		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
 
-        std::cerr << "\nasm code:\n";
-        visitor.getCode().genAsm().gen();
+//        std::cerr << "\nasm code:\n";
+
+        CodeObject code_obj;
+        visitor.getCode().genAsm(code_obj);
+
+        code_obj.gen();
 
 		CodeObject main_code;
-		
+
 		main_code.emit("section .text");
 
 		for ( auto p : GlobalHelper::has_definition )

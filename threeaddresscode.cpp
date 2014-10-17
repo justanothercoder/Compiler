@@ -1,5 +1,6 @@
 #include "threeaddresscode.hpp"
 #include "globalhelper.hpp"
+#include "scope.hpp"
 
 Arg ThreeAddressCode::newTemp()
 {
@@ -39,19 +40,15 @@ std::string ThreeAddressCode::toString()
 	return res;
 }
 		
-CodeObject ThreeAddressCode::genAsm() const
+void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 {
-	CodeObject code_obj;
-    
     for ( auto block : blocks )
         block.genAsm(code_obj);
-
-	return code_obj;
 }
 
 void ThreeAddressCode::newBlock(Scope& scope)
 {
-    blocks.push_back(Block(scope));
+    blocks.push_back(Block(scope, scope.getScopeName()));
     blockStack.push(blocks.size() - 1);
 }
 

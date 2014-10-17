@@ -127,8 +127,11 @@ void GenSSAVisitor::visit(NewExpressionNode *)
 
 void GenSSAVisitor::visit(BinaryOperatorNode *node)
 {
-    if ( node -> lhs -> getType() -> getUnqualifiedType() == BuiltIns::int_type 
-      && node -> rhs -> getType() -> getUnqualifiedType() == BuiltIns::int_type )
+    auto lhs_type = node -> lhs -> getType();
+    auto rhs_type = node -> rhs -> getType();    
+
+    if ( lhs_type -> getUnqualifiedType() == BuiltIns::int_type 
+      && rhs_type -> getUnqualifiedType() == BuiltIns::int_type )
     {
         auto rhs = getArg(node -> rhs);
         auto lhs = getArg(node -> lhs);
@@ -152,7 +155,9 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
         code.add(Command(SSAOp::PARAM, getArg(node -> rhs)));
         code.add(Command(SSAOp::PARAM, getArg(node -> lhs)));
         
-        _arg = code.add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), Arg(IdType::NOID, 2)));
+        _arg = code.add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), 
+                                             Arg(IdType::NOID, lhs_type -> getSize() + rhs_type -> getSize())
+        ));
     }
 }
 
@@ -219,9 +224,13 @@ void GenSSAVisitor::visit(CallNode *node)
 	for ( auto param = node -> params.rbegin(); param != node -> params.rend(); ++param )
 		code.add(Command(SSAOp::PARAM, getArg(*param)));
 
+    int params_size = 0;
+    for ( auto param : node -> params )
+        params_size += param -> getType() -> getSize();    
+
 	_arg = code.add(Command(SSAOp::CALL, 
 			        Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), 
-					Arg(IdType::NOID, node -> params.size()))
+					Arg(IdType::NOID, params_size))
 	);
 }
 
