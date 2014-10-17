@@ -14,7 +14,7 @@ struct Block
 {
     Block(Scope& scope, std::string block_name = "");
 
-    void genAsm(CodeObject& code_obj);
+    void genAsm(CodeObject& code_obj) const;
 
     void genArg(Arg arg, CodeObject& code_obj) const;
     void genCommand(Command command, CodeObject& code_obj) const;

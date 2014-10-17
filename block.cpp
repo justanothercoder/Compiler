@@ -24,11 +24,9 @@ std::string Block::toString()
     return res;
 }
     
-void Block::genAsm(CodeObject& code_obj)
+void Block::genAsm(CodeObject& code_obj) const
 {
     auto it = std::begin(code);
-
-    code_obj.emit("jmp _~" + block_name);
 
     if ( commands[*it].op == SSAOp::LABEL )
     {
@@ -43,15 +41,11 @@ void Block::genAsm(CodeObject& code_obj)
         code_obj.emit("sub rsp, " + std::to_string(scope.getVarAlloc().getSpace()));
     code_obj.emit("sub rsp, " + std::to_string(scope.getTempAlloc().getSpaceNeeded()));
         
-    
     for ( ; it != std::end(code); ++it )
         genCommand(commands[*it], code_obj);
 
     code_obj.emit("mov rsp, rbp");
     code_obj.emit("pop rbp");
-    code_obj.emit("ret");
-
-    code_obj.emit("_~" + block_name + ":");
 }
 
 void Block::genArg(Arg arg, CodeObject& code_obj) const
