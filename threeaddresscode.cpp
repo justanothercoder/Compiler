@@ -87,7 +87,7 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
         code_obj.emit("jmp _~" + block -> block_name);
         block -> genAsm(code_obj);
         code_obj.emit("ret");
-        code_obj.emit(block -> block_name + ":");
+        code_obj.emit("_~" + block -> block_name + ":");
     }
 
     code_obj.emit("mov rax, 60");

@@ -40,7 +40,7 @@ int main()
 //		std::cerr << "code:\n" << visitor.getString() << '\n';
 
         visitor.optimize();
-//		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
+		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
 
 //        std::cerr << "\nasm code:\n";
 

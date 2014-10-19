@@ -1,6 +1,7 @@
 #include "arg.hpp"
 #include "globalhelper.hpp"
 #include "functionsymbol.hpp"
+#include "variablesymbol.hpp"
 
 Arg::Arg(IdType type, int id, const Type *expr_type) : type(type), id(id), expr_type(expr_type)
 {
@@ -17,7 +18,7 @@ std::string Arg::toString() const
     case IdType::TEMP     : return "temp_" + std::to_string(id);
     case IdType::LABEL    : return GlobalHelper::label_name[id] + ":";
     case IdType::PROCEDURE: return GlobalHelper::func_by_id[id] -> getScopedTypedName();
-    case IdType::VARIABLE : return "var_" + std::to_string(id);
+    case IdType::VARIABLE : return GlobalHelper::var_by_id[id] -> getName();
     }
 }
 

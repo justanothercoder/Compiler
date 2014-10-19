@@ -33,8 +33,9 @@ namespace std
 
         result_type operator() (const argument_type& s) const
         {
-            return reinterpret_cast<std::size_t>(&s);
-        }
+            hash<Arg> h;
+            return static_cast<int>(s.op) + (h(s.arg1) << 32) + h(s.arg2);
+        }        
     };
 }
 

@@ -21,4 +21,19 @@ struct Arg
     const Type *expr_type;
 };
 
+namespace std
+{
+    template<>
+    struct hash<Arg>
+    {
+        typedef Arg argument_type;
+        typedef std::size_t result_type;
+
+        result_type operator() (const argument_type& s) const
+        {
+            return (static_cast<unsigned long long>(s.type) << 32) + s.id;
+        }        
+    };
+}
+
 #endif
