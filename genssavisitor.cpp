@@ -5,6 +5,7 @@
 #include "variablenode.hpp"
 #include "callnode.hpp"
 #include "functiondeclarationnode.hpp"
+#include "structdeclarationnode.hpp"
 #include "returnnode.hpp"
 #include "unsafeblocknode.hpp"
 #include "addrnode.hpp"
@@ -161,9 +162,12 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
     }
 }
 
-void GenSSAVisitor::visit(StructDeclarationNode *)
+void GenSSAVisitor::visit(StructDeclarationNode *node)
 {
-
+    code.newBlock(*node -> definedSymbol);
+    for ( auto decl : node -> inner )
+        decl -> accept(*this);
+    code.popBlock();
 }
 
 void GenSSAVisitor::visit(FunctionDeclarationNode *node)

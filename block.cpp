@@ -26,6 +26,9 @@ std::string Block::toString()
 
 void Block::genAsm(CodeObject& code_obj) const
 {
+    if ( code.empty() )
+        return;
+
     auto it = std::begin(code);
 
     if ( commands[*it].op == SSAOp::LABEL )
@@ -200,7 +203,7 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         else
         {
 //            code_obj.emit("push rax");
-            code_obj.emit("mov rbx, rsp");
+            code_obj.emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
             code_obj.emit("sub rsp, " + std::to_string(param_type -> getSize()));
 
             code_obj.emit("push rax");
