@@ -172,7 +172,7 @@ void GenSSAVisitor::visit(StructDeclarationNode *node)
 
 void GenSSAVisitor::visit(FunctionDeclarationNode *node)
 {
-    code.newBlock(*node -> definedSymbol);
+    code.newBlock(*node -> definedSymbol, node -> definedSymbol -> getScopedTypedName());
 	code.add(Command(SSAOp::LABEL, code.newLabel(node -> definedSymbol -> getScopedTypedName())));
 
 	node -> statements -> accept(*this);

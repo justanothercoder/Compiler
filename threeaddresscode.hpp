@@ -62,7 +62,7 @@ public:
 
 	void genAsm(CodeObject& code_obj) const;
 
-    void newBlock(Scope& scope);
+    void newBlock(Scope& scope, std::string block_name = "");
     void popBlock();
 
 private:

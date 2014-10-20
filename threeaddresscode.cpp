@@ -95,9 +95,12 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
     code_obj.emit("syscall");
 }
 
-void ThreeAddressCode::newBlock(Scope& scope)
+void ThreeAddressCode::newBlock(Scope& scope, std::string block_name)
 {
-    blocks.push_back(Block(scope, scope.getScopeName()));
+    if ( block_name == "" )
+        block_name = scope.getScopeName();
+
+    blocks.push_back(Block(scope, block_name));
     blockStack.push(blocks.size() - 1);
 }
 

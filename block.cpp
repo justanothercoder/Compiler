@@ -131,6 +131,10 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
             code_obj.emit("mov rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(sym)) + "]");
             code_obj.emit("lea rax, [rax - " + std::to_string(struc_scope -> getVarAlloc().getAddress(variable)) + "]");
         }
+        else if ( variable -> getType() -> isReference() )
+        {
+            code_obj.emit("mov rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(variable)) + "]");
+        }
         else
         {
             code_obj.emit("lea rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(variable)) + "]");
