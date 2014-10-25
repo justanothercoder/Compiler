@@ -20,8 +20,6 @@ public:
 	
     virtual void build_scope(); 
 
-    virtual void define() = 0;
-    virtual void check() = 0;
 	virtual CodeObject& gen() = 0;
 
 	virtual std::vector<AST*> getChildren() const;	

@@ -34,46 +34,6 @@ Symbol* VariableDeclarationNode::getDefinedSymbol() const
 	return definedSymbol; 
 }
 
-void VariableDeclarationNode::check()
-{	
-	for ( auto param : type_info.template_params )
-	{
-		if ( param.which() == 0 )
-			boost::get<ExprNode*>(param) -> check();
-	}
-
-	if ( !is_field )
-	{
-		if ( !type_info.is_ref )
-		{
-			std::string type_name = type_info.type_name;
-
-			auto var_type = scope -> fromTypeInfo(type_info);
-
-//			if ( var_type -> getSymbol() == nullptr || var_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
-//				throw SemanticError("No such struct '" + type_name + "'");
-
-			if ( var_type -> getTypeKind() != TypeKind::POINTER )
-			{
-				auto struct_symbol = static_cast<const StructSymbol*>(var_type -> getSymbol());
-				call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, constructor_call_params);
-			}
-			else
-			{
-				for ( auto param : constructor_call_params )
-					param -> check();
-			}
-		}
-		else
-		{
-			for ( auto param : constructor_call_params )
-				param -> check();
-		}
-	}
-	
-	getDefinedSymbol() -> is_defined = true;
-}
-
 CodeObject& VariableDeclarationNode::gen()
 {
 	if ( !is_field )
@@ -106,27 +66,6 @@ CodeObject& VariableDeclarationNode::gen()
 	}
 
 	return code_obj;
-}
-
-void VariableDeclarationNode::define()
-{
-	const auto& template_info = scope -> getTemplateInfo();
-
-    if ( template_info.sym && template_info.sym -> isIn(type_info.type_name) )
-    {
-		auto replace = template_info.getReplacement(type_info.type_name);
-
-//		type_info.type_name = boost::get<std::string>(*replace);
-		type_info = boost::get<TypeInfo>(*replace);
-    }
-    
-    auto var_type = scope -> fromTypeInfo(type_info);
-    
-    if ( var_type == BuiltIns::void_type )
-		throw SemanticError("can't declare a variable of 'void' type.");
-   
-    definedSymbol -> setType(var_type);
-	scope -> define(definedSymbol);
 }
 
 AST* VariableDeclarationNode::copyTree() const

@@ -14,7 +14,6 @@ public:
 	BracketNode(ExprNode *base, ExprNode *expr);
 	~BracketNode() override;
 
-	void check() override;
 	CodeObject& gen() override;	
 
 	AST* copyTree() const override;

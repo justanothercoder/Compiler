@@ -28,22 +28,6 @@ void NewExpressionNode::build_scope()
 	}
 }
 
-void NewExpressionNode::check()
-{
-	for ( auto param : type_info.template_params )
-	{
-		if ( param.which() == 0 )
-			boost::get<ExprNode*>(param) -> check();
-	}
-
-	auto type = static_cast<const StructSymbol*>(scope -> fromTypeInfo(type_info));
-
-	call_info = CallHelper::callCheck(type -> getName(), type, params); 
-
-	scope -> getTempAlloc().add(type -> getSize());      //place for object itself
-	scope -> getTempAlloc().add(GlobalConfig::int_size); //place for reference to it
-}
-
 CodeObject& NewExpressionNode::gen()
 {
     auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";

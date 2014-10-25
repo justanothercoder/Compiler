@@ -7,11 +7,6 @@ StringNode::StringNode(std::string str) : str(str)
 	GlobalHelper::addStr(str);
 }
 
-void StringNode::check() 
-{
-
-}
-
 CodeObject& StringNode::gen()
 {
 	auto str_label = StringNode::getNewLabel();

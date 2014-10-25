@@ -14,17 +14,6 @@ BracketNode::~BracketNode()
    	delete expr; 
 }
 
-void BracketNode::check()
-{
-	base -> check();
-
-	auto base_type = dynamic_cast<const StructSymbol*>(base -> getType() -> getSymbol());
-
-	call_info = CallHelper::callCheck("operator[]", base_type, {this -> expr});
-	
-	scope -> getTempAlloc().add(getType() -> getSize());
-}
-
 CodeObject& BracketNode::gen()
 {
 	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";

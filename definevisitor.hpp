@@ -1,22 +1,10 @@
-#ifndef _GENSSAVISITOR_HPP_
-#define _GENSSAVISITOR_HPP_
+#ifndef _DEFINEVISITOR_HPP_
+#define _DEFINEVISITOR_HPP_
 
 #include "astvisitor.hpp"
-#include "threeaddresscode.hpp"
 
-class AST;
-
-class GenSSAVisitor : public ASTVisitor
+class DefineVisitor : public ASTVisitor
 {
-
-    friend class Optimizer;
-
-public:
-	
-	GenSSAVisitor();
-
-	Arg getArg(AST* node);
-
 	void visit(ImportNode *node) override;
 	void visit(IfNode *node) override;
 	void visit(ForNode *node) override;
@@ -41,17 +29,6 @@ public:
 	void visit(AsmArrayNode *node) override;
 	void visit(VarInferTypeDeclarationNode *node) override;
 	void visit(TemplateStructDeclarationNode *node) override;
-
-	std::string getString();
-
-	const ThreeAddressCode& getCode() const;
-
-    void optimize();
-
-private:
-
-	Arg _arg;
-	ThreeAddressCode code;
 };
 
 #endif

@@ -14,11 +14,6 @@ class StructSymbol;
 class StructDeclarationNode : public DeclarationNode
 {
 
-	friend class TemplateStructSymbol;
-	
-	friend class GenSSAVisitor;
-	friend class CheckVisitor;
-
 public:
 
     StructDeclarationNode(std::string name, std::vector<AST*> inner, boost::optional<TemplateInfo> template_info = boost::none);
@@ -29,9 +24,6 @@ public:
 
     Symbol* getDefinedSymbol() const override;
 
-	void define() override;
-    void check() override;
-    
 	CodeObject& gen() override;
 
 	std::vector<AST*> getChildren() const override;
@@ -39,8 +31,6 @@ public:
 	std::string toString() const override;
 	
 	void accept(ASTVisitor& visitor) override;
-
-protected:
 
 	std::string name;
 	std::vector<AST*> inner;

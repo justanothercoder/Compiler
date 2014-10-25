@@ -59,30 +59,6 @@ CodeObject& ReturnNode::gen()
 	return code_obj;
 }
 
-void ReturnNode::check()
-{
-	auto _scope = scope;
-	while ( _scope != nullptr && dynamic_cast<FunctionSymbol*>(_scope) == nullptr )
-		_scope = _scope -> getEnclosingScope();
-
-	if ( _scope == nullptr )
-		throw SemanticError("return is not a in a function");
-
-	enclosing_func = dynamic_cast<FunctionSymbol*>(_scope);
-
-    expr -> check();
-
-//	copy_call_info = CallHelper::callCheck(expr -> getType() -> getTypeName(), static_cast<const StructSymbol*>(expr -> getType().type), {expr});
-	if ( expr -> getType() -> getTypeKind() != TypeKind::POINTER )
-//		copy_call_info = CallHelper::callCheck(expr -> getType() -> getName(), static_cast<const StructSymbol*>(expr -> getType()), {expr});
-		copy_call_info = CallHelper::callCheck(expr -> getType() -> getUnqualifiedType() -> getName(), static_cast<const StructSymbol*>(expr -> getType() -> getSymbol()), {expr});
-}
-	
-void ReturnNode::define() 
-{
-   	expr -> define(); 
-}
-
 AST* ReturnNode::copyTree() const 
 {
    	return new ReturnNode(static_cast<ExprNode*>(expr -> copyTree())); 

@@ -18,7 +18,6 @@ public:
 	UnaryNode(ExprNode *exp, UnaryOp op_type);
 	~UnaryNode() override;
 
-	void check() override;
     CodeObject& gen() override;
 
 	std::vector<AST*> getChildren() const override;

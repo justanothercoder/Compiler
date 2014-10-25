@@ -23,16 +23,6 @@ void TemplateStructDeclarationNode::build_scope()
     }
 }
 
-void TemplateStructDeclarationNode::define() 
-{
-   	scope -> accept(*(new SymbolDefine(definedSymbol)));
-}
-
-void TemplateStructDeclarationNode::check() 
-{
-
-}
-
 CodeObject& TemplateStructDeclarationNode::gen() 
 { 
 	return code_obj; 

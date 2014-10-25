@@ -10,9 +10,6 @@ public:
 	
 	AsmArrayNode();
 
-	void define() override;
-	void check() override;
-
 	CodeObject& gen() override;
 	
 	AST* copyTree() const override;
@@ -21,8 +18,6 @@ public:
 	
 	void accept(ASTVisitor& visitor) override;
 
-private:
-	
 	int size_of_type;
 	int array_size;
 	CodeObject code_obj;

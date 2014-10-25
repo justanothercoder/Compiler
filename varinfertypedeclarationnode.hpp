@@ -10,16 +10,10 @@ class VariableSymbol;
 
 class VarInferTypeDeclarationNode : public DeclarationNode
 {
-
-	friend class GenSSAVisitor;
-	friend class CheckVisitor;
-
 public:
 
 	VarInferTypeDeclarationNode(std::string name, ExprNode *expr);
 
-	void define() override;
-	void check() override;
 	CodeObject& gen() override;
 
 	Symbol* getDefinedSymbol() const override;
@@ -31,8 +25,6 @@ public:
 	std::string toString() const override;
 	
 	void accept(ASTVisitor& visitor) override;
-
-private:
 
 	std::string name;
 	ExprNode *expr;

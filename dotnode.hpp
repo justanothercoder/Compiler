@@ -18,7 +18,6 @@ public:
     DotNode(ExprNode *base, std::string member_name);   
 	~DotNode() override;
     
-    void check() override;
     CodeObject& gen() override;
 
 	std::vector<AST*> getChildren() const override;

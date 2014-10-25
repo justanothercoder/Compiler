@@ -34,40 +34,6 @@ void StructDeclarationNode::build_scope()
     }
 }
 
-void StructDeclarationNode::define()
-{
-    for ( auto decl : inner )
-		decl -> define();
-}
-
-void StructDeclarationNode::check()
-{
-	getDefinedSymbol() -> is_defined = true;
-	
-	if ( definedSymbol -> getDefaultConstructor() == nullptr )
-	{
-		auto default_constr = FunctionHelper::makeDefaultConstructor(definedSymbol);
-		definedSymbol -> define(default_constr);
-		default_constr_code = *default_constr->code_obj;
-	}
-
-	if ( definedSymbol -> getCopyConstructor() == nullptr )
-	{
-		auto copy_constr = FunctionHelper::makeDefaultCopyConstructor(definedSymbol);
-		definedSymbol -> define(copy_constr);
-		default_copy_constr_code = *copy_constr->code_obj;
-	}
-
-	for ( auto decl : inner )
-	{
-		if ( dynamic_cast<DeclarationNode*>(decl) )
-			static_cast<DeclarationNode*>(decl) -> getDefinedSymbol() -> is_defined = true;
-	}
-
-	for ( auto decl : inner )
-		decl->check();	
-}
-
 CodeObject& StructDeclarationNode::gen()
 {
 	code_obj.emit(default_constr_code.getCode());

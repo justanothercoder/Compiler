@@ -262,6 +262,11 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode *)
 {
 
 }
+
+void GenSSAVisitor::visit(TemplateStructDeclarationNode *) 
+{
+
+}
 	
 std::string GenSSAVisitor::getString()
 {

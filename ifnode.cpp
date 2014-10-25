@@ -35,18 +35,6 @@ void IfNode::build_scope()
     stats_false -> build_scope();
 }
 
-void IfNode::define()
-{
-	for ( auto child : getChildren() )
-		child -> define();
-}
-    
-void IfNode::check()
-{
-	for ( auto child : getChildren() )
-		child -> check();
-}
-    
 CodeObject& IfNode::gen()
 {
     code_obj.emit(cond -> gen().getCode());

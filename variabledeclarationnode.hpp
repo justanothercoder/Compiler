@@ -11,10 +11,6 @@ class VariableSymbol;
 
 class VariableDeclarationNode : public DeclarationNode
 {
-
-	friend class GenSSAVisitor;
-	friend class CheckVisitor;
-
 public:
 
     VariableDeclarationNode(std::string name, TypeInfo type_info, bool is_field = false, std::vector<ExprNode*> constructor_call_params = {});
@@ -22,8 +18,6 @@ public:
     AST* copyTree() const override;
     
 	void build_scope() override;
-    void define() override;
-    void check() override;
     
 	CodeObject& gen() override;
     
@@ -34,8 +28,6 @@ public:
 	std::string toString() const override;
 
 	void accept(ASTVisitor& visitor) override;
-
-private:
 
 	std::string name;
     TypeInfo type_info;

@@ -28,6 +28,7 @@ class CheckVisitor : public ASTVisitor
 	void visit(UnsafeBlockNode *node) override;
 	void visit(AsmArrayNode *node) override;
 	void visit(VarInferTypeDeclarationNode *node) override;
+	void visit(TemplateStructDeclarationNode *node) override;
 };
 
 #endif

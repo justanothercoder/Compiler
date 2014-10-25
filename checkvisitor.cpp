@@ -61,7 +61,7 @@ void CheckVisitor::visit(BracketNode *node)
 
 void CheckVisitor::visit(UnaryNode *node) 
 {
-	node -> exp -> check();
+	node -> exp -> accept(*this);
 
 	node -> call_info = CallHelper::callCheck(node -> getOperatorName(), static_cast<const StructSymbol*>(node -> exp -> getType() -> getSymbol()), { });
 
@@ -123,7 +123,7 @@ void CheckVisitor::visit(StructDeclarationNode *node)
 		if ( dynamic_cast<DeclarationNode*>(decl) )
 			static_cast<DeclarationNode*>(decl) -> getDefinedSymbol() -> is_defined = true;
 		
-		decl -> check();	
+		decl -> accept(*this);	
 	}
 }
 
@@ -134,7 +134,7 @@ void CheckVisitor::visit(FunctionDeclarationNode *node)
 	for ( auto param : node -> params_symbols )
 		param -> is_defined = true;
 
-	node -> statements -> check(); 
+	node -> statements -> accept(*this); 
 }
 
 void CheckVisitor::visit(VariableDeclarationNode *node)
@@ -164,13 +164,13 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 			else
 			{
 				for ( auto param : node -> constructor_call_params )
-					param -> check();
+					param -> accept(*this);
 			}
 		}
 		else
 		{
 			for ( auto param : node -> constructor_call_params )
-				param -> check();
+				param -> accept(*this);
 		}
 	}
 	
@@ -179,7 +179,7 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 
 void CheckVisitor::visit(AddrNode *node)
 {
-	node -> expr -> check();
+	node -> expr -> accept(*this);
 
 	if ( node -> op == AddrOp::REF )
 	{
@@ -204,7 +204,7 @@ void CheckVisitor::visit(NullNode *node)
 
 void CheckVisitor::visit(DotNode *node)
 {
-	node -> base -> check();
+	node -> base -> accept(*this);
 
 	auto _base_type = node -> base -> getType();
 
@@ -222,7 +222,7 @@ void CheckVisitor::visit(DotNode *node)
 void CheckVisitor::visit(StatementNode *node)
 {
 	for ( auto i : node -> statements )
-		i -> check();
+		i -> accept(*this);
 }
 
 void CheckVisitor::visit(VariableNode *node)
@@ -267,7 +267,7 @@ void CheckVisitor::visit(NumberNode *)
 
 void CheckVisitor::visit(CallNode *node)
 {
-    node -> caller -> check();
+    node -> caller -> accept(*this);
 
     auto caller_type = node -> caller -> getType();
 
@@ -326,4 +326,9 @@ void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
 	auto type = node -> expr -> getType();
 
 	node -> call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {node -> expr});
+}
+
+void CheckVisitor::visit(TemplateStructDeclarationNode *) 
+{
+
 }

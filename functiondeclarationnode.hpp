@@ -15,10 +15,6 @@ using std::pair;
 
 class FunctionDeclarationNode : public DeclarationNode
 {
-
-	friend class GenSSAVisitor;
-	friend class CheckVisitor;
-
 public:
 
     FunctionDeclarationNode(std::string name
@@ -34,9 +30,6 @@ public:
 
     Symbol* getDefinedSymbol() const override;
 
-    void define() override;
-    void check() override;
-
     CodeObject& gen() override;
 
 	std::vector<AST*> getChildren() const override;
@@ -45,8 +38,6 @@ public:
 	
 	void accept(ASTVisitor& visitor) override;
     
-private:
-
 	std::string name;
 	std::vector< pair<std::string, TypeInfo> > params;
     TypeInfo return_type_info;

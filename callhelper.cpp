@@ -7,8 +7,8 @@
 
 CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector<ExprNode*> params)
 {
-    for ( auto i : params )
-		i -> check();
+//    for ( auto i : params )
+//		i -> check();
 
 	auto params_types = extractTypes(params);
 

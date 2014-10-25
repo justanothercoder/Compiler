@@ -22,16 +22,6 @@ void UnsafeBlockNode::build_scope()
 	block -> build_scope();
 }
 
-void UnsafeBlockNode::define() 
-{
-	block -> define();
-}
-
-void UnsafeBlockNode::check() 
-{
-	block -> check();
-}
-
 CodeObject& UnsafeBlockNode::gen()
 {
 	return block -> gen();

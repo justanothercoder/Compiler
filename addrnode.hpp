@@ -16,7 +16,6 @@ public:
 
 	AddrNode(ExprNode* expr, AddrOp op);
     
-	void check() override;
 	CodeObject& gen() override;
     
 	AST* copyTree() const;

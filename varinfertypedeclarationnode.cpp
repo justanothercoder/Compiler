@@ -16,31 +16,6 @@ Symbol* VarInferTypeDeclarationNode::getDefinedSymbol() const
 	return definedSymbol;
 }
 
-void VarInferTypeDeclarationNode::define() 
-{
-	expr -> check();
-
-	if ( scope -> resolve(name) != nullptr )
-		throw SemanticError(name + " is already defined");
-
-	if ( expr -> getType() == BuiltIns::void_type )
-		throw SemanticError("can't define variable of 'void' type");
-
-	definedSymbol = new VariableSymbol(name, expr -> getType());
-
-	scope -> accept(*(new VariableSymbolDefine(definedSymbol)));
-}
-	
-void VarInferTypeDeclarationNode::check() 
-{
-	scope -> getTempAlloc().add(expr -> getType() -> getSize());	
-	getDefinedSymbol() -> is_defined = true;
-
-	auto type = expr -> getType();
-
-	call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {expr});
-}
-
 CodeObject& VarInferTypeDeclarationNode::gen() 
 {
 	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";

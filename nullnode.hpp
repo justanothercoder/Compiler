@@ -12,7 +12,6 @@ public:
     
 	AST* copyTree() const override;
 	
-    void check() override;
 	CodeObject& gen() override;
 
 	std::string toString() const override;

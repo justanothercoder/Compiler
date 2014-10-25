@@ -20,7 +20,6 @@ public:
 	~NewExpressionNode() override;
 
 	void build_scope() override;
-    void check() override;
     CodeObject& gen() override;
 
 	std::vector<AST*> getChildren() const override;

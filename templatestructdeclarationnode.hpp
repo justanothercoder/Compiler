@@ -12,8 +12,6 @@ public:
 
     void build_scope() override;
 	    
-    void define() override;
-    void check() override;
     CodeObject& gen() override;
 
 private:

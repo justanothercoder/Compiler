@@ -14,32 +14,6 @@ CallNode::~CallNode()
    	delete caller; 
 }
     
-void CallNode::check()
-{
-    caller -> check();
-
-    auto caller_type = caller -> getType();
-
-    if ( caller_type -> getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
-	{
-//		if ( caller_type -> getTypeKind() != TypeKind::STRUCT )
-		if ( caller_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
-			throw SemanticError("caller '" + caller -> toString() + "' is not a function.");
-
-		call_info = CallHelper::callCheck("operator()", static_cast<const StructSymbol*>(caller_type -> getSymbol()), params);
-	}
-	else
-	{
-		auto ov_func = static_cast<const OverloadedFunctionSymbol*>(caller_type);
-		auto _scope = ov_func -> isMethod() ? static_cast<const StructSymbol*>(ov_func -> getBaseType() -> getSymbol()) : scope;
-		call_info = CallHelper::callCheck(ov_func -> getName(), _scope, params);
-	}
-
-	caller -> type_hint = call_info.callee;
-	
-	scope -> getTempAlloc().add(getType() -> getSize());
-}
-
 CodeObject& CallNode::gen()
 {  
 	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";

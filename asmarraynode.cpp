@@ -12,58 +12,6 @@ AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0)
 //	scope = BuiltIns::global_scope; 
 }
 
-void AsmArrayNode::define() 
-{
-	const Type *type;
-    const Type *ref_type;
-
-	const auto& template_info = scope -> getTemplateInfo(); 
-
-	if ( template_info.sym -> isIn("size") )
-	{
-		auto replace = template_info.getReplacement("size");
-		
-		array_size = boost::get<int>(*replace);
-	}
-	else throw SemanticError("");
-
-	auto arr = dynamic_cast<StructSymbol*>(scope);
-	arr -> is_unsafe = true;
-
-	if ( template_info.sym -> isIn("T") )
-	{
-		auto replace = template_info.getReplacement("T");
-		type         = scope -> fromTypeInfo(boost::get<TypeInfo>(*replace));
-		ref_type     = TypeFactory::getReference(type);
-		size_of_type = type -> getSize();
-	}
-	else throw SemanticError("");
-
-	auto just_int = BuiltIns::int_type;
-
-	auto ref_arr = TypeFactory::getReference(arr);
-
-	array_constructor   = new FunctionSymbol("array"     , ref_arr , {ref_arr}          , scope, {true, true, false});
-	array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, scope, {true, false, true});
-	array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , scope, {true, false, false});
-
-	GlobalHelper::has_definition[array_constructor]   = true;
-	GlobalHelper::has_definition[array_elem_operator] = true;
-	GlobalHelper::has_definition[array_size_func]     = true;
-
-	array_constructor   -> is_unsafe = true;
-	array_elem_operator -> is_unsafe = true;
-	array_size_func     -> is_unsafe = true;
-
-	scope -> define(array_constructor);
-	scope -> define(array_elem_operator);
-	scope -> define(array_size_func);
-
-	scope -> define(new VariableSymbol( "~~impl", new BuiltInTypeSymbol("~~array_impl", array_size * size_of_type)));
-}
-
-void AsmArrayNode::check() { }
-
 CodeObject& AsmArrayNode::gen()
 {
 //	auto arr = dynamic_cast<StructSymbol*>(scope);

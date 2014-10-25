@@ -10,36 +10,6 @@ VariableNode::VariableNode(std::string name) : name(name), variable(nullptr), te
 
 }
 
-void VariableNode::check()
-{
-	const auto& template_info = scope -> getTemplateInfo();
-
-	if ( template_info.sym && template_info.sym -> isIn(name) )
-	{
-		auto replace = template_info.getReplacement(name);
-
-		if ( replace -> which() == 0 )
-			throw SemanticError(name + " is typename");
-
-		template_num = new NumberNode(std::to_string(boost::get<int>(*replace)));
-		template_num -> scope = scope;
-		template_num -> build_scope();
-
-		template_num -> check();
-		return;
-	}
-
-	auto sym = scope -> resolve(name);
-
-	if ( sym == nullptr || !sym -> is_defined )
-		throw SemanticError("No such symbol '" + name + "'.");
-
-	if ( sym -> getSymbolType() != SymbolType::VARIABLE )
-		throw SemanticError("'" + name + "' is not a variable.");
-
-	variable = static_cast<VariableSymbol*>(sym);
-}
-
 CodeObject& VariableNode::gen()
 {
 	const auto& template_info = scope -> getTemplateInfo();

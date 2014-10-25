@@ -26,7 +26,7 @@ bool TemplateStructSymbol::isIn(std::string name) const
 			[&](std::pair<std::string, TypeInfo> p){ return name == p.first; }
 			) != std::end(template_symbols);
 }
-
+/*
 Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols, Scope *inst_scope) const
 {
 	auto hash_func = [](std::vector<TemplateParam> vec)
@@ -73,3 +73,4 @@ Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols, Scope 
 
 	return (specs[hash_] = static_cast<StructSymbol*>(decl -> getDefinedSymbol()));
 }
+*/

@@ -10,6 +10,7 @@
 #include "functionsymbol.hpp"
 #include "globalhelper.hpp"
 
+#include "definevisitor.hpp"
 #include "checkvisitor.hpp"
 #include "genssavisitor.hpp"
 
@@ -28,7 +29,9 @@ int main()
 		root -> scope = BuiltIns::global_scope;
 
 		root -> build_scope();
-		root -> define();
+        
+        DefineVisitor define_visitor;
+        root -> accept(define_visitor);
 
 		CheckVisitor check_visitor;
 		root -> accept(check_visitor);

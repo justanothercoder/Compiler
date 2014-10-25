@@ -14,11 +14,6 @@ NumberNode::NumberNode(std::string num) : num(num)
 		GlobalHelper::addConst(num_value);
 }
 
-void NumberNode::check() 
-{ 
-	scope -> getTempAlloc().add(getType() -> getSize());
-}
-
 CodeObject& NumberNode::gen()
 {
 	std::string addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";

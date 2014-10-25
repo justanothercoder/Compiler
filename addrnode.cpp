@@ -57,26 +57,6 @@ AST* AddrNode::copyTree() const
 	return new AddrNode(static_cast<ExprNode*>(expr -> copyTree()), op);
 }
 	
-void AddrNode::check() 
-{
-	expr -> check();
-
-	if ( op == AddrOp::REF )
-	{
-		if ( !expr -> isLeftValue() )
-			throw SemanticError("expression is not an lvalue");
-
-		scope -> getTempAlloc().add(GlobalConfig::int_size);
-	}
-	else
-	{
-		auto type = expr -> getType() -> getUnqualifiedType();
-
-		if ( type -> getTypeKind() != TypeKind::POINTER )
-		   throw SemanticError("expression is not a pointer");	
-	}
-}
-
 CodeObject& AddrNode::gen() 
 {
 	code_obj.emit(expr -> gen().getCode());

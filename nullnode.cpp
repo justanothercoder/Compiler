@@ -14,11 +14,6 @@ AST* NullNode::copyTree() const
 	return new NullNode();
 }
 	
-void NullNode::check() 
-{
-	scope -> getTempAlloc().add(getType() -> getSize());
-}
-
 CodeObject& NullNode::gen() 
 {
 	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";

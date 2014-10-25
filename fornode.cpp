@@ -25,18 +25,6 @@ void ForNode::build_scope()
 	}
 }
 
-void ForNode::define()
-{
-	for ( auto child : getChildren() )
-		child -> define();
-}
-
-void ForNode::check()
-{
-	for ( auto child : getChildren() )
-		child -> check();
-}
-
 CodeObject& ForNode::gen()
 {
 	auto label1 = ForNode::getNewLabel();	

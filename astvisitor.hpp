@@ -24,6 +24,7 @@ class StructDeclarationNode;
 class FunctionDeclarationNode;
 class VariableDeclarationNode;
 class VarInferTypeDeclarationNode;
+class TemplateStructDeclarationNode;
 
 class ASTVisitor
 {
@@ -51,6 +52,7 @@ public:
 	virtual void visit(UnsafeBlockNode *node) = 0;
 	virtual void visit(AsmArrayNode *node) = 0;
 	virtual void visit(VarInferTypeDeclarationNode *node) = 0;
+	virtual void visit(TemplateStructDeclarationNode *node) = 0;
 };
 
 #endif

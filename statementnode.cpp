@@ -11,18 +11,6 @@ StatementNode::~StatementNode()
 		delete i;
 }
 
-void StatementNode::define()
-{
-	for ( auto i : statements )
-		i -> define();
-}
-
-void StatementNode::check()
-{
-	for ( auto i : statements )
-		i -> check();
-}
-
 AST* StatementNode::copyTree() const
 {
 	std::vector<AST*> stats(statements.size());

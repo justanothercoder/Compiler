@@ -20,7 +20,6 @@ public:
 
     VariableNode(std::string name);
 
-    void check() override;
     CodeObject& gen() override;
 
     AST* copyTree() const override;

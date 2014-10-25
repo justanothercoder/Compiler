@@ -14,24 +14,6 @@ BinaryOperatorNode::~BinaryOperatorNode()
    	delete lhs; delete rhs; 
 }
 
-void BinaryOperatorNode::check()
-{
-	lhs -> check();
-	try
-	{
-		if ( lhs -> getType() -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT )
-			call_info = CallHelper::callCheck(getOperatorName(), static_cast<const StructSymbol*>(lhs -> getType() -> getSymbol()), {rhs});
-		else
-			throw SemanticError("");
-	}
-	catch ( SemanticError& e )
-	{
-		call_info = CallHelper::callCheck(getOperatorName(), scope, {lhs, rhs});
-	}
-	
-	scope -> getTempAlloc().add(getType() -> getSize());
-}
-
 CodeObject& BinaryOperatorNode::gen()
 {
 	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";

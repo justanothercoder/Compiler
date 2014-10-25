@@ -10,7 +10,6 @@ public:
 
     NumberNode(std::string num);
 
-    void check() override;
     CodeObject& gen() override;
 
     AST* copyTree() const override;

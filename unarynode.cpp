@@ -14,14 +14,6 @@ UnaryNode::~UnaryNode()
    	delete exp; 
 }	
 
-void UnaryNode::check()
-{
-	exp -> check();
-	call_info = CallHelper::callCheck(getOperatorName(), static_cast<const StructSymbol*>(exp -> getType() -> getSymbol()), { });
-	
-	scope -> getTempAlloc().add(getType() -> getSize());
-}
-
 CodeObject& UnaryNode::gen()
 {
 	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";

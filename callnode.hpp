@@ -19,7 +19,6 @@ public:
     CallNode(ExprNode *caller, std::vector<ExprNode*> params);
 	~CallNode() override;
     
-    void check() override;
     CodeObject& gen() override;
 
 	std::vector<AST*> getChildren() const override;

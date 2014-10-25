@@ -14,8 +14,6 @@ public:
 
 	ExprNode();
 
-    void define() override;
-    
     virtual const Type* getType() const = 0;
 	virtual bool isLeftValue() const = 0;
 

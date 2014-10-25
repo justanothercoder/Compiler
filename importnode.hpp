@@ -11,15 +11,10 @@ public:
 
     AST* copyTree() const override;
 	
-    void define() override;
-    void check() override;
-
     CodeObject& gen() override;
 	std::string toString() const override;
 
 	void accept(ASTVisitor& visitor) override;
-
-private:
 
 	std::string lib;
 	CodeObject code_obj;

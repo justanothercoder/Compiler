@@ -13,23 +13,6 @@ DotNode::~DotNode()
     delete code_obj;
 }
 
-void DotNode::check()
-{
-    base -> check();
-
-    auto _base_type = base -> getType();
-
-    base_type = dynamic_cast<const StructSymbol*>(_base_type -> getUnqualifiedType());
-
-    if ( base_type == nullptr )
-        throw SemanticError("'" + base -> toString() + "' is not an instance of struct.");
-
-    member = dynamic_cast<VariableSymbol*>(base_type -> resolveMember(member_name));
-
-    if ( member == nullptr )
-        throw SemanticError(member_name + " is not member of " + base_type -> getName());
-}
-
 CodeObject& DotNode::gen()
 {
     code_obj -> emit(base -> gen().getCode());

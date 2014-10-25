@@ -11,7 +11,6 @@ public:
 
 	StringNode(std::string str);
 
-    void check() override;
     CodeObject& gen() override;
 
 	AST* copyTree() const override;

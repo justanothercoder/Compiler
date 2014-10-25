@@ -25,14 +25,6 @@ void WhileNode::build_scope()
     stats -> build_scope();
 }
 
-void WhileNode::define() { stats -> define(); }
-
-void WhileNode::check()
-{
-    cond  -> check();
-    stats -> check();
-}
-
 CodeObject& WhileNode::gen()
 {
     auto exit_label  = WhileNode::getNewLabel();
