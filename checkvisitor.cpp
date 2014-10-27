@@ -76,7 +76,7 @@ void CheckVisitor::visit(NewExpressionNode *node)
 			boost::get<ExprNode*>(param) -> accept(*this);
 	}
 
-	auto type = static_cast<const StructSymbol*>(node -> scope -> fromTypeInfo(node -> type_info));
+	auto type = static_cast<const StructSymbol*>(fromTypeInfo(node -> type_info, node -> scope));
 
 	node -> call_info = CallHelper::callCheck(type -> getName(), type, node -> params); 
 	
@@ -87,6 +87,7 @@ void CheckVisitor::visit(NewExpressionNode *node)
 void CheckVisitor::visit(BinaryOperatorNode *node) 
 {
 	node -> lhs -> accept(*this);
+    node -> rhs -> accept(*this);
 	try
 	{
 		if ( node -> lhs -> getType() -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT )
@@ -151,7 +152,7 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 		{
 			std::string type_name = node -> type_info.type_name;
 
-			auto var_type = node -> scope -> fromTypeInfo(node -> type_info);
+			auto var_type = fromTypeInfo(node -> type_info, node -> scope);
 
 //			if ( var_type -> getSymbol() == nullptr || var_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
 //				throw SemanticError("No such struct '" + type_name + "'");
@@ -268,6 +269,9 @@ void CheckVisitor::visit(NumberNode *)
 void CheckVisitor::visit(CallNode *node)
 {
     node -> caller -> accept(*this);
+
+    for ( auto param : node -> params )
+        param -> accept(*this);
 
     auto caller_type = node -> caller -> getType();
 

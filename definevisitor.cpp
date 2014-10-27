@@ -93,7 +93,8 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
 			return type;
 		}
 //		return scope -> fromTypeInfo(type_info);
-		return node -> definedSymbol -> fromTypeInfo(type_info);
+//		return node -> definedSymbol -> fromTypeInfo(type_info);
+        return DefineVisitor::fromTypeInfo(type_info, node -> definedSymbol);
 	};
 
     auto return_type = fromTypeInfo(node -> return_type_info);
@@ -147,7 +148,7 @@ void DefineVisitor::visit(VariableDeclarationNode *node)
 		node -> type_info = boost::get<TypeInfo>(*replace);
     }
     
-    auto var_type = node -> scope -> fromTypeInfo(node -> type_info);
+    auto var_type = fromTypeInfo(node -> type_info, node -> scope);
     
     if ( var_type == BuiltIns::void_type )
 		throw SemanticError("can't declare a variable of 'void' type.");
@@ -193,7 +194,7 @@ void DefineVisitor::visit(AsmArrayNode *node)
 	if ( template_info.sym -> isIn("T") )
 	{
 		auto replace = template_info.getReplacement("T");
-		type         = node -> scope -> fromTypeInfo(boost::get<TypeInfo>(*replace));
+		type         = fromTypeInfo(boost::get<TypeInfo>(*replace), node -> scope);
 		ref_type     = TypeFactory::getReference(type);
 		node -> size_of_type = type -> getSize();
 	}

@@ -4,6 +4,8 @@
 #include <string>
 #include <map>
 
+#include "templateparam.hpp"
+
 class AST;
 class ExprNode;
 class Type;
@@ -11,6 +13,10 @@ class Scope;
 class Symbol;
 class FunctionSymbol;
 class VariableSymbol;
+
+class TypeInfo;
+class TemplateStructSymbol;
+struct TemplateInfo;
 
 class GlobalHelper
 {

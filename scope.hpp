@@ -5,6 +5,7 @@
 #include <set>
 
 #include "typeinfo.hpp"
+#include "templateparam.hpp"
 
 class Type;
 class Scope;
@@ -15,6 +16,8 @@ class TempAllocator;
 class VariableSymbol;
 class FunctionSymbol;
 struct TemplateInfo;
+
+class TemplateStructSymbol;
 
 class Scope
 {
@@ -38,8 +41,6 @@ public:
 	void define(Symbol *sym);
 
 	const Type* resolveType(std::string name);
-	const Type* fromTypeInfo(TypeInfo type_info);
-	const Type* fromTypeInfo(TypeInfo type_info, const TemplateInfo& template_info);
 };
 
 #endif

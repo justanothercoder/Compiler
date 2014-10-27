@@ -1,9 +1,10 @@
 #ifndef _DEFINEVISITOR_HPP_
 #define _DEFINEVISITOR_HPP_
 
+#include "compiler.hpp"
 #include "astvisitor.hpp"
 
-class DefineVisitor : public ASTVisitor
+class DefineVisitor : public ASTVisitor, public Compiler
 {
 	void visit(ImportNode *node) override;
 	void visit(IfNode *node) override;
