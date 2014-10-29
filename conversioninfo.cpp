@@ -9,3 +9,9 @@ ConversionInfo::ConversionInfo(FunctionSymbol *conversion, bool deref, bool ref)
 {
 
 }
+
+bool ConversionInfo::operator==(const ConversionInfo& info) const
+{
+    auto h = std::hash<ConversionInfo>();
+    return h(*this) == h(info);
+}

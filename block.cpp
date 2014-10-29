@@ -198,11 +198,17 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     {
         genArg(command.arg1, code_obj);
 
+        const auto& conversion_info = table.info_by_id.at(command.arg2.id);
+
         const Type *param_type = command.arg1.expr_type;
 
         if ( param_type -> getUnqualifiedType() == BuiltIns::int_type )
         {
             code_obj.emit("push qword [rax]");
+        }
+        else if ( conversion_info.desired_type -> isReference() )
+        {
+            code_obj.emit("push rax");            
         }
         else
         {

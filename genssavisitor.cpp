@@ -239,7 +239,11 @@ void GenSSAVisitor::visit(NumberNode *node)
 void GenSSAVisitor::visit(CallNode *node)
 {
 	for ( auto param = node -> params.rbegin(); param != node -> params.rend(); ++param )
-		code.add(Command(SSAOp::PARAM, getArg(*param)));
+    {
+        ConversionInfo info = *(node -> call_info.conversions.rbegin() + (param - node -> params.rbegin()));
+        code.addParamInfo(info);
+		code.add(Command(SSAOp::PARAM, getArg(*param), Arg(IdType::NOID, code.getInfoId(info))));
+    }
 
     int params_size = 0;
     for ( auto param : node -> params )

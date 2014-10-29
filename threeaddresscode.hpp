@@ -8,6 +8,7 @@
 #include "codeobject.hpp"
 
 #include "globaltable.hpp"
+#include "conversioninfo.hpp"
 
 /* list of SSA commands
  *
@@ -78,6 +79,10 @@ public:
     int getStrId(const std::string& str);
 
     int getConstFromId(int id);
+
+    void addParamInfo(ConversionInfo info);
+    int getInfoId(ConversionInfo info);
+    ConversionInfo getInfoFromId(int id);
 
 private:
 

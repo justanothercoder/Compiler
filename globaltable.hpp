@@ -1,10 +1,12 @@
 #ifndef _GLOBALTABLE_HPP_
 #define _GLOBALTABLE_HPP_
 
-#include <string>
 #include <map>
+#include <string>
+#include <unordered_map>
 
 #include "templateparam.hpp"
+#include "conversioninfo.hpp"
 
 class AST;
 class ExprNode;
@@ -39,11 +41,9 @@ public:
 
 	std::map<std::string, int> id_by_string;
 	std::map<int, std::string> string_by_id;
-
-	void addConst(int value);
-	void addVar(VariableSymbol *var);
-	void addFunc(const FunctionSymbol *func);
-	void addStr(std::string s);
+    
+    std::unordered_map<ConversionInfo, int> id_by_info;
+    std::unordered_map<int, ConversionInfo> info_by_id;
 };
 
 #endif

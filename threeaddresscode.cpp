@@ -173,3 +173,23 @@ int ThreeAddressCode::getConstFromId(int id)
 {
     return globaltable.id_to_num[id];
 }
+    
+void ThreeAddressCode::addParamInfo(ConversionInfo info)
+{
+    if ( globaltable.id_by_info.find(info) == std::end(globaltable.id_by_info) )
+    {
+        auto new_id = globaltable.id_by_info.size();
+        globaltable.id_by_info[info] = new_id;
+        globaltable.info_by_id.insert({new_id, info});
+    }
+}
+
+int ThreeAddressCode::getInfoId(ConversionInfo info)
+{
+    return globaltable.id_by_info.at(info);
+}
+
+ConversionInfo ThreeAddressCode::getInfoFromId(int id)
+{
+    return globaltable.info_by_id.at(id);
+}
