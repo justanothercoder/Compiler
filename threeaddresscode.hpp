@@ -84,7 +84,7 @@ public:
     int getInfoId(ConversionInfo info);
     ConversionInfo getInfoFromId(int id);
 
-private:
+//private:
 
     std::vector<Block> blocks;
     std::stack<int> blockStack;

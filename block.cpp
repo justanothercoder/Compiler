@@ -164,11 +164,32 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
 */
         int arg_addr;
         if ( command.arg1.type == IdType::VARIABLE )
+        {
+            if ( base_type -> isReference() )
+            {
+                genArg(command.arg1, code_obj);
+        
+                auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
+                command_offsets[command] = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
+                scope.getTempAlloc().claim(GlobalConfig::int_size);
+    
+                code_obj.emit("mov rax, [rax - " + std::to_string(static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member)) + "]");
+                code_obj.emit("mov " + addr + ", rax");
+//                code_obj.emit("lea rax, [rax - " + std::to_string(static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member)) + "]");
+
+                return;
+            }
+
             arg_addr = scope.getVarAlloc().getAddress(table.var_by_id[command.arg1.id]); 
+        }
         else if ( command.arg1.type == IdType::TEMP )
+        {
             arg_addr = command_offsets[commands[command.arg1.id]]; 
+        }
         else
+        {
             arg_addr = 0;
+        }
 
         command_offsets[command] = arg_addr + static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member);
 
