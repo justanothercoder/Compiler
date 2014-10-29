@@ -19,6 +19,7 @@
 #include "builtins.hpp"
 #include "optimizer.hpp"
 #include "functionsymbol.hpp"
+#include "nullnode.hpp"
 
 GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
 {
@@ -43,8 +44,8 @@ void GenSSAVisitor::visit(IfNode *node)
 
 	auto expr = getArg(node -> cond);
 
-	GlobalHelper::addConst(0);
-	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0], BuiltIns::int_type);
+	code.addConst(0);
+	auto zero = Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type);
 
 	auto temp = code.add(Command(SSAOp::EQUALS, expr, zero));
 
@@ -70,8 +71,8 @@ void GenSSAVisitor::visit(ForNode *node)
 
 	auto cond = getArg(node -> cond);
 
-	GlobalHelper::addConst(0);
-	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0], BuiltIns::int_type);
+	code.addConst(0);
+	auto zero = Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type);
 
 	auto temp = code.add(Command(SSAOp::EQUALS, cond, zero));
 
@@ -93,8 +94,8 @@ void GenSSAVisitor::visit(WhileNode *node)
 	
 	auto cond = getArg(node -> cond);
 	
-	GlobalHelper::addConst(0);
-	auto zero = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0], BuiltIns::int_type);
+	code.addConst(0);
+	auto zero = Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type);
 
 	auto temp = code.add(Command(SSAOp::EQUALS, cond, zero));
 
@@ -111,14 +112,16 @@ void GenSSAVisitor::visit(BracketNode *node)
 	code.add(Command(SSAOp::PARAM, getArg(node -> expr)));
 	code.add(Command(SSAOp::PARAM, getArg(node -> base)));
 	
-	_arg = code.add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), Arg(IdType::NOID, 2)));
+    code.addFunction(node -> call_info.callee);
+	_arg = code.add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, code.getFuncId(node -> call_info.callee)), Arg(IdType::NOID, 2)));
 }
 
 void GenSSAVisitor::visit(UnaryNode *node)
 {
 	code.add(Command(SSAOp::PARAM, getArg(node -> exp)));
 	
-	_arg = code.add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), Arg(IdType::NOID, 1)));
+    code.addFunction(node -> call_info.callee);
+	_arg = code.add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, code.getFuncId(node -> call_info.callee)), Arg(IdType::NOID, 1)));
 }
 
 void GenSSAVisitor::visit(NewExpressionNode *)
@@ -156,7 +159,8 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
         code.add(Command(SSAOp::PARAM, getArg(node -> rhs)));
         code.add(Command(SSAOp::PARAM, getArg(node -> lhs)));
         
-        _arg = code.add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), 
+        code.addFunction(node -> call_info.callee);
+        _arg = code.add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, code.getFuncId(node -> call_info.callee)), 
                                              Arg(IdType::NOID, lhs_type -> getSize() + rhs_type -> getSize())
         ));
     }
@@ -192,9 +196,8 @@ void GenSSAVisitor::visit(AddrNode *node)
 
 void GenSSAVisitor::visit(NullNode *)
 {
-	GlobalHelper::addConst(0);
-
-	_arg = Arg(IdType::NUMBER, GlobalHelper::const_num_id[0], BuiltIns::int_type);
+	code.addConst(0);
+	_arg = Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type);
 }
 
 void GenSSAVisitor::visit(DotNode *node)
@@ -202,7 +205,7 @@ void GenSSAVisitor::visit(DotNode *node)
     _arg = code.add(
             Command(SSAOp::DOT, 
                 getArg(node -> base), 
-                Arg(IdType::VARIABLE, GlobalHelper::id_by_var[node -> member], node -> member -> getType())
+                Arg(IdType::VARIABLE, code.getVarId(node -> member), node -> member -> getType())
             )
     );
 }
@@ -215,17 +218,22 @@ void GenSSAVisitor::visit(StatementNode *node)
 
 void GenSSAVisitor::visit(VariableNode *node)
 {
-	_arg = Arg(IdType::VARIABLE, node -> getVarId(), node -> variable -> getType());
+    code.addVariable(node -> variable);
+	_arg = Arg(IdType::VARIABLE, code.getVarId(node -> variable), node -> variable -> getType());
 }
 
 void GenSSAVisitor::visit(StringNode *node)
 {
-	_arg = Arg(IdType::STRING, node -> getStrId());
+    code.addString(node -> str);
+	_arg = Arg(IdType::STRING, code.getStrId(node -> str));
 }
 
 void GenSSAVisitor::visit(NumberNode *node)
 {
-	_arg = Arg(IdType::NUMBER, node -> getNumId(), BuiltIns::int_type);
+    int num = std::stoi(node -> num);
+
+    code.addConst(num);
+	_arg = Arg(IdType::NUMBER, code.getConstId(num), BuiltIns::int_type);
 }
 
 void GenSSAVisitor::visit(CallNode *node)
@@ -237,8 +245,9 @@ void GenSSAVisitor::visit(CallNode *node)
     for ( auto param : node -> params )
         params_size += param -> getType() -> getSize();    
 
+    code.addFunction(node -> call_info.callee);
 	_arg = code.add(Command(SSAOp::CALL, 
-			        Arg(IdType::PROCEDURE, GlobalHelper::id_by_func[node -> call_info.callee]), 
+			        Arg(IdType::PROCEDURE, code.getFuncId(node -> call_info.callee)), 
 					Arg(IdType::NOID, params_size))
 	);
 }

@@ -7,6 +7,8 @@
 #include "functionsymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 
+#include "globaltable.hpp"
+
 FunctionSymbolDefine::FunctionSymbolDefine(FunctionSymbol *sym) : sym(sym) 
 {
 
@@ -53,4 +55,7 @@ void FunctionSymbolDefine::visit(BaseScope *sc)
 
 	auto ofs = static_cast<const OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym) -> getType());
 	ofs -> addOverload(func_type_info, sym);
+	
+//    sc -> getSymbolTable().has_definition[sym] = false;
+//	sc -> getSymbolTable().addFunc(sym);
 }

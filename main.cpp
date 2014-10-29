@@ -8,7 +8,6 @@
 #include "builtins.hpp"
 #include "filehelper.hpp"
 #include "functionsymbol.hpp"
-#include "globalhelper.hpp"
 
 #include "definevisitor.hpp"
 #include "checkvisitor.hpp"
@@ -22,9 +21,9 @@ int main()
 
 	try
 	{    
-		shared_ptr<AST> root(FileHelper::parse(filename));
-
 		BuiltIns::defineBuiltIns();
+
+        shared_ptr<AST> root(FileHelper::parse(filename));
 
 		root -> scope = BuiltIns::global_scope;
 
@@ -43,7 +42,7 @@ int main()
 //		std::cerr << "code:\n" << visitor.getString() << '\n';
 
         visitor.optimize();
-		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
+//		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
 
 //        std::cerr << "\nasm code:\n";
 
@@ -51,12 +50,12 @@ int main()
         visitor.getCode().genAsm(code_obj);
 
         code_obj.gen();
-
+/*
 		CodeObject main_code;
 
 		main_code.emit("section .text");
 
-		for ( auto p : GlobalHelper::has_definition )
+		for ( auto p : BuiltIns::global_scope -> getSymbolTable().has_definition )
 		{
 			if ( !p.second )
 				main_code.emit("extern " + p.first -> getScopedTypedName());
@@ -80,7 +79,7 @@ int main()
 		main_code.emit("mov rax, 60");
 		main_code.emit("mov rdi, 0");
 		main_code.emit("syscall");
-
+*/
 //		main_code.gen();
 	}
 //	catch ( SemanticError& e )

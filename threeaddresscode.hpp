@@ -7,6 +7,8 @@
 #include "block.hpp"
 #include "codeobject.hpp"
 
+#include "globaltable.hpp"
+
 /* list of SSA commands
  *
  * I use three address code (TAC) as low-level IR.
@@ -65,10 +67,24 @@ public:
     void newBlock(Scope& scope, std::string block_name = "");
     void popBlock();
 
+    void addConst(int c);
+    void addFunction(const FunctionSymbol *sym);
+    void addVariable(VariableSymbol *sym);
+    void addString(const std::string& str);
+
+    int getConstId(int c);
+    int getFuncId(const FunctionSymbol *sym);
+    int getVarId(VariableSymbol *sym);
+    int getStrId(const std::string& str);
+
+    int getConstFromId(int id);
+
 private:
 
     std::vector<Block> blocks;
     std::stack<int> blockStack;
+
+    GlobalTable globaltable;
 };
 
 #endif

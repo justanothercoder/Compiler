@@ -2,7 +2,7 @@
 #include "functionsymbol.hpp"
 #include "callhelper.hpp"
 #include "structsymbol.hpp"
-#include "globalhelper.hpp"
+#include "globaltable.hpp"
 
 BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type)
 {
@@ -11,12 +11,13 @@ BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op
 
 BinaryOperatorNode::~BinaryOperatorNode() 
 {
-   	delete lhs; delete rhs; 
+   	delete lhs; 
+    delete rhs; 
 }
 
 CodeObject& BinaryOperatorNode::gen()
 {
-	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	code_obj.emit("lea rax, " + addr);

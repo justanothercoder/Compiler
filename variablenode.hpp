@@ -38,8 +38,6 @@ public:
 	
 	void accept(ASTVisitor& visitor) override;
 
-	int getVarId() const;
-
 private:
 
 	std::string name;

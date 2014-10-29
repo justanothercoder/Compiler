@@ -2,9 +2,8 @@
 #include "functionsymbol.hpp"
 #include "structsymbol.hpp"
 #include "typefactory.hpp"
-#include "globalhelper.hpp"
 #include "builtintypesymbol.hpp"
-
+/*
 FunctionSymbol* FunctionHelper::makeDefaultCopyConstructor(StructSymbol *struc)
 {
 	auto ref_struc       = TypeFactory::getReference(struc);
@@ -104,3 +103,4 @@ FunctionSymbol* FunctionHelper::makeDefaultConstructor(StructSymbol *struc)
 
 	return constr;
 }
+*/

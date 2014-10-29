@@ -1,5 +1,6 @@
 #include "optimizer.hpp"
-#include "globalhelper.hpp"
+#include "globaltable.hpp"
+#include "scope.hpp"
 
 Optimizer::Optimizer(ThreeAddressCode& code) : code(code)
 {
@@ -23,8 +24,8 @@ void Optimizer::constantPropagation()
 
             if ( command.arg1.type == IdType::NUMBER && command.arg2.type == IdType::NUMBER )
             {
-                int n1 = GlobalHelper::id_to_num[command.arg1.id];
-                int n2 = GlobalHelper::id_to_num[command.arg2.id];
+                int n1 = code.getConstFromId(command.arg1.id);
+                int n2 = code.getConstFromId(command.arg2.id);
 
                 int n3;
 
@@ -38,7 +39,7 @@ void Optimizer::constantPropagation()
                     default: throw std::logic_error("internal error.");
                 } 
                
-                GlobalHelper::addConst(n3);
+                code.addConst(n3);
         
                 auto it2 = it;          
 
@@ -50,12 +51,12 @@ void Optimizer::constantPropagation()
                     if ( next_command.arg1.type == IdType::TEMP && next_command.arg1.id == command_id )
                     {
                         next_command.arg1.type = IdType::NUMBER;
-                        next_command.arg1.id   = GlobalHelper::const_num_id[n3];
+                        next_command.arg1.id   = code.getConstId(n3);
                     }
                     if ( next_command.arg2.type == IdType::TEMP && next_command.arg2.id == command_id )
                     {
                         next_command.arg2.type = IdType::NUMBER;
-                        next_command.arg2.id   = GlobalHelper::const_num_id[n3];
+                        next_command.arg2.id   = code.getConstId(n3);
                     }
                 } 
             }

@@ -6,6 +6,8 @@
 
 class CheckVisitor : public ASTVisitor, public Compiler
 {
+public:
+            
 	void visit(ImportNode *node) override;
 	void visit(IfNode *node) override;
 	void visit(ForNode *node) override;
@@ -30,6 +32,7 @@ class CheckVisitor : public ASTVisitor, public Compiler
 	void visit(AsmArrayNode *node) override;
 	void visit(VarInferTypeDeclarationNode *node) override;
 	void visit(TemplateStructDeclarationNode *node) override;
+
 };
 
 #endif

@@ -6,7 +6,9 @@
 
 class DefineVisitor : public ASTVisitor, public Compiler
 {
-	void visit(ImportNode *node) override;
+public:
+	
+    void visit(ImportNode *node) override;
 	void visit(IfNode *node) override;
 	void visit(ForNode *node) override;
 	void visit(WhileNode *node) override;
@@ -30,6 +32,7 @@ class DefineVisitor : public ASTVisitor, public Compiler
 	void visit(AsmArrayNode *node) override;
 	void visit(VarInferTypeDeclarationNode *node) override;
 	void visit(TemplateStructDeclarationNode *node) override;
+
 };
 
 #endif

@@ -29,9 +29,9 @@
 #include "asmarraynode.hpp"
 #include "filehelper.hpp"
 #include "typefactory.hpp"
-#include "globalhelper.hpp"
+#include "globaltable.hpp"
 #include "builtins.hpp"
-
+    
 void DefineVisitor::visit(ImportNode *node) 
 {
 	auto root = FileHelper::parse((node -> lib + ".txt").c_str());
@@ -129,7 +129,7 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
 	node -> definedSymbol -> return_type = return_type;
 	node -> definedSymbol -> function_type_info = function_type_info;
 
-	GlobalHelper::has_definition[node -> definedSymbol] = true;
+//	node -> scope -> getSymbolTable().has_definition[node -> definedSymbol] = true;
 
 	node -> scope -> define(node -> definedSymbol);
 
@@ -208,9 +208,9 @@ void DefineVisitor::visit(AsmArrayNode *node)
 	node -> array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, node -> scope, {true, false, true});
 	node -> array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , node -> scope, {true, false, false});
 
-	GlobalHelper::has_definition[node -> array_constructor]   = true;
-	GlobalHelper::has_definition[node -> array_elem_operator] = true;
-	GlobalHelper::has_definition[node -> array_size_func]     = true;
+//	node -> scope -> getSymbolTable().has_definition[node -> array_constructor]   = true;
+//	node -> scope -> getSymbolTable().has_definition[node -> array_elem_operator] = true;
+//	node -> scope -> getSymbolTable().has_definition[node -> array_size_func]     = true;
 
 	node -> array_constructor   -> is_unsafe = true;
 	node -> array_elem_operator -> is_unsafe = true;

@@ -1,7 +1,6 @@
 #include "functionsymbol.hpp"
 #include "scopevisitor.hpp"
 #include "functionsymboldefine.hpp"
-#include "globalhelper.hpp"
 #include "globalconfig.hpp"
 
 FunctionSymbol::FunctionSymbol(std::string name
@@ -9,7 +8,7 @@ FunctionSymbol::FunctionSymbol(std::string name
 							  , FunctionTypeInfo function_type_info
 							  , Scope *enclosing_scope
 							  , FunctionTraits traits
-							  , boost::optional<CodeObject> code_obj) : FunctionScope(enclosing_scope -> getScopeName() + "_" + (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name), enclosing_scope),
+							  , boost::optional<CodeObject> code_obj) : FunctionScope(enclosing_scope -> getScopeName() + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name), enclosing_scope),
 								  code_obj(code_obj)
 													                  , return_type(return_type)
 													                  , function_type_info(function_type_info)
@@ -18,13 +17,11 @@ FunctionSymbol::FunctionSymbol(std::string name
 													                  , traits(traits)
 {
 
-	GlobalHelper::has_definition[this] = false;
-	GlobalHelper::addFunc(this);
 }
 
 std::string FunctionSymbol::getTypedName() const
 {
-	auto res = (traits.is_operator ? GlobalHelper::getCodeOperatorName(name) : name);
+	auto res = (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name);
 
 	for ( auto type : function_type_info.params_types )
 		res += "_" + type -> getName();

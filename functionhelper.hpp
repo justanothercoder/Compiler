@@ -8,8 +8,8 @@ class FunctionHelper
 {
 public:
 
-	static FunctionSymbol* makeDefaultCopyConstructor(StructSymbol *struc);
-	static FunctionSymbol* makeDefaultConstructor(StructSymbol *struc);
+//	static FunctionSymbol* makeDefaultCopyConstructor(StructSymbol *struc);
+//	static FunctionSymbol* makeDefaultConstructor(StructSymbol *struc);
 };   
 
 #endif

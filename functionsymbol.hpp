@@ -10,6 +10,7 @@
 #include "codeobject.hpp"
 #include "symbol.hpp"
 #include "type.hpp"
+#include "globaltable.hpp"
 
 class VariableSymbol;
 
@@ -54,9 +55,8 @@ public:
 
 	ScopeVisitor& getScopeVisitor() override;
 
-
 	bool isUnsafeBlock() const override;
-	
+
 private:
 
 	std::string name;

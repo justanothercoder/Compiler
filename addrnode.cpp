@@ -5,8 +5,8 @@
 #include "semanticerror.hpp"
 #include "scope.hpp"
 #include "tempallocator.hpp"
-#include "globalhelper.hpp"
 #include "pointertype.hpp"
+#include "globaltable.hpp"
 
 AddrNode::AddrNode(ExprNode *expr, AddrOp op) : expr(expr), op(op)
 {
@@ -63,7 +63,7 @@ CodeObject& AddrNode::gen()
 
 	if ( op == AddrOp::REF )
 	{
-		auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+		auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 		scope -> getTempAlloc().claim(GlobalConfig::int_size);
 
 		code_obj.emit("mov " + addr + ", rax");

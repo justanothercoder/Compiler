@@ -1,8 +1,8 @@
 #include "threeaddresscode.hpp"
-#include "globalhelper.hpp"
 #include "scope.hpp"
 #include "builtins.hpp"
 #include "functionsymbol.hpp"
+#include "globaltable.hpp"
 
 Arg ThreeAddressCode::newLabel(std::string label)
 {
@@ -10,10 +10,10 @@ Arg ThreeAddressCode::newLabel(std::string label)
 
 	++label_num;
 
-	if ( label == "" )
-		GlobalHelper::label_name[label_num] = "label_" + std::to_string(label_num);
+	if ( label == "" )        
+		globaltable.label_name[label_num] = "label_" + std::to_string(label_num);
 	else
-		GlobalHelper::label_name[label_num] = label;
+		globaltable.label_name[label_num] = label;
 
 	return Arg(IdType::LABEL, label_num);
 }
@@ -43,10 +43,10 @@ Arg ThreeAddressCode::add(Command command)
             command_type = nullptr;
             break;
         case SSAOp::DOT:
-            command_type = GlobalHelper::var_by_id[command.arg2.id] -> getType();
+            command_type = globaltable.var_by_id[command.arg2.id] -> getType();
             break;
         case SSAOp::CALL:
-            command_type = GlobalHelper::func_by_id[command.arg1.id] -> return_type;
+            command_type = globaltable.func_by_id[command.arg1.id] -> return_type;
             break;        
         default:
             throw "internal error.";
@@ -70,7 +70,7 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 {
     auto block = blocks.cbegin();
 
-    for ( auto p : GlobalHelper::has_definition )
+    for ( auto p : globaltable.has_definition )
     {
         if ( !p.second )
             code_obj.emit("extern " + p.first -> getScopedTypedName());
@@ -100,11 +100,76 @@ void ThreeAddressCode::newBlock(Scope& scope, std::string block_name)
     if ( block_name == "" )
         block_name = scope.getScopeName();
 
-    blocks.push_back(Block(scope, block_name));
+    blocks.push_back(Block(scope, globaltable, block_name));
     blockStack.push(blocks.size() - 1);
 }
 
 void ThreeAddressCode::popBlock()
 {
     blockStack.pop();
+}
+    
+void ThreeAddressCode::addConst(int c)
+{      
+    if ( globaltable.const_num_id.find(c) == std::end(globaltable.const_num_id) )
+    {
+        auto new_id = globaltable.const_num_id.size();
+        globaltable.const_num_id[c] = new_id;
+        globaltable.id_to_num[new_id] = c;
+    }
+}
+
+void ThreeAddressCode::addFunction(const FunctionSymbol *sym)
+{      
+    if ( globaltable.id_by_func.find(sym) == std::end(globaltable.id_by_func) )
+    {
+        auto new_id = globaltable.id_by_func.size();
+        globaltable.id_by_func[sym] = new_id;
+        globaltable.func_by_id[new_id] = sym;
+    }
+}
+
+void ThreeAddressCode::addVariable(VariableSymbol *sym)
+{      
+    if ( globaltable.id_by_var.find(sym) == std::end(globaltable.id_by_var) )
+    {
+        auto new_id = globaltable.id_by_var.size();
+        globaltable.id_by_var[sym] = new_id;
+        globaltable.var_by_id[new_id] = sym;
+    }
+}
+
+void ThreeAddressCode::addString(const std::string& str)
+{      
+    if ( globaltable.id_by_string.find(str) == std::end(globaltable.id_by_string) )
+    {
+        auto new_id = globaltable.id_by_string.size();
+        globaltable.id_by_string[str] = new_id;
+        globaltable.string_by_id[new_id] = str;
+    }
+}
+
+int ThreeAddressCode::getConstId(int c)
+{
+    return globaltable.const_num_id.at(c);
+}
+
+int ThreeAddressCode::getFuncId(const FunctionSymbol *sym)
+{
+    return globaltable.id_by_func.at(sym);
+}
+
+int ThreeAddressCode::getVarId(VariableSymbol *sym)
+{
+    return globaltable.id_by_var.at(sym);
+}
+
+int ThreeAddressCode::getStrId(const std::string& str)
+{
+    return globaltable.id_by_string.at(str);
+}
+
+int ThreeAddressCode::getConstFromId(int id)
+{
+    return globaltable.id_to_num[id];
 }

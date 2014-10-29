@@ -5,7 +5,6 @@
 #include "templatesymbol.hpp"
 #include "numbernode.hpp"
 #include "builtins.hpp"
-#include "globalhelper.hpp"
 
 AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) 
 { 

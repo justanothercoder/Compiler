@@ -5,7 +5,12 @@
 #include "structscope.hpp"
 #include "functionsymbol.hpp"
 
-VariableSymbolDefine::VariableSymbolDefine(VariableSymbol *sym) : sym(sym) { }
+#include "globaltable.hpp"
+
+VariableSymbolDefine::VariableSymbolDefine(VariableSymbol *sym) : sym(sym) 
+{
+
+}
 
 void VariableSymbolDefine::visit(GlobalScope *sc)
 {

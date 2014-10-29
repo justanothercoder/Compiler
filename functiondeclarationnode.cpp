@@ -3,7 +3,6 @@
 #include "typefactory.hpp"
 #include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
-#include "globalhelper.hpp"
 
 FunctionDeclarationNode::FunctionDeclarationNode(std::string name
 		                                       , std::vector< pair<std::string, TypeInfo> > params

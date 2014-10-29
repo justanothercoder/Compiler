@@ -7,6 +7,7 @@
 #include "varallocator.hpp"
 #include "tempallocator.hpp"
 #include "templateinfo.hpp"
+#include "globaltable.hpp"
 
 class GlobalScope : public BaseScope
 {

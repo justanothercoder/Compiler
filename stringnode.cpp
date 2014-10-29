@@ -1,10 +1,11 @@
 #include "stringnode.hpp"
 #include "typefactory.hpp"
 #include "builtins.hpp"
+#include "globaltable.hpp"
 
 StringNode::StringNode(std::string str) : str(str) 
 {
-	GlobalHelper::addStr(str);
+
 }
 
 CodeObject& StringNode::gen()
@@ -86,9 +87,4 @@ std::string StringNode::toString() const
 void StringNode::accept(ASTVisitor& visitor)
 {
 	visitor.visit(this);
-}
-	
-int StringNode::getStrId() const
-{
-	return GlobalHelper::id_by_string[str];
 }

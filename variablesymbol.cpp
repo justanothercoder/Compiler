@@ -1,13 +1,12 @@
 #include "variablesymbol.hpp"
 #include "variablesymboldefine.hpp"
 #include "type.hpp"
-#include "globalhelper.hpp"
 
 VariableSymbol::VariableSymbol(std::string name, const Type *type, VariableSymbolType sym_type) : name(name)
 																						   , type(type)
 																						   , sym_type(sym_type) 
 {
-	GlobalHelper::addVar(this);
+
 }
 
 const Type* VariableSymbol::getType() const 

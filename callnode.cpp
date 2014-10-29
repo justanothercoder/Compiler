@@ -2,7 +2,7 @@
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
 #include "structsymbol.hpp"
-#include "globalhelper.hpp"
+#include "globaltable.hpp"
 
 CallNode::CallNode(ExprNode *caller, std::vector<ExprNode*> params) : caller(caller), params(params) 
 {
@@ -16,7 +16,7 @@ CallNode::~CallNode()
     
 CodeObject& CallNode::gen()
 {  
-	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(getType() -> getSize());
 
 	code_obj.emit("lea rax, " + addr);

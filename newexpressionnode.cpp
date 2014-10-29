@@ -2,7 +2,7 @@
 #include "functionsymbol.hpp"
 #include "callhelper.hpp"
 #include "structsymbol.hpp"
-#include "globalhelper.hpp"
+#include "globaltable.hpp"
 
 NewExpressionNode::NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params) : type_info(type_info), params(params)
 {
@@ -30,10 +30,10 @@ void NewExpressionNode::build_scope()
 
 CodeObject& NewExpressionNode::gen()
 {
-    auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+    auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
    	scope -> getTempAlloc().claim(getType() -> getSize());
 
-	auto addr2 = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	auto addr2 = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 	scope -> getTempAlloc().claim(GlobalConfig::int_size);
 
 	CodeObject new_place;

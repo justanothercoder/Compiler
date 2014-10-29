@@ -24,7 +24,7 @@
 #include "unsafeblocknode.hpp"
 #include "varinfertypedeclarationnode.hpp"
 #include "nullnode.hpp"
-
+    
 void CheckVisitor::visit(ImportNode *) 
 {
 
@@ -106,7 +106,7 @@ void CheckVisitor::visit(BinaryOperatorNode *node)
 void CheckVisitor::visit(StructDeclarationNode *node)
 {
 	node -> getDefinedSymbol() -> is_defined = true;
-	
+/*	
 	if ( node -> definedSymbol -> getDefaultConstructor() == nullptr )
 	{
 		auto default_constr = FunctionHelper::makeDefaultConstructor(node -> definedSymbol);
@@ -118,7 +118,7 @@ void CheckVisitor::visit(StructDeclarationNode *node)
 		auto copy_constr = FunctionHelper::makeDefaultCopyConstructor(node -> definedSymbol);
 		node -> definedSymbol -> define(copy_constr);
 	}
-
+*/
 	for ( auto decl : node -> inner )
 	{
 		if ( dynamic_cast<DeclarationNode*>(decl) )

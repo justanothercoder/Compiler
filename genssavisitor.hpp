@@ -3,10 +3,11 @@
 
 #include "astvisitor.hpp"
 #include "threeaddresscode.hpp"
+#include "compiler.hpp"
 
 class AST;
 
-class GenSSAVisitor : public ASTVisitor
+class GenSSAVisitor : public ASTVisitor, public Compiler
 {
 
     friend class Optimizer;

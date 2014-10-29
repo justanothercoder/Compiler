@@ -19,7 +19,7 @@ public:
 
 	const TemplateInfo& getTemplateInfo() const override;
 	bool isUnsafeBlock() const override;
-	
+
 private:
 
     Scope *enclosing_scope;

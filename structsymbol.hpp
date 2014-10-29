@@ -9,8 +9,8 @@
 #include "variablesymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 #include "fieldvarallocator.hpp"
-
 #include "structscope.hpp"
+#include "globaltable.hpp"
 
 class StructSymbol : public Symbol, public StructScope, public Type
 {

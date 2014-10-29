@@ -14,8 +14,6 @@ public:
 
     AST* copyTree() const override;
 
-	std::string getNum() const;
-    
 	const Type* getType() const override;
 	bool isLeftValue() const override;
 
@@ -27,10 +25,6 @@ public:
 	std::string toString() const override;
 	
 	void accept(ASTVisitor& visitor) override;
-
-	int getNumId() const;
-
-private:
 
 	std::string num;
 	CodeObject code_obj;    

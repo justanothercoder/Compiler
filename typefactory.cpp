@@ -5,7 +5,8 @@
 #include "consttype.hpp"
 #include "builtins.hpp"
 #include "functionsymbol.hpp"
-#include "globalhelper.hpp"
+
+#include "globaltable.hpp"
 
 const Type* TypeFactory::getPointer(const Type *type)
 {
@@ -25,8 +26,9 @@ const Type* TypeFactory::getPointer(const Type *type)
 
 //		auto pointer_assign = new FunctionSymbol("operator=", tp_ref, {tp_ref, tp}, BuiltIns::global_scope, {false, false, true});
 		auto pointer_assign = new FunctionSymbol("operator=", tp_ref, {tp_ref, getConst(tp_ref)}, BuiltIns::global_scope, {false, false, true});
-		GlobalHelper::has_definition[pointer_assign] = true;
-		
+//		GlobalHelper::has_definition[pointer_assign] = true;
+//        BuiltIns::global_scope -> getSymbolTable().has_definition[pointer_assign] = true;
+
 		CodeObject assign_code;
 		assign_code.emit(pointer_assign -> getScopedTypedName() + ":");
 		
@@ -48,7 +50,8 @@ const Type* TypeFactory::getPointer(const Type *type)
 		BuiltIns::global_scope -> define(pointer_assign);
 
 		auto pointer_add = new FunctionSymbol("operator+", tp, {tp, BuiltIns::int_type}, BuiltIns::global_scope, {false, false, true});
-		GlobalHelper::has_definition[pointer_add] = true;
+//		GlobalHelper::has_definition[pointer_add] = true;
+//        BuiltIns::global_scope -> getSymbolTable().has_definition[pointer_add] = true;
 
 		CodeObject add_code;
 		add_code.emit(pointer_add -> getScopedTypedName() + ":");

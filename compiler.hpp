@@ -1,7 +1,7 @@
 #ifndef _COMPILER_HPP_
 #define _COMPILER_HPP_
 
-#include "globalhelper.hpp"
+#include "globaltable.hpp"
 
 class DeclarationNode;
 

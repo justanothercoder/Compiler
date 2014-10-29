@@ -12,7 +12,7 @@ struct Command
 {
 	Command(SSAOp op, Arg arg1, Arg arg2 = Arg(IdType::NOID, -1));
 
-	std::string toString() const;
+//	std::string toString() const;
 
     bool isExpr() const;
 

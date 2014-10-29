@@ -2,7 +2,7 @@
 #include "scope.hpp"
 #include "typefactory.hpp"
 #include "builtins.hpp"
-#include "globalhelper.hpp"
+#include "globaltable.hpp"
 
 NullNode::NullNode() 
 {
@@ -16,7 +16,7 @@ AST* NullNode::copyTree() const
 	
 CodeObject& NullNode::gen() 
 {
-	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
+	auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
 
 	scope -> getTempAlloc().claim(getType() -> getSize());
 
