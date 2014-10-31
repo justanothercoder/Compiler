@@ -1,7 +1,6 @@
 #include "structdeclarationnode.hpp"
 #include "structsymbol.hpp"
 #include "symboldefine.hpp"
-#include "functionhelper.hpp"
 #include "functionsymbol.hpp"
 
 StructDeclarationNode::StructDeclarationNode(std::string name, std::vector<AST*> inner, boost::optional<TemplateInfo> template_info) 

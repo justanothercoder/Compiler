@@ -9,7 +9,6 @@
 #include "newexpressionnode.hpp"
 #include "binaryoperatornode.hpp"
 #include "structdeclarationnode.hpp"
-#include "functionhelper.hpp"
 #include "functiondeclarationnode.hpp"
 #include "functionsymbol.hpp"
 #include "variabledeclarationnode.hpp"
