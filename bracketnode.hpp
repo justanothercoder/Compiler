@@ -2,7 +2,6 @@
 #define _BRACKETNODE_HPP_
 
 #include "exprnode.hpp"
-#include "codeobject.hpp"
 
 class BracketNode : public ExprNode
 {

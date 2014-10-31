@@ -2,7 +2,6 @@
 #define _STRINGNODE_HPP_
 
 #include "exprnode.hpp"
-#include "codeobject.hpp"
 
 class StringNode : public ExprNode
 {

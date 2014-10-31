@@ -1,7 +1,6 @@
 #ifndef _RETURNNODE_HPP_
 #define _RETURNNODE_HPP_
 
-#include "codeobject.hpp"
 #include "callinfo.hpp"
 #include "ast.hpp"
 
@@ -27,7 +26,6 @@ public:
 	CallInfo copy_call_info;
 
 	FunctionSymbol *enclosing_func;
-	CodeObject code_obj;
 };
 
 #endif

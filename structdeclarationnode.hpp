@@ -5,7 +5,6 @@
 #include <boost/optional.hpp>
 
 #include "declarationnode.hpp"
-#include "codeobject.hpp"
 #include "functionsymboldefine.hpp"
 #include "templateinfo.hpp"
 
@@ -36,9 +35,6 @@ public:
 	boost::optional<TemplateInfo> template_info;
 
     StructSymbol *definedSymbol;
-	CodeObject code_obj;
-	CodeObject default_copy_constr_code;
-	CodeObject default_constr_code;
 };
 
 #endif

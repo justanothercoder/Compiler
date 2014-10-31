@@ -3,7 +3,6 @@
 
 #include "exprnode.hpp"
 
-class CodeObject;
 class StructSymbol;
 class VariableSymbol;
 

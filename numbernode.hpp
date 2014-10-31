@@ -2,7 +2,6 @@
 #define _NUMBERNODE_HPP_
 
 #include "exprnode.hpp"
-#include "codeobject.hpp"
 
 class NumberNode : public ExprNode
 {

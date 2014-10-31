@@ -2,7 +2,6 @@
 #define _NULLNODE_HPP_
 
 #include "exprnode.hpp"
-#include "codeobject.hpp"
 
 class NullNode : public ExprNode
 {

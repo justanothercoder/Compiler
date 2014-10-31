@@ -3,7 +3,6 @@
 
 #include "exprnode.hpp"
 #include "callinfo.hpp"
-#include "codeobject.hpp"
 
 enum class UnaryOp { PLUS, MINUS, NOT };
 

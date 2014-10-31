@@ -2,7 +2,6 @@
 #define _ASMARRAYNODE_HPP_
 
 #include "ast.hpp"
-#include "codeobject.hpp"
 
 class AsmArrayNode : public AST
 {

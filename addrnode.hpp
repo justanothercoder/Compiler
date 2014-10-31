@@ -2,7 +2,6 @@
 #define _ADDRNODE_HPP_
 
 #include "exprnode.hpp"
-#include "codeobject.hpp"
 
 enum class AddrOp { REF, DEREF };
 

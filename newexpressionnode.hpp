@@ -6,7 +6,6 @@
 #include <algorithm>
 
 #include "exprnode.hpp"
-#include "codeobject.hpp"
 #include "typeinfo.hpp"
 
 class NewExpressionNode : public ExprNode

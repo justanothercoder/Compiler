@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "ast.hpp"
-#include "codeobject.hpp"
 
 class Scope;
 class ExprNode;

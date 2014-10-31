@@ -5,7 +5,6 @@
 #include <algorithm>
 
 #include "ast.hpp"
-#include "codeobject.hpp"
 
 class StatementNode : public AST
 {   

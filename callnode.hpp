@@ -5,7 +5,6 @@
 #include <algorithm>
 
 #include "exprnode.hpp"
-#include "codeobject.hpp"
 #include "callinfo.hpp"
 
 class CallNode : public ExprNode

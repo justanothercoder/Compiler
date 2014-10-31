@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "declarationnode.hpp"
-#include "codeobject.hpp"
 #include "typeinfo.hpp"
 
 class VariableSymbol;
@@ -37,8 +36,6 @@ public:
 	std::vector<ExprNode*> constructor_call_params;
 
 	CallInfo call_info;
-
-	CodeObject code_obj;
 };
 
 #endif

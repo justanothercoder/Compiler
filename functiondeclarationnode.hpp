@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "declarationnode.hpp"
-#include "codeobject.hpp"
 #include "functiontraits.hpp"
 #include "typeinfo.hpp"
 
@@ -46,8 +45,6 @@ public:
     FunctionSymbol *definedSymbol;
 
 	std::vector<VariableSymbol*> params_symbols;
-
-	CodeObject code_obj;
 
 	bool is_unsafe;
 };

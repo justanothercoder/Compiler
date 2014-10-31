@@ -2,7 +2,6 @@
 #define _IMPORTNODE_HPP_
 
 #include "ast.hpp"
-#include "codeobject.hpp"
 
 class ImportNode : public AST
 {
@@ -15,7 +14,6 @@ public:
 	void accept(ASTVisitor& visitor) override;
 
 	std::string lib;
-	CodeObject code_obj;
 };
 
 #endif

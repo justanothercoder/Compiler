@@ -3,7 +3,6 @@
 
 #include "declarationnode.hpp"
 #include "callinfo.hpp"
-#include "codeobject.hpp"
 
 class ExprNode;
 class VariableSymbol;
@@ -28,8 +27,6 @@ public:
 	ExprNode *expr;
 
 	CallInfo call_info;
-	CodeObject code_obj;
-	
 	VariableSymbol *definedSymbol;
 };
 

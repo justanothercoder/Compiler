@@ -7,7 +7,6 @@
 #include "functionscope.hpp"
 #include "functiontraits.hpp"
 #include "functiontypeinfo.hpp"
-#include "codeobject.hpp"
 #include "symbol.hpp"
 #include "type.hpp"
 #include "globaltable.hpp"
@@ -18,9 +17,7 @@ class FunctionSymbol : public Symbol, public FunctionScope, public Type
 {
 public:
 
-    FunctionSymbol(std::string name, const Type *return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits, boost::optional<CodeObject> code_obj = boost::none);
-
-	using FunctionScope::accept; //to suppress compiler's warning
+    FunctionSymbol(std::string name, const Type *return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits);
 
 	std::string getTypedName() const;
 	std::string getScopedTypedName() const;
@@ -36,8 +33,6 @@ public:
     
     TypeKind getTypeKind() const override;
     size_t getSize() const override;
-
-	boost::optional<CodeObject> code_obj;
 
 	const Type *return_type;
     FunctionTypeInfo function_type_info;	
