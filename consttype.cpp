@@ -59,8 +59,3 @@ const Symbol* ConstType::getSymbol() const
 {
 	return type -> getSymbol();
 }
-
-void ConstType::accept(TypeVisitor& visitor) const
-{
-	visitor.visit(this);
-}

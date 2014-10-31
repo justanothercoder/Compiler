@@ -60,8 +60,3 @@ const Symbol* ReferenceType::getSymbol() const
 {
 	return type -> getSymbol();
 }
-	
-void ReferenceType::accept(TypeVisitor& visitor) const 
-{
-	visitor.visit(this);
-}

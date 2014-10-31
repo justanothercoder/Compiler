@@ -1,13 +1,5 @@
 #include "codeobject.hpp"
 #include "logger.hpp"
-#include "functionsymbol.hpp"
-#include "callhelper.hpp"
-#include "type.hpp"
-#include "builtins.hpp"
-#include "callinfo.hpp"
-#include "exprnode.hpp"
-
-#include "copytypevisitor.hpp"
 
 void CodeObject::gen() const 
 { 

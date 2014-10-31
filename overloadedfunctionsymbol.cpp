@@ -77,8 +77,3 @@ const Symbol* OverloadedFunctionSymbol::getSymbol() const
 {
 	return this;
 }
-	
-void OverloadedFunctionSymbol::accept(TypeVisitor& visitor) const 
-{
-	visitor.visit(this);
-}

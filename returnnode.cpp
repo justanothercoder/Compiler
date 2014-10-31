@@ -3,8 +3,6 @@
 #include "functionsymbol.hpp"
 #include "exprnode.hpp"
 #include "globalconfig.hpp"
-#include "structsymbol.hpp"
-#include "copytypevisitor.hpp"
 
 ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), enclosing_func(nullptr) 
 {

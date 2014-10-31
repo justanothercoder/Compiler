@@ -20,8 +20,6 @@ public:
 
 	using StructScope::accept; // to suppress compiler's warning
 
-	void accept(TypeVisitor& visitor) const override;
-
     SymbolType getSymbolType() const override;
 	std::string getName() const override;
 

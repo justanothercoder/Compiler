@@ -22,8 +22,6 @@ public:
 
 	using FunctionScope::accept; //to suppress compiler's warning
 
-	void accept(TypeVisitor& visitor) const override;
-    
 	std::string getTypedName() const;
 	std::string getScopedTypedName() const;
     
