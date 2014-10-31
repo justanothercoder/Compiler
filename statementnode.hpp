@@ -13,18 +13,15 @@ public:
 
     StatementNode(std::vector<AST*> statements);
 
-    virtual ~StatementNode();
+    AST* copyTree() const override;
 
-    virtual AST* copyTree() const;
-
-	virtual std::vector<AST*> getChildren() const;
+	std::vector<AST*> getChildren() const override;
 	
 	std::string toString() const override;
 	
 	void accept(ASTVisitor& visitor) override;
 
 	std::vector<AST*> statements;
-	CodeObject code_obj;    
 };
 
 #endif

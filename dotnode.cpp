@@ -27,11 +27,6 @@ bool DotNode::isLeftValue() const
     return true;
 }
 
-void DotNode::freeTempSpace()
-{
-
-}
-
 bool DotNode::isCompileTimeExpr() const
 {
     return false;

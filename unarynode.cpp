@@ -42,11 +42,6 @@ const Type* UnaryNode::getType() const
 }
 bool UnaryNode::isLeftValue() const { return false; }
 
-void UnaryNode::freeTempSpace() 
-{
-
-}
-
 bool UnaryNode::isCompileTimeExpr() const
 {
 	return exp -> isCompileTimeExpr() && call_info.callee -> is_constexpr;

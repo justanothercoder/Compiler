@@ -36,11 +36,6 @@ bool StringNode::isLeftValue() const
    	return false; 
 }
 
-void StringNode::freeTempSpace()
-{
-
-}
-
 bool StringNode::isCompileTimeExpr() const
 {
 	return false;

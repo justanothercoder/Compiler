@@ -37,11 +37,6 @@ bool VariableNode::isLeftValue() const
    	return true; 
 }
 
-void VariableNode::freeTempSpace()
-{
-
-}
-
 bool VariableNode::isCompileTimeExpr() const
 {
 	const auto& template_info = scope -> getTemplateInfo();

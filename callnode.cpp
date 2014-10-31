@@ -37,11 +37,6 @@ bool CallNode::isLeftValue() const
    	return false; 
 }
 
-void CallNode::freeTempSpace()
-{
-
-}
-
 bool CallNode::isCompileTimeExpr() const
 {
 	return call_info.callee -> is_constexpr && std::all_of(std::begin(params), std::end(params), [&](ExprNode *expr) 

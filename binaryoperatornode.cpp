@@ -66,13 +66,6 @@ bool BinaryOperatorNode::isLeftValue() const
    	return false; 
 }
 
-void BinaryOperatorNode::freeTempSpace()
-{
-	lhs -> freeTempSpace();
-	rhs -> freeTempSpace();
-	scope -> getTempAlloc().free();
-}
-	
 bool BinaryOperatorNode::isCompileTimeExpr() const
 {
 	return lhs -> isCompileTimeExpr() && rhs -> isCompileTimeExpr() && call_info.callee -> is_constexpr;

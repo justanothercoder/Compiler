@@ -18,8 +18,6 @@ public:
 
 	const Type* getType() const override;
 	bool isLeftValue() const override;
-
-	void freeTempSpace() override;
 	
 	bool isCompileTimeExpr() const override;
 	boost::optional<int> getCompileTimeValue() const override;
@@ -33,7 +31,6 @@ private:
 	ExprNode *base, *expr;
 
 	CallInfo call_info;
-	CodeObject code_obj;
 };
 
 #endif

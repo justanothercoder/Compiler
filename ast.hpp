@@ -7,8 +7,6 @@
 #include "astvisitor.hpp"
 
 class Scope;
-struct TemplateInfo;
-class CodeObject;
 
 class AST
 {

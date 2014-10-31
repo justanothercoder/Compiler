@@ -32,11 +32,6 @@ bool BracketNode::isLeftValue() const
 	return false; 
 }
 
-void BracketNode::freeTempSpace()
-{
-
-}
-
 bool BracketNode::isCompileTimeExpr() const
 {
 	return base -> isCompileTimeExpr() && expr -> isCompileTimeExpr() && call_info.callee -> is_constexpr;

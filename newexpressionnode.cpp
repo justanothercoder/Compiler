@@ -45,11 +45,6 @@ bool NewExpressionNode::isLeftValue() const
    	return false; 
 }
 
-void NewExpressionNode::freeTempSpace()
-{
-	scope -> getTempAlloc().free();	
-}
-
 bool NewExpressionNode::isCompileTimeExpr() const
 {
 	return false;

@@ -24,11 +24,6 @@ bool NumberNode::isLeftValue() const
    	return false; 
 }
 
-void NumberNode::freeTempSpace()
-{
-	scope -> getTempAlloc().free();
-}
-
 bool NumberNode::isCompileTimeExpr() const
 {
 	return true;

@@ -29,11 +29,6 @@ bool NullNode::isLeftValue() const
 	return false;
 }
 
-void NullNode::freeTempSpace() 
-{
-	
-}
-
 bool NullNode::isCompileTimeExpr() const 
 {
 	return false;

@@ -5,12 +5,6 @@ StatementNode::StatementNode(std::vector<AST*> statements) : statements(statemen
 
 }
 
-StatementNode::~StatementNode()
-{
-	for ( auto i : statements )
-		delete i;
-}
-
 AST* StatementNode::copyTree() const
 {
 	std::vector<AST*> stats(statements.size());

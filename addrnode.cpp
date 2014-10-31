@@ -37,11 +37,6 @@ bool AddrNode::isLeftValue() const
 	return (op == AddrOp::DEREF);
 }
 
-void AddrNode::freeTempSpace() 
-{
-
-}
-
 bool AddrNode::isCompileTimeExpr() const 
 {
 	return false;
