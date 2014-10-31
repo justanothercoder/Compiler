@@ -34,40 +34,6 @@ Symbol* VariableDeclarationNode::getDefinedSymbol() const
 	return definedSymbol; 
 }
 
-CodeObject& VariableDeclarationNode::gen()
-{
-	if ( !is_field )
-	{  
-		if ( type_info.is_ref )
-		{
-			for ( auto i : constructor_call_params )
-				code_obj.emit(i -> gen().getCode());
-
-			code_obj.emit("mov [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(definedSymbol)) + "], rax");
-		}
-		else if ( type_info.pointer_depth > 0 )
-		{
-			if ( !constructor_call_params.empty() )
-			{
-				for ( auto i : constructor_call_params )
-					code_obj.emit(i -> gen().getCode());
-
-				code_obj.emit("mov rbx, [rax]");
-				code_obj.emit("mov [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(definedSymbol)) + "], rbx");
-			}
-		}
-		else
-		{
-			CodeObject var_code;
-			var_code.emit("lea rax, [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(definedSymbol)) + "]");
-
-			code_obj.genCallCode(call_info, constructor_call_params, var_code, false);
-		}
-	}
-
-	return code_obj;
-}
-
 AST* VariableDeclarationNode::copyTree() const
 {
 	std::vector<ExprNode*> params(constructor_call_params.size());

@@ -31,36 +31,6 @@ void FunctionDeclarationNode::build_scope()
 
 Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 
-CodeObject& FunctionDeclarationNode::gen()
-{    
-	std::string scoped_typed_name = definedSymbol -> getScopedTypedName();
-
-	code_obj.emit("jmp _~" + scoped_typed_name);
-	code_obj.emit(scoped_typed_name + ":");
-	code_obj.emit("push rbp");
-	code_obj.emit("mov rbp, rsp");
-
-	if ( definedSymbol -> getVarAlloc().getSpace() > 0 )
-		code_obj.emit("sub rsp, " + std::to_string(definedSymbol -> getVarAlloc().getSpace()));
-	code_obj.emit("sub rsp, " + std::to_string(definedSymbol -> getTempAlloc().getSpaceNeeded()));
-
-	code_obj.emit(statements -> gen().getCode());
-
-	if ( definedSymbol -> isConstructor() )
-		code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
-
-//	code_obj.emit("add rsp, " + std::to_string(scope -> getTempAlloc().getSpaceNeeded()));
-	
-	code_obj.emit("mov rsp, rbp");
-	code_obj.emit("pop rbp");
-	code_obj.emit("ret");
-	code_obj.emit("_~" + scoped_typed_name + ":");
-
-	definedSymbol -> code_obj = code_obj;
-
-	return code_obj;
-}
-
 AST* FunctionDeclarationNode::copyTree() const 
 { 
 	return new FunctionDeclarationNode(name, params, return_type_info, statements -> copyTree(), traits); 

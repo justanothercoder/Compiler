@@ -16,8 +16,6 @@ public:
 
 	AddrNode(ExprNode* expr, AddrOp op);
     
-	CodeObject& gen() override;
-    
 	AST* copyTree() const;
 
     const Type* getType() const override;
@@ -38,8 +36,6 @@ private:
 
 	ExprNode *expr;
 	AddrOp op;
-
-	CodeObject code_obj;
 };
 
 #endif

@@ -20,13 +20,6 @@ AST* StatementNode::copyTree() const
 	return new StatementNode(stats);
 }
 
-CodeObject& StatementNode::gen()
-{
-	for ( auto i : statements )
-		code_obj.emit(i -> gen().getCode());
-	return code_obj;
-}
-
 std::vector<AST*> StatementNode::getChildren() const 
 {
    	return statements; 

@@ -8,13 +8,10 @@ class UnsafeBlockNode : public AST
 public:
 
 	UnsafeBlockNode(StatementNode *block);
-	~UnsafeBlockNode() override;
 
 	AST* copyTree() const override;
     
 	void build_scope() override; 
-
-	CodeObject& gen() override;
 
 	std::vector<AST*> getChildren() const override;
 	

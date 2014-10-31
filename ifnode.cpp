@@ -11,50 +11,19 @@ IfNode::IfNode(ExprNode *cond, AST *stats_true, AST *stats_false) : cond(cond)
 
 } 
 
-IfNode::~IfNode()
-{
-	delete if_scope;
-	delete else_scope;
-	
-	for ( auto child : getChildren() )
-		delete child;
-}
-
 void IfNode::build_scope()
 {
-    if_scope   = new LocalScope(scope);
-    else_scope = new LocalScope(scope);
+    if_scope   = std::make_shared<LocalScope>(scope);
+    else_scope = std::make_shared<LocalScope>(scope);
     
     cond -> scope = scope;
     cond -> build_scope();
 
-    stats_true -> scope = if_scope;
+    stats_true -> scope = if_scope.get();
     stats_true -> build_scope();
 
-    stats_false -> scope = else_scope;
+    stats_false -> scope = else_scope.get();
     stats_false -> build_scope();
-}
-
-CodeObject& IfNode::gen()
-{
-    code_obj.emit(cond -> gen().getCode());
-
-	auto false_label = IfNode::getNewLabel();
-    auto exit_label  = IfNode::getNewLabel();
-
-    code_obj.emit("cmp qword [rax], 0");
-    code_obj.emit("jz " + false_label);
-    
-	code_obj.emit(stats_true -> gen().getCode());
-    
-	code_obj.emit("jmp " + exit_label);
-    code_obj.emit(false_label + ":");
-    
-	code_obj.emit(stats_false -> gen().getCode());
- 
- 	code_obj.emit(exit_label + ":");
-
-	return code_obj;
 }
 
 std::string IfNode::getNewLabel() 

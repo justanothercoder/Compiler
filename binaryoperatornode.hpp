@@ -14,9 +14,6 @@ class BinaryOperatorNode : public ExprNode
 public:
 
     BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type);
-	~BinaryOperatorNode() override;
-
-    CodeObject& gen() override;
 
 	std::string getOperatorName();
 	std::string getCodeOperatorName();

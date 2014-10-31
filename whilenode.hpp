@@ -1,6 +1,8 @@
 #ifndef _WHILENODE_HPP_
 #define _WHILENODE_HPP_
 
+#include <memory>
+
 #include "ast.hpp"
 #include "codeobject.hpp"
 
@@ -15,14 +17,11 @@ class WhileNode : public AST
 public:
 
     WhileNode(ExprNode *cond, AST *stats);
-	~WhileNode() override;
 
     AST* copyTree() const override;
 
     void build_scope() override;
 
-    CodeObject& gen() override;
-   
 	std::vector<AST*> getChildren() const override;
 
 	std::string toString() const override;
@@ -34,9 +33,7 @@ private:
     ExprNode *cond;
     AST *stats;
 
-    Scope *while_scope;
-
-	CodeObject code_obj;
+    std::shared_ptr<Scope> while_scope;
 
     static std::string getNewLabel();
 };

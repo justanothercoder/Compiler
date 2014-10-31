@@ -14,11 +14,7 @@ public:
 
     ReturnNode(ExprNode *expr);
 
-	~ReturnNode() override;
-
     AST* copyTree() const override;
-
-    CodeObject& gen() override;
 
 	std::vector<AST*> getChildren() const override;
 

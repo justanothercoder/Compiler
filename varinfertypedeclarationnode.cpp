@@ -16,19 +16,6 @@ Symbol* VarInferTypeDeclarationNode::getDefinedSymbol() const
 	return definedSymbol;
 }
 
-CodeObject& VarInferTypeDeclarationNode::gen() 
-{
-	auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(expr -> getType() -> getSize());
-
-	CodeObject var_code;
-	var_code.emit("lea rax, [rbp - " + std::to_string(scope -> getVarAlloc().getAddress(definedSymbol)) + "]");
-
-	code_obj.genCallCode(call_info, {expr}, var_code, false);
-
-	return code_obj;
-}
-
 AST* VarInferTypeDeclarationNode::copyTree() const
 {
 	return new VarInferTypeDeclarationNode(name, static_cast<ExprNode*>(expr -> copyTree()));

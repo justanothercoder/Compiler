@@ -57,28 +57,6 @@ AST* AddrNode::copyTree() const
 	return new AddrNode(static_cast<ExprNode*>(expr -> copyTree()), op);
 }
 	
-CodeObject& AddrNode::gen() 
-{
-	code_obj.emit(expr -> gen().getCode());
-
-	if ( op == AddrOp::REF )
-	{
-		auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-		scope -> getTempAlloc().claim(GlobalConfig::int_size);
-
-		code_obj.emit("mov " + addr + ", rax");
-	   	code_obj.emit("lea rax, " + addr);
-	}
-	else
-	{
-		if ( expr -> getType() -> isReference() )
-			code_obj.emit("mov rax, [rax]");
-		code_obj.emit("mov rax, [rax]");
-	}
-
-	return code_obj;
-}
-	    
 std::vector<AST*> AddrNode::getChildren() const
 {
 	return {expr};

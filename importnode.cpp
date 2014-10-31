@@ -11,11 +11,6 @@ AST* ImportNode::copyTree() const
    	return new ImportNode(lib); 
 }
 
-CodeObject& ImportNode::gen()
-{
-   	return code_obj; 
-}
-	
 std::string ImportNode::toString() const 
 {
 	return "import " + lib + ";";

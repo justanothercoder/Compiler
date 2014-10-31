@@ -10,8 +10,6 @@ public:
 
 	StringNode(std::string str);
 
-    CodeObject& gen() override;
-
 	AST* copyTree() const override;
 
 	std::string getStr() const;
@@ -30,7 +28,6 @@ public:
 	void accept(ASTVisitor& visitor) override;
 
 	std::string str;
-	CodeObject code_obj;
 };
 
 #endif

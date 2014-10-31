@@ -12,9 +12,6 @@ class BracketNode : public ExprNode
 public:
 	
 	BracketNode(ExprNode *base, ExprNode *expr);
-	~BracketNode() override;
-
-	CodeObject& gen() override;	
 
 	AST* copyTree() const override;
 	std::vector<AST*> getChildren() const override;

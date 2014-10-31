@@ -2,6 +2,7 @@
 #define _FORNODE_HPP_
 
 #include <vector>
+#include <memory>
 
 #include "exprnode.hpp"
 #include "codeobject.hpp"
@@ -14,11 +15,8 @@ class ForNode : public AST
 public:
 
 	ForNode(AST *init, ExprNode *cond, AST *step, AST *stats);
-	~ForNode() override;
 
 	void build_scope() override;
-
-	CodeObject& gen() override;
 
 	AST* copyTree() const override;
 
@@ -36,8 +34,7 @@ private:
 	AST *step;
     AST	*stats;
 
-	Scope *for_scope;
-	CodeObject code_obj;
+    std::shared_ptr<Scope> for_scope;
 };
 
 #endif

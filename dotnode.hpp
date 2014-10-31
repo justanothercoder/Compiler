@@ -16,10 +16,7 @@ class DotNode : public ExprNode
 public:
 
     DotNode(ExprNode *base, std::string member_name);   
-	~DotNode() override;
     
-    CodeObject& gen() override;
-
 	std::vector<AST*> getChildren() const override;
     AST* copyTree() const override;
 
@@ -43,7 +40,6 @@ private:
 
     const StructSymbol *base_type;
     VariableSymbol *member;
-	CodeObject* code_obj;
 };
 
 #endif

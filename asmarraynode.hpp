@@ -10,8 +10,6 @@ public:
 	
 	AsmArrayNode();
 
-	CodeObject& gen() override;
-	
 	AST* copyTree() const override;
 	
 	std::string toString() const override;
@@ -20,7 +18,6 @@ public:
 
 	int size_of_type;
 	int array_size;
-	CodeObject code_obj;
 	
 	FunctionSymbol *array_constructor;
 	FunctionSymbol *array_elem_operator;

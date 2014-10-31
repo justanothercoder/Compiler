@@ -9,33 +9,6 @@ BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op
 
 }
 
-BinaryOperatorNode::~BinaryOperatorNode() 
-{
-   	delete lhs; 
-    delete rhs; 
-}
-
-CodeObject& BinaryOperatorNode::gen()
-{
-	auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType() -> getSize());
-
-	code_obj.emit("lea rax, " + addr);
-	code_obj.emit("push rax");
-
-	if ( call_info.callee -> isMethod() )
-		code_obj.genCallCode(call_info, {rhs}, lhs -> gen(), lhs -> getType() -> isReference());
-	else
-	{
-		CodeObject empty;
-		code_obj.genCallCode(call_info, {lhs, rhs}, empty, false);
-	}
-
-	code_obj.emit("pop rax");
-
-	return code_obj;
-}
-
 std::string BinaryOperatorNode::getOperatorName()
 {
     switch ( op_type )

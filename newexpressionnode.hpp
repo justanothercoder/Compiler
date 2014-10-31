@@ -17,10 +17,8 @@ class NewExpressionNode : public ExprNode
 
 public:
     NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params);
-	~NewExpressionNode() override;
 
 	void build_scope() override;
-    CodeObject& gen() override;
 
 	std::vector<AST*> getChildren() const override;
     AST* copyTree() const override;
@@ -42,7 +40,6 @@ private:
     TypeInfo type_info;
 	std::vector<ExprNode*> params;
     CallInfo call_info;
-	CodeObject code_obj;
 };
 
 #endif

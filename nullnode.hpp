@@ -12,8 +12,6 @@ public:
     
 	AST* copyTree() const override;
 	
-	CodeObject& gen() override;
-
 	std::string toString() const override;
     
 	const Type* getType() const override;
@@ -25,10 +23,6 @@ public:
 	boost::optional<int> getCompileTimeValue() const override;
 	
 	void accept(ASTVisitor& visitor) override;
-
-private:
-
-	CodeObject code_obj;
 };
 
 #endif

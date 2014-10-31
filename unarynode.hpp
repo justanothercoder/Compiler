@@ -16,9 +16,6 @@ class UnaryNode : public ExprNode
 public:
 	
 	UnaryNode(ExprNode *exp, UnaryOp op_type);
-	~UnaryNode() override;
-
-    CodeObject& gen() override;
 
 	std::vector<AST*> getChildren() const override;
 	AST* copyTree() const override;

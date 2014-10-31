@@ -10,8 +10,6 @@ public:
 
     NumberNode(std::string num);
 
-    CodeObject& gen() override;
-
     AST* copyTree() const override;
 
 	const Type* getType() const override;
@@ -27,7 +25,6 @@ public:
 	void accept(ASTVisitor& visitor) override;
 
 	std::string num;
-	CodeObject code_obj;    
 };
     
 #endif

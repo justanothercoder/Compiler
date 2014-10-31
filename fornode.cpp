@@ -6,45 +6,15 @@ ForNode::ForNode(AST *init, ExprNode *cond, AST *step, AST *stats) : init(init),
 
 }
 
-ForNode::~ForNode() 
-{
-	for ( auto child : getChildren() )
-		delete child;
-
-	delete for_scope;
-}
-
 void ForNode::build_scope()
 {
-	for_scope = new LocalScope(scope);
+	for_scope = std::make_shared<LocalScope>(scope);
 
 	for ( auto child : getChildren() )
 	{
-		child -> scope = for_scope;
+		child -> scope = for_scope.get();
 		child -> build_scope();
 	}
-}
-
-CodeObject& ForNode::gen()
-{
-	auto label1 = ForNode::getNewLabel();	
-	auto label2 = ForNode::getNewLabel();
-
-	code_obj.emit(init -> gen().getCode());
-	code_obj.emit(label1 + ":");
-
-	code_obj.emit(cond -> gen().getCode());
-
-    code_obj.emit("cmp qword [rax], 0");
-    code_obj.emit("jz " + label2);
-
-	code_obj.emit(stats -> gen().getCode());
-	code_obj.emit(step -> gen().getCode());
-
-	code_obj.emit("jmp " + label1);
-	code_obj.emit(label2 + ":");
-
-	return code_obj;
 }
 
 AST* ForNode::copyTree() const 

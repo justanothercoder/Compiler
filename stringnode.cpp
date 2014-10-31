@@ -8,34 +8,6 @@ StringNode::StringNode(std::string str) : str(str)
 
 }
 
-CodeObject& StringNode::gen()
-{
-	auto str_label = StringNode::getNewLabel();
-
-	code_obj.emit("section .data");
-
-	std::string res = "0";
-
-	for ( int i = str.length() - 1; i >= 0; --i )
-	{
-		if ( i >= 1 && str[i - 1] == '\\' && str[i] == 'n' )
-		{
-			res += ", 10";
-			--i;
-		}
-		else
-			res += ", " + std::to_string(static_cast<int>(str[i]));
-	}
-
-	code_obj.emit("@" + str_label + ": db " + res);
-	code_obj.emit(str_label + " equ $ - 1");
-
-	code_obj.emit("section .text");
-	code_obj.emit("lea rax, [" + str_label + "]");
-
-	return code_obj;
-}
-	
 AST* StringNode::copyTree() const 
 {
    	return new StringNode(str); 

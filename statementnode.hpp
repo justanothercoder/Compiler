@@ -16,8 +16,6 @@ public:
     virtual ~StatementNode();
 
     virtual AST* copyTree() const;
-    
-    CodeObject& gen() override;
 
 	virtual std::vector<AST*> getChildren() const;
 	

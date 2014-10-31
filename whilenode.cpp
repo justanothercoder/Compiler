@@ -7,38 +7,15 @@ WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats), whi
 
 }
 
-WhileNode::~WhileNode() 
-{ 
-	delete cond; 
-	delete stats; 
-	delete while_scope; 
-}
-
 void WhileNode::build_scope()
 {
-    while_scope = new LocalScope(scope);
+    while_scope = std::make_shared<LocalScope>(scope);
 
     cond -> scope = scope;
     cond -> build_scope();
 
-    stats -> scope = while_scope;
+    stats -> scope = while_scope.get();
     stats -> build_scope();
-}
-
-CodeObject& WhileNode::gen()
-{
-    auto exit_label  = WhileNode::getNewLabel();
-    auto cycle_label = WhileNode::getNewLabel();
-    
-    code_obj.emit(cycle_label + ":");
-    code_obj.emit(cond -> gen().getCode());
-    code_obj.emit("cmp qword [rax], 0");
-    code_obj.emit("jz " + exit_label);
-    code_obj.emit(stats -> gen().getCode());
-    code_obj.emit("jmp " + cycle_label);
-    code_obj.emit(exit_label + ":");
-
-	return code_obj;
 }
 
 std::string WhileNode::getNewLabel() 

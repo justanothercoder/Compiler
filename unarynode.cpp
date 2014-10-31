@@ -9,26 +9,6 @@ UnaryNode::UnaryNode(ExprNode *exp, UnaryOp op_type) : exp(exp), op_type(op_type
 
 }
 
-UnaryNode::~UnaryNode()
-{
-   	delete exp; 
-}	
-
-CodeObject& UnaryNode::gen()
-{
-	auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType() -> getSize());
-
-	code_obj.emit("lea rax, " + addr);
-	code_obj.emit("push rax");
-
-	code_obj.genCallCode(call_info, { }, exp -> gen(), exp -> getType() -> isReference());
-	
-	code_obj.emit("pop rax");
-
-	return code_obj;
-}
-
 std::string UnaryNode::getOperatorName()
 {
 	switch ( op_type )

@@ -9,25 +9,6 @@ BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr
 
 }
 
-BracketNode::~BracketNode() 
-{
-   	delete expr; 
-}
-
-CodeObject& BracketNode::gen()
-{
-	auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType() -> getSize());
-
-	code_obj.emit("lea rax, " + addr);
-	code_obj.emit("push rax");
-
-    code_obj.genCallCode(call_info, {this -> expr}, base -> gen(), base -> getType() -> isReference());
-	code_obj.emit("pop rax");
-
-	return code_obj;
-}
-
 AST* BracketNode::copyTree() const 
 { 
 	return new BracketNode(

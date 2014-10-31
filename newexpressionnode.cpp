@@ -9,12 +9,6 @@ NewExpressionNode::NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> 
 
 }
 
-NewExpressionNode::~NewExpressionNode()
-{
-	for ( auto i : params )
-		delete i;
-}
-
 void NewExpressionNode::build_scope()
 {
 	AST::build_scope();
@@ -26,26 +20,6 @@ void NewExpressionNode::build_scope()
 			boost::get<ExprNode*>(param) -> build_scope();
 		}
 	}
-}
-
-CodeObject& NewExpressionNode::gen()
-{
-    auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-   	scope -> getTempAlloc().claim(getType() -> getSize());
-
-	auto addr2 = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(GlobalConfig::int_size);
-
-	CodeObject new_place;
-	new_place.emit("lea rax, " + addr);
-
-	code_obj.genCallCode(call_info, params, new_place, false);
-
-	code_obj.emit("lea rax, " + addr);
-	code_obj.emit("mov " + addr2 + ", rax");
-	code_obj.emit("lea rax, " + addr2);
-
-	return code_obj;
 }
 
 AST* NewExpressionNode::copyTree() const 

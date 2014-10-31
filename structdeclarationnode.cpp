@@ -34,15 +34,6 @@ void StructDeclarationNode::build_scope()
     }
 }
 
-CodeObject& StructDeclarationNode::gen()
-{
-	code_obj.emit(default_constr_code.getCode());
-	code_obj.emit(default_copy_constr_code.getCode());
-    for ( auto decl : inner )
-		code_obj.emit(decl -> gen().getCode());
-	return code_obj;
-}
-
 AST* StructDeclarationNode::copyTree() const 
 { 
 	std::vector<AST*> in(inner.size());

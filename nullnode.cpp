@@ -14,18 +14,6 @@ AST* NullNode::copyTree() const
 	return new NullNode();
 }
 	
-CodeObject& NullNode::gen() 
-{
-	auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-
-	scope -> getTempAlloc().claim(getType() -> getSize());
-
-	code_obj.emit("mov qword " + addr + ", 0");
-	code_obj.emit("lea rax, " + addr);
-
-	return code_obj;
-}
-
 std::string NullNode::toString() const 
 {
 	return "null";

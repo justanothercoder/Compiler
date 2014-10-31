@@ -41,7 +41,7 @@ void DefineVisitor::visit(ImportNode *node)
 
 	root -> accept(*this);
 //	root -> check();
-	node -> code_obj.emit(root -> gen().getCode());
+//	node -> code_obj.emit(root -> gen().getCode());
 }
 
 void DefineVisitor::visit(IfNode *node) 

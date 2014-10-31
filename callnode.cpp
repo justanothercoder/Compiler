@@ -9,32 +9,6 @@ CallNode::CallNode(ExprNode *caller, std::vector<ExprNode*> params) : caller(cal
 
 }
 
-CallNode::~CallNode() 
-{
-   	delete caller; 
-}
-    
-CodeObject& CallNode::gen()
-{  
-	auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-	scope -> getTempAlloc().claim(getType() -> getSize());
-
-	code_obj.emit("lea rax, " + addr);
-	code_obj.emit("push rax");
-
-  	if ( call_info.callee -> isMethod() )
-		code_obj.genCallCode(call_info, params, caller -> gen(), caller -> getType() -> isReference());
-	else
-	{
-		CodeObject empty;
-		code_obj.genCallCode(call_info, params, empty, false);
-	}
-
-	code_obj.emit("pop rax");
-
-	return code_obj;
-}
-
 AST* CallNode::copyTree() const
 {
 	std::vector<ExprNode*> expr(params.size());

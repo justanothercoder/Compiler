@@ -9,18 +9,6 @@ NumberNode::NumberNode(std::string num) : num(num)
 
 }
 
-CodeObject& NumberNode::gen()
-{
-	std::string addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-
-	code_obj.emit("mov qword " + addr + ", " + num);
-	code_obj.emit("lea rax, " + addr);
-	
-	scope -> getTempAlloc().claim(getType() -> getSize());
-
-	return code_obj;
-}
-	
 AST* NumberNode::copyTree() const 
 {
    	return new NumberNode(num); 

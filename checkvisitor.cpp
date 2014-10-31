@@ -150,7 +150,7 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 	{
 		if ( !node -> type_info.is_ref )
 		{
-			std::string type_name = node -> type_info.type_name;
+//			std::string type_name = node -> type_info.type_name;
 
 			auto var_type = fromTypeInfo(node -> type_info, node -> scope);
 

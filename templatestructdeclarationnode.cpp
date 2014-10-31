@@ -22,8 +22,3 @@ void TemplateStructDeclarationNode::build_scope()
 		decl -> build_scope();
     }
 }
-
-CodeObject& TemplateStructDeclarationNode::gen() 
-{ 
-	return code_obj; 
-}

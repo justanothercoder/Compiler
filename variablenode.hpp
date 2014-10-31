@@ -20,8 +20,6 @@ public:
 
     VariableNode(std::string name);
 
-    CodeObject& gen() override;
-
     AST* copyTree() const override;
 
     bool isTemplateParam() const;
@@ -43,9 +41,6 @@ private:
 	std::string name;
     
     VariableSymbol *variable;
-
-	CodeObject code_obj;
-	
 	NumberNode *template_num;
 };
 

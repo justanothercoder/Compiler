@@ -2,47 +2,9 @@
 #include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
 
-DotNode::DotNode(ExprNode *base, std::string member_name) : base(base), member_name(member_name), base_type(nullptr), member(nullptr), code_obj(new CodeObject())
+DotNode::DotNode(ExprNode *base, std::string member_name) : base(base), member_name(member_name), base_type(nullptr), member(nullptr)
 {
 
-}
-
-DotNode::~DotNode()
-{
-    delete base;
-    delete code_obj;
-}
-
-CodeObject& DotNode::gen()
-{
-    code_obj -> emit(base -> gen().getCode());
-
-    auto member_type = member -> getType();
-
-    if ( member_type -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
-    {
-        auto ov_func = static_cast<const OverloadedFunctionSymbol*>(member_type);
-
-        auto ov_func_type_info = ov_func -> getTypeInfo();
-
-        if ( ov_func_type_info.overloads.size() > 1 )
-        {
-            if ( type_hint == nullptr )
-                throw SemanticError("multiple overloads of " + base_type -> getName() + "::" + member -> getName());
-
-            member = new VariableSymbol(member_name, ov_func_type_info.symbols[static_cast<const FunctionSymbol*>(type_hint) -> function_type_info]);
-        }
-        else
-            member = new VariableSymbol(ov_func -> getName(), std::begin(ov_func_type_info.symbols) -> second);
-    }
-    else
-    {
-        if ( base -> getType() -> isReference() )
-            code_obj -> emit("mov rax, [rax]");
-        code_obj -> emit("lea rax, [rax - " + std::to_string(const_cast<StructSymbol*>(base_type) -> getVarAlloc().getAddress(member)) + "]");
-    }
-
-    return *code_obj;
 }
 
 std::vector<AST*> DotNode::getChildren() const

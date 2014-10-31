@@ -19,8 +19,6 @@ public:
     
 	void build_scope() override;
     
-	CodeObject& gen() override;
-    
     Symbol* getDefinedSymbol() const override;
 
 	std::vector<AST*> getChildren() const override;

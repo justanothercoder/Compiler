@@ -17,9 +17,6 @@ class CallNode : public ExprNode
 public:
 
     CallNode(ExprNode *caller, std::vector<ExprNode*> params);
-	~CallNode() override;
-    
-    CodeObject& gen() override;
 
 	std::vector<AST*> getChildren() const override;
     AST* copyTree() const override;
@@ -42,7 +39,6 @@ private:
 	std::vector<ExprNode*> params;
 
     CallInfo call_info;
-	CodeObject code_obj;
 };
 
 #endif

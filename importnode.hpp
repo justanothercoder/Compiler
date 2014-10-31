@@ -10,8 +10,6 @@ public:
 	ImportNode(std::string lib);
 
     AST* copyTree() const override;
-	
-    CodeObject& gen() override;
 	std::string toString() const override;
 
 	void accept(ASTVisitor& visitor) override;

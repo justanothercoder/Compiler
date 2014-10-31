@@ -1,6 +1,8 @@
 #ifndef _IFNODE_HPP_
 #define _IFNODE_HPP_
 
+#include <memory>
+
 #include "ast.hpp"
 #include "codeobject.hpp"
 
@@ -14,13 +16,10 @@ class IfNode : public AST
 public:
 
     IfNode(ExprNode *cond, AST *stats_true, AST *stats_false);
-	~IfNode() override;
 
     AST* copyTree() const override;
 
     void build_scope() override;
-
-    CodeObject& gen() override;
 	
 	std::vector<AST*> getChildren() const override;
 
@@ -33,10 +32,8 @@ private:
     ExprNode *cond;
     AST *stats_true, *stats_false;
 
-    Scope *if_scope;
-	Scope *else_scope;
-
-	CodeObject code_obj;
+    std::shared_ptr<Scope> if_scope;
+    std::shared_ptr<Scope> else_scope;
 
     static std::string getNewLabel();
 };
