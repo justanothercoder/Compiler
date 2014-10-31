@@ -7,6 +7,7 @@
 
 #include "exprnode.hpp"
 #include "typeinfo.hpp"
+#include "callinfo.hpp"
 
 class NewExpressionNode : public ExprNode
 {

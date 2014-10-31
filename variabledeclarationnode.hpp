@@ -5,6 +5,7 @@
 
 #include "declarationnode.hpp"
 #include "typeinfo.hpp"
+#include "callinfo.hpp"
 
 class VariableSymbol;
 

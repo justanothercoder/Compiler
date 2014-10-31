@@ -8,13 +8,12 @@ FunctionSymbol::FunctionSymbol(std::string name
 							  , FunctionTypeInfo function_type_info
 							  , Scope *enclosing_scope
 							  , FunctionTraits traits
-							  , boost::optional<CodeObject> code_obj) : FunctionScope(enclosing_scope -> getScopeName() + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name), enclosing_scope),
-								  code_obj(code_obj)
-													                  , return_type(return_type)
-													                  , function_type_info(function_type_info)
-															          , is_constexpr(false)
-													                  , name(name)
-													                  , traits(traits)
+							  ) : FunctionScope(enclosing_scope -> getScopeName() + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name), enclosing_scope)
+								, return_type(return_type)
+							    , function_type_info(function_type_info)
+							    , is_constexpr(false)
+								, name(name)
+								, traits(traits)
 {
 
 }

@@ -3,6 +3,8 @@
 
 #include "ast.hpp"
 
+class FunctionSymbol;
+
 class AsmArrayNode : public AST
 {
 public:
