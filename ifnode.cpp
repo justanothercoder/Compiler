@@ -26,12 +26,6 @@ void IfNode::build_scope()
     stats_false -> build_scope();
 }
 
-std::string IfNode::getNewLabel()
-{
-    static int label_num = 0;
-    return "@if_label" + std::to_string(++label_num);
-}
-
 AST* IfNode::copyTree() const
 {
     return new IfNode(static_cast<ExprNode*>(cond -> copyTree()), stats_true -> copyTree(), stats_false -> copyTree());

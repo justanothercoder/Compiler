@@ -20,12 +20,6 @@ void WhileNode::build_scope()
     stats -> build_scope();
 }
 
-std::string WhileNode::getNewLabel()
-{
-    static int label_num = 0;
-    return "@while_label" + std::to_string(++label_num);
-}
-
 AST* WhileNode::copyTree() const
 {
     return new WhileNode(static_cast<ExprNode*>(cond -> copyTree()),

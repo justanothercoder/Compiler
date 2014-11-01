@@ -33,8 +33,6 @@ private:
     AST *stats;
 
     std::shared_ptr<Scope> while_scope;
-
-    static std::string getNewLabel();
 };
 
 #endif

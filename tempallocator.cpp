@@ -1,6 +1,6 @@
 #include "tempallocator.hpp"
 
-#include "globalconfig.hpp"
+#include "logger.hpp"
 
 TempAllocator::TempAllocator() : space_needed(0), space_used(0)
 {

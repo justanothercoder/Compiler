@@ -21,12 +21,17 @@
 #include "functionsymbol.hpp"
 #include "nullnode.hpp"
 #include "variabledeclarationnode.hpp"
+#include "newexpressionnode.hpp"
 
 #include "typefactory.hpp"
 #include "logger.hpp"
 
 GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
 {
+    auto pch = dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> getType()) -> getTypeInfo().symbols.begin() -> second;
+
+    code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(pch)] = false;
+
     code.newBlock(*BuiltIns::global_scope);
 }
 
@@ -141,9 +146,58 @@ void GenSSAVisitor::visit(UnaryNode *node)
     );
 }
 
-void GenSSAVisitor::visit(NewExpressionNode *)
+void GenSSAVisitor::visit(NewExpressionNode *node)
 {
+    const auto& params = node -> params;
 
+    for ( auto param = params.rbegin(); param != params.rend(); ++param )
+    {
+        ConversionInfo info = *(node -> call_info.conversions.rbegin() + (param - params.rbegin()));
+        code.addParamInfo(info);
+        code.add(Command(SSAOp::PARAM,
+                         getArg(*param),
+                         Arg(IdType::NOID, code.getInfoId(info))
+                        )
+                );
+    }
+
+//    auto tmp_obj = code.newTemp();
+//    tmp_obj.expr_type = node -> getType();
+
+    auto expr_type = node -> getType() -> getUnqualifiedType();
+
+    code.addType(expr_type);
+
+    auto tmp_obj = code.add(Command(SSAOp::NEW, 
+                                    Arg(IdType::NOID, 
+                                    code.getTypeId(expr_type))
+                   ));
+
+    auto info = ConversionInfo(nullptr, false, false);
+    info.desired_type = TypeFactory::getReference(expr_type);
+
+    code.addParamInfo(info);
+    code.add(Command(SSAOp::PARAM, 
+                     tmp_obj,
+                     Arg(IdType::NOID, code.getInfoId(info))
+                    )
+    );
+
+    int params_size = 0;
+    for ( auto param : params )
+        params_size += param -> getType() -> getSize();    
+
+    params_size += GlobalConfig::int_size;
+
+    code.addFunction(node -> call_info.callee);
+    code.add(Command(SSAOp::CALL,
+                     Arg(IdType::PROCEDURE,
+                         code.getFuncId(node -> call_info.callee)),
+                     Arg(IdType::NOID, params_size)
+                    )
+    );
+
+    _arg = tmp_obj;
 }
 
 void GenSSAVisitor::visit(BinaryOperatorNode *node)
@@ -284,6 +338,8 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
             int params_size = 0;
             for ( auto param : params )
                 params_size += param -> getType() -> getSize();
+
+            params_size += GlobalConfig::int_size;
 
             code.addFunction(node -> call_info.callee);
             _arg = code.add(Command(SSAOp::CALL,

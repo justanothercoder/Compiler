@@ -58,8 +58,7 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
 {
     switch ( arg.type )
     {
-    case IdType::NOID  :
-        return;
+    case IdType::NOID  : return;
     case IdType::STRING:
     {
         auto str_label = "string_label" + std::to_string(arg.id);
@@ -318,7 +317,33 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
             return;
         }
     }
-    default:
+    case SSAOp::NEW:
+    {
+        auto object_type = table.type_by_id.at(command.arg1.id);
+
+        command_offsets[command] = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
+
+        auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
+        scope.getTempAlloc().claim(object_type -> getSize());
+
+        auto addr2 = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
+        scope.getTempAlloc().claim(GlobalConfig::int_size);
+
+        return;
+/*
+        CodeObject new_place;
+        new_place.emit("lea rax, " + addr);
+
+        code_obj.genCallCode(call_info, params, new_place, false);
+
+        code_obj.emit("lea rax, " + addr);
+        code_obj.emit("mov " + addr2 + ", rax");
+        code_obj.emit("lea rax, " + addr2);
+
+        return code_obj;
+*/       
+    }    
+    case SSAOp::PLUS:
     {
         auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
         scope.getTempAlloc().claim(GlobalConfig::int_size);
@@ -333,6 +358,8 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         code_obj.emit("mov [rax], rbx");
         return;
     }
+    default:
+        throw "internal error.";
     }
 }
 
@@ -340,42 +367,25 @@ std::string Block::toString(Command command) const
 {
     switch ( command.op )
     {
-    case SSAOp::ASSIGN :
-        return toString(command.arg1) + " = "  + toString(command.arg2);
-    case SSAOp::PLUS   :
-        return toString(command.arg1) + " + "  + toString(command.arg2);
-    case SSAOp::MINUS  :
-        return toString(command.arg1) + " - "  + toString(command.arg2);
-    case SSAOp::MUL    :
-        return toString(command.arg1) + " * "  + toString(command.arg2);
-    case SSAOp::DIV    :
-        return toString(command.arg1) + " / "  + toString(command.arg2);
-    case SSAOp::MOD    :
-        return toString(command.arg1) + " % "  + toString(command.arg2);
-    case SSAOp::EQUALS :
-        return toString(command.arg1) + " == " + toString(command.arg2);
-    case SSAOp::ELEM   :
-        return toString(command.arg1) + "[" + toString(command.arg2) + "]";
-    case SSAOp::DOT    :
-        return toString(command.arg1) + "." + toString(command.arg2);
-    case SSAOp::DEREF  :
-        return "*" + toString(command.arg1);
-    case SSAOp::ADDR   :
-        return "&" + toString(command.arg1);
-    case SSAOp::PARAM  :
-        return "param " + toString(command.arg1);
-    case SSAOp::CALL   :
-        return "call " + toString(command.arg1) + ' ' + std::to_string(command.arg2.id);
-    case SSAOp::LABEL  :
-        return toString(command.arg1);
-    case SSAOp::RETURN :
-        return "return " + toString(command.arg1);
-    case SSAOp::IF     :
-        return "if " + toString(command.arg1) + " goto " + toString(command.arg2);
-    case SSAOp::IFFALSE:
-        return "ifFalse " + toString(command.arg1) + " goto " + toString(command.arg2);
-    case SSAOp::GOTO   :
-        return "goto " + toString(command.arg1);
+    case SSAOp::ASSIGN : return toString(command.arg1) + " = "  + toString(command.arg2);
+    case SSAOp::PLUS   : return toString(command.arg1) + " + "  + toString(command.arg2);
+    case SSAOp::MINUS  : return toString(command.arg1) + " - "  + toString(command.arg2);
+    case SSAOp::MUL    : return toString(command.arg1) + " * "  + toString(command.arg2);
+    case SSAOp::DIV    : return toString(command.arg1) + " / "  + toString(command.arg2);
+    case SSAOp::MOD    : return toString(command.arg1) + " % "  + toString(command.arg2);
+    case SSAOp::EQUALS : return toString(command.arg1) + " == " + toString(command.arg2);
+    case SSAOp::ELEM   : return toString(command.arg1) + "[" + toString(command.arg2) + "]";
+    case SSAOp::DOT    : return toString(command.arg1) + "." + toString(command.arg2);
+    case SSAOp::DEREF  : return "*" + toString(command.arg1);
+    case SSAOp::ADDR   : return "&" + toString(command.arg1);
+    case SSAOp::PARAM  : return "param " + toString(command.arg1);
+    case SSAOp::CALL   : return "call " + toString(command.arg1) + ' ' + std::to_string(command.arg2.id);
+    case SSAOp::LABEL  : return toString(command.arg1);
+    case SSAOp::RETURN : return "return " + toString(command.arg1);
+    case SSAOp::IF     : return "if " + toString(command.arg1) + " goto " + toString(command.arg2);
+    case SSAOp::IFFALSE: return "ifFalse " + toString(command.arg1) + " goto " + toString(command.arg2);
+    case SSAOp::GOTO   : return "goto " + toString(command.arg1);
+    case SSAOp::NEW    : return "new " + table.type_by_id[command.arg1.id] -> getName();
     default:
         throw std::logic_error("not all SSAOp catched in toString");
     }
@@ -385,20 +395,13 @@ std::string Block::toString(Arg arg) const
 {
     switch ( arg.type )
     {
-    case IdType::NOID     :
-        return "noid";
-    case IdType::STRING   :
-        return '"' + table.string_by_id[arg.id] + '"';
-    case IdType::NUMBER   :
-        return std::to_string(table.id_to_num[arg.id]);
-    case IdType::TEMP     :
-        return "temp_" + std::to_string(arg.id);
-    case IdType::LABEL    :
-        return table.label_name[arg.id] + ":";
-    case IdType::PROCEDURE:
-        return table.func_by_id[arg.id] -> getScopedTypedName();
-    case IdType::VARIABLE :
-        return table.var_by_id[arg.id] -> getName();
+    case IdType::NOID     : return "noid";
+    case IdType::STRING   : return '"' + table.string_by_id[arg.id] + '"';
+    case IdType::NUMBER   : return std::to_string(table.id_to_num[arg.id]);
+    case IdType::TEMP     : return "temp_" + std::to_string(arg.id);
+    case IdType::LABEL    : return table.label_name[arg.id] + ":";
+    case IdType::PROCEDURE: return table.func_by_id[arg.id] -> getScopedTypedName();
+    case IdType::VARIABLE : return table.var_by_id[arg.id] -> getName();
     }
 }
 

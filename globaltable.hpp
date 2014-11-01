@@ -44,6 +44,9 @@ public:
 
     std::map<ConversionInfo, int> id_by_info;
     std::map<int, ConversionInfo> info_by_id;
+    
+    std::map<const Type*, int> id_by_type;
+    std::map<int, const Type*> type_by_id;
 };
 
 #endif

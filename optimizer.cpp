@@ -31,21 +31,11 @@ void Optimizer::constantPropagation()
 
                 switch ( command.op )
                 {
-                case SSAOp::PLUS :
-                    n3 = n1 + n2;
-                    break;
-                case SSAOp::MINUS:
-                    n3 = n1 - n2;
-                    break;
-                case SSAOp::MUL  :
-                    n3 = n1 * n2;
-                    break;
-                case SSAOp::DIV  :
-                    n3 = n1 / n2;
-                    break;
-                case SSAOp::MOD  :
-                    n3 = n1 % n2;
-                    break;
+                case SSAOp::PLUS : n3 = n1 + n2; break;
+                case SSAOp::MINUS: n3 = n1 - n2; break;
+                case SSAOp::MUL  : n3 = n1 * n2; break;
+                case SSAOp::DIV  : n3 = n1 / n2; break;
+                case SSAOp::MOD  : n3 = n1 % n2; break;
                 default:
                     throw std::logic_error("internal error.");
                 }

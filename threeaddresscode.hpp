@@ -48,6 +48,8 @@
  * +------------------+------+------+---------+
  * | ifFalse x goto L |  x   |  L   | ifFalse |
  * +------------------+------+------+---------+
+ * |    t = new T     |  t   |  T   |   new   |
+ * +------------------+------+------+---------+
  */
 
 class Scope;
@@ -83,6 +85,10 @@ public:
     void addParamInfo(ConversionInfo info);
     int getInfoId(ConversionInfo info);
     ConversionInfo getInfoFromId(int id);
+
+    void addType(const Type *t);
+    int getTypeId(const Type *t);
+    const Type* getTypeFromId(int id);
 
 //private:
 

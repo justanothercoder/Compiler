@@ -33,8 +33,6 @@ private:
 
     std::shared_ptr<Scope> if_scope;
     std::shared_ptr<Scope> else_scope;
-
-    static std::string getNewLabel();
 };
 
 #endif

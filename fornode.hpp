@@ -26,8 +26,6 @@ public:
 
 private:
 
-    static std::string getNewLabel();
-
     AST *init;
     ExprNode *cond;
     AST *step;

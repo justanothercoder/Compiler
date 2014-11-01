@@ -13,12 +13,9 @@ std::string UnaryNode::getOperatorName()
 {
     switch ( op_type )
     {
-    case UnaryOp::PLUS :
-        return "operator+";
-    case UnaryOp::MINUS:
-        return "operator-";
-    case UnaryOp::NOT  :
-        return "operator!";
+    case UnaryOp::PLUS : return "operator+";
+    case UnaryOp::MINUS: return "operator-";
+    case UnaryOp::NOT  : return "operator!";
     }
 }
 
@@ -26,12 +23,9 @@ std::string UnaryNode::getCodeOperatorName()
 {
     switch ( op_type )
     {
-    case UnaryOp::PLUS :
-        return "operatorplus";
-    case UnaryOp::MINUS:
-        return "operatorminus";
-    case UnaryOp::NOT  :
-        return "operatornot";
+    case UnaryOp::PLUS : return "operatorplus";
+    case UnaryOp::MINUS: return "operatorminus";
+    case UnaryOp::NOT  : return "operatornot";
     }
 }
 
@@ -72,15 +66,9 @@ std::string UnaryNode::toString() const
 
     switch ( op_type )
     {
-    case UnaryOp::PLUS :
-        oper = "+";
-        break;
-    case UnaryOp::MINUS:
-        oper = "-";
-        break;
-    case UnaryOp::NOT  :
-        oper = "!";
-        break;
+    case UnaryOp::PLUS : oper = "+"; break;
+    case UnaryOp::MINUS: oper = "-"; break;
+    case UnaryOp::NOT  : oper = "!"; break;
     }
 
     return oper + res;

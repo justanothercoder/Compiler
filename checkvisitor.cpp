@@ -77,6 +77,9 @@ void CheckVisitor::visit(NewExpressionNode *node)
 
     auto type = static_cast<const StructSymbol*>(fromTypeInfo(node -> type_info, node -> scope));
 
+    for ( auto param : node -> params )
+        param -> accept(*this);        
+
     node -> call_info = CallHelper::callCheck(type -> getName(), type, node -> params);
 
     node -> scope -> getTempAlloc().add(type -> getSize());      //place for object itself
@@ -159,6 +162,10 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
             if ( var_type -> getTypeKind() != TypeKind::POINTER )
             {
                 auto struct_symbol = static_cast<const StructSymbol*>(var_type -> getSymbol());
+
+                for ( auto param : node -> constructor_call_params )
+                    param -> accept(*this);
+
                 node -> call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, node -> constructor_call_params);
             }
             else
@@ -260,9 +267,9 @@ void CheckVisitor::visit(StringNode *)
 
 }
 
-void CheckVisitor::visit(NumberNode *)
+void CheckVisitor::visit(NumberNode *node)
 {
-
+    node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
 
 void CheckVisitor::visit(CallNode *node)

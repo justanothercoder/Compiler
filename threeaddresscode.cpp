@@ -26,46 +26,30 @@ Arg ThreeAddressCode::add(Command command)
 
     switch ( command.op )
     {
-    case SSAOp::ASSIGN:
-    case SSAOp::PARAM:
-    case SSAOp::LABEL:
-    case SSAOp::RETURN:
-    case SSAOp::IF:
-    case SSAOp::IFFALSE:
-    case SSAOp::GOTO:
+    case SSAOp::ASSIGN: case SSAOp::PARAM: case SSAOp::LABEL: case SSAOp::RETURN:
+    case SSAOp::IF: case SSAOp::IFFALSE: case SSAOp::GOTO:
         command_type = nullptr;
         break;
-    case SSAOp::PLUS:
-    case SSAOp::MINUS:
-    case SSAOp::MUL:
-    case SSAOp::DIV:
-    case SSAOp::MOD:
-    case SSAOp::EQUALS:
+    case SSAOp::PLUS: case SSAOp::MINUS: case SSAOp::MUL:
+    case SSAOp::DIV: case SSAOp::MOD: case SSAOp::EQUALS:
         command_type = BuiltIns::int_type;
         break;
-    case SSAOp::ELEM:
-        command_type = nullptr;
-        break;
-    case SSAOp::DEREF:
-        command_type = nullptr;
-        break;
-    case SSAOp::ADDR:
-        command_type = nullptr;
-        break;
-    case SSAOp::DOT:
-        command_type = globaltable.var_by_id[command.arg2.id] -> getType();
-        break;
-    case SSAOp::CALL:
-        command_type = globaltable.func_by_id[command.arg1.id] -> return_type;
-        break;
+    case SSAOp::ELEM : command_type = nullptr; break;
+    case SSAOp::DEREF: command_type = nullptr; break;
+    case SSAOp::ADDR : command_type = nullptr; break;
+    case SSAOp::DOT  : command_type = globaltable.var_by_id[command.arg2.id] -> getType(); break;
+    case SSAOp::CALL : command_type = globaltable.func_by_id[command.arg1.id] -> return_type; break;
+    case SSAOp::NEW  : command_type = globaltable.type_by_id[command.arg1.id]; break;
     default:
         throw "internal error.";
     }
 
     current_block.commands.push_back(command);
     current_block.code.push_back(current_block.commands.size() - 1);
+
     return Arg(IdType::TEMP, current_block.commands.size() - 1, command_type);
 }
+
 
 std::string ThreeAddressCode::toString()
 {
@@ -203,3 +187,24 @@ ConversionInfo ThreeAddressCode::getInfoFromId(int id)
 {
     return globaltable.info_by_id.at(id);
 }
+    
+void ThreeAddressCode::addType(const Type *type)
+{
+    if ( globaltable.id_by_type.find(type) == std::end(globaltable.id_by_type) )
+    {
+        auto new_id = globaltable.id_by_type.size();
+        globaltable.id_by_type[type] = new_id;
+        globaltable.type_by_id.insert({new_id, type});
+    }
+}
+
+int ThreeAddressCode::getTypeId(const Type *type)
+{
+    return globaltable.id_by_type.at(type);
+}
+
+const Type* ThreeAddressCode::getTypeFromId(int id)
+{
+    return globaltable.type_by_id.at(id);
+}
+
