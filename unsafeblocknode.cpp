@@ -3,31 +3,31 @@
 
 UnsafeBlockNode::UnsafeBlockNode(StatementNode *block) : block(block)
 {
-	
+
 }
 
-AST* UnsafeBlockNode::copyTree() const 
+AST* UnsafeBlockNode::copyTree() const
 {
-	return new UnsafeBlockNode(static_cast<StatementNode*>(block -> copyTree()));
-}
-    
-void UnsafeBlockNode::build_scope() 
-{
-	block -> scope = new UnsafeScope(scope);
-	block -> build_scope();
+    return new UnsafeBlockNode(static_cast<StatementNode*>(block -> copyTree()));
 }
 
-std::vector<AST*> UnsafeBlockNode::getChildren() const 
+void UnsafeBlockNode::build_scope()
 {
-	return block -> getChildren();
+    block -> scope = new UnsafeScope(scope);
+    block -> build_scope();
 }
-	
-std::string UnsafeBlockNode::toString() const 
+
+std::vector<AST*> UnsafeBlockNode::getChildren() const
 {
-	return "unsafe\n" + block -> toString();
+    return block -> getChildren();
+}
+
+std::string UnsafeBlockNode::toString() const
+{
+    return "unsafe\n" + block -> toString();
 }
 
 void UnsafeBlockNode::accept(ASTVisitor& visitor)
 {
-	visitor.visit(this);
+    visitor.visit(this);
 }

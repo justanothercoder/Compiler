@@ -6,8 +6,8 @@
 class GlobalConfig
 {
 public:
-    static const int int_size = sizeof(int*);     
-	
+    static const int int_size = sizeof(int*);
+
     static std::string getCodeOperatorName(std::string op);
 };
 

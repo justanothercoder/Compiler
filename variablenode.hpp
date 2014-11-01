@@ -9,11 +9,11 @@ class VariableSymbol;
 class VariableNode : public ExprNode
 {
 
-	friend class TemplateStructSymbol;
-	friend class Scope;
+    friend class TemplateStructSymbol;
+    friend class Scope;
 
-	friend class GenSSAVisitor;
-	friend class CheckVisitor;
+    friend class GenSSAVisitor;
+    friend class CheckVisitor;
 
 public:
 
@@ -22,23 +22,23 @@ public:
     AST* copyTree() const override;
 
     bool isTemplateParam() const;
-    
+
     const Type* getType() const override;
-	bool isLeftValue() const override;
+    bool isLeftValue() const override;
 
-	bool isCompileTimeExpr() const override;
-	boost::optional<int> getCompileTimeValue() const override;
+    bool isCompileTimeExpr() const override;
+    boost::optional<int> getCompileTimeValue() const override;
 
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
 
 private:
 
-	std::string name;
-    
+    std::string name;
+
     VariableSymbol *variable;
-	NumberNode *template_num;
+    NumberNode *template_num;
 };
 
 #endif

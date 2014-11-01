@@ -11,17 +11,17 @@ public:
 
     AST* copyTree() const override;
 
-	const Type* getType() const override;
-	bool isLeftValue() const override;
-	
-	bool isCompileTimeExpr() const override;
-	boost::optional<int> getCompileTimeValue() const override;
+    const Type* getType() const override;
+    bool isLeftValue() const override;
 
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
+    bool isCompileTimeExpr() const override;
+    boost::optional<int> getCompileTimeValue() const override;
 
-	std::string num;
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
+
+    std::string num;
 };
-    
+
 #endif

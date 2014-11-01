@@ -9,37 +9,37 @@ NumberNode::NumberNode(std::string num) : num(num)
 
 }
 
-AST* NumberNode::copyTree() const 
+AST* NumberNode::copyTree() const
 {
-   	return new NumberNode(num); 
-}
-	
-const Type* NumberNode::getType() const
-{
-   	return TypeFactory::getConst(BuiltIns::int_type); 
+    return new NumberNode(num);
 }
 
-bool NumberNode::isLeftValue() const 
+const Type* NumberNode::getType() const
 {
-   	return false; 
+    return TypeFactory::getConst(BuiltIns::int_type);
+}
+
+bool NumberNode::isLeftValue() const
+{
+    return false;
 }
 
 bool NumberNode::isCompileTimeExpr() const
 {
-	return true;
+    return true;
 }
 
 boost::optional<int> NumberNode::getCompileTimeValue() const
 {
-	return boost::optional<int>(std::stoi(num));
+    return boost::optional<int>(std::stoi(num));
 }
-	
+
 std::string NumberNode::toString() const
 {
-	return num;
+    return num;
 }
 
 void NumberNode::accept(ASTVisitor& visitor)
 {
-	visitor.visit(this);
+    visitor.visit(this);
 }

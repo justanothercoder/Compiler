@@ -4,50 +4,50 @@
 #include "structsymbol.hpp"
 #include "globaltable.hpp"
 
-BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr) 
+BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr)
 {
 
 }
 
-AST* BracketNode::copyTree() const 
-{ 
-	return new BracketNode(
-			               static_cast<ExprNode*>(base -> copyTree()), 
-						   static_cast<ExprNode*>(expr -> copyTree())
-						  ); 
+AST* BracketNode::copyTree() const
+{
+    return new BracketNode(
+               static_cast<ExprNode*>(base -> copyTree()),
+               static_cast<ExprNode*>(expr -> copyTree())
+           );
 }
 
-std::vector<AST*> BracketNode::getChildren() const 
-{ 
-	return {base, expr}; 
+std::vector<AST*> BracketNode::getChildren() const
+{
+    return {base, expr};
 }
 
-const Type* BracketNode::getType() const 
-{ 
-	return call_info.callee -> return_type; 
+const Type* BracketNode::getType() const
+{
+    return call_info.callee -> return_type;
 }
 
-bool BracketNode::isLeftValue() const 
-{ 
-	return false; 
+bool BracketNode::isLeftValue() const
+{
+    return false;
 }
 
 bool BracketNode::isCompileTimeExpr() const
 {
-	return base -> isCompileTimeExpr() && expr -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
+    return base -> isCompileTimeExpr() && expr -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
 }
 
 boost::optional<int> BracketNode::getCompileTimeValue() const
 {
-	return boost::none;
+    return boost::none;
 }
-	
+
 std::string BracketNode::toString() const
 {
-	return base -> toString() + "[" + expr -> toString() + "]";
+    return base -> toString() + "[" + expr -> toString() + "]";
 }
 
 void BracketNode::accept(ASTVisitor& visitor)
 {
-	visitor.visit(this);
+    visitor.visit(this);
 }

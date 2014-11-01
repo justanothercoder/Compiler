@@ -30,136 +30,136 @@
 #include "typefactory.hpp"
 #include "globaltable.hpp"
 #include "builtins.hpp"
-    
-void DefineVisitor::visit(ImportNode *node) 
+
+void DefineVisitor::visit(ImportNode *node)
 {
-	auto root = FileHelper::parse((node -> lib + ".txt").c_str());
+    auto root = FileHelper::parse((node -> lib + ".txt").c_str());
 
-	root -> scope = node -> scope;
-	root -> build_scope();
+    root -> scope = node -> scope;
+    root -> build_scope();
 
-	root -> accept(*this);
+    root -> accept(*this);
 //	root -> check();
 //	node -> code_obj.emit(root -> gen().getCode());
 }
 
-void DefineVisitor::visit(IfNode *node) 
+void DefineVisitor::visit(IfNode *node)
 {
-	for ( auto child : node -> getChildren() )
-		child -> accept(*this);
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
 }
 
-void DefineVisitor::visit(ForNode *node) 
+void DefineVisitor::visit(ForNode *node)
 {
-	for ( auto child : node -> getChildren() )
-		child -> accept(*this);
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
 }
 
-void DefineVisitor::visit(WhileNode *node) 
+void DefineVisitor::visit(WhileNode *node)
 {
-	for ( auto child : node -> getChildren() )
-		child -> accept(*this);
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
 }
 
 void DefineVisitor::visit(StructDeclarationNode *node)
 {
     for ( auto decl : node -> inner )
-		decl -> accept(*this);
+        decl -> accept(*this);
 }
 
 void DefineVisitor::visit(FunctionDeclarationNode *node)
 {
-	const auto& template_info = node -> scope -> getTemplateInfo();
+    const auto& template_info = node -> scope -> getTemplateInfo();
 
-	if ( template_info.sym != nullptr && node -> return_type_info.type_name == template_info.sym -> getName() )
-		node -> return_type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
+    if ( template_info.sym != nullptr && node -> return_type_info.type_name == template_info.sym -> getName() )
+        node -> return_type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
 
-	auto fromTypeInfo = [&] (TypeInfo type_info) -> const Type*
-	{
-		if ( template_info.sym != nullptr && type_info.type_name == template_info.sym -> getName() )
-			type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
+    auto fromTypeInfo = [&] (TypeInfo type_info) -> const Type*
+    {
+        if ( template_info.sym != nullptr && type_info.type_name == template_info.sym -> getName() )
+            type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
 
-		if ( node -> definedSymbol -> isMethod() && type_info.type_name == static_cast<StructSymbol*>(node -> scope) -> getName() )
-		{
-			const Type *type = static_cast<const StructSymbol*>(node -> scope);
+        if ( node -> definedSymbol -> isMethod() && type_info.type_name == static_cast<StructSymbol*>(node -> scope) -> getName() )
+        {
+            const Type *type = static_cast<const StructSymbol*>(node -> scope);
 
-			if ( type_info.is_ref )
-				type = TypeFactory::getReference(type);
+            if ( type_info.is_ref )
+                type = TypeFactory::getReference(type);
 
-			if ( type_info.is_const )
-				type = TypeFactory::getConst(type);
+            if ( type_info.is_const )
+                type = TypeFactory::getConst(type);
 
-			return type;
-		}
+            return type;
+        }
 //		return scope -> fromTypeInfo(type_info);
 //		return node -> definedSymbol -> fromTypeInfo(type_info);
         return DefineVisitor::fromTypeInfo(type_info, node -> definedSymbol);
-	};
+    };
 
     auto return_type = fromTypeInfo(node -> return_type_info);
 
-	std::vector<const Type*> params_types;
+    std::vector<const Type*> params_types;
 
-	if ( node -> traits.is_method )
-	{
-		auto _this_type = TypeFactory::getReference(static_cast<StructSymbol*>(node -> scope));
-		params_types.push_back(_this_type);
-		
-		auto _this_sym = new VariableSymbol("this", _this_type, VariableSymbolType::PARAM);
+    if ( node -> traits.is_method )
+    {
+        auto _this_type = TypeFactory::getReference(static_cast<StructSymbol*>(node -> scope));
+        params_types.push_back(_this_type);
 
-		node -> params_symbols.push_back(_this_sym);
-		node -> definedSymbol -> define(_this_sym);
-	}
+        auto _this_sym = new VariableSymbol("this", _this_type, VariableSymbolType::PARAM);
 
-	for ( auto i : node -> params )
-	{
-		auto param_type = fromTypeInfo(i.second);
+        node -> params_symbols.push_back(_this_sym);
+        node -> definedSymbol -> define(_this_sym);
+    }
 
-		params_types.push_back(param_type);
+    for ( auto i : node -> params )
+    {
+        auto param_type = fromTypeInfo(i.second);
 
-		auto param_sym = new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM);
+        params_types.push_back(param_type);
 
-		node -> params_symbols.push_back(param_sym);
-		node -> definedSymbol -> define(param_sym);
-	}
+        auto param_sym = new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM);
 
-	FunctionTypeInfo function_type_info(params_types);
+        node -> params_symbols.push_back(param_sym);
+        node -> definedSymbol -> define(param_sym);
+    }
 
-	node -> definedSymbol -> return_type = return_type;
-	node -> definedSymbol -> function_type_info = function_type_info;
+    FunctionTypeInfo function_type_info(params_types);
+
+    node -> definedSymbol -> return_type = return_type;
+    node -> definedSymbol -> function_type_info = function_type_info;
 
 //	node -> scope -> getSymbolTable().has_definition[node -> definedSymbol] = true;
 
-	node -> scope -> define(node -> definedSymbol);
+    node -> scope -> define(node -> definedSymbol);
 
-	node -> statements -> accept(*this);
+    node -> statements -> accept(*this);
 }
 
 void DefineVisitor::visit(VariableDeclarationNode *node)
 {
-	const auto& template_info = node -> scope -> getTemplateInfo();
+    const auto& template_info = node -> scope -> getTemplateInfo();
 
     if ( template_info.sym && template_info.sym -> isIn(node -> type_info.type_name) )
     {
-		auto replace = template_info.getReplacement(node -> type_info.type_name);
+        auto replace = template_info.getReplacement(node -> type_info.type_name);
 
 //		type_info.type_name = boost::get<std::string>(*replace);
-		node -> type_info = boost::get<TypeInfo>(*replace);
+        node -> type_info = boost::get<TypeInfo>(*replace);
     }
-    
+
     auto var_type = fromTypeInfo(node -> type_info, node -> scope);
-    
+
     if ( var_type == BuiltIns::void_type )
-		throw SemanticError("can't declare a variable of 'void' type.");
-   
+        throw SemanticError("can't declare a variable of 'void' type.");
+
     node -> definedSymbol -> setType(var_type);
-	node -> scope -> define(node -> definedSymbol);
+    node -> scope -> define(node -> definedSymbol);
 }
 
 void DefineVisitor::visit(StatementNode *node)
 {
-	for ( auto i : node -> statements )
-		i -> accept(*this);
+    for ( auto i : node -> statements )
+        i -> accept(*this);
 }
 
 void DefineVisitor::visit(ReturnNode *node)
@@ -169,77 +169,77 @@ void DefineVisitor::visit(ReturnNode *node)
 
 void DefineVisitor::visit(UnsafeBlockNode *node)
 {
-	node -> block -> accept(*this);
+    node -> block -> accept(*this);
 }
 
 void DefineVisitor::visit(AsmArrayNode *node)
 {
-	const Type *type;
+    const Type *type;
     const Type *ref_type;
 
-	const auto& template_info = node -> scope -> getTemplateInfo(); 
+    const auto& template_info = node -> scope -> getTemplateInfo();
 
-	if ( template_info.sym -> isIn("size") )
-	{
-		auto replace = template_info.getReplacement("size");
-		
-		node -> array_size = boost::get<int>(*replace);
-	}
-	else throw SemanticError("");
+    if ( template_info.sym -> isIn("size") )
+    {
+        auto replace = template_info.getReplacement("size");
 
-	auto arr = dynamic_cast<StructSymbol*>(node -> scope);
-	arr -> is_unsafe = true;
+        node -> array_size = boost::get<int>(*replace);
+    }
+    else throw SemanticError("");
 
-	if ( template_info.sym -> isIn("T") )
-	{
-		auto replace = template_info.getReplacement("T");
-		type         = fromTypeInfo(boost::get<TypeInfo>(*replace), node -> scope);
-		ref_type     = TypeFactory::getReference(type);
-		node -> size_of_type = type -> getSize();
-	}
-	else throw SemanticError("");
+    auto arr = dynamic_cast<StructSymbol*>(node -> scope);
+    arr -> is_unsafe = true;
 
-	auto just_int = BuiltIns::int_type;
+    if ( template_info.sym -> isIn("T") )
+    {
+        auto replace = template_info.getReplacement("T");
+        type         = fromTypeInfo(boost::get<TypeInfo>(*replace), node -> scope);
+        ref_type     = TypeFactory::getReference(type);
+        node -> size_of_type = type -> getSize();
+    }
+    else throw SemanticError("");
 
-	auto ref_arr = TypeFactory::getReference(arr);
+    auto just_int = BuiltIns::int_type;
 
-	node -> array_constructor   = new FunctionSymbol("array"     , ref_arr , {ref_arr}          , node -> scope, {true, true, false});
-	node -> array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, node -> scope, {true, false, true});
-	node -> array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , node -> scope, {true, false, false});
+    auto ref_arr = TypeFactory::getReference(arr);
+
+    node -> array_constructor   = new FunctionSymbol("array"     , ref_arr , {ref_arr}          , node -> scope, {true, true, false});
+    node -> array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, node -> scope, {true, false, true});
+    node -> array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , node -> scope, {true, false, false});
 
 //	node -> scope -> getSymbolTable().has_definition[node -> array_constructor]   = true;
 //	node -> scope -> getSymbolTable().has_definition[node -> array_elem_operator] = true;
 //	node -> scope -> getSymbolTable().has_definition[node -> array_size_func]     = true;
 
-	node -> array_constructor   -> is_unsafe = true;
-	node -> array_elem_operator -> is_unsafe = true;
-	node -> array_size_func     -> is_unsafe = true;
+    node -> array_constructor   -> is_unsafe = true;
+    node -> array_elem_operator -> is_unsafe = true;
+    node -> array_size_func     -> is_unsafe = true;
 
-	node -> scope -> define(node -> array_constructor);    
-	node -> scope -> define(node -> array_elem_operator);
-	node -> scope -> define(node -> array_size_func);
+    node -> scope -> define(node -> array_constructor);
+    node -> scope -> define(node -> array_elem_operator);
+    node -> scope -> define(node -> array_size_func);
 
-	node -> scope -> define(new VariableSymbol( "~~impl", new BuiltInTypeSymbol("~~array_impl", node -> array_size * node -> size_of_type)));
+    node -> scope -> define(new VariableSymbol( "~~impl", new BuiltInTypeSymbol("~~array_impl", node -> array_size * node -> size_of_type)));
 }
 
-void DefineVisitor::visit(VarInferTypeDeclarationNode *node) 
+void DefineVisitor::visit(VarInferTypeDeclarationNode *node)
 {
 //	node -> expr -> check();
 
-	if ( node -> scope -> resolve(node -> name) != nullptr )
-		throw SemanticError(node -> name + " is already defined");
+    if ( node -> scope -> resolve(node -> name) != nullptr )
+        throw SemanticError(node -> name + " is already defined");
 
-	if ( node -> expr -> getType() == BuiltIns::void_type )
-		throw SemanticError("can't define variable of 'void' type");
+    if ( node -> expr -> getType() == BuiltIns::void_type )
+        throw SemanticError("can't define variable of 'void' type");
 
-	node -> definedSymbol = new VariableSymbol(node -> name, node -> expr -> getType());
+    node -> definedSymbol = new VariableSymbol(node -> name, node -> expr -> getType());
 
-	node -> scope -> define(node -> definedSymbol);
+    node -> scope -> define(node -> definedSymbol);
 }
 
-void DefineVisitor::visit(TemplateStructDeclarationNode *node) 
+void DefineVisitor::visit(TemplateStructDeclarationNode *node)
 {
-   	node -> scope -> define(node -> definedSymbol);
+    node -> scope -> define(node -> definedSymbol);
 }
 
 void DefineVisitor::visit(BracketNode *) { }

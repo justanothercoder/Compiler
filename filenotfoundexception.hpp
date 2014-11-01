@@ -9,7 +9,7 @@ class FileNotFoundException : public std::logic_error
 public:
 
     FileNotFoundException(std::string filename);
-    
+
 };
 
 #endif

@@ -46,46 +46,46 @@ public:
 
 private:
 
-	std::string id();
-	std::string operator_name();
+    std::string id();
+    std::string operator_name();
     TypeInfo typeInfo();
-	std::vector<ExprNode*> call_params_list();
-  
+    std::vector<ExprNode*> call_params_list();
+
     DeclarationNode* declaration(boost::optional<string> struct_name = boost::none);
     DeclarationNode* templateStructDecl();
     DeclarationNode* structDecl();
     DeclarationNode* variableDecl(boost::optional<string> struct_name = boost::none);
     DeclarationNode* functionDecl(boost::optional<string> struct_name = boost::none);
-	DeclarationNode* varInferDecl(boost::optional<string> struct_name = boost::none);
+    DeclarationNode* varInferDecl(boost::optional<string> struct_name = boost::none);
 
-	AST* import_stat();
-	
-	AST* for_stat();
+    AST* import_stat();
+
+    AST* for_stat();
     AST* while_stat();
     AST* if_stat();
     AST* return_stat();
     AST* statement();
     AST* assignment();
-	AST* block();
+    AST* block();
 
-	AST* unsafe_block();
+    AST* unsafe_block();
 
     ExprNode* expression();
-	ExprNode* bool_expr();
-	ExprNode* relation();
+    ExprNode* bool_expr();
+    ExprNode* relation();
     ExprNode* sum_expr();
     ExprNode* term();
     ExprNode* factor();
-	ExprNode* unary_left();
-	ExprNode* addr_expr();
-    ExprNode* unary_right();    
+    ExprNode* unary_left();
+    ExprNode* addr_expr();
+    ExprNode* unary_right();
     ExprNode* primary();
     ExprNode* new_expr();
     ExprNode* variable();
     ExprNode* literal();
     ExprNode* number();
-   	ExprNode* get_string();
-	ExprNode* null();
+    ExprNode* get_string();
+    ExprNode* null();
 
     bool tryAssignment();
     bool tryVarDecl();

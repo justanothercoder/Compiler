@@ -10,11 +10,11 @@ class BuiltIns
 {
 public:
 
-	static void defineBuiltIns();
+    static void defineBuiltIns();
 
     static Scope *global_scope;
-	static Type *void_type;
-	static Type *int_type;
+    static Type *void_type;
+    static Type *int_type;
 };
 
 #endif

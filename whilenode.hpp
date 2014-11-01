@@ -11,7 +11,7 @@ class ExprNode;
 class WhileNode : public AST
 {
 
-	friend class GenSSAVisitor;
+    friend class GenSSAVisitor;
 
 public:
 
@@ -21,12 +21,12 @@ public:
 
     void build_scope() override;
 
-	std::vector<AST*> getChildren() const override;
+    std::vector<AST*> getChildren() const override;
 
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
-    
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
+
 private:
 
     ExprNode *cond;

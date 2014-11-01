@@ -9,31 +9,31 @@ class VariableSymbol;
 class DotNode : public ExprNode
 {
 
-	friend class GenSSAVisitor;
-	friend class CheckVisitor;
+    friend class GenSSAVisitor;
+    friend class CheckVisitor;
 
 public:
 
-    DotNode(ExprNode *base, std::string member_name);   
-    
-	std::vector<AST*> getChildren() const override;
+    DotNode(ExprNode *base, std::string member_name);
+
+    std::vector<AST*> getChildren() const override;
     AST* copyTree() const override;
 
     const Type* getType() const override;
-	bool isLeftValue() const override;
-	
-	bool isCompileTimeExpr() const override;
-	boost::optional<int> getCompileTimeValue() const override;
+    bool isLeftValue() const override;
 
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
+    bool isCompileTimeExpr() const override;
+    boost::optional<int> getCompileTimeValue() const override;
+
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
 
 private:
 
     ExprNode *base;
 
-	std::string member_name;
+    std::string member_name;
 
     const StructSymbol *base_type;
     VariableSymbol *member;

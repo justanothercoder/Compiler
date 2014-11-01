@@ -14,7 +14,7 @@ public:
     virtual void visit(LocalScope *sc) = 0;
     virtual void visit(StructScope *sc) = 0;
     virtual void visit(FunctionScope *sc) = 0;
-	
+
 };
 
 #endif

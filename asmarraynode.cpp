@@ -6,22 +6,22 @@
 #include "numbernode.hpp"
 #include "builtins.hpp"
 
-AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0) 
-{ 
-
-}
-
-AST* AsmArrayNode::copyTree() const 
+AsmArrayNode::AsmArrayNode() : size_of_type(0), array_size(0)
 {
-   	return new AsmArrayNode(*this); 
+
 }
-	
+
+AST* AsmArrayNode::copyTree() const
+{
+    return new AsmArrayNode(*this);
+}
+
 std::string AsmArrayNode::toString() const
 {
-	return "";
+    return "";
 }
 
 void AsmArrayNode::accept(ASTVisitor& visitor)
 {
-	visitor.visit(this);
+    visitor.visit(this);
 }

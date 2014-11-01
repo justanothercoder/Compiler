@@ -6,18 +6,18 @@
 
 Arg ThreeAddressCode::newLabel(std::string label)
 {
-	static int label_num = 0;
+    static int label_num = 0;
 
-	++label_num;
+    ++label_num;
 
-	if ( label == "" )        
-		globaltable.label_name[label_num] = "label_" + std::to_string(label_num);
-	else
-		globaltable.label_name[label_num] = label;
+    if ( label == "" )
+        globaltable.label_name[label_num] = "label_" + std::to_string(label_num);
+    else
+        globaltable.label_name[label_num] = label;
 
-	return Arg(IdType::LABEL, label_num);
+    return Arg(IdType::LABEL, label_num);
 }
-	
+
 Arg ThreeAddressCode::add(Command command)
 {
     Block& current_block = blocks[blockStack.top()];
@@ -26,46 +26,56 @@ Arg ThreeAddressCode::add(Command command)
 
     switch ( command.op )
     {
-        case SSAOp::ASSIGN: case SSAOp::PARAM: case SSAOp::LABEL: case SSAOp::RETURN: case SSAOp::IF:
-        case SSAOp::IFFALSE: case SSAOp::GOTO: 
-            command_type = nullptr;
-            break;
-        case SSAOp::PLUS: case SSAOp::MINUS: case SSAOp::MUL: case SSAOp::DIV: case SSAOp::MOD: case SSAOp::EQUALS:
-            command_type = BuiltIns::int_type;
-            break;
-        case SSAOp::ELEM:
-            command_type = nullptr;
-            break;
-        case SSAOp::DEREF:
-            command_type = nullptr;
-            break;
-        case SSAOp::ADDR:
-            command_type = nullptr;
-            break;
-        case SSAOp::DOT:
-            command_type = globaltable.var_by_id[command.arg2.id] -> getType();
-            break;
-        case SSAOp::CALL:
-            command_type = globaltable.func_by_id[command.arg1.id] -> return_type;
-            break;        
-        default:
-            throw "internal error.";
+    case SSAOp::ASSIGN:
+    case SSAOp::PARAM:
+    case SSAOp::LABEL:
+    case SSAOp::RETURN:
+    case SSAOp::IF:
+    case SSAOp::IFFALSE:
+    case SSAOp::GOTO:
+        command_type = nullptr;
+        break;
+    case SSAOp::PLUS:
+    case SSAOp::MINUS:
+    case SSAOp::MUL:
+    case SSAOp::DIV:
+    case SSAOp::MOD:
+    case SSAOp::EQUALS:
+        command_type = BuiltIns::int_type;
+        break;
+    case SSAOp::ELEM:
+        command_type = nullptr;
+        break;
+    case SSAOp::DEREF:
+        command_type = nullptr;
+        break;
+    case SSAOp::ADDR:
+        command_type = nullptr;
+        break;
+    case SSAOp::DOT:
+        command_type = globaltable.var_by_id[command.arg2.id] -> getType();
+        break;
+    case SSAOp::CALL:
+        command_type = globaltable.func_by_id[command.arg1.id] -> return_type;
+        break;
+    default:
+        throw "internal error.";
     }
 
     current_block.commands.push_back(command);
-	current_block.code.push_back(current_block.commands.size() - 1);
-	return Arg(IdType::TEMP, current_block.commands.size() - 1, command_type);
+    current_block.code.push_back(current_block.commands.size() - 1);
+    return Arg(IdType::TEMP, current_block.commands.size() - 1, command_type);
 }
 
 std::string ThreeAddressCode::toString()
 {
-	std::string res;
+    std::string res;
     for ( auto block : blocks )
         res += block.toString() + "\n";
 
-	return res;
+    return res;
 }
-		
+
 void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 {
     auto block = blocks.cbegin();
@@ -108,9 +118,9 @@ void ThreeAddressCode::popBlock()
 {
     blockStack.pop();
 }
-    
+
 void ThreeAddressCode::addConst(int c)
-{      
+{
     if ( globaltable.const_num_id.find(c) == std::end(globaltable.const_num_id) )
     {
         auto new_id = globaltable.const_num_id.size();
@@ -120,7 +130,7 @@ void ThreeAddressCode::addConst(int c)
 }
 
 void ThreeAddressCode::addFunction(const FunctionSymbol *sym)
-{      
+{
     if ( globaltable.id_by_func.find(sym) == std::end(globaltable.id_by_func) )
     {
         auto new_id = globaltable.id_by_func.size();
@@ -130,7 +140,7 @@ void ThreeAddressCode::addFunction(const FunctionSymbol *sym)
 }
 
 void ThreeAddressCode::addVariable(VariableSymbol *sym)
-{      
+{
     if ( globaltable.id_by_var.find(sym) == std::end(globaltable.id_by_var) )
     {
         auto new_id = globaltable.id_by_var.size();
@@ -140,7 +150,7 @@ void ThreeAddressCode::addVariable(VariableSymbol *sym)
 }
 
 void ThreeAddressCode::addString(const std::string& str)
-{      
+{
     if ( globaltable.id_by_string.find(str) == std::end(globaltable.id_by_string) )
     {
         auto new_id = globaltable.id_by_string.size();
@@ -173,7 +183,7 @@ int ThreeAddressCode::getConstFromId(int id)
 {
     return globaltable.id_to_num[id];
 }
-    
+
 void ThreeAddressCode::addParamInfo(ConversionInfo info)
 {
     if ( globaltable.id_by_info.find(info) == std::end(globaltable.id_by_info) )

@@ -23,27 +23,27 @@ struct TemplateInfo;
 class GlobalTable
 {
 public:
-    
-	static int transformAddress(Scope *scope, int addr); 
 
-	std::map<FunctionSymbol*, bool> has_definition;
+    static int transformAddress(Scope *scope, int addr);
 
-	std::map<int, int> const_num_id;
-	std::map<int, int> id_to_num;
+    std::map<FunctionSymbol*, bool> has_definition;
 
-	std::map<VariableSymbol*, int> id_by_var;
-	std::map<int, VariableSymbol*> var_by_id;
+    std::map<int, int> const_num_id;
+    std::map<int, int> id_to_num;
 
-	std::map<int, std::string> label_name;
+    std::map<VariableSymbol*, int> id_by_var;
+    std::map<int, VariableSymbol*> var_by_id;
 
-	std::map<const FunctionSymbol*, int> id_by_func;
-	std::map<int, const FunctionSymbol*> func_by_id;
+    std::map<int, std::string> label_name;
 
-	std::map<std::string, int> id_by_string;
-	std::map<int, std::string> string_by_id;
-    
-    std::unordered_map<ConversionInfo, int> id_by_info;
-    std::unordered_map<int, ConversionInfo> info_by_id;
+    std::map<const FunctionSymbol*, int> id_by_func;
+    std::map<int, const FunctionSymbol*> func_by_id;
+
+    std::map<std::string, int> id_by_string;
+    std::map<int, std::string> string_by_id;
+
+    std::map<ConversionInfo, int> id_by_info;
+    std::map<int, ConversionInfo> info_by_id;
 };
 
 #endif

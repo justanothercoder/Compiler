@@ -8,20 +8,23 @@
 class Scope;
 class ScopeVisitor;
 
-enum class SymbolType { FUNCTION, OVERLOADED_FUNCTION, VARIABLE, STRUCT, BUILTINTYPE, TEMPLATESTRUCT, CLASSVARIABLE };
+enum class SymbolType
+{
+    FUNCTION, OVERLOADED_FUNCTION, VARIABLE, STRUCT, BUILTINTYPE, TEMPLATESTRUCT, CLASSVARIABLE
+};
 
 class Symbol
 {
 public:
 
-    virtual ~Symbol();    
+    virtual ~Symbol();
     virtual std::string getName() const = 0;
     virtual SymbolType getSymbolType() const = 0;
 
-	virtual ScopeVisitor& getScopeVisitor();
+    virtual ScopeVisitor& getScopeVisitor();
 
-	bool is_defined;
-	bool is_unsafe;
+    bool is_defined;
+    bool is_unsafe;
 };
 
 #endif

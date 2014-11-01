@@ -1,44 +1,44 @@
 #include "fornode.hpp"
 #include "localscope.hpp"
 
-ForNode::ForNode(AST *init, ExprNode *cond, AST *step, AST *stats) : init(init), cond(cond), step(step), stats(stats), for_scope(nullptr) 
+ForNode::ForNode(AST *init, ExprNode *cond, AST *step, AST *stats) : init(init), cond(cond), step(step), stats(stats), for_scope(nullptr)
 {
 
 }
 
 void ForNode::build_scope()
 {
-	for_scope = std::make_shared<LocalScope>(scope);
+    for_scope = std::make_shared<LocalScope>(scope);
 
-	for ( auto child : getChildren() )
-	{
-		child -> scope = for_scope.get();
-		child -> build_scope();
-	}
+    for ( auto child : getChildren() )
+    {
+        child -> scope = for_scope.get();
+        child -> build_scope();
+    }
 }
 
-AST* ForNode::copyTree() const 
-{ 
-	return new ForNode(init -> copyTree(), static_cast<ExprNode*>(cond -> copyTree()), step -> copyTree(), stats -> copyTree()); 
-}
-
-std::vector<AST*> ForNode::getChildren() const 
+AST* ForNode::copyTree() const
 {
-   	return {init, cond, step, stats}; 
+    return new ForNode(init -> copyTree(), static_cast<ExprNode*>(cond -> copyTree()), step -> copyTree(), stats -> copyTree());
 }
 
-std::string ForNode::getNewLabel() 
+std::vector<AST*> ForNode::getChildren() const
 {
-	static int label_num = 0;
-	return "@for_label" + std::to_string(++label_num);
+    return {init, cond, step, stats};
 }
-	
-std::string ForNode::toString() const 
+
+std::string ForNode::getNewLabel()
 {
-	return "for (" + init -> toString() + "; " + cond -> toString() + "; " + step -> toString() + ")\n" + stats -> toString();
+    static int label_num = 0;
+    return "@for_label" + std::to_string(++label_num);
+}
+
+std::string ForNode::toString() const
+{
+    return "for (" + init -> toString() + "; " + cond -> toString() + "; " + step -> toString() + ")\n" + stats -> toString();
 }
 
 void ForNode::accept(ASTVisitor& visitor)
 {
-	visitor.visit(this);
+    visitor.visit(this);
 }

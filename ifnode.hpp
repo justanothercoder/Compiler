@@ -10,7 +10,7 @@ class ExprNode;
 
 class IfNode : public AST
 {
-	friend class GenSSAVisitor;
+    friend class GenSSAVisitor;
 
 public:
 
@@ -19,12 +19,12 @@ public:
     AST* copyTree() const override;
 
     void build_scope() override;
-	
-	std::vector<AST*> getChildren() const override;
 
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
+    std::vector<AST*> getChildren() const override;
+
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
 
 private:
 

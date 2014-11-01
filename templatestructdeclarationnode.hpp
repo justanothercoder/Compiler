@@ -14,7 +14,7 @@ public:
 
 private:
 
-	std::vector< std::pair<std::string, TypeInfo> > template_params;
+    std::vector< std::pair<std::string, TypeInfo> > template_params;
 };
 
 #endif

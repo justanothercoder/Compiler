@@ -10,18 +10,18 @@ class FunctionSymbol;
 
 struct CallInfo
 {
-	CallInfo();
+    CallInfo();
 
-	CallInfo(const FunctionSymbol *callee, std::vector<const Type*> actual_params, 
-									       std::vector<ConversionInfo> conversions,
-									       std::vector<const FunctionSymbol*> copy_constructors
-								);
+    CallInfo(const FunctionSymbol *callee, std::vector<const Type*> actual_params,
+             std::vector<ConversionInfo> conversions,
+             std::vector<const FunctionSymbol*> copy_constructors
+            );
 
-	const FunctionSymbol *callee;
+    const FunctionSymbol *callee;
 
-	std::vector<const Type*> actual_params;
-	std::vector<ConversionInfo> conversions;
-	std::vector<const FunctionSymbol*> copy_constructors;
+    std::vector<const Type*> actual_params;
+    std::vector<ConversionInfo> conversions;
+    std::vector<const FunctionSymbol*> copy_constructors;
 };
 
 #endif

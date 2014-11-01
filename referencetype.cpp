@@ -7,56 +7,56 @@ ReferenceType::ReferenceType(const Type *type) : type(type)
 
 }
 
-std::string ReferenceType::getName() const 
+std::string ReferenceType::getName() const
 {
 //	return type -> getName() + "&";
-	return type -> getName() + "~ref";
+    return type -> getName() + "~ref";
 }
 
-size_t ReferenceType::getSize() const 
+size_t ReferenceType::getSize() const
 {
-	return GlobalConfig::int_size;
+    return GlobalConfig::int_size;
 }
 
 TypeKind ReferenceType::getTypeKind() const
 {
-	return TypeKind::REFERENCE;
+    return TypeKind::REFERENCE;
 }
 
-bool ReferenceType::isConvertableTo(const Type *t) const 
+bool ReferenceType::isConvertableTo(const Type *t) const
 {
-	return (this == t) || type -> isConvertableTo(t);
+    return (this == t) || type -> isConvertableTo(t);
 }
 
-boost::optional<int> ReferenceType::rankOfConversion(const Type *t) const 
+boost::optional<int> ReferenceType::rankOfConversion(const Type *t) const
 {
-	if ( !type -> isConvertableTo(t) )
-		return boost::none;
+    if ( !type -> isConvertableTo(t) )
+        return boost::none;
 
-	return 1 + *type -> rankOfConversion(t);
+    return 1 + *type -> rankOfConversion(t);
 }
 
-bool ReferenceType::isReference() const 
+bool ReferenceType::isReference() const
 {
-	return true;
+    return true;
 }
 
-bool ReferenceType::isConst() const 
+bool ReferenceType::isConst() const
 {
-	return type -> isConst();
+    return type -> isConst();
 }
-	
+
 FunctionSymbol* ReferenceType::getConversionTo(const Type *) const
 {
-	return nullptr;
+    return nullptr;
 }
-	
-const Type* ReferenceType::getUnqualifiedType() const 
+
+const Type* ReferenceType::getUnqualifiedType() const
 {
-	return type -> getUnqualifiedType();
+    return type -> getUnqualifiedType();
 }
-	
+
 const Symbol* ReferenceType::getSymbol() const
 {
-	return type -> getSymbol();
+    return type -> getSymbol();
 }

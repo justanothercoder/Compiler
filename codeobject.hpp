@@ -14,14 +14,14 @@ class CodeObject
 {
 public:
 
-	void emit(std::string text);
+    void emit(std::string text);
 
-	void gen() const;	
-	std::string getCode() const;
+    void gen() const;
+    std::string getCode() const;
 
 private:
 
-	std::string code;
+    std::string code;
 };
 
 #endif

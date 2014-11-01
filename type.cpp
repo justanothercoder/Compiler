@@ -1,26 +1,26 @@
 #include "type.hpp"
 
-Type::~Type() 
+Type::~Type()
 {
 
 }
 
 const Symbol* Type::getSymbol() const
 {
-	return nullptr;
+    return nullptr;
 }
 
 const Type* Type::getUnqualifiedType() const
 {
-	return this;
+    return this;
 }
-	
+
 bool Type::isReference() const
 {
-	return false;
+    return false;
 }
 
 bool Type::isConst() const
 {
-	return false;
+    return false;
 }

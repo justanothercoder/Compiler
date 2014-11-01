@@ -9,11 +9,11 @@
 class NoViableOverloadError : public SemanticError
 {
 public:
-	
-	NoViableOverloadError(std::string name, std::vector<const Type*> params_types);
-	
+
+    NoViableOverloadError(std::string name, std::vector<const Type*> params_types);
+
 private:
-	static std::string paramsToString(std::vector<const Type*> params_types);
+    static std::string paramsToString(std::vector<const Type*> params_types);
 
 };
 

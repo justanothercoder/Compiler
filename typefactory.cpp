@@ -10,58 +10,58 @@
 
 const Type* TypeFactory::getPointer(const Type *type)
 {
-	static std::map<const Type*, const Type*> pointers;
+    static std::map<const Type*, const Type*> pointers;
 
-	if ( type -> getTypeKind() == TypeKind::REFERENCE )
-		return nullptr;
+    if ( type -> getTypeKind() == TypeKind::REFERENCE )
+        return nullptr;
 
-	auto it = pointers.find(type);
+    auto it = pointers.find(type);
 
-	if ( it == std::end(pointers) )
-	{
-		pointers[type] = new PointerType(type);
+    if ( it == std::end(pointers) )
+    {
+        pointers[type] = new PointerType(type);
 
-		const auto& tp = pointers[type];
-		auto tp_ref = getReference(tp);
+        const auto& tp = pointers[type];
+        auto tp_ref = getReference(tp);
 
-		auto pointer_assign = new FunctionSymbol("operator=", tp_ref, {tp_ref, getConst(tp_ref)}, BuiltIns::global_scope, {false, false, true});
+        auto pointer_assign = new FunctionSymbol("operator=", tp_ref, {tp_ref, getConst(tp_ref)}, BuiltIns::global_scope, {false, false, true});
 
-		BuiltIns::global_scope -> define(pointer_assign);
+        BuiltIns::global_scope -> define(pointer_assign);
 
-		auto pointer_add = new FunctionSymbol("operator+", tp, {tp, BuiltIns::int_type}, BuiltIns::global_scope, {false, false, true});
+        auto pointer_add = new FunctionSymbol("operator+", tp, {tp, BuiltIns::int_type}, BuiltIns::global_scope, {false, false, true});
 
-		BuiltIns::global_scope -> define(pointer_add);
-	}
+        BuiltIns::global_scope -> define(pointer_add);
+    }
 
-	return pointers[type];
+    return pointers[type];
 }
 
 const Type* TypeFactory::getReference(const Type *type)
 {
-	static std::map<const Type*, const Type*> references;
-	
-	if ( type -> getTypeKind() == TypeKind::REFERENCE )
-		return nullptr;
+    static std::map<const Type*, const Type*> references;
 
-	auto it = references.find(type);
+    if ( type -> getTypeKind() == TypeKind::REFERENCE )
+        return nullptr;
 
-	if ( it == std::end(references) )
-		references[type] = new ReferenceType(type);
+    auto it = references.find(type);
 
-	return references[type];
+    if ( it == std::end(references) )
+        references[type] = new ReferenceType(type);
+
+    return references[type];
 }
 
 const Type* TypeFactory::getConst(const Type *type)
 {
-	static std::map<const Type*, const Type*> consts;
+    static std::map<const Type*, const Type*> consts;
 
-	if ( type -> getTypeKind() == TypeKind::CONSTTYPE )
-		return type;
+    if ( type -> getTypeKind() == TypeKind::CONSTTYPE )
+        return type;
 
-	auto it = consts.find(type);
+    auto it = consts.find(type);
 
-	if ( it == std::end(consts) )
-		consts[type] = new ConstType(type);
+    if ( it == std::end(consts) )
+        consts[type] = new ConstType(type);
 
-	return consts[type];
+    return consts[type];
 }

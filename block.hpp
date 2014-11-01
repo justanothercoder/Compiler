@@ -36,7 +36,7 @@ struct Block
     std::vector<Command> commands;
 
     mutable std::unordered_map<Command, int> command_offsets;
-    
+
     std::string block_name;
 
     GlobalTable& table;

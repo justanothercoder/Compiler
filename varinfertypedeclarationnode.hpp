@@ -11,23 +11,23 @@ class VarInferTypeDeclarationNode : public DeclarationNode
 {
 public:
 
-	VarInferTypeDeclarationNode(std::string name, ExprNode *expr);
+    VarInferTypeDeclarationNode(std::string name, ExprNode *expr);
 
-	Symbol* getDefinedSymbol() const override;
-	
-	AST* copyTree() const override;	
+    Symbol* getDefinedSymbol() const override;
 
-	std::vector<AST*> getChildren() const override;
-	
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
+    AST* copyTree() const override;
 
-	std::string name;
-	ExprNode *expr;
+    std::vector<AST*> getChildren() const override;
 
-	CallInfo call_info;
-	VariableSymbol *definedSymbol;
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
+
+    std::string name;
+    ExprNode *expr;
+
+    CallInfo call_info;
+    VariableSymbol *definedSymbol;
 };
 
 #endif

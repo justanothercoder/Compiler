@@ -17,28 +17,28 @@ using std::shared_ptr;
 
 int main()
 {
-	std::string filename = "input.txt";
+    std::string filename = "input.txt";
 
-	try
-	{    
-		BuiltIns::defineBuiltIns();
+    try
+    {
+        BuiltIns::defineBuiltIns();
 
         shared_ptr<AST> root(FileHelper::parse(filename));
 
-		root -> scope = BuiltIns::global_scope;
+        root -> scope = BuiltIns::global_scope;
 
-		root -> build_scope();
-        
+        root -> build_scope();
+
         DefineVisitor define_visitor;
         root -> accept(define_visitor);
 
-		CheckVisitor check_visitor;
-		root -> accept(check_visitor);
+        CheckVisitor check_visitor;
+        root -> accept(check_visitor);
 
 //		root -> check ();
 
-		GenSSAVisitor visitor;
-		root -> accept(visitor);
+        GenSSAVisitor visitor;
+        root -> accept(visitor);
 //		std::cerr << "code:\n" << visitor.getString() << '\n';
 
         visitor.optimize();
@@ -50,7 +50,7 @@ int main()
         visitor.getCode().genAsm(code_obj);
 
         code_obj.gen();
-	}
+    }
 //	catch ( SemanticError& e )
 //	{
 //		std::cerr << e.what() << '\n';
@@ -61,12 +61,12 @@ int main()
 //		std::cerr << e.what() << '\n';
 //		return 2;
 //	}
-	catch ( int x )
-	{
-		return 1;
-	}
+    catch ( int x )
+    {
+        return 1;
+    }
 
-	delete BuiltIns::global_scope;
+    delete BuiltIns::global_scope;
 
-	return 0;
+    return 0;
 }

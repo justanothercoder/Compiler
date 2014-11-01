@@ -11,13 +11,13 @@ class OverloadedFunctionSymbol : public Symbol, public Type
 public:
 
     OverloadedFunctionSymbol(std::string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits);
-	
-	std::string getName() const override;
+
+    std::string getName() const override;
     size_t getSize() const override;
 
     OverloadedFunctionTypeInfo getTypeInfo() const;
 
-	void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym) const;
+    void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym) const;
 
     bool isMethod() const;
     bool isConstructor() const;
@@ -27,19 +27,19 @@ public:
 
     SymbolType getSymbolType() const override;
     TypeKind getTypeKind() const override;
-    
-	FunctionSymbol* getViableOverload(FunctionTypeInfo params_type) const;
 
-	bool isConvertableTo(const Type *type) const override;
-	boost::optional<int> rankOfConversion(const Type *type) const override;
-	
-	FunctionSymbol* getConversionTo(const Type *type) const override;
+    FunctionSymbol* getViableOverload(FunctionTypeInfo params_type) const;
 
-	const Symbol* getSymbol() const override;
-    
+    bool isConvertableTo(const Type *type) const override;
+    boost::optional<int> rankOfConversion(const Type *type) const override;
+
+    FunctionSymbol* getConversionTo(const Type *type) const override;
+
+    const Symbol* getSymbol() const override;
+
 private:
 
-	std::string name;
+    std::string name;
     mutable OverloadedFunctionTypeInfo type_info;
 
     FunctionTraits traits;

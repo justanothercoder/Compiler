@@ -6,31 +6,31 @@
 
 class BracketNode : public ExprNode
 {
-	friend class GenSSAVisitor;
-	friend class CheckVisitor;
+    friend class GenSSAVisitor;
+    friend class CheckVisitor;
 
 public:
-	
-	BracketNode(ExprNode *base, ExprNode *expr);
 
-	AST* copyTree() const override;
-	std::vector<AST*> getChildren() const override;
+    BracketNode(ExprNode *base, ExprNode *expr);
 
-	const Type* getType() const override;
-	bool isLeftValue() const override;
-	
-	bool isCompileTimeExpr() const override;
-	boost::optional<int> getCompileTimeValue() const override;
+    AST* copyTree() const override;
+    std::vector<AST*> getChildren() const override;
 
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
+    const Type* getType() const override;
+    bool isLeftValue() const override;
+
+    bool isCompileTimeExpr() const override;
+    boost::optional<int> getCompileTimeValue() const override;
+
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
 
 private:
 
-	ExprNode *base, *expr;
+    ExprNode *base, *expr;
 
-	CallInfo call_info;
+    CallInfo call_info;
 };
 
 #endif

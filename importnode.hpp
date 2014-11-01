@@ -6,14 +6,14 @@
 class ImportNode : public AST
 {
 public:
-	ImportNode(std::string lib);
+    ImportNode(std::string lib);
 
     AST* copyTree() const override;
-	std::string toString() const override;
+    std::string toString() const override;
 
-	void accept(ASTVisitor& visitor) override;
+    void accept(ASTVisitor& visitor) override;
 
-	std::string lib;
+    std::string lib;
 };
 
 #endif

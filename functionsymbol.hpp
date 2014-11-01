@@ -19,41 +19,41 @@ public:
 
     FunctionSymbol(std::string name, const Type *return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits);
 
-	std::string getTypedName() const;
-	std::string getScopedTypedName() const;
-    
+    std::string getTypedName() const;
+    std::string getScopedTypedName() const;
+
     bool isOperator() const;
     bool isMethod() const;
     bool isConstructor() const;
 
-	std::string getName() const override;
-	SymbolType getSymbolType() const override;
-    
+    std::string getName() const override;
+    SymbolType getSymbolType() const override;
+
     FunctionTraits getTraits() const;
-    
+
     TypeKind getTypeKind() const override;
     size_t getSize() const override;
 
-	const Type *return_type;
-    FunctionTypeInfo function_type_info;	
-	
-	bool is_constexpr;
+    const Type *return_type;
+    FunctionTypeInfo function_type_info;
 
-	bool isConvertableTo(const Type *type) const override;
-	boost::optional<int> rankOfConversion(const Type *type) const override;
-	
-	FunctionSymbol* getConversionTo(const Type *type) const override;
+    bool is_constexpr;
 
-	const Symbol* getSymbol() const override;
+    bool isConvertableTo(const Type *type) const override;
+    boost::optional<int> rankOfConversion(const Type *type) const override;
 
-	ScopeVisitor& getScopeVisitor() override;
+    FunctionSymbol* getConversionTo(const Type *type) const override;
 
-	bool isUnsafeBlock() const override;
+    const Symbol* getSymbol() const override;
+
+    ScopeVisitor& getScopeVisitor() override;
+
+    bool isUnsafeBlock() const override;
 
 private:
 
-	std::string name;
-    
+    std::string name;
+
     FunctionTraits traits;
 };
 

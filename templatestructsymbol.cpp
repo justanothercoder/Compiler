@@ -5,26 +5,29 @@
 #include "variablenode.hpp"
 
 TemplateStructSymbol::TemplateStructSymbol(std::string name
-		                                 , Scope *enclosing_scope
-										 , std::vector< std::pair<std::string, TypeInfo> > template_symbols
-										 , AST *holder) : StructSymbol(name, enclosing_scope, (*new TemplateInfo()))
-														, template_symbols(template_symbols)
-														, holder(holder)
+        , Scope *enclosing_scope
+        , std::vector< std::pair<std::string, TypeInfo> > template_symbols
+        , AST *holder) : StructSymbol(name, enclosing_scope, (*new TemplateInfo()))
+    , template_symbols(template_symbols)
+    , holder(holder)
 {
 
 }
 
-SymbolType TemplateStructSymbol::getSymbolType() const 
+SymbolType TemplateStructSymbol::getSymbolType() const
 {
-   	return SymbolType::TEMPLATESTRUCT; 
+    return SymbolType::TEMPLATESTRUCT;
 }
 
-bool TemplateStructSymbol::isIn(std::string name) const 
-{ 
-	return std::find_if(std::begin(template_symbols),
-			std::end(template_symbols),
-			[&](std::pair<std::string, TypeInfo> p){ return name == p.first; }
-			) != std::end(template_symbols);
+bool TemplateStructSymbol::isIn(std::string name) const
+{
+    return std::find_if(std::begin(template_symbols),
+                        std::end(template_symbols),
+                        [&](std::pair<std::string, TypeInfo> p)
+    {
+        return name == p.first;
+    }
+                       ) != std::end(template_symbols);
 }
 /*
 Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols, Scope *inst_scope) const
@@ -40,7 +43,7 @@ Symbol* TemplateStructSymbol::getSpec(std::vector<TemplateParam> symbols, Scope 
 			else
 				ans += static_cast<int>(boost::get<int>(vec[i])) * pow;
 
-			pow *= P;		
+			pow *= P;
 		}
 
 		return ans;

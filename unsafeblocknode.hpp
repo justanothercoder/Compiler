@@ -7,19 +7,19 @@ class UnsafeBlockNode : public AST
 {
 public:
 
-	UnsafeBlockNode(StatementNode *block);
+    UnsafeBlockNode(StatementNode *block);
 
-	AST* copyTree() const override;
-    
-	void build_scope() override; 
+    AST* copyTree() const override;
 
-	std::vector<AST*> getChildren() const override;
-	
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
+    void build_scope() override;
 
-	StatementNode *block;
+    std::vector<AST*> getChildren() const override;
+
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
+
+    StatementNode *block;
 };
 
 #endif

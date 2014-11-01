@@ -6,10 +6,10 @@
 class UnsafeScope : public LocalScope
 {
 public:
-	
-	UnsafeScope(Scope *enclosing_scope);
 
-	bool isUnsafeBlock() const override;
+    UnsafeScope(Scope *enclosing_scope);
+
+    bool isUnsafeBlock() const override;
 };
 
 #endif

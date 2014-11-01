@@ -6,32 +6,35 @@
 #include "globaltable.hpp"
 #include "exprnode.hpp"
 
-VarInferTypeDeclarationNode::VarInferTypeDeclarationNode(std::string name, ExprNode *expr) : name(name), expr(expr), definedSymbol(nullptr)
+VarInferTypeDeclarationNode::VarInferTypeDeclarationNode(std::string name
+                                                       , ExprNode *expr) : name(name)
+                                                                         , expr(expr)
+                                                                         , definedSymbol(nullptr)
 {
 
 }
 
 Symbol* VarInferTypeDeclarationNode::getDefinedSymbol() const
 {
-	return definedSymbol;
+    return definedSymbol;
 }
 
 AST* VarInferTypeDeclarationNode::copyTree() const
 {
-	return new VarInferTypeDeclarationNode(name, static_cast<ExprNode*>(expr -> copyTree()));
+    return new VarInferTypeDeclarationNode(name, static_cast<ExprNode*>(expr -> copyTree()));
 }
 
 std::vector<AST*> VarInferTypeDeclarationNode::getChildren() const
 {
-	return {expr};
+    return {expr};
 }
-	
-std::string VarInferTypeDeclarationNode::toString() const 
+
+std::string VarInferTypeDeclarationNode::toString() const
 {
-	return "var " + name + " = " + expr -> toString() + ";";
+    return "var " + name + " = " + expr -> toString() + ";";
 }
 
 void VarInferTypeDeclarationNode::accept(ASTVisitor& visitor)
 {
-	visitor.visit(this);
+    visitor.visit(this);
 }

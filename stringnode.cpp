@@ -3,55 +3,55 @@
 #include "builtins.hpp"
 #include "globaltable.hpp"
 
-StringNode::StringNode(std::string str) : str(str) 
+StringNode::StringNode(std::string str) : str(str)
 {
 
 }
 
-AST* StringNode::copyTree() const 
+AST* StringNode::copyTree() const
 {
-   	return new StringNode(str); 
+    return new StringNode(str);
 }
-	
-std::string StringNode::getStr() const 
+
+std::string StringNode::getStr() const
 {
-   	return str; 
+    return str;
 }
 
 std::string StringNode::getNewLabel()
 {
-	static int label_num = 0;
-	return "@string_label" + std::to_string(++label_num);
+    static int label_num = 0;
+    return "@string_label" + std::to_string(++label_num);
 }
 
-const Type* StringNode::getType() const 
+const Type* StringNode::getType() const
 {
-	static const Type *type = BuiltIns::global_scope -> resolveType("string");
+    static const Type *type = BuiltIns::global_scope -> resolveType("string");
 
-	return TypeFactory::getConst(type);
+    return TypeFactory::getConst(type);
 }
 
-bool StringNode::isLeftValue() const 
+bool StringNode::isLeftValue() const
 {
-   	return false; 
+    return false;
 }
 
 bool StringNode::isCompileTimeExpr() const
 {
-	return false;
+    return false;
 }
 
 boost::optional<int> StringNode::getCompileTimeValue() const
 {
-	return boost::none;
+    return boost::none;
 }
-	
-std::string StringNode::toString() const 
+
+std::string StringNode::toString() const
 {
-	return '"' + str + '"'; 
+    return '"' + str + '"';
 }
 
 void StringNode::accept(ASTVisitor& visitor)
 {
-	visitor.visit(this);
+    visitor.visit(this);
 }

@@ -16,27 +16,27 @@ public:
     VariableDeclarationNode(std::string name, TypeInfo type_info, bool is_field = false, std::vector<ExprNode*> constructor_call_params = {});
 
     AST* copyTree() const override;
-    
-	void build_scope() override;
-    
+
+    void build_scope() override;
+
     Symbol* getDefinedSymbol() const override;
 
-	std::vector<AST*> getChildren() const override;
-	
-	std::string toString() const override;
+    std::vector<AST*> getChildren() const override;
 
-	void accept(ASTVisitor& visitor) override;
+    std::string toString() const override;
 
-	std::string name;
+    void accept(ASTVisitor& visitor) override;
+
+    std::string name;
     TypeInfo type_info;
 
     bool is_field;
 
     VariableSymbol *definedSymbol;
 
-	std::vector<ExprNode*> constructor_call_params;
+    std::vector<ExprNode*> constructor_call_params;
 
-	CallInfo call_info;
+    CallInfo call_info;
 };
 
 #endif

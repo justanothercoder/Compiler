@@ -4,39 +4,42 @@
 #include "exprnode.hpp"
 #include "callinfo.hpp"
 
-enum class UnaryOp { PLUS, MINUS, NOT };
+enum class UnaryOp
+{
+    PLUS, MINUS, NOT
+};
 
 class UnaryNode : public ExprNode
 {
 
-	friend class GenSSAVisitor;
-	friend class CheckVisitor;
+    friend class GenSSAVisitor;
+    friend class CheckVisitor;
 
 public:
-	
-	UnaryNode(ExprNode *exp, UnaryOp op_type);
 
-	std::vector<AST*> getChildren() const override;
-	AST* copyTree() const override;
+    UnaryNode(ExprNode *exp, UnaryOp op_type);
 
-	std::string getOperatorName();
-	std::string getCodeOperatorName();
-    
-	const Type* getType() const override;
-	bool isLeftValue() const override;
-	
-	bool isCompileTimeExpr() const override;
-	boost::optional<int> getCompileTimeValue() const override;
+    std::vector<AST*> getChildren() const override;
+    AST* copyTree() const override;
 
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
+    std::string getOperatorName();
+    std::string getCodeOperatorName();
+
+    const Type* getType() const override;
+    bool isLeftValue() const override;
+
+    bool isCompileTimeExpr() const override;
+    boost::optional<int> getCompileTimeValue() const override;
+
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
 
 private:
 
-	ExprNode *exp;
-	UnaryOp op_type;
-	CallInfo call_info;
+    ExprNode *exp;
+    UnaryOp op_type;
+    CallInfo call_info;
 };
 
 #endif

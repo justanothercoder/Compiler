@@ -4,39 +4,39 @@
 GlobalScope::GlobalScope() : BaseScope(), template_info(TemplateInfo())
 {
 
-} 
+}
 
-Scope* GlobalScope::getEnclosingScope() const 
+Scope* GlobalScope::getEnclosingScope() const
 {
-   	return nullptr; 
+    return nullptr;
 }
 
 std::string GlobalScope::getScopeName() const
 {
-   	return ""; 
+    return "";
 }
 
 void GlobalScope::accept(ScopeVisitor& visitor)
 {
-   	visitor.visit(this); 
+    visitor.visit(this);
 }
 
-VarAllocator& GlobalScope::getVarAlloc() const 
+VarAllocator& GlobalScope::getVarAlloc() const
 {
-   	return var_alloc; 
+    return var_alloc;
 }
 
 TempAllocator& GlobalScope::getTempAlloc() const
 {
-   	return temp_alloc; 
+    return temp_alloc;
 }
 
 const TemplateInfo& GlobalScope::getTemplateInfo() const
-{ 
-	return template_info;
+{
+    return template_info;
 }
 
 bool GlobalScope::isUnsafeBlock() const
 {
-	return false;
+    return false;
 }

@@ -4,13 +4,16 @@
 #include <stdexcept>
 #include "arg.hpp"
 
-enum class SSAOp { PLUS, MINUS, MUL, DIV, MOD, ELEM, DEREF, ADDR, ASSIGN, PARAM, CALL, LABEL, RETURN, IF, IFFALSE, GOTO, EQUALS, DOT };
+enum class SSAOp
+{
+    PLUS, MINUS, MUL, DIV, MOD, ELEM, DEREF, ADDR, ASSIGN, PARAM, CALL, LABEL, RETURN, IF, IFFALSE, GOTO, EQUALS, DOT
+};
 
 class Type;
 
 struct Command
 {
-	Command(SSAOp op, Arg arg1, Arg arg2 = Arg(IdType::NOID, -1));
+    Command(SSAOp op, Arg arg1, Arg arg2 = Arg(IdType::NOID, -1));
 
 //	std::string toString() const;
 
@@ -18,25 +21,25 @@ struct Command
 
     bool operator==(const Command& c) const;
 
-	SSAOp op;
-	Arg arg1;
-	Arg arg2;
+    SSAOp op;
+    Arg arg1;
+    Arg arg2;
 };
 
 namespace std
 {
-    template<>
-    struct hash<Command>
-    {
-        typedef Command argument_type;
-        typedef std::size_t result_type;
+template<>
+struct hash<Command>
+{
+    typedef Command argument_type;
+    typedef std::size_t result_type;
 
-        result_type operator() (const argument_type& s) const
-        {
-            hash<Arg> h;
-            return static_cast<int>(s.op) + (h(s.arg1) << 32) + h(s.arg2);
-        }        
-    };
+    result_type operator() (const argument_type& s) const
+    {
+        hash<Arg> h;
+        return static_cast<int>(s.op) + (h(s.arg1) << 32) + h(s.arg2);
+    }
+};
 }
 
 #endif

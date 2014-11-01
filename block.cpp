@@ -9,6 +9,9 @@
 #include "builtins.hpp"
 #include "globaltable.hpp"
 
+#include <sstream>
+#include "logger.hpp"
+
 Block::Block(Scope& scope, GlobalTable& table, std::string block_name) : scope(scope), block_name(block_name), table(table)
 {
 
@@ -101,7 +104,7 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
 
 //        code_obj.emit("mov " + addr + ", rax");
 //        code_obj.emit("lea rax, " + addr);
-        
+
         code_obj.emit("lea rax, [rbp - " + std::to_string(command_offsets.at(commands[arg.id])) + "]");
 
         return;
@@ -157,22 +160,22 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         auto base_sym = base_type -> getUnqualifiedType() -> getSymbol();
 
         auto member = table.var_by_id[command.arg2.id];
-/*
-        if ( base_type -> isReference() )
-            code_obj.emit("mov rax, [rax]");
-        code_obj.emit("lea rax, [rax - " + std::to_string(static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member)) + "]");
-*/
+        /*
+                if ( base_type -> isReference() )
+                    code_obj.emit("mov rax, [rax]");
+                code_obj.emit("lea rax, [rax - " + std::to_string(static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member)) + "]");
+        */
         int arg_addr;
         if ( command.arg1.type == IdType::VARIABLE )
         {
             if ( base_type -> isReference() )
             {
                 genArg(command.arg1, code_obj);
-        
+
                 auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
                 command_offsets[command] = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
                 scope.getTempAlloc().claim(GlobalConfig::int_size);
-    
+
                 code_obj.emit("mov rax, [rax - " + std::to_string(static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member)) + "]");
                 code_obj.emit("mov " + addr + ", rax");
 //                code_obj.emit("lea rax, [rax - " + std::to_string(static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member)) + "]");
@@ -180,11 +183,11 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
                 return;
             }
 
-            arg_addr = scope.getVarAlloc().getAddress(table.var_by_id[command.arg1.id]); 
+            arg_addr = scope.getVarAlloc().getAddress(table.var_by_id[command.arg1.id]);
         }
         else if ( command.arg1.type == IdType::TEMP )
         {
-            arg_addr = command_offsets[commands[command.arg1.id]]; 
+            arg_addr = command_offsets[commands[command.arg1.id]];
         }
         else
         {
@@ -229,7 +232,7 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         }
         else if ( conversion_info.desired_type -> isReference() )
         {
-            code_obj.emit("push rax");            
+            code_obj.emit("push rax");
         }
         else
         {
@@ -304,7 +307,8 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     }
     case SSAOp::ASSIGN:
     {
-        if ( command.arg1.expr_type == BuiltIns::int_type && command.arg2.expr_type == BuiltIns::int_type )
+        if ( command.arg1.expr_type -> getUnqualifiedType() == BuiltIns::int_type
+                && command.arg2.expr_type -> getUnqualifiedType() == BuiltIns::int_type )
         {
             genArg(command.arg2, code_obj);
             code_obj.emit("mov rbx, [rax]");
@@ -336,39 +340,65 @@ std::string Block::toString(Command command) const
 {
     switch ( command.op )
     {
-    case SSAOp::ASSIGN : return toString(command.arg1) + " = "  + toString(command.arg2);
-    case SSAOp::PLUS   : return toString(command.arg1) + " + "  + toString(command.arg2);
-    case SSAOp::MINUS  : return toString(command.arg1) + " - "  + toString(command.arg2);
-    case SSAOp::MUL    : return toString(command.arg1) + " * "  + toString(command.arg2);
-    case SSAOp::DIV    : return toString(command.arg1) + " / "  + toString(command.arg2);
-    case SSAOp::MOD    : return toString(command.arg1) + " % "  + toString(command.arg2);
-    case SSAOp::EQUALS : return toString(command.arg1) + " == " + toString(command.arg2);
-    case SSAOp::ELEM   : return toString(command.arg1) + "[" + toString(command.arg2) + "]";
-    case SSAOp::DOT    : return toString(command.arg1) + "." + toString(command.arg2);
-    case SSAOp::DEREF  : return "*" + toString(command.arg1);
-    case SSAOp::ADDR   : return "&" + toString(command.arg1);
-    case SSAOp::PARAM  : return "param " + toString(command.arg1);
-    case SSAOp::CALL   : return "call " + toString(command.arg1) + ' ' + std::to_string(command.arg2.id);
-    case SSAOp::LABEL  : return toString(command.arg1);
-    case SSAOp::RETURN : return "return " + toString(command.arg1);
-    case SSAOp::IF     : return "if " + toString(command.arg1) + " goto " + toString(command.arg2);
-    case SSAOp::IFFALSE: return "ifFalse " + toString(command.arg1) + " goto " + toString(command.arg2);
-    case SSAOp::GOTO   : return "goto " + toString(command.arg1); 
-    default: throw std::logic_error("not all SSAOp catched in toString");
+    case SSAOp::ASSIGN :
+        return toString(command.arg1) + " = "  + toString(command.arg2);
+    case SSAOp::PLUS   :
+        return toString(command.arg1) + " + "  + toString(command.arg2);
+    case SSAOp::MINUS  :
+        return toString(command.arg1) + " - "  + toString(command.arg2);
+    case SSAOp::MUL    :
+        return toString(command.arg1) + " * "  + toString(command.arg2);
+    case SSAOp::DIV    :
+        return toString(command.arg1) + " / "  + toString(command.arg2);
+    case SSAOp::MOD    :
+        return toString(command.arg1) + " % "  + toString(command.arg2);
+    case SSAOp::EQUALS :
+        return toString(command.arg1) + " == " + toString(command.arg2);
+    case SSAOp::ELEM   :
+        return toString(command.arg1) + "[" + toString(command.arg2) + "]";
+    case SSAOp::DOT    :
+        return toString(command.arg1) + "." + toString(command.arg2);
+    case SSAOp::DEREF  :
+        return "*" + toString(command.arg1);
+    case SSAOp::ADDR   :
+        return "&" + toString(command.arg1);
+    case SSAOp::PARAM  :
+        return "param " + toString(command.arg1);
+    case SSAOp::CALL   :
+        return "call " + toString(command.arg1) + ' ' + std::to_string(command.arg2.id);
+    case SSAOp::LABEL  :
+        return toString(command.arg1);
+    case SSAOp::RETURN :
+        return "return " + toString(command.arg1);
+    case SSAOp::IF     :
+        return "if " + toString(command.arg1) + " goto " + toString(command.arg2);
+    case SSAOp::IFFALSE:
+        return "ifFalse " + toString(command.arg1) + " goto " + toString(command.arg2);
+    case SSAOp::GOTO   :
+        return "goto " + toString(command.arg1);
+    default:
+        throw std::logic_error("not all SSAOp catched in toString");
     }
 }
-    
+
 std::string Block::toString(Arg arg) const
 {
     switch ( arg.type )
     {
-    case IdType::NOID     : return "noid";
-    case IdType::STRING   : return '"' + table.string_by_id[arg.id] + '"';
-    case IdType::NUMBER   : return std::to_string(table.id_to_num[arg.id]);
-    case IdType::TEMP     : return "temp_" + std::to_string(arg.id);
-    case IdType::LABEL    : return table.label_name[arg.id] + ":";
-    case IdType::PROCEDURE: return table.func_by_id[arg.id] -> getScopedTypedName();
-    case IdType::VARIABLE : return table.var_by_id[arg.id] -> getName();
+    case IdType::NOID     :
+        return "noid";
+    case IdType::STRING   :
+        return '"' + table.string_by_id[arg.id] + '"';
+    case IdType::NUMBER   :
+        return std::to_string(table.id_to_num[arg.id]);
+    case IdType::TEMP     :
+        return "temp_" + std::to_string(arg.id);
+    case IdType::LABEL    :
+        return table.label_name[arg.id] + ":";
+    case IdType::PROCEDURE:
+        return table.func_by_id[arg.id] -> getScopedTypedName();
+    case IdType::VARIABLE :
+        return table.var_by_id[arg.id] -> getName();
     }
 }
 

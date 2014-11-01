@@ -6,24 +6,24 @@
 class TempAllocator
 {
 public:
-	
-	TempAllocator();
 
-	void add(int space);
+    TempAllocator();
 
-	void claim(int space);
-	void free();
+    void add(int space);
 
-	int getOffset() const;
+    void claim(int space);
+    void free();
 
-	int getSpaceNeeded() const;
-		
+    int getOffset() const;
+
+    int getSpaceNeeded() const;
+
 private:
 
-	int space_needed;
-	int space_used;
+    int space_needed;
+    int space_used;
 
-	std::stack<int> stack;
+    std::stack<int> stack;
 };
 
 #endif

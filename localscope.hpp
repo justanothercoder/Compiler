@@ -12,13 +12,13 @@ public:
     void accept(ScopeVisitor& visitor) override;
 
     Scope* getEnclosingScope() const override;
-	std::string getScopeName() const override;
+    std::string getScopeName() const override;
 
-	VarAllocator& getVarAlloc() const override;
-	TempAllocator& getTempAlloc() const override;
+    VarAllocator& getVarAlloc() const override;
+    TempAllocator& getTempAlloc() const override;
 
-	const TemplateInfo& getTemplateInfo() const override;
-	bool isUnsafeBlock() const override;
+    const TemplateInfo& getTemplateInfo() const override;
+    bool isUnsafeBlock() const override;
 
 private:
 

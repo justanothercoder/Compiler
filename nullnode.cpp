@@ -4,42 +4,42 @@
 #include "builtins.hpp"
 #include "globaltable.hpp"
 
-NullNode::NullNode() 
+NullNode::NullNode()
 {
 
 }
-	
-AST* NullNode::copyTree() const 
+
+AST* NullNode::copyTree() const
 {
-	return new NullNode();
+    return new NullNode();
 }
-	
-std::string NullNode::toString() const 
+
+std::string NullNode::toString() const
 {
-	return "null";
+    return "null";
 }
-    
-const Type* NullNode::getType() const 
+
+const Type* NullNode::getType() const
 {
-	return TypeFactory::getPointer(BuiltIns::void_type);
+    return TypeFactory::getPointer(BuiltIns::void_type);
 }
 
 bool NullNode::isLeftValue() const
 {
-	return false;
+    return false;
 }
 
-bool NullNode::isCompileTimeExpr() const 
+bool NullNode::isCompileTimeExpr() const
 {
-	return false;
+    return false;
 }
 
-boost::optional<int> NullNode::getCompileTimeValue() const 
+boost::optional<int> NullNode::getCompileTimeValue() const
 {
-	return boost::none;
+    return boost::none;
 }
 
 void NullNode::accept(ASTVisitor& visitor)
 {
-	visitor.visit(this);
+    visitor.visit(this);
 }

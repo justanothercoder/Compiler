@@ -7,39 +7,39 @@
 #include "typefactory.hpp"
 #include "structdeclarationnode.hpp"
 
-Scope::~Scope() 
+Scope::~Scope()
 {
 
 }
 
 bool Scope::isUnsafeBlock() const
 {
-	return false;
+    return false;
 }
 
 void Scope::define(Symbol *sym)
 {
-	accept(sym -> getScopeVisitor());
+    accept(sym -> getScopeVisitor());
 }
 
 const Type* Scope::resolveType(std::string name)
 {
-	auto scope = this;
+    auto scope = this;
 
-	Symbol *sym = nullptr;
+    Symbol *sym = nullptr;
 
-	while ( true )
-	{
-		while ( scope != nullptr && scope -> resolve(name) == sym )
-			scope = scope -> getEnclosingScope();
+    while ( true )
+    {
+        while ( scope != nullptr && scope -> resolve(name) == sym )
+            scope = scope -> getEnclosingScope();
 
-		if ( scope == nullptr ) 
-			return nullptr;
+        if ( scope == nullptr )
+            return nullptr;
 
-		sym = scope -> resolve(name);
+        sym = scope -> resolve(name);
 
-		if ( dynamic_cast<Type*>(sym) != nullptr )
-			return dynamic_cast<Type*>(sym);
-	}
+        if ( dynamic_cast<Type*>(sym) != nullptr )
+            return dynamic_cast<Type*>(sym);
+    }
 }
 

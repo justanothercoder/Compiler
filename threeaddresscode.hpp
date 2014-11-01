@@ -58,12 +58,12 @@ class ThreeAddressCode
 
 public:
 
-	Arg add(Command command);
-	Arg newLabel(std::string label = "");
+    Arg add(Command command);
+    Arg newLabel(std::string label = "");
 
-	std::string toString();
+    std::string toString();
 
-	void genAsm(CodeObject& code_obj) const;
+    void genAsm(CodeObject& code_obj) const;
 
     void newBlock(Scope& scope, std::string block_name = "");
     void popBlock();

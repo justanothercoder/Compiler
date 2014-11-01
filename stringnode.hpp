@@ -7,24 +7,24 @@ class StringNode : public ExprNode
 {
 public:
 
-	StringNode(std::string str);
+    StringNode(std::string str);
 
-	AST* copyTree() const override;
+    AST* copyTree() const override;
 
-	std::string getStr() const;
-	static std::string getNewLabel();
+    std::string getStr() const;
+    static std::string getNewLabel();
 
-	const Type* getType() const override;
-	bool isLeftValue() const override;
-	
-	bool isCompileTimeExpr() const override;
-	boost::optional<int> getCompileTimeValue() const override;
+    const Type* getType() const override;
+    bool isLeftValue() const override;
 
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
+    bool isCompileTimeExpr() const override;
+    boost::optional<int> getCompileTimeValue() const override;
 
-	std::string str;
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
+
+    std::string str;
 };
 
 #endif

@@ -5,7 +5,10 @@
 
 class Type;
 
-enum class VariableSymbolType { SIMPLE, PARAM, FIELD };
+enum class VariableSymbolType
+{
+    SIMPLE, PARAM, FIELD
+};
 
 class VariableSymbol : public Symbol
 {
@@ -24,11 +27,11 @@ public:
 
     SymbolType getSymbolType() const override;
 
-	ScopeVisitor& getScopeVisitor() override;
-	
+    ScopeVisitor& getScopeVisitor() override;
+
 private:
 
-	std::string name;
+    std::string name;
     const Type *type;
 
     VariableSymbolType sym_type;

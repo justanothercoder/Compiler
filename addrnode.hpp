@@ -3,36 +3,39 @@
 
 #include "exprnode.hpp"
 
-enum class AddrOp { REF, DEREF };
+enum class AddrOp
+{
+    REF, DEREF
+};
 
 class AddrNode : public ExprNode
 {
 
-	friend class GenSSAVisitor;
-	friend class CheckVisitor;
+    friend class GenSSAVisitor;
+    friend class CheckVisitor;
 
 public:
 
-	AddrNode(ExprNode* expr, AddrOp op);
-    
-	AST* copyTree() const;
+    AddrNode(ExprNode* expr, AddrOp op);
+
+    AST* copyTree() const;
 
     const Type* getType() const override;
-	bool isLeftValue() const override;
+    bool isLeftValue() const override;
 
-	bool isCompileTimeExpr() const override;
-	boost::optional<int> getCompileTimeValue() const override;
-	
-	std::vector<AST*> getChildren() const override;
+    bool isCompileTimeExpr() const override;
+    boost::optional<int> getCompileTimeValue() const override;
 
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
+    std::vector<AST*> getChildren() const override;
+
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
 
 private:
 
-	ExprNode *expr;
-	AddrOp op;
+    ExprNode *expr;
+    AddrOp op;
 };
 
 #endif

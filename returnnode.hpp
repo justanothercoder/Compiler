@@ -15,17 +15,17 @@ public:
 
     AST* copyTree() const override;
 
-	std::vector<AST*> getChildren() const override;
+    std::vector<AST*> getChildren() const override;
 
-	std::string toString() const override;
+    std::string toString() const override;
 
-	void accept(ASTVisitor& visitor) override;
+    void accept(ASTVisitor& visitor) override;
 
     ExprNode *expr;
 
-	CallInfo copy_call_info;
+    CallInfo copy_call_info;
 
-	FunctionSymbol *enclosing_func;
+    FunctionSymbol *enclosing_func;
 };
 
 #endif

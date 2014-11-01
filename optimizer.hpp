@@ -6,7 +6,7 @@
 class Optimizer
 {
 public:
-    
+
     Optimizer(ThreeAddressCode& code);
 
     void optimize();

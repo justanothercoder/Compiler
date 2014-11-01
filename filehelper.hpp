@@ -10,12 +10,12 @@ class AST;
 class FileHelper
 {
 public:
-	
-	static AST* parse(std::string filename);
+
+    static AST* parse(std::string filename);
 
 private:
 
-	static std::string extractContents(std::string filename);
+    static std::string extractContents(std::string filename);
 };
 
 #endif

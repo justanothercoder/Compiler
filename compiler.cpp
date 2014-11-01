@@ -5,63 +5,63 @@
 #include "exprnode.hpp"
 #include "templateinfo.hpp"
 #include "templatestructsymbol.hpp"
-	
+
 
 const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
 {
-	return fromTypeInfo(type_info, scope -> getTemplateInfo(), scope);
+    return fromTypeInfo(type_info, scope -> getTemplateInfo(), scope);
 }
 
 const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, const TemplateInfo& template_info, Scope *scope)
 {
-	auto type_name = type_info.type_name;
+    auto type_name = type_info.type_name;
 
-	if ( template_info.sym && template_info.sym -> isIn(type_name) )
-		type_name = boost::get<std::string>(*template_info.getReplacement(type_name));
+    if ( template_info.sym && template_info.sym -> isIn(type_name) )
+        type_name = boost::get<std::string>(*template_info.getReplacement(type_name));
 
-	const Type *type = scope -> resolveType(type_name);
+    const Type *type = scope -> resolveType(type_name);
 
-	if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )
-		throw SemanticError("Using pointer type in safe block " + scope -> getScopeName() + ".");
-	
-	if ( type == nullptr )
-		throw SemanticError(type_name + " is not a type");
-/*
-	if ( dynamic_cast<const TemplateStructSymbol*>(type) )
-	{
-		auto tmpl = dynamic_cast<const TemplateStructSymbol*>(type);
-		
-		if ( type_info.template_params.size() != tmpl -> template_symbols.size() )
-			throw SemanticError("Wrong number of template parameters");
+    if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )
+        throw SemanticError("Using pointer type in safe block " + scope -> getScopeName() + ".");
 
-		auto getTemplateParam = [] ( TemplateParamInfo tp_info )
-		{
-			if ( tp_info.which() == 1 )
-				return TemplateParam(boost::get<TypeInfo>(tp_info));
-			else
-				return TemplateParam(*boost::get<ExprNode*>(tp_info) -> getCompileTimeValue());
-		};
+    if ( type == nullptr )
+        throw SemanticError(type_name + " is not a type");
+    /*
+    	if ( dynamic_cast<const TemplateStructSymbol*>(type) )
+    	{
+    		auto tmpl = dynamic_cast<const TemplateStructSymbol*>(type);
 
-		std::vector<TemplateParam> tmpl_params(type_info.template_params.size());
-		std::transform(std::begin(type_info.template_params), std::end(type_info.template_params), std::begin(tmpl_params), getTemplateParam);
+    		if ( type_info.template_params.size() != tmpl -> template_symbols.size() )
+    			throw SemanticError("Wrong number of template parameters");
 
-		auto sym = getSpec(tmpl, tmpl_params, scope);
-		type = dynamic_cast<const Type*>(sym);
-	}
-*/
-	if ( type_info.is_ref )
-		type = TypeFactory::getReference(type);
+    		auto getTemplateParam = [] ( TemplateParamInfo tp_info )
+    		{
+    			if ( tp_info.which() == 1 )
+    				return TemplateParam(boost::get<TypeInfo>(tp_info));
+    			else
+    				return TemplateParam(*boost::get<ExprNode*>(tp_info) -> getCompileTimeValue());
+    		};
 
-	if ( type_info.is_const )
-		type = TypeFactory::getConst(type);
+    		std::vector<TemplateParam> tmpl_params(type_info.template_params.size());
+    		std::transform(std::begin(type_info.template_params), std::end(type_info.template_params), std::begin(tmpl_params), getTemplateParam);
 
-	for ( int i = 0; i < type_info.pointer_depth; ++i )
-		type = TypeFactory::getPointer(type);
-	
-	return type;
+    		auto sym = getSpec(tmpl, tmpl_params, scope);
+    		type = dynamic_cast<const Type*>(sym);
+    	}
+    */
+    if ( type_info.is_ref )
+        type = TypeFactory::getReference(type);
+
+    if ( type_info.is_const )
+        type = TypeFactory::getConst(type);
+
+    for ( int i = 0; i < type_info.pointer_depth; ++i )
+        type = TypeFactory::getPointer(type);
+
+    return type;
 
 }
-/* 
+/*
 DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vector<TemplateParam> template_params, Scope *scope)
 {
 	auto hash_func = [](std::vector<TemplateParam> vec)
@@ -75,7 +75,7 @@ DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vec
 			else
 				ans += static_cast<int>(boost::get<int>(vec[i])) * pow;
 
-			pow *= P;		
+			pow *= P;
 		}
 
 		return ans;

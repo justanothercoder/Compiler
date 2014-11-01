@@ -11,9 +11,9 @@ class Lexer : public AbstractLexer
 public:
 
     Lexer(std::string input);
-    
+
     Token getToken() override;
-    
+
 };
 
 #endif

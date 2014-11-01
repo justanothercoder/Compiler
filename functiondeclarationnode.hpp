@@ -17,11 +17,11 @@ class FunctionDeclarationNode : public DeclarationNode
 public:
 
     FunctionDeclarationNode(std::string name
-			              , std::vector< pair<std::string, TypeInfo> > params
-						  , TypeInfo return_type_info
-						  , AST *statements
-						  , FunctionTraits traits
-						  , bool is_unsafe = false);
+                            , std::vector< pair<std::string, TypeInfo> > params
+                            , TypeInfo return_type_info
+                            , AST *statements
+                            , FunctionTraits traits
+                            , bool is_unsafe = false);
 
     AST* copyTree() const override;
 
@@ -29,14 +29,14 @@ public:
 
     Symbol* getDefinedSymbol() const override;
 
-	std::vector<AST*> getChildren() const override;
+    std::vector<AST*> getChildren() const override;
 
-	std::string toString() const override;
-	
-	void accept(ASTVisitor& visitor) override;
-    
-	std::string name;
-	std::vector< pair<std::string, TypeInfo> > params;
+    std::string toString() const override;
+
+    void accept(ASTVisitor& visitor) override;
+
+    std::string name;
+    std::vector< pair<std::string, TypeInfo> > params;
     TypeInfo return_type_info;
     AST *statements;
 
@@ -44,9 +44,9 @@ public:
 
     FunctionSymbol *definedSymbol;
 
-	std::vector<VariableSymbol*> params_symbols;
+    std::vector<VariableSymbol*> params_symbols;
 
-	bool is_unsafe;
+    bool is_unsafe;
 };
 
 #endif
