@@ -349,7 +349,7 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         return code_obj;
 */       
     }    
-    case SSAOp::PLUS:
+    case SSAOp::PLUS: case SSAOp::NEQUALS:
     {
         auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
         scope.getTempAlloc().claim(GlobalConfig::int_size);
@@ -359,7 +359,19 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
 
         genArg(command.arg1, code_obj);
         code_obj.emit("pop rbx");
-        code_obj.emit("add rbx, [rax]"); //need to add switch for other binary operations
+        switch ( command.op )
+        {
+            case SSAOp::PLUS   : code_obj.emit("add rbx, [rax]"); break;
+            case SSAOp::MINUS  : code_obj.emit("sub rbx, [rax]"); break;
+            case SSAOp::MUL    : code_obj.emit("imul rbx, [rax]"); break;
+            case SSAOp::DIV    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx, [rax]"); break;
+            case SSAOp::MOD    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx, [rax]"); code_obj.emit("mov rbx, rdx"); break;
+            case SSAOp::EQUALS : code_obj.emit("cmp rbx, [rax]"); code_obj.emit("sete rbx"); break;
+            case SSAOp::NEQUALS: code_obj.emit("cmp rbx, [rax]"); code_obj.emit("setne rbx"); break;
+            default:
+                   throw std::logic_error("internal error.");
+        }
+                                
         code_obj.emit("lea rax, " + addr);
         code_obj.emit("mov [rax], rbx");
         return;

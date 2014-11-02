@@ -1,7 +1,25 @@
 #include "command.hpp"
 
+Command::Command(SSAOp op, Arg arg) : op(op), arg1(arg), arg2(IdType::NOID, -1)
+{
+    if (!(op == SSAOp::DEREF 
+       || op == SSAOp::ADDR 
+       || op == SSAOp::GOTO
+       || op == SSAOp::LABEL
+       || op == SSAOp::RETURN
+       || op == SSAOp::NEW ))
+        throw std::logic_error("Internal error.");
+}
+
 Command::Command(SSAOp op, Arg arg1, Arg arg2) : op(op), arg1(arg1), arg2(arg2)
 {
+    if (op == SSAOp::DEREF 
+     || op == SSAOp::ADDR 
+     || op == SSAOp::GOTO
+     || op == SSAOp::LABEL
+     || op == SSAOp::RETURN
+     || op == SSAOp::NEW )
+        throw std::logic_error("Internal error.");
 
 }
 

@@ -40,7 +40,7 @@ std::vector<AST*> NewExpressionNode::getChildren() const
 
 const Type* NewExpressionNode::getType() const
 {
-    return call_info.callee -> return_type;
+    return call_info.callee -> return_type -> getUnqualifiedType();
 }
 
 bool NewExpressionNode::isLeftValue() const

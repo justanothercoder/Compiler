@@ -3,6 +3,8 @@
 #include "builtins.hpp"
 #include "functionsymbol.hpp"
 #include "globaltable.hpp"
+#include "typefactory.hpp"
+#include "pointertype.hpp"
 
 #include "logger.hpp"
 
@@ -24,24 +26,20 @@ Arg ThreeAddressCode::add(Command command)
 {
     Block& current_block = blocks[blockStack.top()];
 
-    Logger::log("Debug: " + current_block.toString(command));
-
     const Type *command_type;
 
     switch ( command.op )
     {
     case SSAOp::ASSIGN: case SSAOp::PARAM: case SSAOp::LABEL: case SSAOp::RETURN:
     case SSAOp::IF: case SSAOp::IFFALSE: case SSAOp::GOTO:
-        command_type = nullptr;
-        break;
+        return Arg(IdType::NOID, -1);
     case SSAOp::PLUS: case SSAOp::MINUS: case SSAOp::MUL:
     case SSAOp::DIV: case SSAOp::MOD: case SSAOp::EQUALS:
-    case SSAOp::NEQUALS:
+    case SSAOp::NEQUALS: case SSAOp::ELEM:
         command_type = BuiltIns::int_type;
         break;
-    case SSAOp::ELEM : command_type = nullptr; break;
-    case SSAOp::DEREF: command_type = nullptr; break;
-    case SSAOp::ADDR : command_type = nullptr; break;
+    case SSAOp::DEREF: command_type = static_cast<const PointerType*>(command.arg1.expr_type); break;
+    case SSAOp::ADDR : command_type = TypeFactory::getPointer(command.arg1.expr_type); break;
     case SSAOp::DOT  : command_type = globaltable.var_by_id[command.arg2.id] -> getType(); break;
     case SSAOp::CALL : command_type = globaltable.func_by_id[command.arg1.id] -> return_type; break;
     case SSAOp::NEW  : command_type = globaltable.type_by_id[command.arg1.id]; break;

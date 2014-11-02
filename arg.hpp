@@ -12,7 +12,8 @@ enum class IdType
 
 struct Arg
 {
-    Arg(IdType type, int id, const Type *expr_type = nullptr);
+    Arg(IdType type, int id);
+    Arg(IdType type, int id, const Type *expr_type);
 
 //	std::string toString() const;
 

@@ -34,6 +34,9 @@ GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("char")) -> resolve("char")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("int")) -> resolve("int")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
 
     code.newBlock(*BuiltIns::global_scope);
 }
@@ -265,10 +268,10 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
 
 void GenSSAVisitor::visit(StructDeclarationNode *node)
 {
-    code.newBlock(*node -> definedSymbol);
+//    code.newBlock(*node -> definedSymbol);
     for ( auto decl : node -> inner )
         decl -> accept(*this);
-    code.popBlock();
+//    code.popBlock();
 }
 
 void GenSSAVisitor::visit(FunctionDeclarationNode *node)
