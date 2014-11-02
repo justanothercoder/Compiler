@@ -10,6 +10,7 @@
 
 class AST;
 class StructSymbol;
+class StructDeclarationNode;
 
 class TemplateStructSymbol : public StructSymbol, public TemplateSymbol
 {
@@ -25,7 +26,7 @@ public:
 
 public:
 
-    mutable std::map< long long, StructSymbol*> specs;
+    mutable std::map< long long, StructDeclarationNode*> specs;
 
     std::vector< std::pair<std::string, TypeInfo> > template_symbols;
     AST *holder;

@@ -50,8 +50,9 @@ void CheckVisitor::visit(WhileNode *node)
 void CheckVisitor::visit(BracketNode *node)
 {
     node -> base -> accept(*this);
+    node -> expr -> accept(*this);
 
-    auto base_type = dynamic_cast<const StructSymbol*>(node -> base -> getType() -> getSymbol());
+    auto base_type = dynamic_cast<const StructSymbol*>(node -> base -> getType() -> getSymbol());    
 
     node -> call_info = CallHelper::callCheck("operator[]", base_type, {node -> expr});
 

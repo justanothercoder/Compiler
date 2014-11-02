@@ -26,29 +26,29 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, const TemplateInfo
 
     if ( type == nullptr )
         throw SemanticError(type_name + " is not a type");
-    /*
-    	if ( dynamic_cast<const TemplateStructSymbol*>(type) )
-    	{
-    		auto tmpl = dynamic_cast<const TemplateStructSymbol*>(type);
+    
+    if ( dynamic_cast<const TemplateStructSymbol*>(type) )
+    {
+        auto tmpl = dynamic_cast<const TemplateStructSymbol*>(type);
 
-    		if ( type_info.template_params.size() != tmpl -> template_symbols.size() )
-    			throw SemanticError("Wrong number of template parameters");
+        if ( type_info.template_params.size() != tmpl -> template_symbols.size() )
+            throw SemanticError("Wrong number of template parameters");
 
-    		auto getTemplateParam = [] ( TemplateParamInfo tp_info )
-    		{
-    			if ( tp_info.which() == 1 )
-    				return TemplateParam(boost::get<TypeInfo>(tp_info));
-    			else
-    				return TemplateParam(*boost::get<ExprNode*>(tp_info) -> getCompileTimeValue());
-    		};
+        auto getTemplateParam = [] ( TemplateParamInfo tp_info )
+        {
+            if ( tp_info.which() == 1 )
+                return TemplateParam(boost::get<TypeInfo>(tp_info));
+            else
+                return TemplateParam(*boost::get<ExprNode*>(tp_info) -> getCompileTimeValue());
+        };
 
-    		std::vector<TemplateParam> tmpl_params(type_info.template_params.size());
-    		std::transform(std::begin(type_info.template_params), std::end(type_info.template_params), std::begin(tmpl_params), getTemplateParam);
+        std::vector<TemplateParam> tmpl_params(type_info.template_params.size());
+        std::transform(std::begin(type_info.template_params), std::end(type_info.template_params), std::begin(tmpl_params), getTemplateParam);
 
-    		auto sym = getSpec(tmpl, tmpl_params, scope);
-    		type = dynamic_cast<const Type*>(sym);
-    	}
-    */
+        auto sym = getSpec(tmpl, tmpl_params, scope);
+        type = dynamic_cast<const Type*>(sym);
+    }
+    
     if ( type_info.is_ref )
         type = TypeFactory::getReference(type);
 
@@ -61,7 +61,7 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, const TemplateInfo
     return type;
 
 }
-/*
+
 DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vector<TemplateParam> template_params, Scope *scope)
 {
 	auto hash_func = [](std::vector<TemplateParam> vec)
@@ -83,9 +83,9 @@ DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vec
 
 	auto hash_ = hash_func(template_params);
 
-//	auto it = sym -> specs.find(hash_);
-//	if ( it != std::end(sym -> specs) )
-//		return it -> second;
+	auto it = sym -> specs.find(hash_);
+	if ( it != std::end(sym -> specs) )
+		return it -> second;
 
 	auto children = sym -> holder -> getChildren();
 
@@ -94,10 +94,13 @@ DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vec
 	for ( auto t : children )
 		vec.push_back(t -> copyTree());
 
-	StructDeclarationNode *decl = new StructDeclarationNode(sym -> getName() + "~hash" + std::to_string(hash_), vec, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(sym), tmpl_params)));
+	auto decl = new StructDeclarationNode(sym -> getName() + "~hash" + std::to_string(hash_), vec, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(sym), template_params)));
 
 //	decl -> scope = new StructSymbol(getName(), holder -> scope, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)));
 	decl -> scope = scope;
+
+    return (sym -> specs[hash_] = decl);
+
 //	decl -> definedSymbol = new StructSymbol(getName(), inst_scope, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)));
 
 //	decl -> build_scope();
@@ -106,11 +109,11 @@ DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vec
 //	decl -> check();
 //	decl -> gen().gen();
 
-    return decl;
+//    return decl;
 }
 
 const Symbol* Compiler::getSpec(const TemplateStructSymbol *sym, std::vector<TemplateParam> tmpl_params, Scope *scope)
 {
     return getSpecDecl(sym, tmpl_params, scope) -> getDefinedSymbol();
 }
-*/
+

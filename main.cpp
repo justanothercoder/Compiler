@@ -12,6 +12,7 @@
 #include "definevisitor.hpp"
 #include "checkvisitor.hpp"
 #include "genssavisitor.hpp"
+#include "collecttemplatesvisitor.hpp"
 
 using std::shared_ptr;
 
@@ -28,9 +29,18 @@ int main()
         root -> scope = BuiltIns::global_scope;
 
         root -> build_scope();
-
+       
         DefineVisitor define_visitor;
         root -> accept(define_visitor);
+
+        CollectTemplatesVisitor collect_visitor;
+        root -> accept(collect_visitor);
+
+        for ( auto sym : collect_visitor.getTemplateSymbols() )
+        {
+            for ( auto spec : sym -> specs )
+                spec.second -> accept(define_visitor); 
+        }           
 
         CheckVisitor check_visitor;
         root -> accept(check_visitor);
@@ -42,7 +52,7 @@ int main()
 //		std::cerr << "code:\n" << visitor.getString() << '\n';
 
         visitor.optimize();
-//		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
+		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
 
 //        std::cerr << "\nasm code:\n";
 

@@ -11,6 +11,8 @@ public:
     TemplateStructDeclarationNode(std::string name, std::vector<AST*> inner, std::vector< std::pair<std::string, TypeInfo> > template_params);
 
     void build_scope() override;
+    
+    std::set<DeclarationNode*> instances;
 
 private:
 

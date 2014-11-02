@@ -71,8 +71,8 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
 {
     const auto& template_info = node -> scope -> getTemplateInfo();
 
-    if ( template_info.sym != nullptr && node -> return_type_info.type_name == template_info.sym -> getName() )
-        node -> return_type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
+//    if ( template_info.sym != nullptr && node -> return_type_info.type_name == template_info.sym -> getName() )
+//        node -> return_type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
 
     auto fromTypeInfo = [&] (TypeInfo type_info) -> const Type*
     {
@@ -215,6 +215,9 @@ void DefineVisitor::visit(AsmArrayNode *node)
     node -> array_elem_operator -> is_unsafe = true;
     node -> array_size_func     -> is_unsafe = true;
 
+    node -> array_elem_operator -> define(new VariableSymbol("this", TypeFactory::getPointer(arr), VariableSymbolType::PARAM));
+    node -> array_elem_operator -> define(new VariableSymbol("__i", BuiltIns::int_type, VariableSymbolType::PARAM));
+
     node -> scope -> define(node -> array_constructor);
     node -> scope -> define(node -> array_elem_operator);
     node -> scope -> define(node -> array_size_func);
@@ -239,7 +242,7 @@ void DefineVisitor::visit(VarInferTypeDeclarationNode *node)
 
 void DefineVisitor::visit(TemplateStructDeclarationNode *node)
 {
-    node -> scope -> define(node -> definedSymbol);
+//    node -> scope -> define(node -> definedSymbol);
 }
 
 void DefineVisitor::visit(BracketNode *) { }
