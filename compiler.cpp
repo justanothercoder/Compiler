@@ -16,9 +16,6 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, const TemplateInfo
 {
     auto type_name = type_info.type_name;
 
-    if ( template_info.sym && template_info.sym -> isIn(type_name) )
-        type_name = boost::get<std::string>(*template_info.getReplacement(type_name));
-
     const Type *type = scope -> resolveType(type_name);
 
     if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )
@@ -27,36 +24,14 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, const TemplateInfo
     if ( type == nullptr )
         throw SemanticError(type_name + " is not a type");
     
-    if ( dynamic_cast<const TemplateStructSymbol*>(type) )
-    {
-        auto tmpl = dynamic_cast<const TemplateStructSymbol*>(type);
-
-        if ( type_info.template_params.size() != tmpl -> template_symbols.size() )
-            throw SemanticError("Wrong number of template parameters");
-
-        auto getTemplateParam = [] ( TemplateParamInfo tp_info )
-        {
-            if ( tp_info.which() == 1 )
-                return TemplateParam(boost::get<TypeInfo>(tp_info));
-            else
-                return TemplateParam(*boost::get<ExprNode*>(tp_info) -> getCompileTimeValue());
-        };
-
-        std::vector<TemplateParam> tmpl_params(type_info.template_params.size());
-        std::transform(std::begin(type_info.template_params), std::end(type_info.template_params), std::begin(tmpl_params), getTemplateParam);
-
-        auto sym = getSpec(tmpl, tmpl_params, scope);
-        type = dynamic_cast<const Type*>(sym);
-    }
+    for ( int i = 0; i < type_info.pointer_depth; ++i )
+        type = TypeFactory::getPointer(type);
     
     if ( type_info.is_ref )
         type = TypeFactory::getReference(type);
 
     if ( type_info.is_const )
         type = TypeFactory::getConst(type);
-
-    for ( int i = 0; i < type_info.pointer_depth; ++i )
-        type = TypeFactory::getPointer(type);
 
     return type;
 
@@ -94,22 +69,18 @@ DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vec
 	for ( auto t : children )
 		vec.push_back(t -> copyTree());
 
-	auto decl = new StructDeclarationNode(sym -> getName() + "~hash" + std::to_string(hash_), vec, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(sym), template_params)));
+    auto decl = new StructDeclarationNode(sym -> getName() + "~hash" + std::to_string(hash_), 
+                                          vec, 
+                                          *(new TemplateInfo(const_cast<TemplateStructSymbol*>(sym), 
+                                                             template_params)
+                                           )
+    );
 
-//	decl -> scope = new StructSymbol(getName(), holder -> scope, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)));
-	decl -> scope = scope;
+
+	decl -> scope = sym -> holder -> scope;
+    decl -> build_scope();
 
     return (sym -> specs[hash_] = decl);
-
-//	decl -> definedSymbol = new StructSymbol(getName(), inst_scope, *(new TemplateInfo(const_cast<TemplateStructSymbol*>(this), symbols)));
-
-//	decl -> build_scope();
-
-//	decl -> define();
-//	decl -> check();
-//	decl -> gen().gen();
-
-//    return decl;
 }
 
 const Symbol* Compiler::getSpec(const TemplateStructSymbol *sym, std::vector<TemplateParam> tmpl_params, Scope *scope)

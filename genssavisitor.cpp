@@ -121,8 +121,24 @@ void GenSSAVisitor::visit(WhileNode *node)
 
 void GenSSAVisitor::visit(BracketNode *node)
 {
-    code.add(Command(SSAOp::PARAM, getArg(node -> expr)));
-    code.add(Command(SSAOp::PARAM, getArg(node -> base)));
+    auto expr_info = node -> call_info.conversions.front();
+    code.addParamInfo(expr_info);
+
+    code.add(Command(SSAOp::PARAM, 
+                     getArg(node -> expr), 
+                     Arg(IdType::NOID, code.getInfoId(expr_info))
+             )
+    );
+
+    auto base_info = ConversionInfo(nullptr, false, false);
+    base_info.desired_type = TypeFactory::getReference(node -> base -> getType());
+    code.addParamInfo(base_info);
+
+    code.add(Command(SSAOp::PARAM, 
+                     getArg(node -> base),
+                     Arg(IdType::NOID, code.getInfoId(base_info))
+             )
+    );
 
     code.addFunction(node -> call_info.callee);
     _arg = code.add(Command(SSAOp::CALL, 
@@ -130,7 +146,7 @@ void GenSSAVisitor::visit(BracketNode *node)
                                 code.getFuncId(node -> call_info.callee)), 
                             Arg(IdType::NOID, 
                                 node -> expr -> getType() -> getSize() + 
-                                node -> base -> getType() -> getSize())
+                                GlobalConfig::int_size)
                    )
     );
 }
@@ -217,14 +233,15 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
         SSAOp op;
         switch ( node -> op_type )
         {
-        case BinaryOp::PLUS  : op = SSAOp::PLUS  ; break;
-        case BinaryOp::MINUS : op = SSAOp::MINUS ; break;
-        case BinaryOp::MUL   : op = SSAOp::MUL   ; break;
-        case BinaryOp::DIV   : op = SSAOp::DIV   ; break;
-        case BinaryOp::MOD   : op = SSAOp::MOD   ; break;
-        case BinaryOp::ASSIGN: op = SSAOp::ASSIGN; break;
-        default:
-            throw std::logic_error("internal error");
+        case BinaryOp::PLUS   : op = SSAOp::PLUS  ; break;
+        case BinaryOp::MINUS  : op = SSAOp::MINUS ; break;
+        case BinaryOp::MUL    : op = SSAOp::MUL   ; break;
+        case BinaryOp::DIV    : op = SSAOp::DIV   ; break;
+        case BinaryOp::MOD    : op = SSAOp::MOD   ; break;
+        case BinaryOp::ASSIGN : op = SSAOp::ASSIGN; break;
+        case BinaryOp::EQUALS : op = SSAOp::EQUALS; break;
+        case BinaryOp::NEQUALS: op = SSAOp::NEQUALS; break;        
+        default: throw std::logic_error("internal error");
         }
 
         _arg = code.add(Command(op, lhs, rhs));
@@ -299,6 +316,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
         {
             if ( node -> definedSymbol -> getType() -> getUnqualifiedType() == BuiltIns::int_type )
             {
+                code.addConst(0);
                 code.add(Command(SSAOp::ASSIGN,
                                  Arg(IdType::VARIABLE,
                                      code.getVarId(node -> definedSymbol),
@@ -392,7 +410,7 @@ void GenSSAVisitor::visit(VariableNode *node)
 void GenSSAVisitor::visit(StringNode *node)
 {
     code.addString(node -> str);
-    _arg = Arg(IdType::STRING, code.getStrId(node -> str));
+    _arg = Arg(IdType::STRING, code.getStrId(node -> str), BuiltIns::ASCII_string_type);
 }
 
 void GenSSAVisitor::visit(NumberNode *node)

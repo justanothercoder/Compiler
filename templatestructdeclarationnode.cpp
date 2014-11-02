@@ -22,3 +22,8 @@ void TemplateStructDeclarationNode::build_scope()
         decl -> build_scope();
     }
 }
+    
+void TemplateStructDeclarationNode::accept(ASTVisitor& visitor)
+{
+    visitor.visit(this);
+}

@@ -137,16 +137,6 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
 
 void DefineVisitor::visit(VariableDeclarationNode *node)
 {
-    const auto& template_info = node -> scope -> getTemplateInfo();
-
-    if ( template_info.sym && template_info.sym -> isIn(node -> type_info.type_name) )
-    {
-        auto replace = template_info.getReplacement(node -> type_info.type_name);
-
-//		type_info.type_name = boost::get<std::string>(*replace);
-        node -> type_info = boost::get<TypeInfo>(*replace);
-    }
-
     auto var_type = fromTypeInfo(node -> type_info, node -> scope);
 
     if ( var_type == BuiltIns::void_type )
@@ -242,7 +232,8 @@ void DefineVisitor::visit(VarInferTypeDeclarationNode *node)
 
 void DefineVisitor::visit(TemplateStructDeclarationNode *node)
 {
-//    node -> scope -> define(node -> definedSymbol);
+    for ( auto instance : node -> instances )
+        instance -> accept(*this);
 }
 
 void DefineVisitor::visit(BracketNode *) { }

@@ -12,7 +12,9 @@
 #include "definevisitor.hpp"
 #include "checkvisitor.hpp"
 #include "genssavisitor.hpp"
-#include "collecttemplatesvisitor.hpp"
+#include "expandtemplatesvisitor.hpp"
+
+#include "statementnode.hpp"
 
 using std::shared_ptr;
 
@@ -28,24 +30,18 @@ int main()
 
         root -> scope = BuiltIns::global_scope;
 
+        static_cast<StatementNode*>(root.get()) -> statements.insert(std::begin(static_cast<StatementNode*>(root.get()) -> statements), BuiltIns::array_decl);
+
         root -> build_scope();
+        
+        ExpandTemplatesVisitor expand_visitor;
+        root -> accept(expand_visitor);
        
         DefineVisitor define_visitor;
         root -> accept(define_visitor);
 
-        CollectTemplatesVisitor collect_visitor;
-        root -> accept(collect_visitor);
-
-        for ( auto sym : collect_visitor.getTemplateSymbols() )
-        {
-            for ( auto spec : sym -> specs )
-                spec.second -> accept(define_visitor); 
-        }           
-
         CheckVisitor check_visitor;
         root -> accept(check_visitor);
-
-//		root -> check ();
 
         GenSSAVisitor visitor;
         root -> accept(visitor);

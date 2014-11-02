@@ -4,6 +4,8 @@
 #include "functionsymbol.hpp"
 #include "globaltable.hpp"
 
+#include "logger.hpp"
+
 Arg ThreeAddressCode::newLabel(std::string label)
 {
     static int label_num = 0;
@@ -22,6 +24,8 @@ Arg ThreeAddressCode::add(Command command)
 {
     Block& current_block = blocks[blockStack.top()];
 
+    Logger::log("Debug: " + current_block.toString(command));
+
     const Type *command_type;
 
     switch ( command.op )
@@ -32,6 +36,7 @@ Arg ThreeAddressCode::add(Command command)
         break;
     case SSAOp::PLUS: case SSAOp::MINUS: case SSAOp::MUL:
     case SSAOp::DIV: case SSAOp::MOD: case SSAOp::EQUALS:
+    case SSAOp::NEQUALS:
         command_type = BuiltIns::int_type;
         break;
     case SSAOp::ELEM : command_type = nullptr; break;
@@ -41,7 +46,7 @@ Arg ThreeAddressCode::add(Command command)
     case SSAOp::CALL : command_type = globaltable.func_by_id[command.arg1.id] -> return_type; break;
     case SSAOp::NEW  : command_type = globaltable.type_by_id[command.arg1.id]; break;
     default:
-        throw "internal error.";
+        throw std::logic_error("internal error.");
     }
 
     current_block.commands.push_back(command);

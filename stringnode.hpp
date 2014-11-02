@@ -12,7 +12,6 @@ public:
     AST* copyTree() const override;
 
     std::string getStr() const;
-    static std::string getNewLabel();
 
     const Type* getType() const override;
     bool isLeftValue() const override;

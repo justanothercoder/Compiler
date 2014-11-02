@@ -18,12 +18,6 @@ std::string StringNode::getStr() const
     return str;
 }
 
-std::string StringNode::getNewLabel()
-{
-    static int label_num = 0;
-    return "@string_label" + std::to_string(++label_num);
-}
-
 const Type* StringNode::getType() const
 {
     static const Type *type = BuiltIns::global_scope -> resolveType("string");

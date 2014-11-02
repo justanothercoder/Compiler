@@ -9,6 +9,8 @@
 Scope *BuiltIns::global_scope;
 Type *BuiltIns::void_type;
 Type *BuiltIns::int_type;
+AST *BuiltIns::array_decl;
+Type *BuiltIns::ASCII_string_type;
 
 void BuiltIns::defineBuiltIns()
 {
@@ -29,6 +31,8 @@ void BuiltIns::defineBuiltIns()
     const Type *const_ref_char = TypeFactory::getConst(ref_char);
 
     StructSymbol *ASCII_string = new StructSymbol("string", global_scope, global_scope -> getTemplateInfo());
+
+    ASCII_string_type = ASCII_string;
 
     const Type *ref_ASCII_string       = TypeFactory::getReference(ASCII_string);
     const Type *const_ref_ASCII_string = TypeFactory::getConst(ref_ASCII_string);
@@ -81,7 +85,7 @@ void BuiltIns::defineBuiltIns()
     auto arr_node = new AsmArrayNode();
     arr_node -> scope = global_scope;
 
-    auto array_decl = new TemplateStructDeclarationNode("array", {arr_node}, array_tp);
+    array_decl = new TemplateStructDeclarationNode("array", {arr_node}, array_tp);
     array_decl -> scope = global_scope;
 
     TemplateStructSymbol *array_struct = new TemplateStructSymbol("array", global_scope, array_tp, array_decl);
@@ -91,7 +95,7 @@ void BuiltIns::defineBuiltIns()
     global_scope -> define(new FunctionSymbol("getchar", int_struct, { }, global_scope, simple_traits));
 
     array_struct -> holder -> scope = global_scope;
-    global_scope -> define(array_struct);
+//    global_scope -> define(array_struct);
 
     ASCII_string -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~string", 256), VariableSymbolType::FIELD));
 

@@ -1,6 +1,8 @@
 #ifndef _EXPANDTEMPLATESVISITOR_HPP_
 #define _EXPANDTEMPLATESVISITOR_HPP_
 
+#include <set>
+
 #include "compiler.hpp"
 #include "astvisitor.hpp"
 

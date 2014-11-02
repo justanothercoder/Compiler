@@ -98,14 +98,7 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
     }
     case IdType::TEMP:
     {
-//        auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
-//        genCommand(commands[arg.id], code_obj);
-
-//        code_obj.emit("mov " + addr + ", rax");
-//        code_obj.emit("lea rax, " + addr);
-
         code_obj.emit("lea rax, [rbp - " + std::to_string(command_offsets.at(commands[arg.id])) + "]");
-
         return;
     }
     case IdType::LABEL:
@@ -264,6 +257,8 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     {
         auto callee = table.func_by_id[command.arg1.id];
 
+        command_offsets[command] = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
+
         auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
         scope.getTempAlloc().claim(callee -> return_type -> getSize());
 
@@ -369,6 +364,10 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         code_obj.emit("mov [rax], rbx");
         return;
     }
+    case SSAOp::ELEM:
+    {
+        return;
+    }
     default:
         throw "internal error.";
     }
@@ -385,6 +384,7 @@ std::string Block::toString(Command command) const
     case SSAOp::DIV    : return toString(command.arg1) + " / "  + toString(command.arg2);
     case SSAOp::MOD    : return toString(command.arg1) + " % "  + toString(command.arg2);
     case SSAOp::EQUALS : return toString(command.arg1) + " == " + toString(command.arg2);
+    case SSAOp::NEQUALS: return toString(command.arg1) + " != " + toString(command.arg2);
     case SSAOp::ELEM   : return toString(command.arg1) + "[" + toString(command.arg2) + "]";
     case SSAOp::DOT    : return toString(command.arg1) + "." + toString(command.arg2);
     case SSAOp::DEREF  : return "*" + toString(command.arg1);
@@ -398,7 +398,7 @@ std::string Block::toString(Command command) const
     case SSAOp::GOTO   : return "goto " + toString(command.arg1);
     case SSAOp::NEW    : return "new " + table.type_by_id[command.arg1.id] -> getName();
     default:
-        throw std::logic_error("not all SSAOp catched in toString");
+        throw std::logic_error("not all SSAOp catched in Block::toString");
     }
 }
 

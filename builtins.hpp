@@ -15,6 +15,9 @@ public:
     static Scope *global_scope;
     static Type *void_type;
     static Type *int_type;
+    static Type *ASCII_string_type;    
+
+    static AST *array_decl;
 };
 
 #endif
