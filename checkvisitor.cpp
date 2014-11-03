@@ -23,6 +23,7 @@
 #include "unsafeblocknode.hpp"
 #include "varinfertypedeclarationnode.hpp"
 #include "nullnode.hpp"
+#include "templatestructdeclarationnode.hpp"
 
 void CheckVisitor::visit(ImportNode *)
 {
@@ -339,7 +340,8 @@ void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
     node -> call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {node -> expr});
 }
 
-void CheckVisitor::visit(TemplateStructDeclarationNode *)
+void CheckVisitor::visit(TemplateStructDeclarationNode *node)
 {
-
+    for ( auto instance : node -> instances )
+        instance -> accept(*this);
 }

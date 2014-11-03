@@ -23,6 +23,7 @@
 #include "variabledeclarationnode.hpp"
 #include "newexpressionnode.hpp"
 #include "asmarraynode.hpp"
+#include "templatestructdeclarationnode.hpp"
 
 #include "typefactory.hpp"
 #include "logger.hpp"
@@ -36,6 +37,9 @@ GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("int")) -> resolve("int")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator[]")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
 
     code.newBlock(*BuiltIns::global_scope);
@@ -465,7 +469,7 @@ void GenSSAVisitor::visit(AsmArrayNode *node)
     auto arr = static_cast<StructSymbol*>(node -> scope);
     int arr_size = boost::get<int>(*node -> scope -> getTemplateInfo().getReplacement("size"));
     
-    code.newBlock(*arr);
+//    code.newBlock(*arr);
 
     code.newBlock(*node -> array_constructor, node -> array_constructor -> getScopedTypedName());
     code.add(Command(SSAOp::LABEL, code.newLabel(node -> array_constructor -> getScopedTypedName())));
@@ -474,7 +478,7 @@ void GenSSAVisitor::visit(AsmArrayNode *node)
     code.addConst(arr_size);
     code.newBlock(*node -> array_size_func, node -> array_size_func -> getScopedTypedName());
     code.add(Command(SSAOp::LABEL, code.newLabel(node -> array_size_func -> getScopedTypedName())));
-    code.add(Command(SSAOp::RETURN, Arg(IdType::NUMBER, code.getConstId(arr_size))));
+    code.add(Command(SSAOp::RETURN, Arg(IdType::NUMBER, code.getConstId(arr_size), BuiltIns::int_type)));
     code.popBlock();
 
     code.newBlock(*node -> array_elem_operator, node -> array_elem_operator -> getScopedTypedName());
@@ -486,10 +490,14 @@ void GenSSAVisitor::visit(AsmArrayNode *node)
     code.addVariable(param_sym);
 
     code.add(Command(SSAOp::LABEL, code.newLabel(node -> array_elem_operator -> getScopedTypedName())));
-    code.add(Command(SSAOp::ELEM,  Arg(IdType::VARIABLE, code.getVarId(sym_this)), Arg(IdType::VARIABLE, code.getVarId(param_sym))));
+    code.add(Command(SSAOp::ELEM,  
+                     Arg(IdType::VARIABLE, code.getVarId(sym_this), sym_this -> getType()), 
+                     Arg(IdType::VARIABLE, code.getVarId(param_sym), param_sym -> getType())
+             )
+    );
     code.popBlock();
 
-    code.popBlock();
+//    code.popBlock();
 }
 
 void GenSSAVisitor::visit(VarInferTypeDeclarationNode *)
@@ -497,9 +505,10 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode *)
 
 }
 
-void GenSSAVisitor::visit(TemplateStructDeclarationNode *)
+void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)
 {
-
+    for ( auto instance : node -> instances )
+        instance -> accept(*this);
 }
 
 std::string GenSSAVisitor::getString()

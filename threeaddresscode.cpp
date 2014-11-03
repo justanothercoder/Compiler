@@ -27,6 +27,9 @@ Arg ThreeAddressCode::add(Command command)
     Block& current_block = blocks[blockStack.top()];
 
     const Type *command_type;
+    
+    current_block.commands.push_back(command);
+    current_block.code.push_back(current_block.commands.size() - 1);
 
     switch ( command.op )
     {
@@ -46,9 +49,6 @@ Arg ThreeAddressCode::add(Command command)
     default:
         throw std::logic_error("internal error.");
     }
-
-    current_block.commands.push_back(command);
-    current_block.code.push_back(current_block.commands.size() - 1);
 
     return Arg(IdType::TEMP, current_block.commands.size() - 1, command_type);
 }

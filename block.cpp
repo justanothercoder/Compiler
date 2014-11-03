@@ -8,6 +8,7 @@
 #include "structsymbol.hpp"
 #include "builtins.hpp"
 #include "globaltable.hpp"
+#include "referencetype.hpp"
 
 #include <sstream>
 #include "logger.hpp"
@@ -103,7 +104,7 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
     }
     case IdType::LABEL:
     {
-        code_obj.emit(table.label_name[arg.id] + ":");
+        code_obj.emit(table.label_name.at(arg.id) + ":");
         return;
     }
     case IdType::PROCEDURE:
@@ -217,7 +218,7 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         const auto& conversion_info = table.info_by_id.at(command.arg2.id);
 
         const Type *param_type = command.arg1.expr_type;
-
+           
         if ( param_type -> getUnqualifiedType() == BuiltIns::int_type )
         {
             code_obj.emit("push qword [rax]");
@@ -244,10 +245,16 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
             code_obj.emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
             code_obj.emit("sub rsp, " + std::to_string(param_type -> getSize()));
 
+            if ( param_type -> isReference() )
+            {
+                code_obj.emit("mov rax, [rax]");
+                param_type = static_cast<const ReferenceType*>(param_type) -> type;
+            }
+
             code_obj.emit("push rax");
             code_obj.emit("push rbx");
 
-            code_obj.emit("call " + static_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
+            code_obj.emit("call " + dynamic_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
             code_obj.emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
         }
 
@@ -294,20 +301,20 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     case SSAOp::IF:
     {
         genArg(command.arg1, code_obj);
-        code_obj.emit("cmp [rax], qword 0");
-        code_obj.emit("jnz " + table.label_name[command.arg2.id]);
+        code_obj.emit("cmp qword [rax], qword 0");
+        code_obj.emit("jnz " + table.label_name.at(command.arg2.id));
         return;
     }
     case SSAOp::IFFALSE:
     {
         genArg(command.arg1, code_obj);
-        code_obj.emit("cmp [rax], qword 0");
-        code_obj.emit("jz " + table.label_name[command.arg2.id]);
+        code_obj.emit("cmp qword [rax], qword 0");
+        code_obj.emit("jz " + table.label_name.at(command.arg2.id));
         return;
     }
     case SSAOp::GOTO:
     {
-        code_obj.emit("jmp " + table.label_name[command.arg2.id]);
+        code_obj.emit("jmp " + table.label_name.at(command.arg1.id));
         return;
     }
     case SSAOp::ASSIGN:
@@ -349,8 +356,12 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         return code_obj;
 */       
     }    
-    case SSAOp::PLUS: case SSAOp::NEQUALS:
+    case SSAOp::PLUS: case SSAOp::NEQUALS: case SSAOp::EQUALS:
+    case SSAOp::MINUS: case SSAOp::MUL: case SSAOp::DIV:
+    case SSAOp::MOD:
     {
+        command_offsets[command] = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
+
         auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
         scope.getTempAlloc().claim(GlobalConfig::int_size);
 
@@ -366,8 +377,8 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
             case SSAOp::MUL    : code_obj.emit("imul rbx, [rax]"); break;
             case SSAOp::DIV    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx, [rax]"); break;
             case SSAOp::MOD    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx, [rax]"); code_obj.emit("mov rbx, rdx"); break;
-            case SSAOp::EQUALS : code_obj.emit("cmp rbx, [rax]"); code_obj.emit("sete rbx"); break;
-            case SSAOp::NEQUALS: code_obj.emit("cmp rbx, [rax]"); code_obj.emit("setne rbx"); break;
+            case SSAOp::EQUALS : code_obj.emit("cmp rbx, [rax]"); code_obj.emit("sete bl"); break;
+            case SSAOp::NEQUALS: code_obj.emit("cmp rbx, [rax]"); code_obj.emit("setne bl"); break;
             default:
                    throw std::logic_error("internal error.");
         }
@@ -381,7 +392,10 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         return;
     }
     default:
+    {
+        Logger::log(toString(command));
         throw "internal error.";
+    }
     }
 }
 

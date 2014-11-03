@@ -25,8 +25,6 @@ public:
 
     const Symbol* getSymbol() const override;
 
-private:
-
     const Type *type;
 };
 

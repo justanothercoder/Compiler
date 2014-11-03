@@ -14,7 +14,6 @@ Arg::Arg(IdType type, int id) : type(type), id(id), expr_type(nullptr)
 
 Arg::Arg(IdType type, int id, const Type *expr_type) : type(type), id(id), expr_type(expr_type)
 {
-    std::cerr << "Arg type: " << expr_type << '\n';
     if ( expr_type == nullptr )
         throw std::logic_error("nullptr error.");
 }
