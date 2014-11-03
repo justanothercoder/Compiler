@@ -377,8 +377,8 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
             case SSAOp::MUL    : code_obj.emit("imul rbx, [rax]"); break;
             case SSAOp::DIV    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx, [rax]"); break;
             case SSAOp::MOD    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx, [rax]"); code_obj.emit("mov rbx, rdx"); break;
-            case SSAOp::EQUALS : code_obj.emit("cmp rbx, [rax]"); code_obj.emit("sete bl"); break;
-            case SSAOp::NEQUALS: code_obj.emit("cmp rbx, [rax]"); code_obj.emit("setne bl"); break;
+            case SSAOp::EQUALS : code_obj.emit("cmp rbx, [rax]"); code_obj.emit("mov rbx, qword 0"); code_obj.emit("sete bl"); break;
+            case SSAOp::NEQUALS: code_obj.emit("cmp rbx, [rax]"); code_obj.emit("mov rbx, qword 0"); code_obj.emit("setne bl"); break;
             default:
                    throw std::logic_error("internal error.");
         }
@@ -389,6 +389,7 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     }
     case SSAOp::ELEM:
     {
+
         return;
     }
     default:

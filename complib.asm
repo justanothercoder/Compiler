@@ -552,16 +552,14 @@ _string_operatorelem_string~ref_int:
 	push rbp
 	mov rbp, rsp
 
-	mov rsi, [rbp + 16]
-	mov rbx, [rbp + 24]
+;	mov rsi, [rbp + 16]
+;	mov rbx, [rbp + 24]
+	mov rsi, [rbp + 24]
+	mov rbx, [rbp + 32]
 
 	sub rsi, rbx
 
-;	mov r9, [rbp]
-;	mov [r9 - 8], rsi
-;	lea rax, [r9 - 8]
-
-	mov rax, [rbp + 32]
+	mov rax, [rbp + 16]
 	mov [rax], rsi
 
 	mov rsp, rbp
