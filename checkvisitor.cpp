@@ -57,7 +57,7 @@ void CheckVisitor::visit(BracketNode *node)
     auto base_type = dynamic_cast<const StructSymbol*>(node -> base -> getType() -> getSymbol());    
 
     if ( node -> base -> getType() -> getTypeKind() == TypeKind::ARRAY )
-        node -> call_info = CallHelper::callCheck("opertator[]", BuiltIns::global_scope, {node -> base, node -> expr});
+        node -> call_info = CallHelper::callCheck("operator[]", BuiltIns::global_scope, {node -> base, node -> expr});
     else
         node -> call_info = CallHelper::callCheck("operator[]", base_type, {node -> expr});
 

@@ -41,7 +41,7 @@ GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator[]")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
-
+    
     code.newBlock(*BuiltIns::global_scope);
 }
 
@@ -128,6 +128,16 @@ void GenSSAVisitor::visit(WhileNode *node)
 
 void GenSSAVisitor::visit(BracketNode *node)
 {
+    if ( node -> base -> getType() -> getTypeKind() == TypeKind::ARRAY )
+    {
+        code.add(Command(SSAOp::ELEM,
+                         getArg(node -> base),
+                         getArg(node -> expr)
+                 )
+        );
+        return;
+    }
+
     auto expr_info = node -> call_info.conversions.front();
     code.addParamInfo(expr_info);
 
@@ -186,9 +196,6 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
                         )
                 );
     }
-
-//    auto tmp_obj = code.newTemp();
-//    tmp_obj.expr_type = node -> getType();
 
     auto expr_type = node -> getType() -> getUnqualifiedType();
 
@@ -272,10 +279,8 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
 
 void GenSSAVisitor::visit(StructDeclarationNode *node)
 {
-//    code.newBlock(*node -> definedSymbol);
     for ( auto decl : node -> inner )
         decl -> accept(*this);
-//    code.popBlock();
 }
 
 void GenSSAVisitor::visit(FunctionDeclarationNode *node)
@@ -346,7 +351,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                         );
             }
 
-            auto info = ConversionInfo(nullptr, false, false); //*(node -> call_info.conversions.begin()) 
+            auto info = ConversionInfo(nullptr, false, false); 
             info.desired_type = TypeFactory::getReference(node -> definedSymbol -> getType());
 
             code.addParamInfo(info);
@@ -389,6 +394,7 @@ void GenSSAVisitor::visit(NullNode *)
 
 void GenSSAVisitor::visit(DotNode *node)
 {
+    code.addVariable(node -> member);
     _arg = code.add(
                Command(SSAOp::DOT,
                        getArg(node -> base),
@@ -407,6 +413,12 @@ void GenSSAVisitor::visit(StatementNode *node)
 
 void GenSSAVisitor::visit(VariableNode *node)
 {
+    if ( node -> isTemplateParam() )
+    {
+        node -> template_num -> accept(*this);
+        return;
+    }
+    
     code.addVariable(node -> variable);
     _arg = Arg(IdType::VARIABLE, 
                code.getVarId(node -> variable), 
@@ -456,7 +468,10 @@ void GenSSAVisitor::visit(CallNode *node)
 
 void GenSSAVisitor::visit(ReturnNode *node)
 {
-    code.add(Command(SSAOp::RETURN, getArg(node -> expr)));
+    if ( node -> enclosing_func -> return_type -> isReference() )
+        code.add(Command(SSAOp::RETURNREF, getArg(node -> expr)));
+    else
+        code.add(Command(SSAOp::RETURN, getArg(node -> expr)));
 }
 
 void GenSSAVisitor::visit(UnsafeBlockNode *node)
@@ -469,8 +484,6 @@ void GenSSAVisitor::visit(AsmArrayNode *node)
     auto arr = static_cast<StructSymbol*>(node -> scope);
     int arr_size = boost::get<int>(*node -> scope -> getTemplateInfo().getReplacement("size"));
     
-//    code.newBlock(*arr);
-
     code.newBlock(*node -> array_constructor, node -> array_constructor -> getScopedTypedName());
     code.add(Command(SSAOp::LABEL, code.newLabel(node -> array_constructor -> getScopedTypedName())));
     code.popBlock(); 
@@ -496,8 +509,6 @@ void GenSSAVisitor::visit(AsmArrayNode *node)
              )
     );
     code.popBlock();
-
-//    code.popBlock();
 }
 
 void GenSSAVisitor::visit(VarInferTypeDeclarationNode *)

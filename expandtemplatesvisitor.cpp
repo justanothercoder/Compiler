@@ -142,7 +142,7 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
         std::vector<TemplateParam> tmpl_params(type_info.template_params.size());
         std::transform(std::begin(type_info.template_params), std::end(type_info.template_params), std::begin(tmpl_params), getTemplateParam);
 
-        auto decl = getSpecDecl(tmpl, tmpl_params, scope);
+        auto decl = getSpecDecl(tmpl, tmpl_params);
         static_cast<TemplateStructDeclarationNode*>(tmpl -> holder) -> instances.insert(decl);
         type_info.type_name = static_cast<StructDeclarationNode*>(decl) -> name;
 

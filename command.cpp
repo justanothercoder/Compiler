@@ -1,39 +1,36 @@
 #include "command.hpp"
 
+#include <cassert>
+
 Command::Command(SSAOp op, Arg arg) : op(op), arg1(arg), arg2(IdType::NOID, -1)
 {
-    if (!(op == SSAOp::DEREF 
-       || op == SSAOp::ADDR 
-       || op == SSAOp::GOTO
-       || op == SSAOp::LABEL
-       || op == SSAOp::RETURN
-       || op == SSAOp::NEW ))
-        throw std::logic_error("Internal error.");
+    assert(op == SSAOp::DEREF 
+        || op == SSAOp::ADDR 
+        || op == SSAOp::GOTO
+        || op == SSAOp::LABEL
+        || op == SSAOp::RETURN
+        || op == SSAOp::RETURNREF
+        || op == SSAOp::NEW);
 }
 
 Command::Command(SSAOp op, Arg arg1, Arg arg2) : op(op), arg1(arg1), arg2(arg2)
 {
-    if (op == SSAOp::DEREF 
+    assert(!(op == SSAOp::DEREF 
      || op == SSAOp::ADDR 
      || op == SSAOp::GOTO
      || op == SSAOp::LABEL
      || op == SSAOp::RETURN
-     || op == SSAOp::NEW )
-        throw std::logic_error("Internal error.");
-
+     || op == SSAOp::RETURNREF
+     || op == SSAOp::NEW ));
 }
 
 bool Command::isExpr() const
 {
     switch ( op )
     {
-    case SSAOp::GOTO  :
-    case SSAOp::IFFALSE:
-    case SSAOp::IF   :
-    case SSAOp::RETURN:
-    case SSAOp::LABEL  :
-    case SSAOp::PARAM:
-    case SSAOp::ASSIGN:
+    case SSAOp::GOTO: case SSAOp::IFFALSE: case SSAOp::IF:
+    case SSAOp::RETURN: case SSAOp::RETURNREF: case SSAOp::LABEL:
+    case SSAOp::PARAM: case SSAOp::ASSIGN:
         return false;
     default:
         return true;

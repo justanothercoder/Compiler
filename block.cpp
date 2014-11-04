@@ -296,6 +296,43 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     }
     case SSAOp::RETURN:
     {
+        genArg(command.arg1, code_obj);
+       
+        code_obj.emit("mov rbx, rax"); 
+        code_obj.emit("lea rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
+
+        const Type *param_type = command.arg1.expr_type;
+           
+        if ( param_type -> getUnqualifiedType() == BuiltIns::int_type )
+        {
+            code_obj.emit("mov rcx, [rbx]");
+            code_obj.emit("mov [rax], rcx");
+        }
+        else
+        {
+            if ( param_type -> isReference() )
+            {
+                code_obj.emit("mov rbx, [rbx]");
+                param_type = static_cast<const ReferenceType*>(param_type) -> type;
+            }
+
+            code_obj.emit("push rbx");
+            code_obj.emit("push rax");
+
+            code_obj.emit("call " + dynamic_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
+            code_obj.emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
+        }
+        return;
+    }
+    case SSAOp::RETURNREF:
+    {
+        genArg(command.arg1, code_obj);
+       
+        code_obj.emit("mov rbx, rax"); 
+        code_obj.emit("lea rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
+
+        code_obj.emit("mov [rax], rbx");
+
         return;
     }
     case SSAOp::IF:
@@ -389,6 +426,12 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     }
     case SSAOp::ELEM:
     {
+        genArg(command.arg2, code_obj);
+        code_obj.emit("push qword [rax]");
+
+        genArg(command.arg1, code_obj);
+        code_obj.emit("pop rbx");
+        code_obj.emit("add rax, rbx");
 
         return;
     }
@@ -420,6 +463,7 @@ std::string Block::toString(Command command) const
     case SSAOp::CALL   : return "call " + toString(command.arg1) + ' ' + std::to_string(command.arg2.id);
     case SSAOp::LABEL  : return toString(command.arg1);
     case SSAOp::RETURN : return "return " + toString(command.arg1);
+    case SSAOp::RETURNREF: return "returnref " + toString(command.arg1);
     case SSAOp::IF     : return "if " + toString(command.arg1) + " goto " + toString(command.arg2);
     case SSAOp::IFFALSE: return "ifFalse " + toString(command.arg1) + " goto " + toString(command.arg2);
     case SSAOp::GOTO   : return "goto " + toString(command.arg1);

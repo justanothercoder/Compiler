@@ -5,17 +5,16 @@
 #include "builtins.hpp"
 
 #include <iostream>
+#include <cassert>
 
 Arg::Arg(IdType type, int id) : type(type), id(id), expr_type(nullptr)
 {
-    if ( !(type == IdType::NOID || type == IdType::LABEL || type == IdType::PROCEDURE) )
-        throw std::logic_error("Internal error.");
+    assert(type == IdType::NOID || type == IdType::LABEL || type == IdType::PROCEDURE);
 }
 
 Arg::Arg(IdType type, int id, const Type *expr_type) : type(type), id(id), expr_type(expr_type)
 {
-    if ( expr_type == nullptr )
-        throw std::logic_error("nullptr error.");
+    assert(expr_type != nullptr);
 }
 
 bool Arg::operator==(const Arg& a) const

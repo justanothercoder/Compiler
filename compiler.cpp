@@ -9,11 +9,6 @@
 
 const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
 {
-    return fromTypeInfo(type_info, scope -> getTemplateInfo(), scope);
-}
-
-const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, const TemplateInfo& template_info, Scope *scope)
-{
     auto type_name = type_info.type_name;
 
     const Type *type = scope -> resolveType(type_name);
@@ -21,8 +16,8 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, const TemplateInfo
     if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )
         throw SemanticError("Using pointer type in safe block " + scope -> getScopeName() + ".");
     
-    if ( type_info.array_dimensions.size() > 0 && !scope -> isUnsafeBlock() )
-        throw SemanticError("Using plain array type in safe block " + scope -> getScopeName() + ".");
+//    if ( type_info.array_dimensions.size() > 0 && !scope -> isUnsafeBlock() )
+//        throw SemanticError("Using plain array type in safe block " + scope -> getScopeName() + ".");
 
     if ( type == nullptr )
         throw SemanticError(type_name + " is not a type.");
@@ -47,7 +42,7 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, const TemplateInfo
 
 }
 
-DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vector<TemplateParam> template_params, Scope *scope)
+DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vector<TemplateParam> template_params)
 {
 	auto hash_func = [](std::vector<TemplateParam> vec)
 	{
@@ -93,7 +88,7 @@ DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vec
     return (sym -> specs[hash_] = decl);
 }
 
-const Symbol* Compiler::getSpec(const TemplateStructSymbol *sym, std::vector<TemplateParam> tmpl_params, Scope *scope)
+const Symbol* Compiler::getSpec(const TemplateStructSymbol *sym, std::vector<TemplateParam> tmpl_params)
 {
-    return getSpecDecl(sym, tmpl_params, scope) -> getDefinedSymbol();
+    return getSpecDecl(sym, tmpl_params) -> getDefinedSymbol();
 }

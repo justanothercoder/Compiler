@@ -34,7 +34,7 @@ Arg ThreeAddressCode::add(Command command)
     switch ( command.op )
     {
     case SSAOp::ASSIGN: case SSAOp::PARAM: case SSAOp::LABEL: case SSAOp::RETURN:
-    case SSAOp::IF: case SSAOp::IFFALSE: case SSAOp::GOTO:
+    case SSAOp::IF: case SSAOp::IFFALSE: case SSAOp::GOTO: case SSAOp::RETURNREF:
         return Arg(IdType::NOID, -1);
     case SSAOp::PLUS: case SSAOp::MINUS: case SSAOp::MUL:
     case SSAOp::DIV: case SSAOp::MOD: case SSAOp::EQUALS:
