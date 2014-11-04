@@ -709,6 +709,14 @@ TypeInfo Parser::typeInfo()
         match(TokenType::MUL);
         ++pointer_depth;
     }
+    
+    std::vector<ExprNode*> array_dimensions;
+    while ( getTokenType(1) == TokenType::LBRACKET )
+    {
+        match(TokenType::LBRACKET);
+        array_dimensions.push_back(expression());
+        match(TokenType::RBRACKET);
+    }
 
     if ( getTokenType(1) == TokenType::REF )
     {
@@ -716,7 +724,7 @@ TypeInfo Parser::typeInfo()
         match(TokenType::REF);
     }
 
-    return TypeInfo(std::move(type_name), is_ref, is_const, std::move(template_params), pointer_depth);
+    return TypeInfo(std::move(type_name), is_ref, is_const, std::move(template_params), pointer_depth, std::move(array_dimensions));
 }
 
 std::vector<ExprNode*> Parser::call_params_list()

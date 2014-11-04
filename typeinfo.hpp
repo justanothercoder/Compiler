@@ -14,7 +14,12 @@ class TypeInfo
 {
 public:
     TypeInfo();
-    TypeInfo(std::string type_name, bool is_ref, bool is_const, std::vector<TemplateParamInfo> template_params = { }, int pointer_depth = 0);
+    TypeInfo(std::string                    type_name
+           , bool                           is_ref
+           , bool                           is_const
+           , std::vector<TemplateParamInfo> template_params = { }
+           , int                            pointer_depth = 0
+           , std::vector<ExprNode*>         array_dimensions = { });
 
     TypeInfo(const TypeInfo& type_info);
     TypeInfo& operator=(const TypeInfo& type_info);
@@ -28,6 +33,7 @@ public:
     bool is_ref, is_const;
     std::vector<TemplateParamInfo> template_params;
     int pointer_depth;
+    std::vector<ExprNode*> array_dimensions;
 };
 
 #endif

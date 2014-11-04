@@ -24,7 +24,10 @@ CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector
     for ( int i = function_info.params_types.size() - 1; i >= is_meth; --i )
     {
         auto t = function_info.params_types.at(i);
-        if ( t -> isReference() && (!params.at(i - is_meth) -> isLeftValue() && !params.at(i - is_meth) -> getType() -> isReference()) && !t -> isConst() )
+        if ( t -> isReference() 
+         && (!params.at(i - is_meth) -> isLeftValue() 
+         && !params.at(i - is_meth) -> getType() -> isReference()) 
+         && !t -> isConst() )
             throw SemanticError("parameter is not an lvalue.");
     }
 

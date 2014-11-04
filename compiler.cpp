@@ -20,12 +20,22 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, const TemplateInfo
 
     if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )
         throw SemanticError("Using pointer type in safe block " + scope -> getScopeName() + ".");
+    
+    if ( type_info.array_dimensions.size() > 0 && !scope -> isUnsafeBlock() )
+        throw SemanticError("Using plain array type in safe block " + scope -> getScopeName() + ".");
 
     if ( type == nullptr )
-        throw SemanticError(type_name + " is not a type");
+        throw SemanticError(type_name + " is not a type.");
     
     for ( int i = 0; i < type_info.pointer_depth; ++i )
         type = TypeFactory::getPointer(type);
+
+    for ( auto dim : type_info.array_dimensions )
+    {
+        if ( !dim -> isCompileTimeExpr() )
+            throw SemanticError("Array dimension is not compile-time expression.");
+        type = TypeFactory::getArray(type, *dim -> getCompileTimeValue());
+    }
     
     if ( type_info.is_ref )
         type = TypeFactory::getReference(type);
@@ -87,4 +97,3 @@ const Symbol* Compiler::getSpec(const TemplateStructSymbol *sym, std::vector<Tem
 {
     return getSpecDecl(sym, tmpl_params, scope) -> getDefinedSymbol();
 }
-

@@ -2,6 +2,7 @@
 
 #include "pointertype.hpp"
 #include "referencetype.hpp"
+#include "arraytype.hpp"
 #include "consttype.hpp"
 #include "builtins.hpp"
 #include "functionsymbol.hpp"
@@ -64,4 +65,33 @@ const Type* TypeFactory::getConst(const Type *type)
         consts[type] = new ConstType(type);
 
     return consts[type];
+}
+    
+const Type* TypeFactory::getArray(const Type *type, int size)
+{
+    static std::map<const Type*, std::map<int, const Type*> > arrays;
+
+    if ( type -> getTypeKind() == TypeKind::REFERENCE )
+        return nullptr;
+
+    auto it = arrays.find(type);    
+
+    if ( it == std::end(arrays) || it -> second.find(size) == std::end(it -> second) )
+    {
+        arrays[type][size] = new ArrayType(type, size);
+
+        const auto& tp = arrays[type][size];
+        auto tp_ref = getReference(tp);
+
+        auto array_assign = new FunctionSymbol("operator=", tp_ref, {tp_ref, getConst(tp_ref)}, BuiltIns::global_scope, {false, false, true});
+        BuiltIns::global_scope -> define(array_assign);
+
+        auto array_add = new FunctionSymbol("operator+", getPointer(type), {tp, BuiltIns::int_type}, BuiltIns::global_scope, {false, false, true});
+        BuiltIns::global_scope -> define(array_add);
+
+        auto array_elem = new FunctionSymbol("operator[]", type, {tp, BuiltIns::int_type}, BuiltIns::global_scope, {false, false, true});
+        BuiltIns::global_scope -> define(array_elem);
+    }
+
+    return arrays[type][size];
 }

@@ -35,6 +35,8 @@ public:
     void visit(VarInferTypeDeclarationNode *node) override;
     void visit(TemplateStructDeclarationNode *node) override;
 
+    TypeInfo preprocessTypeInfo(TypeInfo type_info, Scope *scope);
+
 private:
 
     std::set<TemplateStructSymbol*> template_symbols;
