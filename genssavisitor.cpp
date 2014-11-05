@@ -130,10 +130,10 @@ void GenSSAVisitor::visit(BracketNode *node)
 {
     if ( node -> base -> getType() -> getTypeKind() == TypeKind::ARRAY )
     {
-        code.add(Command(SSAOp::ELEM,
-                         getArg(node -> base),
-                         getArg(node -> expr)
-                 )
+        _arg = code.add(Command(SSAOp::ELEM,
+                                getArg(node -> base),
+                                getArg(node -> expr)
+                        )
         );
         return;
     }

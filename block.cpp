@@ -30,9 +30,6 @@ std::string Block::toString()
 
 void Block::genAsm(CodeObject& code_obj) const
 {
-    if ( code.empty() )
-        return;
-
     auto it = std::begin(code);
 
     if ( commands[*it].op == SSAOp::LABEL )
@@ -40,6 +37,9 @@ void Block::genAsm(CodeObject& code_obj) const
         genCommand(commands[*it], code_obj);
         ++it;
     }
+
+    if ( it == std::end(code) )
+        return;
 
     code_obj.emit("push rbp");
     code_obj.emit("mov rbp, rsp");
@@ -273,20 +273,9 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         code_obj.emit("push rax");
 
         code_obj.emit("call " + callee -> getScopedTypedName());
+        code_obj.emit("pop rax");
         code_obj.emit("add rsp, " +  std::to_string(command.arg2.id));
 
-        code_obj.emit("pop rax");
-        /*
-                if ( callee -> isMethod() )
-                    code_obj.genCallCode(call_info, params, caller -> gen(), caller -> getType() -> isReference());
-                else
-                {
-                    CodeObject empty;
-                    code_obj.genCallCode(call_info, params, empty, false);
-                }
-
-                code_obj.emit("pop rax");
-        */
         return;
     }
     case SSAOp::LABEL:
@@ -299,7 +288,7 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         genArg(command.arg1, code_obj);
        
         code_obj.emit("mov rbx, rax"); 
-        code_obj.emit("lea rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
+        code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
 
         const Type *param_type = command.arg1.expr_type;
            
@@ -328,9 +317,8 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     {
         genArg(command.arg1, code_obj);
        
-        code_obj.emit("mov rbx, rax"); 
-        code_obj.emit("lea rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
-
+        code_obj.emit("mov rbx, [rax]"); 
+        code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
         code_obj.emit("mov [rax], rbx");
 
         return;
@@ -380,18 +368,6 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
         scope.getTempAlloc().claim(GlobalConfig::int_size);
 
         return;
-/*
-        CodeObject new_place;
-        new_place.emit("lea rax, " + addr);
-
-        code_obj.genCallCode(call_info, params, new_place, false);
-
-        code_obj.emit("lea rax, " + addr);
-        code_obj.emit("mov " + addr2 + ", rax");
-        code_obj.emit("lea rax, " + addr2);
-
-        return code_obj;
-*/       
     }    
     case SSAOp::PLUS: case SSAOp::NEQUALS: case SSAOp::EQUALS:
     case SSAOp::MINUS: case SSAOp::MUL: case SSAOp::DIV:
@@ -426,13 +402,21 @@ void Block::genCommand(Command command, CodeObject& code_obj) const
     }
     case SSAOp::ELEM:
     {
+        command_offsets[command] = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
+
+        auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
+        scope.getTempAlloc().claim(GlobalConfig::int_size);
+
         genArg(command.arg2, code_obj);
         code_obj.emit("push qword [rax]");
 
         genArg(command.arg1, code_obj);
         code_obj.emit("pop rbx");
-        code_obj.emit("add rax, rbx");
+        code_obj.emit("sub rax, rbx");
 
+        code_obj.emit("mov " + addr + ", rax");
+        code_obj.emit("lea rax, " + addr);
+        
         return;
     }
     default:

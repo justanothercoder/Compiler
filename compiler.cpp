@@ -74,7 +74,18 @@ DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vec
 	for ( auto t : children )
 		vec.push_back(t -> copyTree());
 
-    auto decl = new StructDeclarationNode(sym -> getName() + "~hash" + std::to_string(hash_), 
+    auto templates_name = std::string("");
+    templates_name += sym -> getName() + "~";
+    for ( auto param : template_params )
+    {
+        if ( param.which() == 0 )
+            templates_name += boost::get<TypeInfo>(param).type_name;
+        else
+            templates_name += std::to_string(boost::get<int>(param));
+    }
+
+//    auto decl = new StructDeclarationNode(sym -> getName() + "~hash" + std::to_string(hash_), 
+    auto decl = new StructDeclarationNode(templates_name, 
                                           vec, 
                                           *(new TemplateInfo(const_cast<TemplateStructSymbol*>(sym), 
                                                              template_params)

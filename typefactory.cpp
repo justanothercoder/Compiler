@@ -25,12 +25,20 @@ const Type* TypeFactory::getPointer(const Type *type)
         const auto& tp = pointers[type];
         auto tp_ref = getReference(tp);
 
-        auto pointer_assign = new FunctionSymbol("operator=", tp_ref, {tp_ref, getConst(tp_ref)}, BuiltIns::global_scope, {false, false, true});
-
+        auto pointer_assign = new FunctionSymbol("operator=", 
+                                                 tp_ref, 
+                                                 {tp_ref, getConst(tp_ref)}, 
+                                                 BuiltIns::global_scope, 
+                                                 {false, false, true}
+        );
         BuiltIns::global_scope -> define(pointer_assign);
 
-        auto pointer_add = new FunctionSymbol("operator+", tp, {tp, BuiltIns::int_type}, BuiltIns::global_scope, {false, false, true});
-
+        auto pointer_add = new FunctionSymbol("operator+", 
+                                              tp, 
+                                              {tp, BuiltIns::int_type}, 
+                                              BuiltIns::global_scope, 
+                                              {false, false, true}
+        );
         BuiltIns::global_scope -> define(pointer_add);
     }
 
@@ -83,13 +91,28 @@ const Type* TypeFactory::getArray(const Type *type, int size)
         const auto& tp = arrays[type][size];
         auto tp_ref = getReference(tp);
 
-        auto array_assign = new FunctionSymbol("operator=", tp_ref, {tp_ref, getConst(tp_ref)}, BuiltIns::global_scope, {false, false, true});
+        auto array_assign = new FunctionSymbol("operator=", 
+                                               tp_ref, 
+                                               {tp_ref, getConst(tp_ref)}, 
+                                               BuiltIns::global_scope, 
+                                               {false, false, true}
+        );
         BuiltIns::global_scope -> define(array_assign);
 
-        auto array_add = new FunctionSymbol("operator+", getPointer(type), {tp, BuiltIns::int_type}, BuiltIns::global_scope, {false, false, true});
+        auto array_add = new FunctionSymbol("operator+", 
+                                            getPointer(type), 
+                                            {tp, BuiltIns::int_type}, 
+                                            BuiltIns::global_scope, 
+                                            {false, false, true}
+        );
         BuiltIns::global_scope -> define(array_add);
 
-        auto array_elem = new FunctionSymbol("operator[]", type, {tp, BuiltIns::int_type}, BuiltIns::global_scope, {false, false, true});
+        auto array_elem = new FunctionSymbol("operator[]", 
+                                             getReference(type), 
+                                             {tp, BuiltIns::int_type}, 
+                                             BuiltIns::global_scope, 
+                                             {false, false, true}
+        );
         BuiltIns::global_scope -> define(array_elem);
     }
 

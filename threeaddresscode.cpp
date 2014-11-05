@@ -65,8 +65,6 @@ std::string ThreeAddressCode::toString()
 
 void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 {
-    auto block = blocks.cbegin();
-
     for ( auto p : globaltable.has_definition )
     {
         if ( !p.second )
@@ -74,18 +72,19 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
     }
 
     code_obj.emit("section .text");
-    code_obj.emit("global _start");
-    code_obj.emit("_start:");
 
-    block -> genAsm(code_obj);
+    auto block = blocks.cbegin();
 
     for ( ++block; block != blocks.cend(); ++block )
     {
-        code_obj.emit("jmp _~" + block -> block_name);
         block -> genAsm(code_obj);
         code_obj.emit("ret");
-        code_obj.emit("_~" + block -> block_name + ":");
     }
+    
+    code_obj.emit("global _start");
+    code_obj.emit("_start:");
+
+    blocks.cbegin() -> genAsm(code_obj);    
 
     code_obj.emit("mov rax, 60");
     code_obj.emit("mov rdi, 0");
