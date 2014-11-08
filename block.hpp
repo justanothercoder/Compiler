@@ -23,7 +23,7 @@ struct Block
     void genAsm(CodeObject& code_obj) const;
 
     void genArg(Arg arg, CodeObject& code_obj) const;
-    void genCommand(Command command, CodeObject& code_obj) const;
+    void genCommand(int command_id, CodeObject& code_obj) const;
 
     std::string toString();
 
@@ -34,8 +34,6 @@ struct Block
     Scope& scope;
 
     std::vector<Command> commands;
-
-    mutable std::unordered_map<Command, int> command_offsets;
 
     std::string block_name;
 

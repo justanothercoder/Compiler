@@ -47,7 +47,7 @@ int main()
         root -> accept(visitor);
 //		std::cerr << "code:\n" << visitor.getString() << '\n';
 
-        visitor.optimize();
+//        visitor.optimize();
 		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
 
 //        std::cerr << "\nasm code:\n";

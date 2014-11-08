@@ -25,8 +25,6 @@ public:
 
     const Type* getPointedType() const;
 
-private:
-
     const Type *type;
     int size;
 };

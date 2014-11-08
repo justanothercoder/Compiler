@@ -26,22 +26,8 @@ struct Command
     SSAOp op;
     Arg arg1;
     Arg arg2;
-};
 
-namespace std
-{
-template<>
-struct hash<Command>
-{
-    typedef Command argument_type;
-    typedef std::size_t result_type;
-
-    result_type operator() (const argument_type& s) const
-    {
-        hash<Arg> h;
-        return static_cast<int>(s.op) + (h(s.arg1) << 32) + h(s.arg2);
-    }
+    mutable int offset;
 };
-}
 
 #endif
