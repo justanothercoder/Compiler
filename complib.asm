@@ -1,18 +1,3 @@
-	global _int_operatorassign_int~ref_const~int~ref:function
-	global _int_operatorplus_int~ref_int:function
-	global _int_operatorminus_int~ref_int:function
-	global _int_operatormul_int~ref_int:function
-	global _int_operatoreq_int~ref_int:function
-	global _int_operatorneq_int~ref_int:function
-	global _int_operatordiv_int~ref_int:function
-	global _int_operatormod_int~ref_int:function
-	
-	global _int_operatorand_int~ref_int:function
-	global _int_operatoror_int~ref_int:function
-
-	global _int_int_int~ref_const~int~ref:function
-	global _int_int_int~ref:function
-
 	global _char_operatorassign_char~ref_const~char~ref:function
 	global _char_operatoreq_char~ref_char:function
 	global _char_operatorneq_char~ref_char:function
@@ -41,92 +26,6 @@
 
 	global ___brk_void~ptr:function
 
-_int_operatorassign_int~ref_const~int~ref:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov rbx, [rbp + 24]
-	mov rbx, [rbx]
-
-	mov [rax], rbx
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
-_int_operatorplus_int~ref_int:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov rax, [rax]
-	add rax, [rbp + 24]
-
-	mov rbx, rax
-	mov rax, [rbp + 32]
-	mov [rax], rbx
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
-_int_operatorminus_int~ref_int:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov rax, [rax]
-	sub rax, [rbp + 24]
-
-	mov rbx, rax
-	mov rax, [rbp + 32]
-	mov [rax], rbx
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
-_int_operatormul_int~ref_int:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov rax, [rax]
-	imul qword [rbp + 24]
-
-	mov rbx, rax
-	mov rax, [rbp + 32]
-	mov [rax], rbx
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
-_int_int_int~ref:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov qword [rax], 0
-	
-	mov rsp, rbp
-	pop rbp
-	ret
-
-_int_int_int~ref_const~int~ref:
-	push rbp
-	mov rbp, rsp
-
-	mov rbx, [rbp + 24]
-	mov rbx, [rbx]
-	mov rax, [rbp + 16]	
-	mov [rax], rbx
-
-	mov rsp, rbp
-	pop rbp
-	ret 
-
 _putchar_char:
 	push rbp
 	mov rbp, rsp
@@ -136,7 +35,6 @@ _putchar_char:
 	push rdi
 	push rdx
 
-;	lea rsi, [rbp + 16]
 	lea rsi, [rbp + 24]
 	mov rax, 1
 	mov rdi, 1
@@ -170,126 +68,6 @@ _getchar:
 	pop rbp
 	ret
 	
-_int_operatoreq_int~ref_int:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov rax, [rax]
-
-	cmp rax, qword [rbp + 24]
-	jz .equal
-
-	mov rax, [rbp + 32]
-	mov qword [rax], 0
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
-.equal:
-	mov rax, [rbp + 32]
-	mov qword [rax], 1
-
-	mov rsp, rbp
-	pop rbp
-	ret
-	
-_int_operatorneq_int~ref_int:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov rax, [rax]
-
-	cmp rax, qword [rbp + 24]
-	je .equal
-
-	mov rax, [rbp + 32]
-	mov qword [rax], 1
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
-.equal:
-	mov rax, [rbp + 32]
-	mov qword [rax], 0
-
-	mov rsp, rbp
-	pop rbp
-	ret
-	
-_int_operatordiv_int~ref_int:
-
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov rax, [rax]
-	xor rdx, rdx
-	idiv qword [rbp + 24]
-
-	mov r9, [rbp]
-	mov qword [r9 - 8], rax
-	lea rax, [r9 - 8]
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
-_int_operatormod_int~ref_int:
-	
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov rax, [rax]
-	xor rdx, rdx
-	idiv qword [rbp + 24]
-
-	mov r9, [rbp]
-	mov qword [r9 - 8], rdx
-	lea rax, [r9 - 8]
-
-	mov rsp, rbp
-	pop rbp
-	ret
-	
-_int_operatorand_int~ref_int:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov rax, [rax]
-	mov rbx, [rbp + 24]
-	and rax, rbx
-
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
-_int_operatoror_int~ref_int:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov rax, [rax]
-	mov rbx, [rbp + 24]
-	or rax, rbx
-
-	mov r9, [rbp]
-	mov [r9 - 8], rax
-	lea rax, [r9 - 8]
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
 ___fopen_const~string~ref_int_int:
 	push rbp
 	mov rbp, rsp
@@ -482,10 +260,10 @@ _char_char_char~ref_const~char~ref:
 	push rbp
 	mov rbp, rsp
 	
-	mov rbx, [rbp + 24]
+	mov rbx, [rbp + 32]
 	mov bl, byte [rbx]
 
-	mov rax, [rbp + 16]
+	mov rax, [rbp + 24]
 	mov byte [rax], bl
 
 	mov rsp, rbp
@@ -510,10 +288,10 @@ _char_char_char~ref_const~int~ref:
 	push rbp
 	mov rbp, rsp
 
-	mov rbx, [rbp + 24]
+	mov rbx, [rbp + 32]
 	mov bl, byte [rbx]
 
-	mov rax, [rbp + 16]
+	mov rax, [rbp + 24]
 	mov byte [rax], bl
 
 	mov rsp, rbp
@@ -705,14 +483,10 @@ _int_int_int~ref_char:
 	mov rbp, rsp
 
 	xor rbx, rbx
-	mov bl, byte [rbp + 24]
+	mov bl, byte [rbp + 32]
 
-	mov rax, [rbp + 16]
+	mov rax, [rbp + 24]
 	mov [rax], rbx
-
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]
 
 	mov rsp, rbp
 	pop rbp

@@ -68,7 +68,7 @@ void GenSSAVisitor::visit(IfNode *node)
 
     auto temp = code.add(Command(SSAOp::EQUALS, expr, zero));
 
-    code.add(Command(SSAOp::IFFALSE, temp, false_label));
+    code.add(Command(SSAOp::IF, temp, false_label));
 
     node -> stats_true -> accept(*this);
 
@@ -95,7 +95,7 @@ void GenSSAVisitor::visit(ForNode *node)
 
     auto temp = code.add(Command(SSAOp::EQUALS, cond, zero));
 
-    code.add(Command(SSAOp::IFFALSE, temp, exit_label));
+    code.add(Command(SSAOp::IF, temp, exit_label));
 
     node -> stats -> accept(*this);
     node -> step  -> accept(*this);
@@ -118,7 +118,7 @@ void GenSSAVisitor::visit(WhileNode *node)
 
     auto temp = code.add(Command(SSAOp::EQUALS, cond, zero));
 
-    code.add(Command(SSAOp::IFFALSE, temp, exit_label));
+    code.add(Command(SSAOp::IF, temp, exit_label));
 
     node -> stats -> accept(*this);
 
