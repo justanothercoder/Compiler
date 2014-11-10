@@ -33,6 +33,7 @@ void CheckVisitor::visit(ImportNode *)
 
 void CheckVisitor::visit(IfNode *node)
 {
+    node -> scope -> getTempAlloc().add(2 * GlobalConfig::int_size);
     for ( auto child : node -> getChildren() )
         child -> accept(*this);
 }
@@ -89,7 +90,6 @@ void CheckVisitor::visit(NewExpressionNode *node)
     node -> call_info = CallHelper::callCheck(type -> getName(), type, node -> params);
 
     node -> scope -> getTempAlloc().add(type -> getSize());      //place for object itself
-    node -> scope -> getTempAlloc().add(GlobalConfig::int_size); //place for reference to it
 }
 
 void CheckVisitor::visit(BinaryOperatorNode *node)
@@ -165,6 +165,12 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 //			if ( var_type -> getSymbol() == nullptr || var_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
 //				throw SemanticError("No such struct '" + type_name + "'");
 
+            if ( var_type == BuiltIns::int_type && node -> constructor_call_params.empty() )
+            {
+                node -> scope -> getTempAlloc().add(GlobalConfig::int_size);
+                return;
+            }
+
             if ( var_type -> getTypeKind() != TypeKind::POINTER )
             {
                 auto struct_symbol = static_cast<const StructSymbol*>(var_type -> getSymbol());
@@ -220,6 +226,9 @@ void CheckVisitor::visit(DotNode *node)
     node -> base -> accept(*this);
 
     auto _base_type = node -> base -> getType();
+
+    if ( _base_type -> isReference() )
+        node -> scope -> getTempAlloc().add(GlobalConfig::int_size);
 
     node -> base_type = dynamic_cast<const StructSymbol*>(_base_type -> getUnqualifiedType());
 

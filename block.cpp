@@ -31,6 +31,9 @@ std::string Block::toString()
 
 void Block::genAsm(CodeObject& code_obj) const
 {
+    if ( code.empty() )
+        return;
+
     auto it = std::begin(code);
 
     if ( commands[*it].op == SSAOp::LABEL )
@@ -273,15 +276,35 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
 
         command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
 
-        auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
-        scope.getTempAlloc().claim(callee -> return_type -> getSize());
+        if ( callee -> isConstructor() )
+        {
+//            code_obj.emit("call " + callee -> getScopedTypedName());
+//            code_obj.emit("add rsp, " + std::to_string(command.arg2.id));
+            
+//            auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
+           // scope.getTempAlloc().claim(callee -> return_type -> getSize());
 
-        code_obj.emit("lea rax, " + addr);
-        code_obj.emit("push rax");
+//            code_obj.emit("lea rax, " + addr);
+//            code_obj.emit("push rax");
 
-        code_obj.emit("call " + callee -> getScopedTypedName());
-        code_obj.emit("pop rax");
-        code_obj.emit("add rsp, " +  std::to_string(command.arg2.id));
+            code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+
+            code_obj.emit("call " + callee -> getScopedTypedName());
+//            code_obj.emit("pop rax");
+            code_obj.emit("add rsp, " +  std::to_string(command.arg2.id + GlobalConfig::int_size));
+        }
+        else
+        {
+            auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
+            scope.getTempAlloc().claim(callee -> return_type -> getSize());
+
+            code_obj.emit("lea rax, " + addr);
+            code_obj.emit("push rax");
+
+            code_obj.emit("call " + callee -> getScopedTypedName());
+            code_obj.emit("pop rax");
+            code_obj.emit("add rsp, " +  std::to_string(command.arg2.id));
+        }
 
         return;
     }
@@ -318,8 +341,9 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             code_obj.emit("push rbx");
             code_obj.emit("push rax");
 
+            code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
             code_obj.emit("call " + dynamic_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
-            code_obj.emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
+            code_obj.emit("add rsp, " + std::to_string((1 + 2) * GlobalConfig::int_size));
         }
         return;
     }
@@ -378,8 +402,8 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
         scope.getTempAlloc().claim(object_type -> getSize());
 
-        auto addr2 = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
-        scope.getTempAlloc().claim(GlobalConfig::int_size);
+//        auto addr2 = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
+//        scope.getTempAlloc().claim(GlobalConfig::int_size);
 
         return;
     }    
