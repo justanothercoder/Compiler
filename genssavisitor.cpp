@@ -63,12 +63,7 @@ void GenSSAVisitor::visit(IfNode *node)
 
     auto expr = getArg(node -> cond);
 
-    code.addConst(0);
-    auto zero = Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type);
-
-    auto temp = code.add(Command(SSAOp::EQUALS, expr, zero));
-
-    code.add(Command(SSAOp::IF, temp, false_label));
+    code.add(Command(SSAOp::IFFALSE, expr, false_label));
 
     node -> stats_true -> accept(*this);
 

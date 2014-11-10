@@ -71,6 +71,11 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
             code_obj.emit("extern " + p.first -> getScopedTypedName());
     }
 
+    code_obj.emit("section .data");
+
+    for ( auto p : globaltable.id_to_num )
+        code_obj.emit("iconst" + std::to_string(p.first) + ": dq " + std::to_string(p.second));
+
     code_obj.emit("section .text");
 
     auto block = blocks.cbegin();

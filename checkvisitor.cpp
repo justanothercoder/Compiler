@@ -284,7 +284,7 @@ void CheckVisitor::visit(StringNode *)
 
 void CheckVisitor::visit(NumberNode *node)
 {
-    node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
+//    node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
 
 void CheckVisitor::visit(CallNode *node)

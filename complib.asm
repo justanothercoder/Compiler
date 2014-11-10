@@ -260,10 +260,10 @@ _char_char_char~ref_const~char~ref:
 	push rbp
 	mov rbp, rsp
 	
-	mov rbx, [rbp + 32]
+	mov rbx, [rbp + 24]
 	mov bl, byte [rbx]
 
-	mov rax, [rbp + 24]
+	mov rax, [rbp + 16]
 	mov byte [rax], bl
 
 	mov rsp, rbp
@@ -288,10 +288,10 @@ _char_char_char~ref_const~int~ref:
 	push rbp
 	mov rbp, rsp
 
-	mov rbx, [rbp + 32]
+	mov rbx, [rbp + 24]
 	mov bl, byte [rbx]
 
-	mov rax, [rbp + 24]
+	mov rax, [rbp + 16]
 	mov byte [rax], bl
 
 	mov rsp, rbp
