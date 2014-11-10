@@ -88,8 +88,7 @@ void CheckVisitor::visit(NewExpressionNode *node)
         param -> accept(*this);        
 
     node -> call_info = CallHelper::callCheck(type -> getName(), type, node -> params);
-
-    node -> scope -> getTempAlloc().add(type -> getSize());      //place for object itself
+    node -> scope -> getTempAlloc().add(type -> getSize());
 }
 
 void CheckVisitor::visit(BinaryOperatorNode *node)

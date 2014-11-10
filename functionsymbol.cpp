@@ -9,7 +9,8 @@ FunctionSymbol::FunctionSymbol(std::string name
                                , Scope *enclosing_scope
                                , FunctionTraits traits
                               ) : FunctionScope(enclosing_scope -> getScopeName() 
-                                 + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name), enclosing_scope)
+                                 + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name), enclosing_scope,
+                                 traits.is_constructor)
                                 , return_type(return_type)
                                 , function_type_info(function_type_info)
                                 , is_constexpr(false)

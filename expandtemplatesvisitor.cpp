@@ -10,6 +10,9 @@
 #include "unsafeblocknode.hpp"
 #include "templatestructsymbol.hpp"
 #include "variabledeclarationnode.hpp"
+#include "newexpressionnode.hpp"
+#include "callnode.hpp"
+#include "dotnode.hpp"
 
 void ExpandTemplatesVisitor::visit(IfNode *node)
 {
@@ -87,6 +90,11 @@ void ExpandTemplatesVisitor::visit(VariableDeclarationNode *node)
     node -> type_info = preprocessTypeInfo(node -> type_info, node -> scope);
 }
 
+void ExpandTemplatesVisitor::visit(NewExpressionNode *node)
+{
+    node -> type_info = preprocessTypeInfo(node -> type_info, node -> scope);
+}
+
 TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *scope)
 {
     const auto& template_info = scope -> getTemplateInfo();
@@ -104,11 +112,6 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
 
         if ( type_info.is_const )
             temp_info.is_const = true;
-
-//        temp_info.array_dimensions.insert(std::end(temp_info.array_dimensions)
-//                                        , std::begin(type_info.array_dimensions)
-//                                        , std::end(type_info.array_dimensions)
-//        );
 
         for ( auto dim : type_info.array_dimensions )
             temp_info.array_dimensions.push_back(dim);
@@ -152,17 +155,26 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
     return type_info;
 }
 
+void ExpandTemplatesVisitor::visit(CallNode *node) 
+{
+    node -> caller -> accept(*this);
+    for ( auto param : node -> params )
+        param -> accept(*this);
+}
+
+void ExpandTemplatesVisitor::visit(DotNode *node) 
+{
+    node -> base -> accept(*this);
+}
+
 void ExpandTemplatesVisitor::visit(BracketNode *) { }
 void ExpandTemplatesVisitor::visit(UnaryNode *) { }
-void ExpandTemplatesVisitor::visit(NewExpressionNode *) { }
 void ExpandTemplatesVisitor::visit(BinaryOperatorNode *) { }
 void ExpandTemplatesVisitor::visit(AddrNode *) { }
 void ExpandTemplatesVisitor::visit(NullNode *) { }
-void ExpandTemplatesVisitor::visit(DotNode *) { }
 void ExpandTemplatesVisitor::visit(VariableNode *) { }
 void ExpandTemplatesVisitor::visit(StringNode *) { }
 void ExpandTemplatesVisitor::visit(NumberNode *) { }
-void ExpandTemplatesVisitor::visit(CallNode *) { }
 void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode *) { }
 void ExpandTemplatesVisitor::visit(ImportNode *) { }
 void ExpandTemplatesVisitor::visit(AsmArrayNode *) { }

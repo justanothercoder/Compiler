@@ -94,14 +94,7 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
     }
     case IdType::NUMBER:
     {
-//        auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
-//        scope.getTempAlloc().claim(GlobalConfig::int_size);
-
-//        code_obj.emit("mov qword " + addr + ", " + toString(arg));
-//        code_obj.emit("lea rax, " + addr);
-
         code_obj.emit("lea rax, [iconst" + std::to_string(arg.id) + "]"); 
-
         return;
     }
     case IdType::TEMP:
@@ -155,11 +148,14 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     {
     case SSAOp::DOT:
     {
-
         auto base_type = command.arg1.expr_type;
         auto base_sym = base_type -> getUnqualifiedType() -> getSymbol();
 
         auto member = table.var_by_id[command.arg2.id];
+
+        if ( dynamic_cast<const OverloadedFunctionSymbol*>(member -> getType()) )
+            return;
+
         int arg_addr;
         if ( command.arg1.type == IdType::VARIABLE )
         {

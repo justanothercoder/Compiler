@@ -85,12 +85,7 @@ void GenSSAVisitor::visit(ForNode *node)
 
     auto cond = getArg(node -> cond);
 
-    code.addConst(0);
-    auto zero = Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type);
-
-    auto temp = code.add(Command(SSAOp::EQUALS, cond, zero));
-
-    code.add(Command(SSAOp::IF, temp, exit_label));
+    code.add(Command(SSAOp::IFFALSE, cond, exit_label));
 
     node -> stats -> accept(*this);
     node -> step  -> accept(*this);
@@ -108,12 +103,7 @@ void GenSSAVisitor::visit(WhileNode *node)
 
     auto cond = getArg(node -> cond);
 
-    code.addConst(0);
-    auto zero = Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type);
-
-    auto temp = code.add(Command(SSAOp::EQUALS, cond, zero));
-
-    code.add(Command(SSAOp::IF, temp, exit_label));
+    code.add(Command(SSAOp::IFFALSE, cond, exit_label));
 
     node -> stats -> accept(*this);
 
@@ -257,18 +247,49 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
     }
     else
     {
-        code.add(Command(SSAOp::PARAM, getArg(node -> rhs)));
-        code.add(Command(SSAOp::PARAM, getArg(node -> lhs)));
+        if ( node -> call_info.callee -> isMethod() )
+        {
+            auto rhs_info = *std::begin(node -> call_info.conversions);
+            code.addParamInfo(rhs_info);
+            code.add(Command(SSAOp::PARAM, getArg(node -> rhs), Arg(IdType::NOID, code.getInfoId(rhs_info))));
 
-        code.addFunction(node -> call_info.callee);
-        _arg = code.add(Command(SSAOp::CALL, 
-                                Arg(IdType::PROCEDURE, 
-                                    code.getFuncId(node -> call_info.callee)),
-                                Arg(IdType::NOID, 
-                                    lhs_type -> getSize() + 
-                                    rhs_type -> getSize())
-                        )
-        );
+            auto lhs_info = ConversionInfo(nullptr, false, false);
+            lhs_info.desired_type = TypeFactory::getReference(node -> lhs -> getType() -> getUnqualifiedType());
+
+            code.addParamInfo(lhs_info);                      
+            code.add(Command(SSAOp::PARAM, getArg(node -> lhs), Arg(IdType::NOID, code.getInfoId(lhs_info))));
+
+            code.addFunction(node -> call_info.callee);
+            _arg = code.add(Command(SSAOp::CALL, 
+                                    Arg(IdType::PROCEDURE, 
+                                        code.getFuncId(node -> call_info.callee)),
+                                    Arg(IdType::NOID, 
+                                        lhs_type -> getSize() + 
+                                        rhs_type -> getSize())
+                            )
+            );
+        }
+        else
+        {       
+            auto rhs_info = *(std::begin(node -> call_info.conversions) + 1);
+            auto lhs_info = *(std::begin(node -> call_info.conversions) + 0);
+
+            code.addParamInfo(rhs_info);
+            code.addParamInfo(lhs_info);
+
+            code.add(Command(SSAOp::PARAM, getArg(node -> rhs), Arg(IdType::NOID, code.getInfoId(rhs_info))));
+            code.add(Command(SSAOp::PARAM, getArg(node -> lhs), Arg(IdType::NOID, code.getInfoId(lhs_info))));
+
+            code.addFunction(node -> call_info.callee);
+            _arg = code.add(Command(SSAOp::CALL, 
+                                    Arg(IdType::PROCEDURE, 
+                                        code.getFuncId(node -> call_info.callee)),
+                                    Arg(IdType::NOID, 
+                                        lhs_type -> getSize() + 
+                                        rhs_type -> getSize())
+                            )
+            );
+        }
     }
 }
 
@@ -323,13 +344,25 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
         {
             if ( node -> definedSymbol -> getType() -> getUnqualifiedType() == BuiltIns::int_type )
             {
-                code.addConst(0);
-                code.add(Command(SSAOp::ASSIGN,
-                                 Arg(IdType::VARIABLE,
-                                     code.getVarId(node -> definedSymbol),
-                                     node -> definedSymbol -> getType()),
-                                 Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type)
-                                ));
+                if ( node -> constructor_call_params.empty() )
+                {
+                    code.addConst(0);
+                    code.add(Command(SSAOp::ASSIGN,
+                                     Arg(IdType::VARIABLE,
+                                         code.getVarId(node -> definedSymbol),
+                                         node -> definedSymbol -> getType()),
+                                     Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type)
+                                    ));
+                }
+                else
+                {
+                    code.add(Command(SSAOp::ASSIGN,
+                                     Arg(IdType::VARIABLE,
+                                         code.getVarId(node -> definedSymbol),
+                                         node -> definedSymbol -> getType()),
+                                     getArg(*std::begin(node -> constructor_call_params))
+                                    ));
+                }
                 return;
             }
 
@@ -451,6 +484,21 @@ void GenSSAVisitor::visit(CallNode *node)
     int params_size = 0;
     for ( auto param : node -> params )
         params_size += param -> getType() -> getSize();
+
+    if ( node -> call_info.callee -> isMethod() )
+    {
+        params_size += GlobalConfig::int_size;
+        
+        auto info = ConversionInfo(nullptr, false, false);
+        info.desired_type = TypeFactory::getReference(node -> caller -> getType()); 
+
+        code.addParamInfo(info);
+        code.add(Command(SSAOp::PARAM,
+                         getArg(node -> caller),
+                         Arg(IdType::NOID, code.getInfoId(info))
+                        )
+                );
+    }
 
     code.addFunction(node -> call_info.callee);
     _arg = code.add(Command(SSAOp::CALL,

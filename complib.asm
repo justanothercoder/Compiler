@@ -483,9 +483,9 @@ _int_int_int~ref_char:
 	mov rbp, rsp
 
 	xor rbx, rbx
-	mov bl, byte [rbp + 32]
+	mov bl, byte [rbp + 24]
 
-	mov rax, [rbp + 24]
+	mov rax, [rbp + 16]
 	mov [rax], rbx
 
 	mov rsp, rbp

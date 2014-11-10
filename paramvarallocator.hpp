@@ -7,7 +7,7 @@ class ParamVarAllocator : public VarAllocator
 {
 public:
 
-    ParamVarAllocator();
+    ParamVarAllocator(int offset);
 
     void addVariable(VariableSymbol *var) override;
 
@@ -16,6 +16,7 @@ public:
 private:
 
     int space_for_params;
+    int offset;
 };
 
 #endif

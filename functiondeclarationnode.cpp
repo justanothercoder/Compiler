@@ -5,17 +5,17 @@
 #include "templatestructsymbol.hpp"
 
 FunctionDeclarationNode::FunctionDeclarationNode(std::string name
-        , std::vector< pair<std::string, TypeInfo> > params
-        , TypeInfo return_type_info
-        , AST *statements
-        , FunctionTraits traits
-        , bool is_unsafe) : name(name)
-    , params(params)
-    , return_type_info(return_type_info)
-    , statements(statements)
-    , traits(traits)
-    , definedSymbol(nullptr)
-    , is_unsafe(is_unsafe)
+                                               , std::vector< pair<std::string, TypeInfo> > params
+                                               , TypeInfo return_type_info
+                                               , AST *statements
+                                               , FunctionTraits traits
+                                               , bool is_unsafe) : name(name)
+                                                                 , params(params)
+                                                                 , return_type_info(return_type_info)
+                                                                 , statements(statements)
+                                                                 , traits(traits)
+                                                                 , definedSymbol(nullptr)
+                                                                 , is_unsafe(is_unsafe)
 {
 
 }

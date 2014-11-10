@@ -14,6 +14,7 @@ class NewExpressionNode : public ExprNode
 
     friend class GenSSAVisitor;
     friend class CheckVisitor;
+    friend class ExpandTemplatesVisitor;
 
 public:
     NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params);

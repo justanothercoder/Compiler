@@ -12,7 +12,7 @@ class FunctionScope : public BaseScope
 
 public:
 
-    FunctionScope(std::string scope_name, Scope *enclosing_scope);
+    FunctionScope(std::string scope_name, Scope *enclosing_scope, bool is_constr);
 
     std::string getScopeName() const override;
     Scope* getEnclosingScope() const override;
