@@ -13,8 +13,6 @@ struct ConversionInfo
     bool operator<(const ConversionInfo& info) const;
 
     FunctionSymbol *conversion;
-
-    const Type *actual_type;
     const Type *desired_type;
 };
 

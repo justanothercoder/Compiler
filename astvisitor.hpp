@@ -16,7 +16,6 @@ class StringNode;
 class NumberNode;
 class VariableNode;
 class StatementNode;
-class AsmArrayNode;
 class UnsafeBlockNode;
 class NewExpressionNode;
 class BinaryOperatorNode;
@@ -50,7 +49,6 @@ public:
     virtual void visit(CallNode *node) = 0;
     virtual void visit(ReturnNode *node) = 0;
     virtual void visit(UnsafeBlockNode *node) = 0;
-    virtual void visit(AsmArrayNode *node) = 0;
     virtual void visit(VarInferTypeDeclarationNode *node) = 0;
     virtual void visit(TemplateStructDeclarationNode *node) = 0;
 };

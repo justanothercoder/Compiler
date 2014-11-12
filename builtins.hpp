@@ -17,8 +17,6 @@ public:
     static Type *int_type;
     static Type *char_type;
     static Type *ASCII_string_type;    
-
-    static AST *array_decl;
 };
 
 #endif

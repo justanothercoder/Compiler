@@ -30,8 +30,6 @@ int main()
 
         root -> scope = BuiltIns::global_scope;
 
-        static_cast<StatementNode*>(root.get()) -> statements.insert(std::begin(static_cast<StatementNode*>(root.get()) -> statements), BuiltIns::array_decl);
-
         root -> build_scope();
         
         ExpandTemplatesVisitor expand_visitor;

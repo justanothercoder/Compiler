@@ -177,5 +177,4 @@ void ExpandTemplatesVisitor::visit(StringNode *) { }
 void ExpandTemplatesVisitor::visit(NumberNode *) { }
 void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode *) { }
 void ExpandTemplatesVisitor::visit(ImportNode *) { }
-void ExpandTemplatesVisitor::visit(AsmArrayNode *) { }
 

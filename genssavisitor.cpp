@@ -22,7 +22,6 @@
 #include "nullnode.hpp"
 #include "variabledeclarationnode.hpp"
 #include "newexpressionnode.hpp"
-#include "asmarraynode.hpp"
 #include "templatestructdeclarationnode.hpp"
 #include "importnode.hpp"
 
@@ -581,38 +580,6 @@ void GenSSAVisitor::visit(ReturnNode *node)
 void GenSSAVisitor::visit(UnsafeBlockNode *node)
 {
     node -> block -> accept(*this);
-}
-
-void GenSSAVisitor::visit(AsmArrayNode *node)
-{
-    auto arr = static_cast<StructSymbol*>(node -> scope);
-    int arr_size = boost::get<int>(*node -> scope -> getTemplateInfo().getReplacement("size"));
-    
-    code.newBlock(*node -> array_constructor, node -> array_constructor -> getScopedTypedName());
-    code.add(Command(SSAOp::LABEL, code.newLabel(node -> array_constructor -> getScopedTypedName())));
-    code.popBlock(); 
-    
-    code.addConst(arr_size);
-    code.newBlock(*node -> array_size_func, node -> array_size_func -> getScopedTypedName());
-    code.add(Command(SSAOp::LABEL, code.newLabel(node -> array_size_func -> getScopedTypedName())));
-    code.add(Command(SSAOp::RETURN, Arg(IdType::NUMBER, code.getConstId(arr_size), BuiltIns::int_type)));
-    code.popBlock();
-
-    code.newBlock(*node -> array_elem_operator, node -> array_elem_operator -> getScopedTypedName());
-
-    auto sym_this = static_cast<VariableSymbol*>(arr -> resolve("~~impl"));
-    code.addVariable(sym_this);
-
-    auto param_sym = static_cast<VariableSymbol*>(node -> array_elem_operator -> resolve("__i"));
-    code.addVariable(param_sym);
-
-    code.add(Command(SSAOp::LABEL, code.newLabel(node -> array_elem_operator -> getScopedTypedName())));
-    code.add(Command(SSAOp::ELEM,  
-                     Arg(IdType::VARIABLE, code.getVarId(sym_this), sym_this -> getType()), 
-                     Arg(IdType::VARIABLE, code.getVarId(param_sym), param_sym -> getType())
-             )
-    );
-    code.popBlock();
 }
 
 void GenSSAVisitor::visit(VarInferTypeDeclarationNode *)

@@ -158,12 +158,7 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
     {
         if ( !node -> type_info.is_ref )
         {
-//			std::string type_name = node -> type_info.type_name;
-
             auto var_type = fromTypeInfo(node -> type_info, node -> scope);
-
-//			if ( var_type -> getSymbol() == nullptr || var_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
-//				throw SemanticError("No such struct '" + type_name + "'");
 
             if ( var_type == BuiltIns::int_type && node -> constructor_call_params.empty() )
             {
@@ -277,16 +272,6 @@ void CheckVisitor::visit(VariableNode *node)
     node -> variable = static_cast<VariableSymbol*>(sym);
 }
 
-void CheckVisitor::visit(StringNode *)
-{
-
-}
-
-void CheckVisitor::visit(NumberNode *node)
-{
-//    node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
-}
-
 void CheckVisitor::visit(CallNode *node)
 {
     node -> caller -> accept(*this);
@@ -338,11 +323,6 @@ void CheckVisitor::visit(UnsafeBlockNode *node)
     node -> block -> accept(*this);
 }
 
-void CheckVisitor::visit(AsmArrayNode *)
-{
-
-}
-
 void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
 {
     node -> scope -> getTempAlloc().add(node -> expr -> getType() -> getSize());
@@ -358,3 +338,7 @@ void CheckVisitor::visit(TemplateStructDeclarationNode *node)
     for ( auto instance : node -> instances )
         instance -> accept(*this);
 }
+
+void CheckVisitor::visit(NumberNode *) { }
+void CheckVisitor::visit(StringNode *) { }
+

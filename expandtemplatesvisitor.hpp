@@ -31,7 +31,6 @@ public:
     void visit(CallNode *node) override;
     void visit(ReturnNode *node) override;
     void visit(UnsafeBlockNode *node) override;
-    void visit(AsmArrayNode *node) override;
     void visit(VarInferTypeDeclarationNode *node) override;
     void visit(TemplateStructDeclarationNode *node) override;
 

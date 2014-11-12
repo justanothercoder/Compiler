@@ -1,5 +1,4 @@
 #include "builtins.hpp"
-#include "asmarraynode.hpp"
 #include "templatestructdeclarationnode.hpp"
 #include "structsymbol.hpp"
 #include "functionsymbol.hpp"
@@ -10,7 +9,6 @@ Scope *BuiltIns::global_scope;
 Type *BuiltIns::void_type;
 Type *BuiltIns::int_type;
 Type *BuiltIns::char_type;
-AST *BuiltIns::array_decl;
 Type *BuiltIns::ASCII_string_type;
 
 void BuiltIns::defineBuiltIns()
@@ -85,20 +83,9 @@ void BuiltIns::defineBuiltIns()
         { "size", TypeInfo("int", false, { }) }
     };
 
-    auto arr_node = new AsmArrayNode();
-    arr_node -> scope = global_scope;
-
-    array_decl = new TemplateStructDeclarationNode("array", {arr_node}, array_tp);
-    array_decl -> scope = global_scope;
-
-    TemplateStructSymbol *array_struct = new TemplateStructSymbol("array", global_scope, array_tp, array_decl);
-
     global_scope -> define(const_cast<Symbol*>(BuiltIns::void_type -> getSymbol()));
     global_scope -> define(new FunctionSymbol("putchar", void_type, {char_struct}, global_scope, simple_traits));
     global_scope -> define(new FunctionSymbol("getchar", int_struct, { }, global_scope, simple_traits));
-
-    array_struct -> holder -> scope = global_scope;
-//    global_scope -> define(array_struct);
 
     ASCII_string -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~string", 256), VariableSymbolType::FIELD));
 

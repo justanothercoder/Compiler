@@ -25,7 +25,6 @@
 #include "varinfertypedeclarationnode.hpp"
 #include "templatestructdeclarationnode.hpp"
 #include "nullnode.hpp"
-#include "asmarraynode.hpp"
 #include "filehelper.hpp"
 #include "typefactory.hpp"
 #include "globaltable.hpp"
@@ -153,59 +152,6 @@ void DefineVisitor::visit(ReturnNode *node)
 void DefineVisitor::visit(UnsafeBlockNode *node)
 {
     node -> block -> accept(*this);
-}
-
-void DefineVisitor::visit(AsmArrayNode *node)
-{
-    const Type *type;
-    const Type *ref_type;
-
-    const auto& template_info = node -> scope -> getTemplateInfo();
-
-    if ( template_info.sym -> isIn("size") )
-    {
-        auto replace = template_info.getReplacement("size");
-
-        node -> array_size = boost::get<int>(*replace);
-    }
-    else throw SemanticError("");
-
-    auto arr = dynamic_cast<StructSymbol*>(node -> scope);
-    arr -> is_unsafe = true;
-
-    if ( template_info.sym -> isIn("T") )
-    {
-        auto replace = template_info.getReplacement("T");
-        type         = fromTypeInfo(boost::get<TypeInfo>(*replace), node -> scope);
-        ref_type     = TypeFactory::getReference(type);
-        node -> size_of_type = type -> getSize();
-    }
-    else throw SemanticError("");
-
-    auto just_int = BuiltIns::int_type;
-
-    auto ref_arr = TypeFactory::getReference(arr);
-
-    node -> array_constructor   = new FunctionSymbol("array"     , ref_arr , {ref_arr}          , node -> scope, {true, true, false});
-    node -> array_elem_operator = new FunctionSymbol("operator[]", ref_type, {ref_arr, just_int}, node -> scope, {true, false, true});
-    node -> array_size_func     = new FunctionSymbol("size"      , just_int, {ref_arr}          , node -> scope, {true, false, false});
-
-//	node -> scope -> getSymbolTable().has_definition[node -> array_constructor]   = true;
-//	node -> scope -> getSymbolTable().has_definition[node -> array_elem_operator] = true;
-//	node -> scope -> getSymbolTable().has_definition[node -> array_size_func]     = true;
-
-    node -> array_constructor   -> is_unsafe = true;
-    node -> array_elem_operator -> is_unsafe = true;
-    node -> array_size_func     -> is_unsafe = true;
-
-    node -> array_elem_operator -> define(new VariableSymbol("this", TypeFactory::getPointer(arr), VariableSymbolType::PARAM));
-    node -> array_elem_operator -> define(new VariableSymbol("__i", BuiltIns::int_type, VariableSymbolType::PARAM));
-
-    node -> scope -> define(node -> array_constructor);
-    node -> scope -> define(node -> array_elem_operator);
-    node -> scope -> define(node -> array_size_func);
-
-    node -> scope -> define(new VariableSymbol( "~~impl", new BuiltInTypeSymbol("~~array_impl", node -> array_size * node -> size_of_type)));
 }
 
 void DefineVisitor::visit(VarInferTypeDeclarationNode *node)
