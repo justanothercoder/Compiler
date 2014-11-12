@@ -291,10 +291,10 @@ _string_operatorplus_string~ref_const~string~ref:
 	push rbp
 	mov rbp, rsp
 
-	mov rax, [rbp + 32]
+	mov rax, [rbp + 16]
 	mov rdi, rax
 
-	mov rsi, [rbp + 16]
+	mov rsi, [rbp + 24]
 
 .floop:
 	
@@ -311,7 +311,7 @@ _string_operatorplus_string~ref_const~string~ref:
 
 .fend:
 
-	mov rsi, [rbp + 24]
+	mov rsi, [rbp + 32]
 
 .sloop:
 

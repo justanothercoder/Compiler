@@ -66,29 +66,8 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
     case IdType::NOID  : return;
     case IdType::STRING:
     {
-        auto str_label = "string_label" + std::to_string(arg.id);
 
-        code_obj.emit("section .data");
-
-        std::string res = "0";
-        auto str = table.string_by_id[arg.id];
-        for ( int i = str.length() - 1; i >= 0; --i )
-        {
-            if ( i >= 1 && str[i - 1] == '\\' && str[i] == 'n' )
-            {
-                res.append(", 10");
-                --i;
-            }
-            else
-            {
-                res.append(", " + std::to_string(static_cast<int>(str[i])));
-            }
-        }
-
-        code_obj.emit("@" + str_label + ": db " + res);
-        code_obj.emit(str_label + ": equ $ - 1");
-        code_obj.emit("section .text");
-        code_obj.emit("lea rax, [" + str_label + "]");
+        code_obj.emit("lea rax, [string_label" + std::to_string(arg.id) + "]");
 
         return;
     }
