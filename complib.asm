@@ -348,7 +348,7 @@ _string_length_string~ref:
 	push rbp
 	mov rbp, rsp
 
-	mov rdi, [rbp + 16]
+	mov rdi, [rbp + 24]
 	
 	mov rax, 0
 
@@ -357,7 +357,7 @@ _string_length_string~ref:
 	cmp byte [rdi], 0
 	jz .end
 
-	inc eax
+	inc rax
 	dec rdi
 
 	jmp .loop
@@ -365,12 +365,8 @@ _string_length_string~ref:
 .end:
 
 	mov rbx, rax
-	mov rax, [rbp + 24]
+	mov rax, [rbp + 16]
 	mov [rax], rbx
-
-;	mov r9, [rbp]
-;	mov [r9 - 8], rax
-;	lea rax, [r9 - 8]	
 
 	mov rsp, rbp
 	pop rbp
@@ -380,7 +376,7 @@ _print_const~string~ref:
 	push rbp
 	mov rbp, rsp
 
-	mov r10, [rbp + 16]
+	mov r10, [rbp + 24]
 
 .loop:
 
