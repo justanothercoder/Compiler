@@ -15,8 +15,8 @@ public:
 
     void accept(ASTVisitor& visitor) override;
 
-    AST *root;
     std::string lib;
+    AST *root;
 };
 
 #endif

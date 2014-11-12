@@ -79,10 +79,6 @@ void BuiltIns::defineBuiltIns()
 
     BuiltIns::void_type = void_type;
 
-    std::vector< std::pair<std::string, TypeInfo> > array_tp = { {"T", TypeInfo("class", false, { }) },
-        { "size", TypeInfo("int", false, { }) }
-    };
-
     global_scope -> define(const_cast<Symbol*>(BuiltIns::void_type -> getSymbol()));
     global_scope -> define(new FunctionSymbol("putchar", void_type, {char_struct}, global_scope, simple_traits));
     global_scope -> define(new FunctionSymbol("getchar", int_struct, { }, global_scope, simple_traits));

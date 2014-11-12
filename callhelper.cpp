@@ -40,7 +40,6 @@ CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector
     auto params_types = CallHelper::extractTypes(params);
 
     std::vector<ConversionInfo> conversions;
-    std::vector<const FunctionSymbol*> copy_constructors;
 
     int is_meth = (function_sym -> isMethod() ? 1 : 0);
 
