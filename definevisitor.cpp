@@ -33,14 +33,7 @@
 
 void DefineVisitor::visit(ImportNode *node)
 {
-    auto root = FileHelper::parse((node -> lib + ".txt").c_str());
-
-    root -> scope = node -> scope;
-    root -> build_scope();
-
-    root -> accept(*this);
-//	root -> check();
-//	node -> code_obj.emit(root -> gen().getCode());
+    node -> root -> accept(*this);
 }
 
 void DefineVisitor::visit(IfNode *node)

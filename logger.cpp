@@ -2,5 +2,5 @@
 
 void Logger::log(std::string s)
 {
-    std::cerr << s << '\n';
+    std::cerr << "Log: " << s << '\n';
 }

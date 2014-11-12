@@ -24,6 +24,7 @@
 #include "newexpressionnode.hpp"
 #include "asmarraynode.hpp"
 #include "templatestructdeclarationnode.hpp"
+#include "importnode.hpp"
 
 #include "typefactory.hpp"
 #include "logger.hpp"
@@ -31,6 +32,21 @@
 GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
 {
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fopen")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fread")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fwrite")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fclose")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("char")) -> resolve("char")) -> getType()) -> getTypeInfo().symbols )
@@ -42,6 +58,15 @@ GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator[]")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("length")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("string")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator=")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
     code.newBlock(*BuiltIns::global_scope);
 }
 
@@ -51,9 +76,9 @@ Arg GenSSAVisitor::getArg(AST *node)
     return _arg;
 }
 
-void GenSSAVisitor::visit(ImportNode *)
+void GenSSAVisitor::visit(ImportNode *node)
 {
-
+    node -> root -> accept(*this);
 }
 
 void GenSSAVisitor::visit(IfNode *node)
@@ -170,6 +195,8 @@ void GenSSAVisitor::visit(UnaryNode *node)
 void GenSSAVisitor::visit(NewExpressionNode *node)
 {
     const auto& params = node -> params;
+    
+    int params_size = 0;
 
     for ( auto param = params.rbegin(); param != params.rend(); ++param )
     {
@@ -180,6 +207,8 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
                          Arg(IdType::NOID, code.getInfoId(info))
                         )
                 );
+
+        params_size += info.desired_type -> getSize();
     }
 
     auto expr_type = node -> getType() -> getUnqualifiedType();
@@ -200,10 +229,6 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
                      Arg(IdType::NOID, code.getInfoId(info))
                     )
     );
-
-    int params_size = 0;
-    for ( auto param : params )
-        params_size += param -> getType() -> getSize();    
 
     params_size += GlobalConfig::int_size;
 
@@ -368,6 +393,8 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
 
             const auto& params = node -> constructor_call_params;
 
+            int params_size = 0;
+
             for ( auto param = params.rbegin(); param != params.rend(); ++param )
             {
                 ConversionInfo info = *(node -> call_info.conversions.rbegin() + (param - params.rbegin()));
@@ -377,6 +404,8 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                                  Arg(IdType::NOID, code.getInfoId(info))
                                 )
                         );
+
+                params_size += info.desired_type -> getSize();
             }
 
             auto info = ConversionInfo(nullptr, false, false); 
@@ -393,9 +422,6 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                             )
                     );
 
-            int params_size = 0;
-            for ( auto param : params )
-                params_size += param -> getType() -> getSize();
 
             params_size += GlobalConfig::int_size;
 
@@ -422,15 +448,22 @@ void GenSSAVisitor::visit(NullNode *)
 
 void GenSSAVisitor::visit(DotNode *node)
 {
-    code.addVariable(node -> member);
-    _arg = code.add(
-               Command(SSAOp::DOT,
-                       getArg(node -> base),
-                       Arg(IdType::VARIABLE, 
-                           code.getVarId(node -> member), 
-                           node -> member -> getType())
-                      )
-           );
+    if ( node -> member -> getType() -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
+    {
+        _arg = getArg(node -> base);
+    }
+    else
+    {
+        code.addVariable(node -> member);
+        _arg = code.add(
+                   Command(SSAOp::DOT,
+                           getArg(node -> base),
+                           Arg(IdType::VARIABLE, 
+                               code.getVarId(node -> member), 
+                               node -> member -> getType())
+                          )
+               );
+    }
 }
 
 void GenSSAVisitor::visit(StatementNode *node)
@@ -470,6 +503,8 @@ void GenSSAVisitor::visit(NumberNode *node)
 
 void GenSSAVisitor::visit(CallNode *node)
 {
+    int params_size = 0;
+    
     for ( auto param = node -> params.rbegin(); param != node -> params.rend(); ++param )
     {
         ConversionInfo info = *(node -> call_info.conversions.rbegin() + (param - node -> params.rbegin()));
@@ -479,11 +514,9 @@ void GenSSAVisitor::visit(CallNode *node)
                          Arg(IdType::NOID, code.getInfoId(info))
                         )
                 );
-    }
 
-    int params_size = 0;
-    for ( auto param : node -> params )
-        params_size += param -> getType() -> getSize();
+        params_size += info.desired_type -> getSize();
+    }
 
     if ( node -> call_info.callee -> isMethod() )
     {

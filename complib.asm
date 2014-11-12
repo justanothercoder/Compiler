@@ -74,7 +74,7 @@ ___fopen_const~string~ref_int_int:
 
 	sub rsp, 256
 
-	mov rdi, [rbp + 16]
+	mov rdi, [rbp + 24]
 	lea rsi, [rbp - 256]
 
 .reverse.loop:
@@ -96,12 +96,12 @@ ___fopen_const~string~ref_int_int:
 
 	mov rax, 2
 	lea rdi, [rbp - 256]
-	mov rsi, [rbp + 24]
-	mov rdx, [rbp + 32]
+	mov rsi, [rbp + 32]
+	mov rdx, [rbp + 40]
 	syscall
 
 	mov rbx, rax
-	mov rax, [rbp + 40]
+	mov rax, [rbp + 16]
 	mov [rax], rbx
 
 	mov rsp, rbp
@@ -113,7 +113,7 @@ ___fclose_int:
 	mov rbp, rsp
 
 	mov rax, qword 3
-	mov rdi, [rbp + 16]
+	mov rdi, [rbp + 24]
 	syscall
 
 	mov rsp, rbp
@@ -126,7 +126,7 @@ ___fwrite_int_const~string~ref_int:
 
 	sub rsp, 256
 
-	mov rsi, [rbp + 24]
+	mov rsi, [rbp + 32]
 	lea rdi, [rbp - 256]
 
 .reverse.loop:
@@ -147,9 +147,9 @@ ___fwrite_int_const~string~ref_int:
 	mov byte [rdi], 0
 
 	mov rax, qword 1
-	mov rdi, [rbp + 16]
+	mov rdi, [rbp + 24]
 	lea rsi, [rbp - 256]
-	mov rdx, [rbp + 32]
+	mov rdx, [rbp + 16]
 	syscall
 
 	mov rsp, rbp
@@ -165,17 +165,17 @@ ___fread_int_string~ref_int:
 	mov qword [rbp - 256], 0
 
 	mov rax, qword 0
-	mov rdi, [rbp + 16]
+	mov rdi, [rbp + 24]
 	lea rsi, [rbp - 256]
-	mov rdx, [rbp + 32]
+	mov rdx, [rbp + 40]
 	syscall
 
 	mov rbx, rax
-	mov rax, [rbp + 40]
+	mov rax, [rbp + 16]
 	mov [rax], rbx
 
 	lea rsi, [rbp - 256]
-	mov rdi, [rbp + 24]
+	mov rdi, [rbp + 32]
 
 .loop:
 	
@@ -454,8 +454,8 @@ _string_operatorassign_string~ref_const~string~ref:
 	push rbp
 	mov rbp, rsp
 
-	mov rdi, [rbp + 16]
-	mov rsi, [rbp + 24]
+	mov rdi, [rbp + 24]
+	mov rsi, [rbp + 32]
 
 .loop:
 

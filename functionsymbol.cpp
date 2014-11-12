@@ -16,6 +16,7 @@ FunctionSymbol::FunctionSymbol(std::string name
                                 , is_constexpr(false)
                                 , name(name)
                                 , traits(traits)
+                                , is_used(false)
 {
 
 }

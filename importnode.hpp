@@ -8,11 +8,14 @@ class ImportNode : public AST
 public:
     ImportNode(std::string lib);
 
+    void build_scope();        
+
     AST* copyTree() const override;
     std::string toString() const override;
 
     void accept(ASTVisitor& visitor) override;
 
+    AST *root;
     std::string lib;
 };
 

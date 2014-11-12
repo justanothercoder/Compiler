@@ -67,7 +67,7 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 {
     for ( auto p : globaltable.has_definition )
     {
-        if ( !p.second )
+        if ( !p.second && p.first -> is_used )
             code_obj.emit("extern " + p.first -> getScopedTypedName());
     }
 
@@ -82,6 +82,9 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 
     for ( ++block; block != blocks.cend(); ++block )
     {
+        if ( !(dynamic_cast<FunctionSymbol*>(&block -> scope) && dynamic_cast<FunctionSymbol*>(&block -> scope) -> is_used) )
+            continue;
+
         block -> genAsm(code_obj);
         code_obj.emit("ret");
     }

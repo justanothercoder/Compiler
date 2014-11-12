@@ -1,9 +1,17 @@
 #include "importnode.hpp"
 #include "filehelper.hpp"
 
-ImportNode::ImportNode(std::string lib) : lib(lib)
+ImportNode::ImportNode(std::string lib) : lib(lib), root(nullptr)
 {
 
+}
+
+void ImportNode::build_scope()
+{
+    root = FileHelper::parse((lib + ".txt").c_str());
+    
+    root -> scope = scope;
+    root -> build_scope();
 }
 
 AST* ImportNode::copyTree() const

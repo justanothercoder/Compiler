@@ -25,10 +25,11 @@
 #include "nullnode.hpp"
 #include "templatestructdeclarationnode.hpp"
 #include "builtins.hpp"
+#include "importnode.hpp"
 
-void CheckVisitor::visit(ImportNode *)
+void CheckVisitor::visit(ImportNode *node)
 {
-
+    node -> root -> accept(*this);
 }
 
 void CheckVisitor::visit(IfNode *node)

@@ -39,6 +39,8 @@ public:
 
     bool is_constexpr;
 
+    mutable bool is_used;
+
     bool isConvertableTo(const Type *type) const override;
     boost::optional<int> rankOfConversion(const Type *type) const override;
 

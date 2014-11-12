@@ -152,14 +152,33 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         auto base_sym = base_type -> getUnqualifiedType() -> getSymbol();
 
         auto member = table.var_by_id[command.arg2.id];
-
+        
         if ( dynamic_cast<const OverloadedFunctionSymbol*>(member -> getType()) )
+        {
+            genArg(command.arg1, code_obj);
             return;
+        }
 
         int arg_addr;
         if ( command.arg1.type == IdType::VARIABLE )
         {
             if ( base_type -> isReference() )
+            {
+                genArg(command.arg1, code_obj);
+
+                auto addr = "[rbp - " + std::to_string(GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset())) + "]";
+                command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
+                scope.getTempAlloc().claim(GlobalConfig::int_size);
+
+                code_obj.emit("mov rax, [rax - " + std::to_string(static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member)) + "]");
+                code_obj.emit("mov " + addr + ", rax");
+
+                return;
+            }
+
+            auto base_var = table.var_by_id[command.arg1.id];
+
+            if ( base_var -> isField() )
             {
                 genArg(command.arg1, code_obj);
 

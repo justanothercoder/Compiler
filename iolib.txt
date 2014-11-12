@@ -1,12 +1,12 @@
 struct InputStream
 {
+	int fd;
+
 	def InputStream() {
 		fd = 0;
 	}
 
-
-
-	def open(string filename) {
+	def open(const string& filename) {
 		fd = __fopen(filename, 438, 0);
 	}
 
@@ -19,29 +19,27 @@ struct InputStream
 	def close() {
 		__fclose(fd);
 	}
-
-	int fd;
 }
 
 struct OutputStream
 {
+	int fd;
+
 	def OutputStream() {
 		fd = 1;
 	}
 
-	def open(string filename) {
+	def open(const string& filename) {
 		fd = __fopen(filename, 438, 1);
 	}
 
-	def write(string text) {
+	def write(const string& text) {
 		__fwrite(fd, text, text.length())
 	}
 
 	def close() {
 		__fclose(fd);
 	}
-
-	int fd;
 }
 
 
@@ -49,12 +47,13 @@ struct OutputStream
 struct BufferedInputStream
 {
 	InputStream istream;
+	string buffer;
 
 	def BufferedInputStream() {
 		istream.fd = 0
 	}
 
-	def open(string filename) {
+	def open(const string& filename) {
 		istream.open(filename)
 	}
 
@@ -67,7 +66,5 @@ struct BufferedInputStream
 	def close() {
 		istream.close()
 	}
-
-	string buffer;
 }
 

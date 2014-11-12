@@ -31,6 +31,8 @@ CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector
             throw SemanticError("parameter is not an lvalue.");
     }
 
+    function_sym -> is_used = true;
+
     return getCallInfo(function_sym, params);
 }
 
@@ -55,6 +57,10 @@ CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector
         conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type, is_left_value));
 
         auto copy_constr = (desired_type -> isReference() || desired_type -> getTypeKind() == TypeKind::POINTER) ? nullptr : static_cast<const StructSymbol*>(desired_type -> getSymbol()) -> getCopyConstructor();
+
+        if ( copy_constr )
+            copy_constr -> is_used = true;
+
         copy_constructors.push_back(copy_constr);
     }
 
@@ -152,6 +158,9 @@ ConversionInfo CallHelper::getConversionInfo(const Type *lhs, const Type *rhs, b
 
     conv_info.actual_type  = lhs;
     conv_info.desired_type = rhs;
+    
+    if ( conv != nullptr )
+        conv -> is_used = true;
 
     return conv_info;
 }
