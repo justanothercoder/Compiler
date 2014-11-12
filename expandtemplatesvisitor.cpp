@@ -10,9 +10,16 @@
 #include "unsafeblocknode.hpp"
 #include "templatestructsymbol.hpp"
 #include "variabledeclarationnode.hpp"
+#include "varinfertypedeclarationnode.hpp"
 #include "newexpressionnode.hpp"
 #include "callnode.hpp"
 #include "dotnode.hpp"
+#include "importnode.hpp"
+
+void ExpandTemplatesVisitor::visit(ImportNode *node) 
+{
+    node -> root -> accept(*this);
+}
 
 void ExpandTemplatesVisitor::visit(IfNode *node)
 {
@@ -155,6 +162,11 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
     return type_info;
 }
 
+void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode *node)
+{
+    node -> expr -> accept(*this);
+}
+
 void ExpandTemplatesVisitor::visit(CallNode *node) 
 {
     node -> caller -> accept(*this);
@@ -175,6 +187,4 @@ void ExpandTemplatesVisitor::visit(NullNode *) { }
 void ExpandTemplatesVisitor::visit(VariableNode *) { }
 void ExpandTemplatesVisitor::visit(StringNode *) { }
 void ExpandTemplatesVisitor::visit(NumberNode *) { }
-void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode *) { }
-void ExpandTemplatesVisitor::visit(ImportNode *) { }
 

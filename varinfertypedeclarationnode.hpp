@@ -13,6 +13,8 @@ public:
 
     VarInferTypeDeclarationNode(std::string name, ExprNode *expr);
 
+    void build_scope();
+
     Symbol* getDefinedSymbol() const override;
 
     AST* copyTree() const override;

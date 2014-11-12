@@ -10,6 +10,7 @@
 #include "functionsymbol.hpp"
 
 #include "definevisitor.hpp"
+#include "isdefinedvisitor.hpp"
 #include "checkvisitor.hpp"
 #include "genssavisitor.hpp"
 #include "expandtemplatesvisitor.hpp"
@@ -37,6 +38,9 @@ int main()
        
         DefineVisitor define_visitor;
         root -> accept(define_visitor);
+
+        IsDefinedVisitor is_defined_visitor;
+        root -> accept(is_defined_visitor);
 
         CheckVisitor check_visitor;
         root -> accept(check_visitor);

@@ -1,6 +1,8 @@
 template <class T, int _size>
 struct Array
 {
+    T[_size] __impl;
+ 
     def Array() {
 
     }
@@ -17,6 +19,4 @@ struct Array
     def size() : int {
         return _size
     }
-
-    T[_size] __impl;
 }

@@ -24,6 +24,7 @@
 #include "newexpressionnode.hpp"
 #include "templatestructdeclarationnode.hpp"
 #include "importnode.hpp"
+#include "varinfertypedeclarationnode.hpp"
 
 #include "typefactory.hpp"
 #include "logger.hpp"
@@ -582,9 +583,46 @@ void GenSSAVisitor::visit(UnsafeBlockNode *node)
     node -> block -> accept(*this);
 }
 
-void GenSSAVisitor::visit(VarInferTypeDeclarationNode *)
+void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
 {
+    auto expr_type = node -> expr -> getType() -> getUnqualifiedType();
 
+    code.addVariable(node -> definedSymbol);
+    auto var = Arg(IdType::VARIABLE, code.getVarId(node -> definedSymbol), expr_type);
+
+    if ( expr_type == BuiltIns::int_type || expr_type == BuiltIns::char_type )
+    {
+        code.add(Command(SSAOp::ASSIGN, var, getArg(node -> expr)));
+        return;
+    }
+    
+    auto info = *std::begin(node -> call_info.conversions);
+    code.addParamInfo(info);
+    code.add(Command(SSAOp::PARAM,
+                     getArg(node -> expr),
+                     Arg(IdType::NOID, code.getInfoId(info))
+                    )
+            );
+
+    info = ConversionInfo(nullptr);
+    info.desired_type = TypeFactory::getReference(expr_type);
+
+    code.addParamInfo(info);
+    code.add(Command(SSAOp::PARAM, 
+                     var,
+                     Arg(IdType::NOID, code.getInfoId(info))
+                    )
+    );
+
+    int params_size = expr_type -> getSize() + GlobalConfig::int_size;
+
+    code.addFunction(node -> call_info.callee);
+    code.add(Command(SSAOp::CALL,
+                     Arg(IdType::PROCEDURE,
+                         code.getFuncId(node -> call_info.callee)),
+                     Arg(IdType::NOID, params_size)
+                    )
+    );
 }
 
 void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)

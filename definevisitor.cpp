@@ -29,6 +29,7 @@
 #include "typefactory.hpp"
 #include "globaltable.hpp"
 #include "builtins.hpp"
+#include "checkvisitor.hpp"
 
 void DefineVisitor::visit(ImportNode *node)
 {
@@ -153,7 +154,8 @@ void DefineVisitor::visit(UnsafeBlockNode *node)
 
 void DefineVisitor::visit(VarInferTypeDeclarationNode *node)
 {
-//	node -> expr -> check();
+    CheckVisitor visitor;
+    node -> expr -> accept(visitor);
 
     if ( node -> scope -> resolve(node -> name) != nullptr )
         throw SemanticError(node -> name + " is already defined");

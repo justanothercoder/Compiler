@@ -113,7 +113,6 @@ void CheckVisitor::visit(BinaryOperatorNode *node)
 
 void CheckVisitor::visit(StructDeclarationNode *node)
 {
-    node -> getDefinedSymbol() -> is_defined = true;
     /*
     	if ( node -> definedSymbol -> getDefaultConstructor() == nullptr )
     	{
@@ -127,22 +126,13 @@ void CheckVisitor::visit(StructDeclarationNode *node)
     		node -> definedSymbol -> define(copy_constr);
     	}
     */
-    for ( auto decl : node -> inner )
-    {
-        if ( dynamic_cast<DeclarationNode*>(decl) )
-            static_cast<DeclarationNode*>(decl) -> getDefinedSymbol() -> is_defined = true;
 
+    for ( auto decl : node -> inner )
         decl -> accept(*this);
-    }
 }
 
 void CheckVisitor::visit(FunctionDeclarationNode *node)
 {
-    node -> scope -> resolve(node -> name) -> is_defined = true;
-
-    for ( auto param : node -> params_symbols )
-        param -> is_defined = true;
-
     node -> statements -> accept(*this);
 }
 
@@ -187,8 +177,6 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
                 param -> accept(*this);
         }
     }
-
-    node -> getDefinedSymbol() -> is_defined = true;
 }
 
 void CheckVisitor::visit(AddrNode *node)
@@ -263,9 +251,6 @@ void CheckVisitor::visit(VariableNode *node)
 
     auto sym = node -> scope -> resolve(node -> name);
 
-    if ( sym == nullptr || !sym -> is_defined )
-        throw SemanticError("No such symbol '" + node -> name + "'.");
-
     if ( sym -> getSymbolType() != SymbolType::VARIABLE )
         throw SemanticError("'" + node -> name + "' is not a variable.");
 
@@ -326,9 +311,8 @@ void CheckVisitor::visit(UnsafeBlockNode *node)
 void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
 {
     node -> scope -> getTempAlloc().add(node -> expr -> getType() -> getSize());
-    node -> getDefinedSymbol() -> is_defined = true;
 
-    auto type = node -> expr -> getType();
+    auto type = node -> expr -> getType() -> getUnqualifiedType();
 
     node -> call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {node -> expr});
 }

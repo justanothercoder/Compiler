@@ -14,6 +14,12 @@ VarInferTypeDeclarationNode::VarInferTypeDeclarationNode(std::string name
 
 }
 
+void VarInferTypeDeclarationNode::build_scope()
+{
+    expr -> scope = scope;
+    expr -> build_scope();
+}
+
 Symbol* VarInferTypeDeclarationNode::getDefinedSymbol() const
 {
     return definedSymbol;
