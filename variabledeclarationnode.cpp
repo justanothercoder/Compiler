@@ -13,7 +13,7 @@ VariableDeclarationNode::VariableDeclarationNode(std::string name
     , is_field(is_field)
     , constructor_call_params(constructor_call_params)
 {
-    definedSymbol = new VariableSymbol(name, nullptr, (is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE));
+
 }
 
 void VariableDeclarationNode::build_scope()

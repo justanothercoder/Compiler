@@ -18,8 +18,6 @@ public:
 
     const Type* getType() const;
 
-    void setType(const Type *t);
-
     std::string getName() const override;
 
     bool isParam() const;

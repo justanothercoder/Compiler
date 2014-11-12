@@ -63,9 +63,6 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
 {
     const auto& template_info = node -> scope -> getTemplateInfo();
 
-//    if ( template_info.sym != nullptr && node -> return_type_info.type_name == template_info.sym -> getName() )
-//        node -> return_type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
-
     auto fromTypeInfo = [&] (TypeInfo type_info) -> const Type*
     {
         if ( template_info.sym != nullptr && type_info.type_name == template_info.sym -> getName() )
@@ -83,8 +80,6 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
 
             return type;
         }
-//		return scope -> fromTypeInfo(type_info);
-//		return node -> definedSymbol -> fromTypeInfo(type_info);
         return DefineVisitor::fromTypeInfo(type_info, node -> definedSymbol);
     };
 
@@ -120,8 +115,6 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
     node -> definedSymbol -> return_type = return_type;
     node -> definedSymbol -> function_type_info = function_type_info;
 
-//	node -> scope -> getSymbolTable().has_definition[node -> definedSymbol] = true;
-
     node -> scope -> define(node -> definedSymbol);
 
     node -> statements -> accept(*this);
@@ -134,7 +127,11 @@ void DefineVisitor::visit(VariableDeclarationNode *node)
     if ( var_type == BuiltIns::void_type )
         throw SemanticError("can't declare a variable of 'void' type.");
 
-    node -> definedSymbol -> setType(var_type);
+    node -> definedSymbol = new VariableSymbol(node -> name, 
+                                               var_type, 
+                                               (node -> is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE)
+    );
+
     node -> scope -> define(node -> definedSymbol);
 }
 

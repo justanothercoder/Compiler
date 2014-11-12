@@ -14,11 +14,6 @@ const Type* VariableSymbol::getType() const
     return type;
 }
 
-void VariableSymbol::setType(const Type *t)
-{
-    type = t;
-}
-
 std::string VariableSymbol::getName() const
 {
     return name;
