@@ -23,7 +23,7 @@ public:
 
     static const FunctionSymbol* resolveOverload(std::string name, const Scope *sc, std::vector<const Type*> params_types);
 
-    static ConversionInfo getConversionInfo(const Type *lhs, const Type *rhs, bool is_lhs_left_value);
+    static ConversionInfo getConversionInfo(const Type *lhs, const Type *rhs);
     static std::vector<const Type*> extractTypes(std::vector<ExprNode*> params);
 };
 

@@ -151,7 +151,7 @@ void GenSSAVisitor::visit(BracketNode *node)
              )
     );
 
-    auto base_info = ConversionInfo(nullptr, false, false);
+    auto base_info = ConversionInfo(nullptr);
     base_info.desired_type = TypeFactory::getReference(node -> base -> getType());
     code.addParamInfo(base_info);
 
@@ -243,7 +243,7 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
 
     
 
-    auto info = ConversionInfo(nullptr, false, false);
+    auto info = ConversionInfo(nullptr);
     info.desired_type = TypeFactory::getReference(expr_type);
 
     code.addParamInfo(info);
@@ -301,7 +301,7 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
             code.addParamInfo(rhs_info);
             code.add(Command(SSAOp::PARAM, getArg(node -> rhs), Arg(IdType::NOID, code.getInfoId(rhs_info))));
 
-            auto lhs_info = ConversionInfo(nullptr, false, false);
+            auto lhs_info = ConversionInfo(nullptr);
             lhs_info.desired_type = TypeFactory::getReference(node -> lhs -> getType() -> getUnqualifiedType());
 
             code.addParamInfo(lhs_info);                      
@@ -436,7 +436,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                 params_size += info.desired_type -> getSize();
             }
 
-            auto info = ConversionInfo(nullptr, false, false); 
+            auto info = ConversionInfo(nullptr); 
             info.desired_type = TypeFactory::getReference(node -> definedSymbol -> getType());
 
             code.addParamInfo(info);
@@ -550,7 +550,7 @@ void GenSSAVisitor::visit(CallNode *node)
     {
         params_size += GlobalConfig::int_size;
         
-        auto info = ConversionInfo(nullptr, false, false);
+        auto info = ConversionInfo(nullptr);
         info.desired_type = TypeFactory::getReference(node -> caller -> getType()); 
 
         code.addParamInfo(info);

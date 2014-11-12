@@ -7,9 +7,6 @@
 
 CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector<ExprNode*> params)
 {
-//    for ( auto i : params )
-//		i -> check();
-
     auto params_types = extractTypes(params);
 
     auto function_sym = resolveOverload(name, scope, params_types);
@@ -52,19 +49,13 @@ CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector
         auto actual_type = params_types.at(i - is_meth);
         auto desired_type = function_info.params_types.at(i);
 
-        bool is_left_value = params.at(i - is_meth) -> isLeftValue();
+        conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type));
 
-        conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type, is_left_value));
-
-        auto copy_constr = (desired_type -> isReference() || desired_type -> getTypeKind() == TypeKind::POINTER) ? nullptr : static_cast<const StructSymbol*>(desired_type -> getSymbol()) -> getCopyConstructor();
-
-        if ( copy_constr )
-            copy_constr -> is_used = true;
-
-        copy_constructors.push_back(copy_constr);
+        if ( !(desired_type -> isReference() || desired_type -> getTypeKind() == TypeKind::POINTER) )
+            static_cast<const StructSymbol*>(desired_type -> getSymbol()) -> getCopyConstructor() -> is_used = true;
     }
 
-    return CallInfo(function_sym, params_types, conversions, copy_constructors);
+    return CallInfo(function_sym, conversions);
 }
 
 const OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(std::string name, const Scope *scope)
@@ -105,11 +96,7 @@ const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope 
         auto pt = params_types;
 
         if ( ov_func -> isMethod() )
-        {
-//			auto t = TypeFactory::getReference(ov_func -> getBaseType());
-//			pt.insert(std::begin(pt), t);
             pt.insert(std::begin(pt), ov_func -> getBaseType());
-        }
 
         auto func_sym = ov_func -> getViableOverload(FunctionTypeInfo(pt));
 
@@ -143,20 +130,18 @@ std::vector<const Type*> CallHelper::extractTypes(std::vector<ExprNode*> params)
     return params_types;
 }
 
-ConversionInfo CallHelper::getConversionInfo(const Type *lhs, const Type *rhs, bool is_lhs_left_value)
+ConversionInfo CallHelper::getConversionInfo(const Type *lhs, const Type *rhs)
 {
     auto _lhs = lhs -> getUnqualifiedType();
     auto _rhs = rhs -> getUnqualifiedType();
 
-//	auto conv = (_lhs == _rhs) ? nullptr : lhs -> getConversionTo(rhs);
     auto conv = (_lhs == _rhs) ? nullptr : _lhs -> getConversionTo(_rhs);
 
     if ( _lhs != _rhs && conv == nullptr )
         throw SemanticError("Invalid initialization of '" + rhs -> getName() + "' with type '" + lhs -> getName() + "'.");
 
-    ConversionInfo conv_info(conv, lhs -> isReference() && !is_lhs_left_value, !lhs -> isReference());
+    ConversionInfo conv_info(conv);
 
-    conv_info.actual_type  = lhs;
     conv_info.desired_type = rhs;
     
     if ( conv != nullptr )

@@ -259,8 +259,6 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     {
         auto callee = table.func_by_id[command.arg1.id];
 
-        command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-
         if ( callee -> isConstructor() )
         {
             code_obj.emit("call " + callee -> getScopedTypedName());
@@ -268,6 +266,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         }
         else
         {
+            command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
             scope.getTempAlloc().claim(callee -> return_type -> getSize());
 
             code_obj.emit("lea rax, [rbp - " + std::to_string(command.offset) + "]");
@@ -294,7 +293,8 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
 
         const Type *param_type = command.arg1.expr_type;
            
-        if ( param_type -> getUnqualifiedType() == BuiltIns::int_type || param_type -> getUnqualifiedType() == BuiltIns::char_type )
+        if ( param_type -> getUnqualifiedType() == BuiltIns::int_type 
+          || param_type -> getUnqualifiedType() == BuiltIns::char_type )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rbx, [rbx]");
