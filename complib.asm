@@ -1,11 +1,3 @@
-	global _char_operatorassign_char~ref_const~char~ref:function
-	global _char_operatoreq_char~ref_char:function
-	global _char_operatorneq_char~ref_char:function
-
-	global _char_char_char~ref_const~char~ref:function
-	global _char_char_char~ref_const~int~ref:function
-	global _char_char_char~ref:function
-
 	global _putchar_char:function
 	global _getchar:function
 	
@@ -22,8 +14,6 @@
 		
 	global _print_const~string~ref:function
 	
-	global _int_int_int~ref_char:function
-
 	global ___brk_void~ptr:function
 
 _putchar_char:
@@ -198,106 +188,6 @@ ___fread_int_string~ref_int:
 	pop rbp
 	ret
 
-
-_char_operatoreq_char~ref_char:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov al, byte [rax]
-
-	cmp al, byte [rbp + 24]
-	jz .equal
-
-	mov qword [rsp - 8], 0
-	lea rax, [rsp - 8]
-	mov rsp, rbp
-	pop rbp
-	ret
-
-.equal:
-	mov qword [rsp - 8], 1
-	lea rax, [rsp - 8]		
-	mov rsp, rbp
-	pop rbp
-	ret
-	
-_char_operatorneq_char~ref_char:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov al, byte [rax]
-
-	cmp al, byte [rbp + 24]
-	je .equal
-
-	mov qword [rsp - 8], 1
-	lea rax, [rsp - 8]
-	mov rsp, rbp
-	pop rbp
-	ret
-
-.equal:
-	mov qword [rsp - 8], 0
-	lea rax, [rsp - 8]		
-	mov rsp, rbp
-	pop rbp
-	ret
-
-_char_char_char~ref:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov byte [rax], 0
-	
-	mov rsp, rbp
-	pop rbp
-	ret
-
-_char_char_char~ref_const~char~ref:
-	push rbp
-	mov rbp, rsp
-	
-	mov rbx, [rbp + 24]
-	mov bl, byte [rbx]
-
-	mov rax, [rbp + 16]
-	mov byte [rax], bl
-
-	mov rsp, rbp
-	pop rbp
-	ret 
-
-_char_operatorassign_char~ref_const~char~ref:
-	push rbp
-	mov rbp, rsp
-
-	mov rax, [rbp + 16]
-	mov rbx, [rbp + 24]
-	mov bl, byte [rbx]
-
-	mov byte [rax], bl
-
-	mov rsp, rbp
-	pop rbp
-	ret
-	
-_char_char_char~ref_const~int~ref:
-	push rbp
-	mov rbp, rsp
-
-	mov rbx, [rbp + 24]
-	mov bl, byte [rbx]
-
-	mov rax, [rbp + 16]
-	mov byte [rax], bl
-
-	mov rsp, rbp
-	pop rbp
-	ret 
-	
 _string_string_string~ref_const~string~ref:
 	push rbp
 	mov rbp, rsp
@@ -330,8 +220,6 @@ _string_operatorelem_string~ref_int:
 	push rbp
 	mov rbp, rsp
 
-;	mov rsi, [rbp + 16]
-;	mov rbx, [rbp + 24]
 	mov rsi, [rbp + 24]
 	mov rbx, [rbp + 32]
 
@@ -469,20 +357,6 @@ _string_operatorassign_string~ref_const~string~ref:
 .end:
 
 	mov byte [rdi], 0
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
-_int_int_int~ref_char:
-	push rbp
-	mov rbp, rsp
-
-	xor rbx, rbx
-	mov bl, byte [rbp + 24]
-
-	mov rax, [rbp + 16]
-	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp

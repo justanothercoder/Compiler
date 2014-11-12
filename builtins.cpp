@@ -9,6 +9,7 @@
 Scope *BuiltIns::global_scope;
 Type *BuiltIns::void_type;
 Type *BuiltIns::int_type;
+Type *BuiltIns::char_type;
 AST *BuiltIns::array_decl;
 Type *BuiltIns::ASCII_string_type;
 
@@ -26,6 +27,8 @@ void BuiltIns::defineBuiltIns()
     const Type *const_ref_int = TypeFactory::getConst(ref_int);
 
     StructSymbol *char_struct = new StructSymbol("char", global_scope, global_scope -> getTemplateInfo());
+
+    BuiltIns::char_type = char_struct;
 
     const Type *ref_char       = TypeFactory::getReference(char_struct);
     const Type *const_ref_char = TypeFactory::getConst(ref_char);

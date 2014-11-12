@@ -239,7 +239,8 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         {
             code_obj.emit("push rax");
         }
-        else if ( param_type -> getUnqualifiedType() == BuiltIns::int_type )
+        else if ( param_type -> getUnqualifiedType() == BuiltIns::int_type 
+               || param_type -> getUnqualifiedType() == BuiltIns::char_type )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rax, [rax]");
@@ -255,8 +256,9 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             code_obj.emit("push rax");
             code_obj.emit("push rbx");
 
+            code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
             code_obj.emit("call " + conv -> getScopedTypedName());
-            code_obj.emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
+            code_obj.emit("add rsp, " + std::to_string((2 + 1) * GlobalConfig::int_size));
         }
         else
         {
@@ -318,7 +320,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
 
         const Type *param_type = command.arg1.expr_type;
            
-        if ( param_type -> getUnqualifiedType() == BuiltIns::int_type )
+        if ( param_type -> getUnqualifiedType() == BuiltIns::int_type || param_type -> getUnqualifiedType() == BuiltIns::char_type )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rbx, [rbx]");
@@ -373,20 +375,17 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     }
     case SSAOp::ASSIGN:
     {
-        if ( command.arg1.expr_type -> getUnqualifiedType() == BuiltIns::int_type
-                && command.arg2.expr_type -> getUnqualifiedType() == BuiltIns::int_type )
-        {
-            genArg(command.arg2, code_obj);
-            if ( command.arg2.expr_type -> isReference() )
-                code_obj.emit("mov rax, [rax]");
-            code_obj.emit("mov rbx, [rax]");
+        genArg(command.arg2, code_obj);
+        if ( command.arg2.expr_type -> isReference() )
+            code_obj.emit("mov rax, [rax]");
+        code_obj.emit("mov rbx, [rax]");
 
-            genArg(command.arg1, code_obj);
-            if ( command.arg1.expr_type -> isReference() )
-                code_obj.emit("mov rax, [rax]");
-            code_obj.emit("mov [rax], rbx");
-            return;
-        }
+        genArg(command.arg1, code_obj);
+        if ( command.arg1.expr_type -> isReference() )
+            code_obj.emit("mov rax, [rax]");
+        code_obj.emit("mov [rax], rbx");
+       
+        return;
     }
     case SSAOp::NEW:
     {

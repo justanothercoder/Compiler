@@ -195,6 +195,42 @@ void GenSSAVisitor::visit(UnaryNode *node)
 void GenSSAVisitor::visit(NewExpressionNode *node)
 {
     const auto& params = node -> params;
+
+    auto expr_type = node -> getType() -> getUnqualifiedType();
+
+    code.addType(expr_type);
+
+    auto tmp_obj = code.add(Command(SSAOp::NEW, 
+                                    Arg(IdType::NOID, 
+                                        code.getTypeId(expr_type))
+                   )
+    );
+    
+    if ( expr_type == BuiltIns::int_type || expr_type == BuiltIns::char_type )
+    {
+        if ( node -> params.empty() )
+        {
+            code.addConst(0);
+            code.add(Command(SSAOp::ASSIGN,
+                             tmp_obj,
+                             Arg(IdType::NUMBER, 
+                                 code.getConstId(0), 
+                                 BuiltIns::int_type)
+                            )
+            );
+        }
+        else
+        {
+            code.add(Command(SSAOp::ASSIGN,
+                             tmp_obj,
+                             getArg(*std::begin(params))
+                            )
+            );
+        }
+
+        _arg = tmp_obj;
+        return;
+    }
     
     int params_size = 0;
 
@@ -211,14 +247,7 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
         params_size += info.desired_type -> getSize();
     }
 
-    auto expr_type = node -> getType() -> getUnqualifiedType();
-
-    code.addType(expr_type);
-
-    auto tmp_obj = code.add(Command(SSAOp::NEW, 
-                                    Arg(IdType::NOID, 
-                                    code.getTypeId(expr_type))
-                   ));
+    
 
     auto info = ConversionInfo(nullptr, false, false);
     info.desired_type = TypeFactory::getReference(expr_type);
@@ -248,8 +277,8 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
     auto lhs_type = node -> lhs -> getType();
     auto rhs_type = node -> rhs -> getType();
 
-    if ( lhs_type -> getUnqualifiedType() == BuiltIns::int_type
-            && rhs_type -> getUnqualifiedType() == BuiltIns::int_type )
+    if ( (lhs_type -> getUnqualifiedType() == BuiltIns::int_type || lhs_type -> getUnqualifiedType() == BuiltIns::char_type)
+      && (rhs_type -> getUnqualifiedType() == BuiltIns::int_type || rhs_type -> getUnqualifiedType() == BuiltIns::char_type) )
     {
         auto rhs = getArg(node -> rhs);
         auto lhs = getArg(node -> lhs);
@@ -342,13 +371,15 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
     {
         code.addVariable(node -> definedSymbol);
 
+        auto var_type = node -> definedSymbol -> getType();
+
         if ( node -> type_info.is_ref )
         {
             auto arg = getArg(node -> constructor_call_params.front());
             code.add(Command(SSAOp::ASSIGN,
                              Arg(IdType::VARIABLE,
                                  code.getVarId(node -> definedSymbol),
-                                 node -> definedSymbol -> getType()),
+                                 var_type),
                              arg
                             ));
         }
@@ -360,14 +391,15 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                 code.add(Command(SSAOp::ASSIGN,
                                  Arg(IdType::VARIABLE,
                                      code.getVarId(node -> definedSymbol),
-                                     node -> definedSymbol -> getType()),
+                                     var_type),
                                  arg
                                 ));
             }
         }
         else
         {
-            if ( node -> definedSymbol -> getType() -> getUnqualifiedType() == BuiltIns::int_type )
+            if ( var_type -> getUnqualifiedType() == BuiltIns::int_type
+              || var_type -> getUnqualifiedType() == BuiltIns::char_type )
             {
                 if ( node -> constructor_call_params.empty() )
                 {
@@ -375,8 +407,10 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                     code.add(Command(SSAOp::ASSIGN,
                                      Arg(IdType::VARIABLE,
                                          code.getVarId(node -> definedSymbol),
-                                         node -> definedSymbol -> getType()),
-                                     Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type)
+                                         var_type),
+                                     Arg(IdType::NUMBER, 
+                                         code.getConstId(0), 
+                                         BuiltIns::int_type)
                                     ));
                 }
                 else
@@ -384,7 +418,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                     code.add(Command(SSAOp::ASSIGN,
                                      Arg(IdType::VARIABLE,
                                          code.getVarId(node -> definedSymbol),
-                                         node -> definedSymbol -> getType()),
+                                         var_type),
                                      getArg(*std::begin(node -> constructor_call_params))
                                     ));
                 }
@@ -416,7 +450,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
             code.add(Command(SSAOp::PARAM,
                              Arg(IdType::VARIABLE,
                                  code.getVarId(node -> definedSymbol),
-                                 node -> definedSymbol -> getType()
+                                 var_type
                                 ),
                              Arg(IdType::NOID, code.getInfoId(info))
                             )
