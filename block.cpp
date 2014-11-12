@@ -420,7 +420,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         code_obj.emit("imul rbx, " + std::to_string(static_cast<const ArrayType*>(command.arg1.expr_type) -> type -> getSize()));
         code_obj.emit("sub rax, rbx");
 
-        code_obj.emit("mov [rbp - " + std::to_string(command.offset) "], rax");
+        code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
         return;
     }
     default:

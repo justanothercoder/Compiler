@@ -49,12 +49,6 @@ GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("char")) -> resolve("char")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("int")) -> resolve("int")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
-    
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator[]")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
