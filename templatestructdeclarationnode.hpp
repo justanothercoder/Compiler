@@ -1,6 +1,8 @@
 #ifndef _TEMPLATESTRUCTDECLARATIONNODE_HPP_
 #define _TEMPLATESTRUCTDECLARATIONNODE_HPP_
 
+#include <set>
+
 #include "structdeclarationnode.hpp"
 #include "typeinfo.hpp"
 
@@ -11,14 +13,14 @@ public:
     TemplateStructDeclarationNode(std::string name, std::vector<AST*> inner, std::vector< std::pair<std::string, TypeInfo> > template_params);
 
     void build_scope() override;
-	    
-    void define() override;
-    void check() override;
-    CodeObject& gen() override;
+
+    void accept(ASTVisitor& visitor);
+    
+    std::set<DeclarationNode*> instances;
 
 private:
 
-	std::vector< std::pair<std::string, TypeInfo> > template_params;
+    std::vector< std::pair<std::string, TypeInfo> > template_params;
 };
 
 #endif

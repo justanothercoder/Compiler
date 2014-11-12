@@ -8,7 +8,7 @@ class Logger
 {
 public:
 
-	static void log(std::string s);
+    static void log(std::string s);
 };
 
 #endif

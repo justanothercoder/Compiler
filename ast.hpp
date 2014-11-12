@@ -4,29 +4,22 @@
 #include <vector>
 #include <string>
 
+#include "astvisitor.hpp"
+
 class Scope;
-struct TemplateInfo;
-class CodeObject;
 
 class AST
 {
 public:
 
     virtual ~AST();
-
     virtual AST* copyTree() const = 0;
-	
-    virtual void build_scope(); 
+    virtual void build_scope();
+    virtual std::vector<AST*> getChildren() const;
+    virtual std::string toString() const = 0;
+    virtual void accept(ASTVisitor& visitor) = 0;
 
-    virtual void define() = 0;
-    virtual void check() = 0;
-	virtual CodeObject& gen() = 0;
-
-	virtual std::vector<AST*> getChildren() const;	
-
-	virtual std::string toString() const = 0;
-
-	Scope *scope;
+    Scope *scope;
 };
 
 #endif

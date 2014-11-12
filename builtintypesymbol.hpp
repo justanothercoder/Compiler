@@ -9,26 +9,24 @@ class BuiltInTypeSymbol : public Symbol, public Type
 public:
 
     BuiltInTypeSymbol(std::string name, int size);
-    
-	void accept(TypeVisitor *visitor) const override;
-	
-	std::string getName() const override;
+
+    std::string getName() const override;
     size_t getSize() const override;
 
     SymbolType getSymbolType() const override;
 
     TypeKind getTypeKind() const override;
 
-	bool isConvertableTo(const Type *type) const override;
-	boost::optional<int> rankOfConversion(const Type *type) const override;
-	
-	FunctionSymbol* getConversionTo(const Type *type) const override;
+    bool isConvertableTo(const Type *type) const override;
+    boost::optional<int> rankOfConversion(const Type *type) const override;
 
-	const Symbol* getSymbol() const override;	
+    FunctionSymbol* getConversionTo(const Type *type) const override;
+
+    const Symbol* getSymbol() const override;
 
 private:
 
-	std::string name;
+    std::string name;
     size_t size;
 
 };

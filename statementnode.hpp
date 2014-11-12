@@ -5,30 +5,22 @@
 #include <algorithm>
 
 #include "ast.hpp"
-#include "codeobject.hpp"
 
 class StatementNode : public AST
-{       
+{
 public:
 
     StatementNode(std::vector<AST*> statements);
 
-    virtual ~StatementNode();
+    AST* copyTree() const override;
 
-    virtual AST* copyTree() const;
-    
-    void define() override;
-    void check() override;
-    CodeObject& gen() override;
+    std::vector<AST*> getChildren() const override;
 
-	virtual std::vector<AST*> getChildren() const;
-	
-	std::string toString() const override;
+    std::string toString() const override;
 
-private:
+    void accept(ASTVisitor& visitor) override;
 
-	std::vector<AST*> statements;
-	CodeObject code_obj;    
+    std::vector<AST*> statements;
 };
 
 #endif

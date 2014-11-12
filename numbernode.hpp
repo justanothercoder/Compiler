@@ -2,7 +2,6 @@
 #define _NUMBERNODE_HPP_
 
 #include "exprnode.hpp"
-#include "codeobject.hpp"
 
 class NumberNode : public ExprNode
 {
@@ -10,27 +9,19 @@ public:
 
     NumberNode(std::string num);
 
-    void check() override;
-    CodeObject& gen() override;
-
     AST* copyTree() const override;
 
-	std::string getNum() const;
-    
-	const Type* getType() const override;
-	bool isLeftValue() const override;
+    const Type* getType() const override;
+    bool isLeftValue() const override;
 
-	void freeTempSpace() override;
-	
-	bool isCompileTimeExpr() const override;
-	boost::optional<int> getCompileTimeValue() const override;
+    bool isCompileTimeExpr() const override;
+    boost::optional<int> getCompileTimeValue() const override;
 
-	std::string toString() const override;
+    std::string toString() const override;
 
-private:
+    void accept(ASTVisitor& visitor) override;
 
-	std::string num;
-	CodeObject code_obj;    
+    std::string num;
 };
-    
+
 #endif

@@ -14,11 +14,13 @@ public:
     friend class VariableSymbolDefine;
     friend class FunctionSymbolDefine;
     friend class SymbolDefine;
-    
+
+    ~BaseScope() override;
+
     Symbol* resolve(std::string name) const override;
 
 public:
-	std::map<std::string, Symbol*> table;
+    std::map<std::string, Symbol*> table;
 };
 
 #endif

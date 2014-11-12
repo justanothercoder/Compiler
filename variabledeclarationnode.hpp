@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "declarationnode.hpp"
-#include "codeobject.hpp"
 #include "typeinfo.hpp"
+#include "callinfo.hpp"
 
 class VariableSymbol;
 
@@ -15,36 +15,28 @@ public:
 
     VariableDeclarationNode(std::string name, TypeInfo type_info, bool is_field = false, std::vector<ExprNode*> constructor_call_params = {});
 
-    ~VariableDeclarationNode() override;
-
     AST* copyTree() const override;
-    
-	void build_scope() override;
-    void define() override;
-    void check() override;
-    
-	CodeObject& gen() override;
-    
+
+    void build_scope() override;
+
     Symbol* getDefinedSymbol() const override;
 
-	std::vector<AST*> getChildren() const override;
-	
-	std::string toString() const override;
+    std::vector<AST*> getChildren() const override;
 
-private:
+    std::string toString() const override;
 
-	std::string name;
+    void accept(ASTVisitor& visitor) override;
+
+    std::string name;
     TypeInfo type_info;
 
     bool is_field;
 
     VariableSymbol *definedSymbol;
 
-	std::vector<ExprNode*> constructor_call_params;
+    std::vector<ExprNode*> constructor_call_params;
 
-	CallInfo call_info;
-
-	CodeObject code_obj;
+    CallInfo call_info;
 };
 
 #endif

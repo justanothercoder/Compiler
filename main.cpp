@@ -8,57 +8,53 @@
 #include "builtins.hpp"
 #include "filehelper.hpp"
 #include "functionsymbol.hpp"
-#include "globalhelper.hpp"
+
+#include "definevisitor.hpp"
+#include "checkvisitor.hpp"
+#include "genssavisitor.hpp"
+#include "expandtemplatesvisitor.hpp"
+
+#include "statementnode.hpp"
 
 using std::shared_ptr;
 
 int main()
 {
-	std::string filename = "input.txt";
+    std::string filename = "input.txt";
 
-	try
-	{    
-		shared_ptr<AST> root(FileHelper::parse(filename));
+    try
+    {
+        BuiltIns::defineBuiltIns();
 
-		BuiltIns::defineBuiltIns();
+        shared_ptr<AST> root(FileHelper::parse(filename));
 
-		root -> scope = BuiltIns::global_scope;
+        root -> scope = BuiltIns::global_scope;
 
-		root -> build_scope();
-		root -> define();
-		root -> check ();
-	
-		CodeObject main_code;
-		
-		main_code.emit("section .text");
+        root -> build_scope();
+        
+        ExpandTemplatesVisitor expand_visitor;
+        root -> accept(expand_visitor);
+       
+        DefineVisitor define_visitor;
+        root -> accept(define_visitor);
 
-		for ( auto p : GlobalHelper::has_definition )
-		{
-			if ( !p.second )
-				main_code.emit("extern " + p.first -> getScopedTypedName());
-		}
+        CheckVisitor check_visitor;
+        root -> accept(check_visitor);
 
-		main_code.emit("global _start");
-		main_code.emit("_start:");
+        GenSSAVisitor visitor;
+        root -> accept(visitor);
+//		std::cerr << "code:\n" << visitor.getString() << '\n';
 
-		main_code.emit("push rbp");
-		main_code.emit("mov rbp, rsp");	
+//        visitor.optimize();
+		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
 
-		if ( root -> scope -> getVarAlloc().getSpace() > 0 )		
-			main_code.emit("sub rsp, " + std::to_string(root -> scope -> getVarAlloc().getSpace()));
-		main_code.emit("sub rsp, " + std::to_string(root -> scope -> getTempAlloc().getSpaceNeeded()));
+//        std::cerr << "\nasm code:\n";
 
-		main_code.emit(root -> gen().getCode());
+        CodeObject code_obj;
+        visitor.getCode().genAsm(code_obj);
 
-		main_code.emit("mov rsp, rbp");
-		main_code.emit("pop rbp");
-
-		main_code.emit("mov rax, 60");
-		main_code.emit("mov rdi, 0");
-		main_code.emit("syscall");
-
-		main_code.gen();
-	}
+        code_obj.gen();
+    }
 //	catch ( SemanticError& e )
 //	{
 //		std::cerr << e.what() << '\n';
@@ -69,10 +65,12 @@ int main()
 //		std::cerr << e.what() << '\n';
 //		return 2;
 //	}
-	catch ( int x )
-	{
-		return 1;
-	}
+    catch ( int x )
+    {
+        return 1;
+    }
 
-	return 0;
+    delete BuiltIns::global_scope;
+
+    return 0;
 }

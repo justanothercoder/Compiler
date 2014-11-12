@@ -2,32 +2,24 @@
 #define _NULLNODE_HPP_
 
 #include "exprnode.hpp"
-#include "codeobject.hpp"
 
 class NullNode : public ExprNode
 {
 public:
 
-	NullNode();
-    
-	AST* copyTree() const override;
-	
-    void check() override;
-	CodeObject& gen() override;
+    NullNode();
 
-	std::string toString() const override;
-    
-	const Type* getType() const override;
-	bool isLeftValue() const override;
+    AST* copyTree() const override;
 
-	void freeTempSpace() override;
+    std::string toString() const override;
 
-	bool isCompileTimeExpr() const override;
-	boost::optional<int> getCompileTimeValue() const override;
+    const Type* getType() const override;
+    bool isLeftValue() const override;
 
-private:
+    bool isCompileTimeExpr() const override;
+    boost::optional<int> getCompileTimeValue() const override;
 
-	CodeObject code_obj;
+    void accept(ASTVisitor& visitor) override;
 };
 
 #endif

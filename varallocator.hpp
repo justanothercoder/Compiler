@@ -9,19 +9,19 @@ class VariableSymbol;
 class VarAllocator
 {
 public:
-	VarAllocator();
+    VarAllocator();
 
-	virtual void addVariable(VariableSymbol *var);
-	
-	int getAddress(VariableSymbol *var) const;
+    virtual void addVariable(VariableSymbol *var);
 
-	int getSpace() const;
-		
+    int getAddress(VariableSymbol *var) const;
+
+    int getSpace() const;
+
 protected:
 
-	int space_for_variables;
+    int space_for_variables;
 
-	std::map<VariableSymbol*, int> var_addresses;
+    std::map<VariableSymbol*, int> var_addresses;
 };
 
 #endif

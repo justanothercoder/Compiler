@@ -3,43 +3,38 @@
 #include "type.hpp"
 
 VariableSymbol::VariableSymbol(std::string name, const Type *type, VariableSymbolType sym_type) : name(name)
-																						   , type(type)
-																						   , sym_type(sym_type) 
+    , type(type)
+    , sym_type(sym_type)
 {
 
 }
 
-const Type* VariableSymbol::getType() const 
+const Type* VariableSymbol::getType() const
 {
-   	return type; 
+    return type;
 }
 
-void VariableSymbol::setType(const Type *t) 
+std::string VariableSymbol::getName() const
 {
-   	type = t; 
+    return name;
 }
 
-std::string VariableSymbol::getName() const 
+bool VariableSymbol::isParam() const
 {
-   	return name; 
+    return sym_type == VariableSymbolType::PARAM;
 }
 
-bool VariableSymbol::isParam() const 
+bool VariableSymbol::isField() const
 {
-   	return sym_type == VariableSymbolType::PARAM; 
+    return sym_type == VariableSymbolType::FIELD;
 }
 
-bool VariableSymbol::isField() const 
+SymbolType VariableSymbol::getSymbolType() const
 {
-	return sym_type == VariableSymbolType::FIELD; 
+    return SymbolType::VARIABLE;
 }
 
-SymbolType VariableSymbol::getSymbolType() const 
+ScopeVisitor& VariableSymbol::getScopeVisitor()
 {
-   	return SymbolType::VARIABLE; 
-}
-	
-ScopeVisitor* VariableSymbol::getScopeVisitor() 
-{
-	return new VariableSymbolDefine(this);
+    return *(new VariableSymbolDefine(this));
 }

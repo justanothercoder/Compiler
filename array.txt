@@ -1,0 +1,22 @@
+template <class T, int _size>
+struct Array
+{
+    def Array() {
+
+    }
+
+    def Array(const Array& other) {
+        for ( int i = 0; i != _size; i = i + 1 )
+            __impl[i] = other.__impl[i]
+    }
+
+    def operator[] (int i) : T& { 
+        return __impl[i]
+    }
+
+    def size() : int {
+        return _size
+    }
+
+    T[_size] __impl;
+}

@@ -1,7 +1,6 @@
 #ifndef _RETURNNODE_HPP_
 #define _RETURNNODE_HPP_
 
-#include "codeobject.hpp"
 #include "callinfo.hpp"
 #include "ast.hpp"
 
@@ -14,27 +13,19 @@ public:
 
     ReturnNode(ExprNode *expr);
 
-	~ReturnNode() override;
-
     AST* copyTree() const override;
 
-	void define() override;
-	void check() override;
+    std::vector<AST*> getChildren() const override;
 
-    CodeObject& gen() override;
+    std::string toString() const override;
 
-	std::vector<AST*> getChildren() const override;
-
-	std::string toString() const override;
-
-private:
+    void accept(ASTVisitor& visitor) override;
 
     ExprNode *expr;
 
-	CallInfo copy_call_info;
+    CallInfo copy_call_info;
 
-	FunctionSymbol *enclosing_func;
-	CodeObject code_obj;
+    FunctionSymbol *enclosing_func;
 };
 
 #endif

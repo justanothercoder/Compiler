@@ -4,31 +4,31 @@
 #include "parser.hpp"
 #include "ast.hpp"
 
-AST* FileHelper::parse(std::string filename) 
-{ 
-	return std::shared_ptr<AbstractParser>(new Parser(
-				std::shared_ptr<AbstractLexer>(new Lexer(
-						extractContents(filename)
-						)
-					).get()
-				)
-			)->parse(); 
+AST* FileHelper::parse(std::string filename)
+{
+    return std::shared_ptr<AbstractParser>(new Parser(
+            std::shared_ptr<AbstractLexer>(new Lexer(
+                    extractContents(filename)
+                                           )
+                                          ).get()
+                                           )
+                                          )->parse();
 }
-	
+
 string FileHelper::extractContents(std::string filename)
 {
-	std::ifstream in(filename.c_str());
+    std::ifstream in(filename.c_str());
 
-	if ( !in )
-		throw FileNotFoundException("No such file '" + filename + "'\n");
+    if ( !in )
+        throw FileNotFoundException("No such file '" + filename + "'\n");
 
-	std::string buf = "";
+    std::string buf = "";
 
-	char c;
-	while ( (c = in.get()) != -1 )
-		buf += c;    
+    char c;
+    while ( (c = in.get()) != -1 )
+        buf += c;
 
-	in.close();
+    in.close();
 
-	return buf;
+    return buf;
 }

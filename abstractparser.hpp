@@ -7,8 +7,6 @@
 
 class AST;
 
-using std::vector;
-
 class AbstractParser
 {
 public:
@@ -16,7 +14,7 @@ public:
     AbstractParser(AbstractLexer *input);
 
     virtual ~AbstractParser();
-    
+
     virtual AST* parse() = 0;
 
 protected:
@@ -31,18 +29,18 @@ protected:
 
     Token getToken(int i);
     TokenType getTokenType(int i);
-    
+
     int mark();
     void release();
 
 protected:
 
-    vector<Token> lookahead;
-    vector<int> markers;
+    std::vector<Token> lookahead;
+    std::vector<int> markers;
 
     AbstractLexer *input;
-    int pos;    
-        
+    int pos;
+
 };
 
 #endif

@@ -7,29 +7,25 @@ class ReferenceType : public Type
 {
 public:
 
-	ReferenceType(const Type *type);
+    ReferenceType(const Type *type);
 
-	void accept(TypeVisitor *visitor) const override;
+    std::string getName() const override;
+    size_t getSize() const override;
+    TypeKind getTypeKind() const override;
 
-	std::string getName() const override;
-	size_t getSize() const override;
-	TypeKind getTypeKind() const override;
-	
-	bool isConvertableTo(const Type *type) const override;
-	boost::optional<int> rankOfConversion(const Type *type) const override;
+    bool isConvertableTo(const Type *type) const override;
+    boost::optional<int> rankOfConversion(const Type *type) const override;
 
-	bool isReference() const override;
-	bool isConst() const override;
-	
-	FunctionSymbol* getConversionTo(const Type *type) const override;
-	
-	const Type* getUnqualifiedType() const override;
+    bool isReference() const override;
+    bool isConst() const override;
 
-	const Symbol* getSymbol() const override;
+    FunctionSymbol* getConversionTo(const Type *type) const override;
 
-private:
+    const Type* getUnqualifiedType() const override;
 
-	const Type *type;
+    const Symbol* getSymbol() const override;
+
+    const Type *type;
 };
 
 #endif

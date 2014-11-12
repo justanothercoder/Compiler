@@ -2,70 +2,41 @@
 #include "exprnode.hpp"
 #include "localscope.hpp"
 
-WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats), while_scope(nullptr)
+WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond)
+                                                 , stats(stats)
+                                                 , while_scope(nullptr)
 {
 
-}
-
-WhileNode::~WhileNode() 
-{ 
-	delete cond; 
-	delete stats; 
-	delete while_scope; 
 }
 
 void WhileNode::build_scope()
 {
-    while_scope = new LocalScope(scope);
+    while_scope = std::make_shared<LocalScope>(scope);
 
     cond -> scope = scope;
     cond -> build_scope();
 
-    stats -> scope = while_scope;
+    stats -> scope = while_scope.get();
     stats -> build_scope();
 }
 
-void WhileNode::define() { stats -> define(); }
-
-void WhileNode::check()
+AST* WhileNode::copyTree() const
 {
-    cond  -> check();
-    stats -> check();
+    return new WhileNode(static_cast<ExprNode*>(cond -> copyTree()),
+                         stats -> copyTree());
 }
 
-CodeObject& WhileNode::gen()
+std::vector<AST*> WhileNode::getChildren() const
 {
-    auto exit_label  = WhileNode::getNewLabel();
-    auto cycle_label = WhileNode::getNewLabel();
-    
-    code_obj.emit(cycle_label + ":");
-    code_obj.emit(cond -> gen().getCode());
-    code_obj.emit("cmp qword [rax], 0");
-    code_obj.emit("jz " + exit_label);
-    code_obj.emit(stats -> gen().getCode());
-    code_obj.emit("jmp " + cycle_label);
-    code_obj.emit(exit_label + ":");
-
-	return code_obj;
+    return {cond, stats};
 }
 
-std::string WhileNode::getNewLabel() 
+std::string WhileNode::toString() const
 {
-	static int label_num = 0;
-	return "@while_label" + std::to_string(++label_num); 
+    return "while (" + cond -> toString() + ")\n" + stats -> toString();
 }
 
-AST* WhileNode::copyTree() const 
+void WhileNode::accept(ASTVisitor& visitor)
 {
-   	return new WhileNode(static_cast<ExprNode*>(cond -> copyTree()), stats -> copyTree()); 
-}
-   	
-std::vector<AST*> WhileNode::getChildren() const 
-{
-   	return {cond, stats}; 
-}
-	
-std::string WhileNode::toString() const 
-{
-	return "while (" + cond -> toString() + ")\n" + stats -> toString();
+    visitor.visit(this);
 }

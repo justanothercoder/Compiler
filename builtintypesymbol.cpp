@@ -1,51 +1,47 @@
 #include "builtintypesymbol.hpp"
 
-BuiltInTypeSymbol::BuiltInTypeSymbol(std::string name, int size) : name(name), size(size) 
+BuiltInTypeSymbol::BuiltInTypeSymbol(std::string name, int size) : name(name), size(size)
 {
 
 }
-    
-std::string BuiltInTypeSymbol::getName() const 
+
+std::string BuiltInTypeSymbol::getName() const
 {
-   	return name; 
+    return name;
 }
 
-size_t BuiltInTypeSymbol::getSize() const 
+size_t BuiltInTypeSymbol::getSize() const
 {
-   	return size; 
+    return size;
 }
 
-SymbolType BuiltInTypeSymbol::getSymbolType() const 
+SymbolType BuiltInTypeSymbol::getSymbolType() const
 {
-   	return SymbolType::BUILTINTYPE; 
+    return SymbolType::BUILTINTYPE;
 }
 
-TypeKind BuiltInTypeSymbol::getTypeKind() const 
-{ 
-	return TypeKind::BUILTIN; 
+TypeKind BuiltInTypeSymbol::getTypeKind() const
+{
+    return TypeKind::BUILTIN;
 }
-	
+
 bool BuiltInTypeSymbol::isConvertableTo(const Type *type) const
 {
-	return this == type;
+    return this == type;
 }
-	
-boost::optional<int> BuiltInTypeSymbol::rankOfConversion(const Type *type) const 
+
+boost::optional<int> BuiltInTypeSymbol::rankOfConversion(const Type *type) const
 {
-	return isConvertableTo(type) ? 0 : boost::none;
+    return isConvertableTo(type) ? 0 : boost::none;
 }
-	
-FunctionSymbol* BuiltInTypeSymbol::getConversionTo(const Type *) const 
+
+FunctionSymbol* BuiltInTypeSymbol::getConversionTo(const Type *) const
 {
-	return nullptr;
+    return nullptr;
 }
-	
+
 const Symbol* BuiltInTypeSymbol::getSymbol() const
 {
-	return this;
+    return this;
 }
-	
-void BuiltInTypeSymbol::accept(TypeVisitor *visitor) const 
-{
-	visitor -> visit(this);
-}
+

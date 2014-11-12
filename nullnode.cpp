@@ -2,61 +2,44 @@
 #include "scope.hpp"
 #include "typefactory.hpp"
 #include "builtins.hpp"
-#include "globalhelper.hpp"
+#include "globaltable.hpp"
 
-NullNode::NullNode() 
+NullNode::NullNode()
 {
 
 }
-	
-AST* NullNode::copyTree() const 
+
+AST* NullNode::copyTree() const
 {
-	return new NullNode();
-}
-	
-void NullNode::check() 
-{
-	scope -> getTempAlloc().add(getType() -> getSize());
+    return new NullNode();
 }
 
-CodeObject& NullNode::gen() 
+std::string NullNode::toString() const
 {
-	auto addr = "[rbp - " + std::to_string(GlobalHelper::transformAddress(scope, scope -> getTempAlloc().getOffset())) + "]";
-
-	scope -> getTempAlloc().claim(getType() -> getSize());
-
-	code_obj.emit("mov qword " + addr + ", 0");
-	code_obj.emit("lea rax, " + addr);
-
-	return code_obj;
+    return "null";
 }
 
-std::string NullNode::toString() const 
+const Type* NullNode::getType() const
 {
-	return "null";
-}
-    
-const Type* NullNode::getType() const 
-{
-	return TypeFactory::getPointer(BuiltIns::void_type);
+    return TypeFactory::getPointer(BuiltIns::void_type);
 }
 
 bool NullNode::isLeftValue() const
 {
-	return false;
+    return false;
 }
 
-void NullNode::freeTempSpace() 
+bool NullNode::isCompileTimeExpr() const
 {
-	
+    return false;
 }
 
-bool NullNode::isCompileTimeExpr() const 
+boost::optional<int> NullNode::getCompileTimeValue() const
 {
-	return false;
+    return boost::none;
 }
 
-boost::optional<int> NullNode::getCompileTimeValue() const 
+void NullNode::accept(ASTVisitor& visitor)
 {
-	return boost::none;
+    visitor.visit(this);
 }

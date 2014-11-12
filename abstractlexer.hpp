@@ -11,13 +11,13 @@ using string = std::string;
 class AbstractLexer
 {
 public:
-    
+
     AbstractLexer(string input);
 
     virtual ~AbstractLexer();
-    
+
     virtual Token getToken() = 0;
-    
+
 protected:
 
     void consume();
@@ -26,7 +26,7 @@ protected:
 protected:
 
     char cur;
-    int pos;   
+    int pos;
     string input;
 
     int line, symbol;

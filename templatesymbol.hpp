@@ -12,7 +12,7 @@ class ExprNode;
 
 class TemplateSymbol
 {
-    virtual Symbol* getSpec(std::vector<TemplateParam> symbols, Scope *inst_scope) const = 0;
+//    virtual Symbol* getSpec(std::vector<TemplateParam> symbols, Scope *inst_scope) const = 0;
 };
 
 #endif

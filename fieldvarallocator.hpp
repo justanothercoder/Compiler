@@ -7,9 +7,9 @@
 class FieldVarAllocator : public VarAllocator
 {
 public:
-	FieldVarAllocator();
+    FieldVarAllocator();
 
-	virtual void addVariable(VariableSymbol *var);
+    virtual void addVariable(VariableSymbol *var);
 };
 
 #endif

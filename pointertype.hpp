@@ -7,29 +7,27 @@ class PointerType : public Type
 {
 public:
 
-	PointerType(const Type *type);
-	
-	void accept(TypeVisitor *visitor) const override;
+    PointerType(const Type *type);
 
-	std::string getName() const override;
-	size_t getSize() const override;
-	TypeKind getTypeKind() const override;
-	
-	bool isConvertableTo(const Type *type) const override;
-	boost::optional<int> rankOfConversion(const Type *t) const override;
+    std::string getName() const override;
+    size_t getSize() const override;
+    TypeKind getTypeKind() const override;
 
-	bool isReference() const override;
-	bool isConst() const override;
+    bool isConvertableTo(const Type *type) const override;
+    boost::optional<int> rankOfConversion(const Type *t) const override;
 
-	FunctionSymbol* getConversionTo(const Type *t) const override;
+    bool isReference() const override;
+    bool isConst() const override;
 
-	const Symbol* getSymbol() const override;
+    FunctionSymbol* getConversionTo(const Type *t) const override;
 
-	const Type* getPointedType() const;
+    const Symbol* getSymbol() const override;
+
+    const Type* getPointedType() const;
 
 private:
 
-	const Type *type;
+    const Type *type;
 };
 
 #endif

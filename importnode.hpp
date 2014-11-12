@@ -2,25 +2,21 @@
 #define _IMPORTNODE_HPP_
 
 #include "ast.hpp"
-#include "codeobject.hpp"
 
 class ImportNode : public AST
 {
 public:
-	ImportNode(std::string lib);
+    ImportNode(std::string lib);
+
+    void build_scope();        
 
     AST* copyTree() const override;
-	
-    void define() override;
-    void check() override;
+    std::string toString() const override;
 
-    CodeObject& gen() override;
-	std::string toString() const override;
+    void accept(ASTVisitor& visitor) override;
 
-private:
-
-	std::string lib;
-	CodeObject code_obj;
+    std::string lib;
+    AST *root;
 };
 
 #endif

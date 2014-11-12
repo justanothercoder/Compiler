@@ -4,10 +4,10 @@
 #include "templatestructsymbol.hpp"
 
 TemplateStructDeclarationNode::TemplateStructDeclarationNode(std::string name
-		                                                   , std::vector<AST*> inner
-														   , std::vector< std::pair<std::string, TypeInfo> > template_params) 
-																											: StructDeclarationNode(name, inner)
-																											, template_params(template_params) 
+        , std::vector<AST*> inner
+        , std::vector< std::pair<std::string, TypeInfo> > template_params)
+    : StructDeclarationNode(name, inner)
+    , template_params(template_params)
 {
 
 }
@@ -18,22 +18,12 @@ void TemplateStructDeclarationNode::build_scope()
 
     for ( auto decl : inner )
     {
-		decl -> scope = definedSymbol;
-		decl -> build_scope();
+        decl -> scope = definedSymbol;
+        decl -> build_scope();
     }
 }
-
-void TemplateStructDeclarationNode::define() 
+    
+void TemplateStructDeclarationNode::accept(ASTVisitor& visitor)
 {
-   	scope -> accept(new SymbolDefine(definedSymbol));
-}
-
-void TemplateStructDeclarationNode::check() 
-{
-
-}
-
-CodeObject& TemplateStructDeclarationNode::gen() 
-{ 
-	return code_obj; 
+    visitor.visit(this);
 }

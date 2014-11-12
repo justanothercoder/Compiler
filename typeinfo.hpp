@@ -12,16 +12,28 @@ using TemplateParamInfo = boost::variant<ExprNode*, TypeInfo>;
 
 class TypeInfo
 {
-public:   
+public:
     TypeInfo();
-    TypeInfo(std::string type_name, bool is_ref, bool is_const, std::vector<TemplateParamInfo> template_params = { }, int pointer_depth = 0);
+    TypeInfo(std::string                    type_name
+           , bool                           is_ref
+           , bool                           is_const
+           , std::vector<TemplateParamInfo> template_params = { }
+           , int                            pointer_depth = 0
+           , std::vector<ExprNode*>         array_dimensions = { });
 
-	std::string toString() const;
+    TypeInfo(const TypeInfo& type_info);
+    TypeInfo& operator=(const TypeInfo& type_info);
 
-	std::string type_name;
+    TypeInfo(TypeInfo&& type_info);
+    TypeInfo& operator=(TypeInfo&& type_info);
+
+    std::string toString() const;
+
+    std::string type_name;
     bool is_ref, is_const;
-	std::vector<TemplateParamInfo> template_params;
-	int pointer_depth;
+    std::vector<TemplateParamInfo> template_params;
+    int pointer_depth;
+    std::vector<ExprNode*> array_dimensions;
 };
 
 #endif

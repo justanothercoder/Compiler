@@ -1,89 +1,51 @@
 #include "stringnode.hpp"
 #include "typefactory.hpp"
 #include "builtins.hpp"
+#include "globaltable.hpp"
 
-StringNode::StringNode(std::string str) : str(str) 
+StringNode::StringNode(std::string str) : str(str)
 {
 
 }
 
-void StringNode::check() 
+AST* StringNode::copyTree() const
 {
-
+    return new StringNode(str);
 }
 
-CodeObject& StringNode::gen()
+std::string StringNode::getStr() const
 {
-	auto str_label = StringNode::getNewLabel();
-
-	code_obj.emit("section .data");
-
-	std::string res = "0";
-
-	for ( int i = str.length() - 1; i >= 0; --i )
-	{
-		if ( i >= 1 && str[i - 1] == '\\' && str[i] == 'n' )
-		{
-			res += ", 10";
-			--i;
-		}
-		else
-			res += ", " + std::to_string(static_cast<int>(str[i]));
-	}
-
-	code_obj.emit("@" + str_label + ": db " + res);
-	code_obj.emit(str_label + " equ $ - 1");
-
-	code_obj.emit("section .text");
-	code_obj.emit("lea rax, [" + str_label + "]");
-
-	return code_obj;
-}
-	
-AST* StringNode::copyTree() const 
-{
-   	return new StringNode(str); 
-}
-	
-std::string StringNode::getStr() const 
-{
-   	return str; 
+    return str;
 }
 
-std::string StringNode::getNewLabel()
+const Type* StringNode::getType() const
 {
-	static int label_num = 0;
-	return "@string_label" + std::to_string(++label_num);
+    static const Type *type = BuiltIns::global_scope -> resolveType("string");
+
+    return TypeFactory::getConst(type);
 }
 
-const Type* StringNode::getType() const 
+bool StringNode::isLeftValue() const
 {
-	static const Type *type = BuiltIns::global_scope -> resolveType("string");
-
-	return TypeFactory::getConst(type);
-}
-
-bool StringNode::isLeftValue() const 
-{
-   	return false; 
-}
-
-void StringNode::freeTempSpace()
-{
-
+    return false;
 }
 
 bool StringNode::isCompileTimeExpr() const
 {
-	return false;
+    return false;
 }
 
 boost::optional<int> StringNode::getCompileTimeValue() const
 {
-	return boost::none;
+    return boost::none;
 }
-	
-std::string StringNode::toString() const 
+
+std::string StringNode::toString() const
 {
-	return '"' + str + '"'; 
+    return '"' + str + '"';
+}
+
+void StringNode::accept(ASTVisitor& visitor)
+{
+    visitor.visit(this);
 }

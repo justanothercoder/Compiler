@@ -7,15 +7,16 @@ class ParamVarAllocator : public VarAllocator
 {
 public:
 
-	ParamVarAllocator();
+    ParamVarAllocator(int offset);
 
-	void addVariable(VariableSymbol *var) override;
+    void addVariable(VariableSymbol *var) override;
 
-	int getSpaceForParams() const;
+    int getSpaceForParams() const;
 
 private:
-	
-	int space_for_params;
+
+    int space_for_params;
+    int offset;
 };
 
 #endif

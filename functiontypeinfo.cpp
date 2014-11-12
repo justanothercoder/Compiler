@@ -1,87 +1,87 @@
 #include "functiontypeinfo.hpp"
 #include "structsymbol.hpp"
 
-FunctionTypeInfo::FunctionTypeInfo(std::vector<const Type*> params_types) : params_types(params_types) 
+FunctionTypeInfo::FunctionTypeInfo(std::vector<const Type*> params_types) : params_types(params_types)
 {
 
 }
-	
+
 FunctionTypeInfo::FunctionTypeInfo(std::initializer_list<const Type*> init_list) : params_types(init_list)
 {
 
 }
 
-bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs) 
-{ 
-	return lhs.hash_func() < rhs.hash_func(); 
+bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
+{
+    return lhs.hash_func() < rhs.hash_func();
 }
 
 bool operator==(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
 {
-	if ( lhs.params_types.size() != rhs.params_types.size() )
-		return false;
+    if ( lhs.params_types.size() != rhs.params_types.size() )
+        return false;
 
-	for ( size_t i = 0; i < lhs.params_types.size(); ++i )
-	{
-		if ( lhs.params_types[i] != rhs.params_types[i] )
-			return false;
-	}	
+    for ( size_t i = 0; i < lhs.params_types.size(); ++i )
+    {
+        if ( lhs.params_types[i] != rhs.params_types[i] )
+            return false;
+    }
 
-	return true;
+    return true;
 }
 
 std::string FunctionTypeInfo::toString() const
 {
-	std::string res;
+    std::string res;
 
-	res += "(";
+    res += "(";
 
-	if ( !params_types.empty() )
-	{
-		auto it = std::begin(params_types);
+    if ( !params_types.empty() )
+    {
+        auto it = std::begin(params_types);
 
-		res += (*it) -> getName();
-		for ( ++it; it != std::end(params_types); ++it )
-			res += ", " + (*it) -> getName();
-	}
+        res += (*it) -> getName();
+        for ( ++it; it != std::end(params_types); ++it )
+            res += ", " + (*it) -> getName();
+    }
 
-	res += ")";
+    res += ")";
 
-	return res;	
+    return res;
 }
-	
+
 long long FunctionTypeInfo::hash_func() const
 {
-	long long res = 0;
+    long long res = 0;
 
-	std::hash<std::string> hash_fn;
+    std::hash<std::string> hash_fn;
 
-	for ( auto type : params_types )
-		res += hash_fn(type -> getName());
+    for ( auto type : params_types )
+        res += hash_fn(type -> getName());
 
-	return res;
+    return res;
 }
-	
+
 bool FunctionTypeInfo::isCompatibleWith(const FunctionTypeInfo& info) const
 {
-	if ( params_types.size() != info.params_types.size() )
-		return false;	
+    if ( params_types.size() != info.params_types.size() )
+        return false;
 
-	for ( size_t i = 0; i < info.params_types.size(); ++i )
-	{
-		if ( !info.params_types[i] -> isConvertableTo(params_types[i]) )
-			return false;
-	}
+    for ( size_t i = 0; i < info.params_types.size(); ++i )
+    {
+        if ( !info.params_types[i] -> isConvertableTo(params_types[i]) )
+            return false;
+    }
 
-	return true;
+    return true;
 }
 
 int FunctionTypeInfo::rankOfConversion(const FunctionTypeInfo& info) const
 {
-	int rank = 0;
+    int rank = 0;
 
-	for ( int i = 0; i < static_cast<int>(params_types.size()); ++i )
-		rank += *(info.params_types[i] -> rankOfConversion(params_types[i]));
+    for ( int i = 0; i < static_cast<int>(params_types.size()); ++i )
+        rank += *(info.params_types[i] -> rankOfConversion(params_types[i]));
 
-	return rank;
+    return rank;
 }

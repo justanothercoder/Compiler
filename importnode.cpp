@@ -1,39 +1,30 @@
 #include "importnode.hpp"
 #include "filehelper.hpp"
 
-ImportNode::ImportNode(std::string lib) : lib(lib) 
+ImportNode::ImportNode(std::string lib) : lib(lib), root(nullptr)
 {
 
 }
 
-AST* ImportNode::copyTree() const 
+void ImportNode::build_scope()
 {
-   	return new ImportNode(lib); 
+    root = FileHelper::parse((lib + ".txt").c_str());
+    
+    root -> scope = scope;
+    root -> build_scope();
 }
 
-void ImportNode::define() 
+AST* ImportNode::copyTree() const
 {
-	auto root = FileHelper::parse((lib + ".txt").c_str());
-
-	root -> scope = scope;
-	root -> build_scope();
-
-	root -> define();
-	root -> check();
-	code_obj.emit(root -> gen().getCode());
+    return new ImportNode(lib);
 }
 
-void ImportNode::check() 
+std::string ImportNode::toString() const
 {
-
+    return "import " + lib + ";";
 }
 
-CodeObject& ImportNode::gen()
+void ImportNode::accept(ASTVisitor& visitor)
 {
-   	return code_obj; 
-}
-	
-std::string ImportNode::toString() const 
-{
-	return "import " + lib + ";";
+    visitor.visit(this);
 }
