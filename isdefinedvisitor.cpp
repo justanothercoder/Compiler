@@ -116,6 +116,9 @@ void IsDefinedVisitor::visit(VariableNode *node)
 {
     auto sym = node -> scope -> resolve(node -> name);
 
+    if ( dynamic_cast<VariableSymbol*>(sym) && dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(sym) -> getType()) )
+        return;
+
     if ( sym == nullptr || !sym -> is_defined )
         throw SemanticError("No such symbol '" + node -> name + "'.");
 }

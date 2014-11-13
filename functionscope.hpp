@@ -25,6 +25,8 @@ public:
 
     const TemplateInfo& getTemplateInfo() const override;
 
+    bool isUnsafeBlock() const override;
+
     FunctionSymbol *func;
 
 private:

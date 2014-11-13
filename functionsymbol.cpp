@@ -77,12 +77,8 @@ ScopeVisitor& FunctionSymbol::getScopeVisitor()
 {
     return *(new FunctionSymbolDefine(this));
 }
-/*
-bool FunctionSymbol::isUnsafeBlock() const
-{
-    return is_unsafe;
-}
-*/  
+
+  
 const FunctionType* FunctionSymbol::getType() const
 {
     return type;

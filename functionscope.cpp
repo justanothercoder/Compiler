@@ -1,6 +1,7 @@
 #include "functionscope.hpp"
 #include "scopevisitor.hpp"
 #include "globalconfig.hpp"
+#include "functionsymbol.hpp"
 
 FunctionScope::FunctionScope(std::string scope_name
                            , Scope *enclosing_scope
@@ -42,3 +43,7 @@ const TemplateInfo& FunctionScope::getTemplateInfo() const
     return template_info;
 }
 
+bool FunctionScope::isUnsafeBlock() const
+{
+    return func -> is_unsafe;
+}

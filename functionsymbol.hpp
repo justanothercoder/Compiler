@@ -41,8 +41,6 @@ public:
 
     ScopeVisitor& getScopeVisitor() override;
 
-//    bool isUnsafeBlock() const override;
-
 private:
 
     std::string name;
