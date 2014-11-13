@@ -29,7 +29,7 @@ std::vector<AST*> CallNode::getChildren() const
 
 const Type* CallNode::getType() const
 {
-    return call_info.callee -> return_type;
+    return call_info.callee -> getType() -> getReturnType();
 }
 
 bool CallNode::isLeftValue() const

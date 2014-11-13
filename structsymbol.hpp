@@ -12,13 +12,13 @@
 #include "structscope.hpp"
 #include "globaltable.hpp"
 
+class FunctionType;
+
 class StructSymbol : public Symbol, public StructScope, public Type
 {
 public:
 
     StructSymbol(std::string name, Scope *enclosing_scope, const TemplateInfo& template_info);
-
-    using StructScope::accept; // to suppress compiler's warning
 
     SymbolType getSymbolType() const override;
     std::string getName() const override;
@@ -48,6 +48,10 @@ public:
     const Symbol* getSymbol() const override;
 
     bool isUnsafeBlock() const override;
+
+    void defineBuiltInMethod(std::string name, const FunctionType *type);
+    void defineBuiltInOperator(std::string name, const FunctionType *type);
+    void defineBuiltInConstructor(const FunctionType *type);
 
 private:
 

@@ -351,7 +351,7 @@ void GenSSAVisitor::visit(FunctionDeclarationNode *node)
 {
     auto scope_name = node -> definedSymbol -> getScopedTypedName();
 
-    code.newBlock(*node -> definedSymbol, scope_name);
+    code.newBlock(*node -> definedSymbol -> getScope(), scope_name);
     code.add(Command(SSAOp::LABEL, code.newLabel(scope_name)));
 
     node -> statements -> accept(*this);
@@ -572,7 +572,7 @@ void GenSSAVisitor::visit(CallNode *node)
 
 void GenSSAVisitor::visit(ReturnNode *node)
 {
-    if ( node -> enclosing_func -> return_type -> isReference() )
+    if ( node -> enclosing_func -> getType() -> getReturnType() -> isReference() )
         code.add(Command(SSAOp::RETURNREF, getArg(node -> expr)));
     else
         code.add(Command(SSAOp::RETURN, getArg(node -> expr)));

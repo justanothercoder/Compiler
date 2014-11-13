@@ -146,3 +146,18 @@ bool StructSymbol::isUnsafeBlock() const
 {
     return is_unsafe;
 }
+    
+void StructSymbol::defineBuiltInMethod(std::string name, const FunctionType *type)
+{
+    define(new FunctionSymbol(name, type, new FunctionScope(getScopeName() + "_" + name, this, false), {true, false, false}));
+}
+
+void StructSymbol::defineBuiltInOperator(std::string name, const FunctionType *type)
+{
+    define(new FunctionSymbol(name, type, new FunctionScope(getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name), this, false), {true, false, true}));
+}
+
+void StructSymbol::defineBuiltInConstructor(const FunctionType *type)
+{
+    define(new FunctionSymbol(name, type, new FunctionScope(getScopeName() + "_" + name, this, true), {true, true, false}));
+}

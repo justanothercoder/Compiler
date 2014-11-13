@@ -22,10 +22,12 @@ FunctionDeclarationNode::FunctionDeclarationNode(std::string name
 
 void FunctionDeclarationNode::build_scope()
 {
-    definedSymbol = new FunctionSymbol(traits.is_constructor ? static_cast<StructSymbol*>(scope) -> getName() : name, nullptr, { }, scope, traits);
-    definedSymbol -> is_unsafe = is_unsafe;
+    func_scope = new FunctionScope(scope -> getScopeName() + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name)
+                                 , scope
+                                 , traits.is_constructor
+    );
 
-    statements -> scope = definedSymbol;
+    statements -> scope = func_scope;
     statements -> build_scope();
 }
 

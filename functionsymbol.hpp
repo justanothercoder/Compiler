@@ -8,19 +8,23 @@
 #include "functiontraits.hpp"
 #include "functiontypeinfo.hpp"
 #include "symbol.hpp"
-#include "type.hpp"
+#include "functiontype.hpp"
 #include "globaltable.hpp"
 
 class VariableSymbol;
 
-class FunctionSymbol : public Symbol, public FunctionScope, public Type
+class FunctionSymbol : public Symbol
 {
 public:
 
-    FunctionSymbol(std::string name, const Type *return_type, FunctionTypeInfo function_type_info, Scope *enclosing_scope, FunctionTraits traits);
+    FunctionSymbol(std::string name, const FunctionType *type, FunctionScope *scope, FunctionTraits traits);
 
     std::string getTypedName() const;
     std::string getScopedTypedName() const;
+
+    const FunctionType* getType() const;
+
+    Scope* getScope() const;
 
     bool isOperator() const;
     bool isMethod() const;
@@ -31,32 +35,21 @@ public:
 
     FunctionTraits getTraits() const;
 
-    TypeKind getTypeKind() const override;
-    size_t getSize() const override;
-
-    const Type *return_type;
-    FunctionTypeInfo function_type_info;
-
     bool is_constexpr;
 
     mutable bool is_used;
 
-    bool isConvertableTo(const Type *type) const override;
-    boost::optional<int> rankOfConversion(const Type *type) const override;
-
-    FunctionSymbol* getConversionTo(const Type *type) const override;
-
-    const Symbol* getSymbol() const override;
-
     ScopeVisitor& getScopeVisitor() override;
 
-    bool isUnsafeBlock() const override;
+//    bool isUnsafeBlock() const override;
 
 private:
 
     std::string name;
 
     FunctionTraits traits;
+    const FunctionType *type;
+    FunctionScope *scope;
 };
 
 #endif

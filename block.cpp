@@ -267,7 +267,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         else
         {
             command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-            scope.getTempAlloc().claim(callee -> return_type -> getSize());
+            scope.getTempAlloc().claim(callee -> getType() -> getReturnType() -> getSize());
 
             code_obj.emit("lea rax, [rbp - " + std::to_string(command.offset) + "]");
             code_obj.emit("push rax");

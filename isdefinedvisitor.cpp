@@ -21,6 +21,7 @@
 #include "importnode.hpp"
 #include "variablesymbol.hpp"
 #include "structsymbol.hpp"
+#include "functionsymbol.hpp"
 
 void IsDefinedVisitor::visit(ImportNode *node) 
 {
@@ -83,7 +84,7 @@ void IsDefinedVisitor::visit(StructDeclarationNode *node)
 
 void IsDefinedVisitor::visit(FunctionDeclarationNode *node)
 {
-    node -> getDefinedSymbol() -> is_defined = true;
+    node -> definedSymbol -> is_defined = true;
 
     for ( auto param : node -> params_symbols )
         param -> is_defined = true;
