@@ -214,12 +214,22 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         {
             code_obj.emit("push rax");
         }
-        else if ( param_type -> getUnqualifiedType() == BuiltIns::int_type 
-               || param_type -> getUnqualifiedType() == BuiltIns::char_type )
+        else if ( param_type -> getUnqualifiedType() == BuiltIns::int_type )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rax, [rax]");
+
             code_obj.emit("push qword [rax]");
+        }
+        else if ( param_type -> getUnqualifiedType() == BuiltIns::char_type )
+        {
+            if ( param_type -> isReference() )
+                code_obj.emit("mov rax, [rax]");
+
+            code_obj.emit("mov qword [rsp], 0");
+            code_obj.emit("mov bl, byte [rax]");
+            code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+            code_obj.emit("mov byte [rsp], bl");
         }
         else if ( conversion_info.conversion )
         {
@@ -357,7 +367,14 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         genArg(command.arg2, code_obj);
         if ( command.arg2.expr_type -> isReference() )
             code_obj.emit("mov rax, [rax]");
-        code_obj.emit("mov rbx, [rax]");
+        
+        if ( command.arg2.expr_type -> getUnqualifiedType() == BuiltIns::char_type )
+        {
+            code_obj.emit("xor rbx, rbx");
+            code_obj.emit("mov bl, byte [rax]");
+        }
+        else
+            code_obj.emit("mov rbx, [rax]");
 
         genArg(command.arg1, code_obj);
         if ( command.arg1.expr_type -> isReference() )
@@ -401,7 +418,15 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         if ( command.arg2.expr_type -> isReference() )
             code_obj.emit("mov rax, [rax]");
 
-        code_obj.emit("push qword [rax]");
+        if ( command.arg2.expr_type -> getUnqualifiedType() == BuiltIns::char_type )
+        {
+            code_obj.emit("mov qword [rsp], 0");
+            code_obj.emit("mov bl, byte [rax]");
+            code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+            code_obj.emit("mov byte [rsp], bl");
+        }
+        else
+            code_obj.emit("push qword [rax]");
 
         genArg(command.arg1, code_obj);
         
@@ -409,7 +434,11 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             code_obj.emit("mov rax, [rax]");
 
         code_obj.emit("pop rbx");
-        code_obj.emit("mov rax, [rax]");
+
+        if ( command.arg1.expr_type -> getUnqualifiedType() == BuiltIns::char_type )
+            code_obj.emit("mov rax, byte [rax]");
+        else
+            code_obj.emit("mov rax, [rax]");
         
         switch ( command.op )
         {
