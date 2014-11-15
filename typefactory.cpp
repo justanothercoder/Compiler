@@ -116,13 +116,20 @@ const Type* TypeFactory::getArray(const Type *type, int size)
     
 const FunctionType* TypeFactory::getFunctionType(const Type *return_type, const FunctionTypeInfo& func_info)
 {
-    static std::map<long long, const FunctionType*> functions;
+    static std::map<const Type*, std::map<long long, const FunctionType*> > functions;
 
-    long long hash = std::hash<std::string>()(return_type -> getName()) + func_info.hash_func();
+    auto it = functions.find(return_type);
 
-    auto it = functions.find(hash);
+    if ( it != std::end(functions) )
+    {
+        auto hash = std::hash<std::string>()(func_info.toString());
+        auto it2 = it -> second.find(hash);
 
-    if ( it == std::end(functions) )
-        functions[hash] = new FunctionType(return_type, func_info);
-    return functions[hash];
+        if ( it2 == std::end(it -> second) )
+            it -> second[hash] = new FunctionType(return_type, func_info);
+    }
+    else
+        functions[return_type][std::hash<std::string>()(func_info.toString())] = new FunctionType(return_type, func_info); 
+
+    return functions[return_type][std::hash<std::string>()(func_info.toString())];
 }

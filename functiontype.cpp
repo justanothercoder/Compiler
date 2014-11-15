@@ -13,10 +13,13 @@ std::string FunctionType::getName() const
     res += return_type -> getName();
     res += "(";
     
-    auto it = std::begin(type_info.params_types);
-    res += (*it) -> getName();
-    for ( ++it; it != std::end(type_info.params_types); ++it ) 
-        res += ", " + (*it) -> getName();
+    if ( !type_info.params_types.empty() )
+    {
+        auto it = std::begin(type_info.params_types);
+        res += (*it) -> getName();
+        for ( ++it; it != std::end(type_info.params_types); ++it ) 
+            res += ", " + (*it) -> getName();
+    }
 
     res += ")";
     return res;

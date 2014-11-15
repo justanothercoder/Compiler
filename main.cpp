@@ -39,8 +39,8 @@ int main()
         DefineVisitor define_visitor;
         root -> accept(define_visitor);
 
-        IsDefinedVisitor is_defined_visitor;
-        root -> accept(is_defined_visitor);
+//        IsDefinedVisitor is_defined_visitor;
+//        root -> accept(is_defined_visitor);
 
         CheckVisitor check_visitor;
         root -> accept(check_visitor);
