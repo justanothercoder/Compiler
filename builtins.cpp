@@ -121,5 +121,18 @@ void BuiltIns::defineBuiltIns()
     global_scope -> resolve("__fread") -> is_defined  = true;
 
     global_scope -> resolve("__brk") -> is_defined  = true;
+
+    global_scope -> defineBuiltInFunction("__mmap", 
+                                          TypeFactory::getFunctionType(void_ptr, 
+                                                                       {int_struct
+                                                                      , int_struct
+                                                                      , int_struct
+                                                                      , int_struct
+                                                                      , int_struct
+                                                                      , int_struct}
+                                                                      )
+                                          );
+
+    global_scope -> resolve("__mmap") -> is_defined = true;
 }
 
