@@ -316,6 +316,11 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             code_obj.emit("call " + dynamic_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
             code_obj.emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
         }
+
+        code_obj.emit("mov rsp, rbp");
+        code_obj.emit("pop rbp");
+        code_obj.emit("ret");
+
         return;
     }
     case SSAOp::RETURNREF:
