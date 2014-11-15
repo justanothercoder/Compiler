@@ -35,6 +35,7 @@ Arg ThreeAddressCode::add(Command command)
     {
     case SSAOp::ASSIGN: case SSAOp::PARAM: case SSAOp::LABEL: case SSAOp::RETURN:
     case SSAOp::IF: case SSAOp::IFFALSE: case SSAOp::GOTO: case SSAOp::RETURNREF:
+    case SSAOp::ASSIGNCHAR:
         return Arg(IdType::NOID, -1);
     case SSAOp::PLUS: case SSAOp::MINUS: case SSAOp::MUL:
     case SSAOp::DIV: case SSAOp::MOD: case SSAOp::EQUALS:
@@ -47,7 +48,7 @@ Arg ThreeAddressCode::add(Command command)
     case SSAOp::CALL : command_type = globaltable.func_by_id[command.arg1.id] -> return_type; break;
     case SSAOp::NEW  : command_type = globaltable.type_by_id[command.arg1.id]; break;
     default:
-        throw std::logic_error("internal error.");
+        throw std::logic_error("Not all SSAOp's handled in ThreeAddressCode::add.");
     }
 
     return Arg(IdType::TEMP, current_block.commands.size() - 1, command_type);

@@ -361,6 +361,20 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
        
         return;
     }
+    case SSAOp::ASSIGNCHAR:
+    {
+        genArg(command.arg2, code_obj);
+        if ( command.arg2.expr_type -> isReference() )
+            code_obj.emit("mov rax, [rax]");
+        code_obj.emit("mov bl, byte [rax]");
+
+        genArg(command.arg1, code_obj);
+        if ( command.arg1.expr_type -> isReference() )
+            code_obj.emit("mov rax, [rax]");
+        code_obj.emit("mov byte [rax], bl");
+       
+        return;
+    }
     case SSAOp::NEW:
     {
         auto object_type = table.type_by_id.at(command.arg1.id);
@@ -457,6 +471,7 @@ std::string Block::toString(Command command) const
     case SSAOp::IFFALSE: return "ifFalse " + toString(command.arg1) + " goto " + toString(command.arg2);
     case SSAOp::GOTO   : return "goto " + toString(command.arg1);
     case SSAOp::NEW    : return "new " + table.type_by_id[command.arg1.id] -> getName();
+    case SSAOp::ASSIGNCHAR : return toString(command.arg1) + " = "  + toString(command.arg2);
     default:
         throw std::logic_error("not all SSAOp catched in Block::toString");
     }

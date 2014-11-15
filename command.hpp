@@ -7,7 +7,8 @@
 enum class SSAOp
 {
     PLUS, MINUS, MUL, DIV, MOD, ELEM, DEREF, ADDR, ASSIGN, PARAM, CALL, 
-    LABEL, RETURN, IF, IFFALSE, GOTO, EQUALS, NEQUALS, DOT, NEW, RETURNREF
+    LABEL, RETURN, IF, IFFALSE, GOTO, EQUALS, NEQUALS, DOT, NEW, RETURNREF,
+    ASSIGNCHAR
 };
 
 class Type;
@@ -16,8 +17,6 @@ struct Command
 {
     Command(SSAOp op, Arg arg);
     Command(SSAOp op, Arg arg1, Arg arg2);
-
-//	std::string toString() const;
 
     bool isExpr() const;
 

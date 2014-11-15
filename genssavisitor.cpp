@@ -55,6 +55,9 @@ GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("length")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator+")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("string")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
@@ -202,10 +205,12 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
     
     if ( expr_type == BuiltIns::int_type || expr_type == BuiltIns::char_type )
     {
+        SSAOp assign_op = expr_type == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR;
+
         if ( node -> params.empty() )
         {
             code.addConst(0);
-            code.add(Command(SSAOp::ASSIGN,
+            code.add(Command(assign_op,
                              tmp_obj,
                              Arg(IdType::NUMBER, 
                                  code.getConstId(0), 
@@ -215,7 +220,7 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
         }
         else
         {
-            code.add(Command(SSAOp::ASSIGN,
+            code.add(Command(assign_op,
                              tmp_obj,
                              getArg(*std::begin(params))
                             )
@@ -285,7 +290,7 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
         case BinaryOp::MUL    : op = SSAOp::MUL   ; break;
         case BinaryOp::DIV    : op = SSAOp::DIV   ; break;
         case BinaryOp::MOD    : op = SSAOp::MOD   ; break;
-        case BinaryOp::ASSIGN : op = SSAOp::ASSIGN; break;
+        case BinaryOp::ASSIGN : op = (lhs_type -> getUnqualifiedType() == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR); break;
         case BinaryOp::EQUALS : op = SSAOp::EQUALS; break;
         case BinaryOp::NEQUALS: op = SSAOp::NEQUALS; break;        
         default: throw std::logic_error("internal error");
@@ -395,10 +400,11 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
             if ( var_type -> getUnqualifiedType() == BuiltIns::int_type
               || var_type -> getUnqualifiedType() == BuiltIns::char_type )
             {
+                SSAOp assign_op = (var_type -> getUnqualifiedType() == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR);
                 if ( node -> constructor_call_params.empty() )
                 {
                     code.addConst(0);
-                    code.add(Command(SSAOp::ASSIGN,
+                    code.add(Command(assign_op,
                                      Arg(IdType::VARIABLE,
                                          code.getVarId(node -> definedSymbol),
                                          var_type),
@@ -409,7 +415,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                 }
                 else
                 {
-                    code.add(Command(SSAOp::ASSIGN,
+                    code.add(Command(assign_op,
                                      Arg(IdType::VARIABLE,
                                          code.getVarId(node -> definedSymbol),
                                          var_type),
@@ -592,7 +598,7 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
 
     if ( expr_type == BuiltIns::int_type || expr_type == BuiltIns::char_type )
     {
-        code.add(Command(SSAOp::ASSIGN, var, getArg(node -> expr)));
+        code.add(Command(expr_type == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR, var, getArg(node -> expr)));
         return;
     }
     
