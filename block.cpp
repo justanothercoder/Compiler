@@ -390,21 +390,22 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             code_obj.emit("mov rax, [rax]");
 
         code_obj.emit("pop rbx");
+        code_obj.emit("mov rax, [rax]");
         
         switch ( command.op )
         {
-            case SSAOp::PLUS   : code_obj.emit("add rbx, [rax]"); break;
-            case SSAOp::MINUS  : code_obj.emit("sub rbx, [rax]"); break;
-            case SSAOp::MUL    : code_obj.emit("imul rbx, [rax]"); break;
-            case SSAOp::DIV    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx, [rax]"); break;
-            case SSAOp::MOD    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx, [rax]"); code_obj.emit("mov rbx, rdx"); break;
-            case SSAOp::EQUALS : code_obj.emit("cmp rbx, [rax]"); code_obj.emit("mov rbx, qword 0"); code_obj.emit("sete bl"); break;
-            case SSAOp::NEQUALS: code_obj.emit("cmp rbx, [rax]"); code_obj.emit("mov rbx, qword 0"); code_obj.emit("setne bl"); break;
+            case SSAOp::PLUS   : code_obj.emit("add rax, rbx"); break;
+            case SSAOp::MINUS  : code_obj.emit("sub rax, rbx"); break;
+            case SSAOp::MUL    : code_obj.emit("imul rbx"); break;
+            case SSAOp::DIV    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx"); break;
+            case SSAOp::MOD    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx"); code_obj.emit("mov rax, rdx"); break;
+            case SSAOp::EQUALS : code_obj.emit("cmp rax, rbx"); code_obj.emit("mov rax, qword 0"); code_obj.emit("sete al"); break;
+            case SSAOp::NEQUALS: code_obj.emit("cmp rax, rbx"); code_obj.emit("mov rax, qword 0"); code_obj.emit("setne al"); break;
             default:
                    throw std::logic_error("internal error.");
         }
                                 
-        code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rbx");
+        code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
         return;
     }
     case SSAOp::ELEM:

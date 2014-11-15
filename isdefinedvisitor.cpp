@@ -114,7 +114,7 @@ void IsDefinedVisitor::visit(StatementNode *node)
 void IsDefinedVisitor::visit(VariableNode *node) 
 {
     auto sym = node -> scope -> resolve(node -> name);
-
+    
     if ( sym == nullptr || !sym -> is_defined )
         throw SemanticError("No such symbol '" + node -> name + "'.");
 }
