@@ -214,7 +214,8 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         {
             code_obj.emit("push rax");
         }
-        else if ( param_type -> getUnqualifiedType() == BuiltIns::int_type )
+        else if ( param_type -> getUnqualifiedType() == BuiltIns::int_type
+               || param_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::POINTER )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rax, [rax]");
@@ -303,14 +304,22 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
 
         const Type *param_type = command.arg1.expr_type;
            
-        if ( param_type -> getUnqualifiedType() == BuiltIns::int_type 
-          || param_type -> getUnqualifiedType() == BuiltIns::char_type )
+        if ( param_type -> getUnqualifiedType() == BuiltIns::int_type
+          || param_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::POINTER )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rbx, [rbx]");
 
             code_obj.emit("mov rcx, [rbx]");
             code_obj.emit("mov [rax], rcx");
+        }
+        else if ( param_type -> getUnqualifiedType() == BuiltIns::char_type )
+        {
+            if ( param_type -> isReference() )
+                code_obj.emit("mov rbx, [rbx]");
+
+            code_obj.emit("mov cl, byte [rbx]");
+            code_obj.emit("mov [rax], cl");
         }
         else
         {

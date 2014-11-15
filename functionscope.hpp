@@ -14,7 +14,7 @@ class FunctionScope : public BaseScope
 
 public:
 
-    FunctionScope(std::string scope_name, Scope *enclosing_scope, bool is_constr);
+    FunctionScope(std::string scope_name, Scope *enclosing_scope, bool is_constr, bool is_unsafe);
 
     std::string getScopeName() const override;
     Scope* getEnclosingScope() const override;
@@ -38,6 +38,8 @@ private:
     mutable ParamVarAllocator var_alloc;
 
     TemplateInfo template_info;
+
+    bool is_unsafe;
 };
 
 #endif

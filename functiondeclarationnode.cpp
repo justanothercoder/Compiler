@@ -25,6 +25,7 @@ void FunctionDeclarationNode::build_scope()
     func_scope = new FunctionScope(scope -> getScopeName() + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name)
                                  , scope
                                  , traits.is_constructor
+                                 , is_unsafe
     );
 
     statements -> scope = func_scope;

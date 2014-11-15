@@ -367,11 +367,11 @@ ___brk_void~ptr:
 	mov rbp, rsp
 
 	mov rax, 12
-	mov rdi, [rbp + 16]
+	mov rdi, [rbp + 24]
 	syscall
 
 	mov rbx, rax
-	mov rax, [rbp + 24]
+	mov rax, [rbp + 16]
 	mov [rax], rbx
 
 	mov rsp, rbp

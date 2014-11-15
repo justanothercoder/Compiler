@@ -97,9 +97,6 @@ const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope 
         if ( ov_func -> isMethod() )
             pt.insert(std::begin(pt), ov_func -> getBaseType());
 
-        for ( auto i : ov_func -> getTypeInfo().overloads )
-            Logger::log(name + ": " + i.toString());
-
         auto func_sym = ov_func -> getViableOverload(FunctionTypeInfo(pt));
 
         if ( func_sym == nullptr )

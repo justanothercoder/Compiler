@@ -49,6 +49,9 @@ GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__brk")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator[]")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
@@ -276,8 +279,13 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
     auto lhs_type = node -> lhs -> getType();
     auto rhs_type = node -> rhs -> getType();
 
-    if ( (lhs_type -> getUnqualifiedType() == BuiltIns::int_type || lhs_type -> getUnqualifiedType() == BuiltIns::char_type)
-      && (rhs_type -> getUnqualifiedType() == BuiltIns::int_type || rhs_type -> getUnqualifiedType() == BuiltIns::char_type) )
+    if ( (lhs_type -> getUnqualifiedType() == BuiltIns::int_type 
+       || lhs_type -> getUnqualifiedType() == BuiltIns::char_type
+       || lhs_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::POINTER)
+      && 
+         (rhs_type -> getUnqualifiedType() == BuiltIns::int_type 
+       || rhs_type -> getUnqualifiedType() == BuiltIns::char_type
+       || rhs_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::POINTER) )
     {
         auto rhs = getArg(node -> rhs);
         auto lhs = getArg(node -> lhs);
@@ -471,7 +479,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
 
 void GenSSAVisitor::visit(AddrNode *node)
 {
-    _arg = code.add(Command(SSAOp::ADDR, getArg(node -> expr)));
+    _arg = code.add(Command(node -> op == AddrOp::REF ? SSAOp::ADDR : SSAOp::DEREF, getArg(node -> expr)));
 }
 
 void GenSSAVisitor::visit(NullNode *)

@@ -54,8 +54,6 @@ void FunctionSymbolDefine::visit(BaseScope *sc)
 
     auto func_type_info = sym -> getType() -> getTypeInfo();
 
-    Logger::log("symbol: " + sym -> getName() + " " + func_type_info.toString());
-
     auto ofs = static_cast<const OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym) -> getType());
     ofs -> addOverload(func_type_info, sym);
 }

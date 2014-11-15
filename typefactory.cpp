@@ -6,6 +6,7 @@
 #include "consttype.hpp"
 #include "builtins.hpp"
 #include "functionsymbol.hpp"
+#include "globalscope.hpp"
 
 #include "globaltable.hpp"
 
@@ -24,20 +25,12 @@ const Type* TypeFactory::getPointer(const Type *type)
 
         const auto& tp = pointers[type];
         auto tp_ref = getReference(tp);
-
-        auto pointer_assign = new FunctionSymbol("operator=", 
-                                                 getFunctionType(tp_ref, {tp_ref, getConst(tp_ref)}), 
-                                                 nullptr, 
-                                                 {false, false, true}
-        );
-        BuiltIns::global_scope -> define(pointer_assign);
-
-        auto pointer_add = new FunctionSymbol("operator+", 
-                                              getFunctionType(tp, {tp, BuiltIns::int_type}),
-                                              nullptr, 
-                                              {false, false, true}
-        );
-        BuiltIns::global_scope -> define(pointer_add);
+        static_cast<GlobalScope*>(BuiltIns::global_scope) -> defineBuiltInOperator("operator="
+                                                                                 , getFunctionType(tp_ref, {tp_ref, getConst(tp_ref)})
+                                                             );
+        static_cast<GlobalScope*>(BuiltIns::global_scope) -> defineBuiltInOperator("operator+"
+                                                                                 , getFunctionType(tp, {tp, BuiltIns::int_type})
+                                                             );
     }
 
     return pointers[type];

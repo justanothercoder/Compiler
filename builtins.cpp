@@ -100,8 +100,6 @@ void BuiltIns::defineBuiltIns()
     ASCII_string -> defineBuiltInOperator("operator+", TypeFactory::getFunctionType(ASCII_string, {ref_ASCII_string, const_ref_ASCII_string}));
     ASCII_string -> defineBuiltInOperator("operator=", str_tp);
 
-    Logger::log(TypeFactory::getFunctionType(int_struct, {int_struct, const_ref_ASCII_string, int_struct}) -> getName());
-    
     global_scope -> defineBuiltInFunction("print" , TypeFactory::getFunctionType(void_type, {const_ref_ASCII_string}));
     global_scope -> defineBuiltInFunction("__fopen", TypeFactory::getFunctionType(int_struct, {const_ref_ASCII_string, int_struct, int_struct}));
     global_scope -> defineBuiltInFunction("__fclose", TypeFactory::getFunctionType(void_type, {int_struct}));

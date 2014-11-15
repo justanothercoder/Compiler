@@ -2,6 +2,7 @@
 #include "scopevisitor.hpp"
 #include "functionscope.hpp"
 #include "functionsymbol.hpp"
+#include "globalconfig.hpp"
 #include "logger.hpp"
 
 GlobalScope::GlobalScope() : BaseScope(), template_info(TemplateInfo())
@@ -46,7 +47,26 @@ bool GlobalScope::isUnsafeBlock() const
     
 void GlobalScope::defineBuiltInFunction(std::string name, const FunctionType *type)
 {
-    Logger::log("define " + name + " " + type -> getName());
+    define(new FunctionSymbol(name
+                            , type
+                            , new FunctionScope(getScopeName() + "_" + name
+                                              , this
+                                              , false
+                                              , false)
+                            , {false, false, false}
+                            )
+            ); 
+}
 
-    define(new FunctionSymbol(name, type, new FunctionScope(getScopeName() + "_" + name, this, false), {false, false, false})); 
+void GlobalScope::defineBuiltInOperator(std::string name, const FunctionType *type)
+{
+    define(new FunctionSymbol(name
+                            , type
+                            , new FunctionScope(getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name)
+                                              , this
+                                              , false
+                                              , false)
+                            , {false, false, true}
+                            )
+            ); 
 }
