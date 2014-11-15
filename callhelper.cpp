@@ -14,7 +14,7 @@ CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector
     if ( function_sym == nullptr )
         throw NoViableOverloadError(name, params_types);
 
-    auto function_info = function_sym -> function_type_info;
+    auto function_info = function_sym -> getType() -> getTypeInfo();
 
     int is_meth = (function_sym -> isMethod() ? 1 : 0);
 
@@ -35,7 +35,7 @@ CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector
 
 CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector<ExprNode*> params)
 {
-    auto function_info = function_sym -> function_type_info;
+    auto function_info = function_sym -> getType() -> getTypeInfo();
 
     auto params_types = CallHelper::extractTypes(params);
 
@@ -96,6 +96,9 @@ const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope 
 
         if ( ov_func -> isMethod() )
             pt.insert(std::begin(pt), ov_func -> getBaseType());
+
+        for ( auto i : ov_func -> getTypeInfo().overloads )
+            Logger::log(name + ": " + i.toString());
 
         auto func_sym = ov_func -> getViableOverload(FunctionTypeInfo(pt));
 

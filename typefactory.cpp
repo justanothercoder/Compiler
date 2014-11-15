@@ -26,17 +26,15 @@ const Type* TypeFactory::getPointer(const Type *type)
         auto tp_ref = getReference(tp);
 
         auto pointer_assign = new FunctionSymbol("operator=", 
-                                                 tp_ref, 
-                                                 {tp_ref, getConst(tp_ref)}, 
-                                                 BuiltIns::global_scope, 
+                                                 getFunctionType(tp_ref, {tp_ref, getConst(tp_ref)}), 
+                                                 nullptr, 
                                                  {false, false, true}
         );
         BuiltIns::global_scope -> define(pointer_assign);
 
         auto pointer_add = new FunctionSymbol("operator+", 
-                                              tp, 
-                                              {tp, BuiltIns::int_type}, 
-                                              BuiltIns::global_scope, 
+                                              getFunctionType(tp, {tp, BuiltIns::int_type}),
+                                              nullptr, 
                                               {false, false, true}
         );
         BuiltIns::global_scope -> define(pointer_add);
@@ -92,29 +90,46 @@ const Type* TypeFactory::getArray(const Type *type, int size)
         auto tp_ref = getReference(tp);
 
         auto array_assign = new FunctionSymbol("operator=", 
-                                               tp_ref, 
-                                               {tp_ref, getConst(tp_ref)}, 
-                                               BuiltIns::global_scope, 
+                                               getFunctionType(tp_ref, {tp_ref, getConst(tp_ref)}), 
+                                               nullptr, 
                                                {false, false, true}
         );
         BuiltIns::global_scope -> define(array_assign);
 
         auto array_add = new FunctionSymbol("operator+", 
-                                            getPointer(type), 
-                                            {tp, BuiltIns::int_type}, 
-                                            BuiltIns::global_scope, 
+                                            getFunctionType(getPointer(type), {tp, BuiltIns::int_type}),
+                                            nullptr, 
                                             {false, false, true}
         );
         BuiltIns::global_scope -> define(array_add);
 
         auto array_elem = new FunctionSymbol("operator[]", 
-                                             getReference(type), 
-                                             {tp, BuiltIns::int_type}, 
-                                             BuiltIns::global_scope, 
+                                             getFunctionType(getReference(type), {tp, BuiltIns::int_type}), 
+                                             nullptr, 
                                              {false, false, true}
         );
         BuiltIns::global_scope -> define(array_elem);
     }
 
     return arrays[type][size];
+}
+    
+const FunctionType* TypeFactory::getFunctionType(const Type *return_type, const FunctionTypeInfo& func_info)
+{
+    static std::map<const Type*, std::map<long long, const FunctionType*> > functions;
+
+    auto it = functions.find(return_type);
+
+    if ( it != std::end(functions) )
+    {
+        auto hash = std::hash<std::string>()(func_info.toString());
+        auto it2 = it -> second.find(hash);
+
+        if ( it2 == std::end(it -> second) )
+            it -> second[hash] = new FunctionType(return_type, func_info);
+    }
+    else
+        functions[return_type][std::hash<std::string>()(func_info.toString())] = new FunctionType(return_type, func_info); 
+
+    return functions[return_type][std::hash<std::string>()(func_info.toString())];
 }

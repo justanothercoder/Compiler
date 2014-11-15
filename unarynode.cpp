@@ -41,7 +41,7 @@ AST* UnaryNode::copyTree() const
 
 const Type* UnaryNode::getType() const
 {
-    return call_info.callee -> return_type;
+    return call_info.callee -> getType() -> getReturnType();
 }
 bool UnaryNode::isLeftValue() const
 {

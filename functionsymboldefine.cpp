@@ -8,6 +8,7 @@
 #include "overloadedfunctionsymbol.hpp"
 
 #include "globaltable.hpp"
+#include "logger.hpp"
 
 FunctionSymbolDefine::FunctionSymbolDefine(FunctionSymbol *sym) : sym(sym)
 {
@@ -51,7 +52,9 @@ void FunctionSymbolDefine::visit(BaseScope *sc)
     if ( static_cast<VariableSymbol*>(_sym) -> getType() -> getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
         throw SemanticError(sym_name + " is already defined as not function");
 
-    auto func_type_info = sym -> function_type_info;
+    auto func_type_info = sym -> getType() -> getTypeInfo();
+
+    Logger::log("symbol: " + sym -> getName() + " " + func_type_info.toString());
 
     auto ofs = static_cast<const OverloadedFunctionSymbol*>(static_cast<VariableSymbol*>(_sym) -> getType());
     ofs -> addOverload(func_type_info, sym);

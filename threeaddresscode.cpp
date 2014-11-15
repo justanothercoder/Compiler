@@ -45,7 +45,7 @@ Arg ThreeAddressCode::add(Command command)
     case SSAOp::DEREF: command_type = static_cast<const PointerType*>(command.arg1.expr_type); break;
     case SSAOp::ADDR : command_type = TypeFactory::getPointer(command.arg1.expr_type); break;
     case SSAOp::DOT  : command_type = globaltable.var_by_id[command.arg2.id] -> getType(); break;
-    case SSAOp::CALL : command_type = globaltable.func_by_id[command.arg1.id] -> return_type; break;
+    case SSAOp::CALL : command_type = globaltable.func_by_id[command.arg1.id] -> getType() -> getReturnType(); break;
     case SSAOp::NEW  : command_type = globaltable.type_by_id[command.arg1.id]; break;
     default:
         throw std::logic_error("Not all SSAOp's handled in ThreeAddressCode::add.");
@@ -106,7 +106,7 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 
     for ( ++block; block != blocks.cend(); ++block )
     {
-        if ( !(dynamic_cast<FunctionSymbol*>(&block -> scope) && dynamic_cast<FunctionSymbol*>(&block -> scope) -> is_used) )
+        if ( !(dynamic_cast<FunctionScope*>(&block -> scope) && dynamic_cast<FunctionScope*>(&block -> scope) -> func -> is_used) )
             continue;
 
         block -> genAsm(code_obj);

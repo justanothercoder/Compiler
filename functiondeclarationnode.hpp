@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "declarationnode.hpp"
+#include "functionscope.hpp"
 #include "functiontraits.hpp"
 #include "typeinfo.hpp"
 
@@ -43,6 +44,7 @@ public:
     FunctionTraits traits;
 
     FunctionSymbol *definedSymbol;
+    FunctionScope *func_scope;
 
     std::vector<VariableSymbol*> params_symbols;
 

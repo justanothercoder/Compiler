@@ -21,6 +21,7 @@
 #include "importnode.hpp"
 #include "variablesymbol.hpp"
 #include "structsymbol.hpp"
+#include "functionsymbol.hpp"
 
 void IsDefinedVisitor::visit(ImportNode *node) 
 {
@@ -83,7 +84,7 @@ void IsDefinedVisitor::visit(StructDeclarationNode *node)
 
 void IsDefinedVisitor::visit(FunctionDeclarationNode *node)
 {
-    node -> getDefinedSymbol() -> is_defined = true;
+    node -> definedSymbol -> is_defined = true;
 
     for ( auto param : node -> params_symbols )
         param -> is_defined = true;
@@ -114,7 +115,10 @@ void IsDefinedVisitor::visit(StatementNode *node)
 void IsDefinedVisitor::visit(VariableNode *node) 
 {
     auto sym = node -> scope -> resolve(node -> name);
-    
+
+    if ( dynamic_cast<VariableSymbol*>(sym) && dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(sym) -> getType()) )
+        return;
+
     if ( sym == nullptr || !sym -> is_defined )
         throw SemanticError("No such symbol '" + node -> name + "'.");
 }

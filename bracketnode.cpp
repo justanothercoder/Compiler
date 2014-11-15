@@ -24,7 +24,7 @@ std::vector<AST*> BracketNode::getChildren() const
 
 const Type* BracketNode::getType() const
 {
-    return call_info.callee -> return_type;
+    return call_info.callee -> getType() -> getReturnType();
 }
 
 bool BracketNode::isLeftValue() const

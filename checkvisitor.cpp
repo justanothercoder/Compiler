@@ -280,7 +280,7 @@ void CheckVisitor::visit(CallNode *node)
         node -> call_info = CallHelper::callCheck(ov_func -> getName(), _scope, node -> params);
     }
 
-    node -> caller -> type_hint = node -> call_info.callee;
+    node -> caller -> type_hint = node -> call_info.callee -> getType();
 
     node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
@@ -288,13 +288,13 @@ void CheckVisitor::visit(CallNode *node)
 void CheckVisitor::visit(ReturnNode *node)
 {
     auto _scope = node -> scope;
-    while ( _scope != nullptr && dynamic_cast<FunctionSymbol*>(_scope) == nullptr )
+    while ( _scope != nullptr && dynamic_cast<FunctionScope*>(_scope) == nullptr )
         _scope = _scope -> getEnclosingScope();
 
     if ( _scope == nullptr )
-        throw SemanticError("return is not a in a function");
+        throw SemanticError("return is not in a function");
 
-    node -> enclosing_func = dynamic_cast<FunctionSymbol*>(_scope);
+    node -> enclosing_func = dynamic_cast<FunctionScope*>(_scope) -> func;
 
     node -> expr -> accept(*this);
 

@@ -4,19 +4,19 @@
 #include "globalconfig.hpp"
 
 FunctionSymbol::FunctionSymbol(std::string name
-                               , const Type *return_type
-                               , FunctionTypeInfo function_type_info
-                               , Scope *enclosing_scope
+                               , const FunctionType *type
+                               , FunctionScope *scope
                                , FunctionTraits traits
-                              ) : FunctionScope(enclosing_scope -> getScopeName() 
-                                 + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name), enclosing_scope,
-                                 traits.is_constructor)
-                                , return_type(return_type)
-                                , function_type_info(function_type_info)
-                                , is_constexpr(false)
+                              ) 
+//: FunctionScope(enclosing_scope -> getScopeName() 
+  //                               + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name), enclosing_scope,
+//                                 traits.is_constructor)
+                                : is_constexpr(false)
+                                , is_used(false)
                                 , name(name)
                                 , traits(traits)
-                                , is_used(false)
+                                , type(type)
+                                , scope(scope)
 {
 
 }
@@ -25,7 +25,7 @@ std::string FunctionSymbol::getTypedName() const
 {
     auto res = (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name);
 
-    for ( auto type : function_type_info.params_types )
+    for ( auto type : type -> getTypeInfo().params_types )
         res += "_" + type -> getName();
 
     return res;
@@ -33,9 +33,9 @@ std::string FunctionSymbol::getTypedName() const
 
 std::string FunctionSymbol::getScopedTypedName() const
 {
-    auto res = getScopeName(); //scope_name;
+    auto res = scope -> getScopeName(); //scope_name;
 
-    auto& pt = function_type_info.params_types;
+    auto& pt = type -> getTypeInfo().params_types;
 
     for ( auto type : pt )
         res += "_" + type -> getName();
@@ -63,11 +63,6 @@ std::string FunctionSymbol::getName() const
     return name;
 }
 
-size_t FunctionSymbol::getSize() const
-{
-    return GlobalConfig::int_size;
-}
-
 FunctionTraits FunctionSymbol::getTraits() const
 {
     return traits;
@@ -78,37 +73,18 @@ SymbolType FunctionSymbol::getSymbolType() const
     return SymbolType::FUNCTION;
 }
 
-TypeKind FunctionSymbol::getTypeKind() const
-{
-    return TypeKind::FUNCTION;
-}
-
-bool FunctionSymbol::isConvertableTo(const Type *) const
-{
-    return false;
-}
-
-boost::optional<int> FunctionSymbol::rankOfConversion(const Type *) const
-{
-    return boost::none;
-}
-
-FunctionSymbol* FunctionSymbol::getConversionTo(const Type *) const
-{
-    return nullptr;
-}
-
-const Symbol* FunctionSymbol::getSymbol() const
-{
-    return this;
-}
-
 ScopeVisitor& FunctionSymbol::getScopeVisitor()
 {
     return *(new FunctionSymbolDefine(this));
 }
 
-bool FunctionSymbol::isUnsafeBlock() const
+  
+const FunctionType* FunctionSymbol::getType() const
 {
-    return is_unsafe;
+    return type;
+}
+
+Scope* FunctionSymbol::getScope() const
+{
+    return scope;
 }

@@ -69,7 +69,7 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
         if ( template_info.sym != nullptr && type_info.type_name == template_info.sym -> getName() )
             type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
 
-        if ( node -> definedSymbol -> isMethod() && type_info.type_name == static_cast<StructSymbol*>(node -> scope) -> getName() )
+        if ( node -> traits.is_method && type_info.type_name == static_cast<StructSymbol*>(node -> scope) -> getName() )
         {
             const Type *type = static_cast<const StructSymbol*>(node -> scope);
 
@@ -81,7 +81,7 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
 
             return type;
         }
-        return DefineVisitor::fromTypeInfo(type_info, node -> definedSymbol);
+        return DefineVisitor::fromTypeInfo(type_info, node -> func_scope);
     };
 
     auto return_type = fromTypeInfo(node -> return_type_info);
@@ -96,7 +96,7 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
         auto _this_sym = new VariableSymbol("this", _this_type, VariableSymbolType::PARAM);
 
         node -> params_symbols.push_back(_this_sym);
-        node -> definedSymbol -> define(_this_sym);
+        node -> func_scope -> define(_this_sym);
     }
 
     for ( auto i : node -> params )
@@ -108,13 +108,21 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
         auto param_sym = new VariableSymbol(i.first, param_type, VariableSymbolType::PARAM);
 
         node -> params_symbols.push_back(param_sym);
-        node -> definedSymbol -> define(param_sym);
+        node -> func_scope -> define(param_sym);
     }
 
-    FunctionTypeInfo function_type_info(params_types);
+    auto type = TypeFactory::getFunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
 
-    node -> definedSymbol -> return_type = return_type;
-    node -> definedSymbol -> function_type_info = function_type_info;
+    node -> definedSymbol = new FunctionSymbol(
+                                           node -> traits.is_constructor ? static_cast<StructSymbol*>(node -> scope) -> getName() : node -> name
+                                         , type
+                                         , node -> func_scope
+                                         , node -> traits
+    );
+    
+    node -> func_scope -> func = node -> definedSymbol;
+
+    node -> definedSymbol -> is_unsafe = node -> is_unsafe;
 
     node -> scope -> define(node -> definedSymbol);
 

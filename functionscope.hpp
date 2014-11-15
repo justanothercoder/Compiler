@@ -6,6 +6,8 @@
 #include "paramvarallocator.hpp"
 #include "templateinfo.hpp"
 
+class FunctionSymbol;
+
 class FunctionScope : public BaseScope
 {
     friend class VariableSymbolDefine;
@@ -22,6 +24,10 @@ public:
     TempAllocator& getTempAlloc() const override;
 
     const TemplateInfo& getTemplateInfo() const override;
+
+    bool isUnsafeBlock() const override;
+
+    FunctionSymbol *func;
 
 private:
 
