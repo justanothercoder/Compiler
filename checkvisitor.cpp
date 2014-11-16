@@ -314,7 +314,8 @@ void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
 
     auto type = node -> expr -> getType() -> getUnqualifiedType();
 
-    node -> call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {node -> expr});
+    if ( type -> getTypeKind() == TypeKind::STRUCT )
+        node -> call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {node -> expr});
 }
 
 void CheckVisitor::visit(TemplateStructDeclarationNode *node)
