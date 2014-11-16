@@ -14,6 +14,7 @@ class CallNode;
 class ReturnNode;
 class StringNode;
 class NumberNode;
+class ExternNode;
 class VariableNode;
 class StatementNode;
 class UnsafeBlockNode;
@@ -51,6 +52,7 @@ public:
     virtual void visit(UnsafeBlockNode *node) = 0;
     virtual void visit(VarInferTypeDeclarationNode *node) = 0;
     virtual void visit(TemplateStructDeclarationNode *node) = 0;
+    virtual void visit(ExternNode* node) = 0;
 };
 
 #endif

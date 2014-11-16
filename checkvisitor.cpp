@@ -251,6 +251,9 @@ void CheckVisitor::visit(VariableNode *node)
 
     auto sym = node -> scope -> resolve(node -> name);
 
+    if ( sym == nullptr )
+        throw SemanticError("No such symbol '" + node -> name + "'");
+
     if ( sym -> getSymbolType() != SymbolType::VARIABLE )
         throw SemanticError("'" + node -> name + "' is not a variable.");
 
@@ -326,4 +329,4 @@ void CheckVisitor::visit(TemplateStructDeclarationNode *node)
 
 void CheckVisitor::visit(NumberNode *) { }
 void CheckVisitor::visit(StringNode *) { }
-
+void CheckVisitor::visit(ExternNode *) { }

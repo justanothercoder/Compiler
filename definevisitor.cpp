@@ -29,11 +29,39 @@
 #include "typefactory.hpp"
 #include "globaltable.hpp"
 #include "builtins.hpp"
+#include "externnode.hpp"
 #include "checkvisitor.hpp"
 
 void DefineVisitor::visit(ImportNode *node)
 {
     node -> root -> accept(*this);
+}
+
+void DefineVisitor::visit(ExternNode *node) 
+{
+    auto return_type = fromTypeInfo(node -> return_type_info, node -> scope);
+
+    std::vector<const Type*> params_types;
+
+    for ( auto i : node -> params )
+    {
+        auto param_type = fromTypeInfo(i.second, node -> scope);
+        params_types.push_back(param_type);
+    }
+
+    auto type = TypeFactory::getFunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
+
+    node -> definedSymbol = new FunctionSymbol(node -> name
+                                             , type
+                                             , new FunctionScope("_" + node -> name
+                                                               , node -> scope
+                                                               , false
+                                                               , false)
+                                             , {false, false, false}
+                                             );
+    
+    node -> definedSymbol -> is_unsafe = node -> is_unsafe;
+    node -> scope -> define(node -> definedSymbol);
 }
 
 void DefineVisitor::visit(IfNode *node)

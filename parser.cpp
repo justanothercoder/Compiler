@@ -38,6 +38,7 @@ AST* Parser::statement()
     else if ( getTokenType(1) == TokenType::LBRACE ) return block();
     else if ( getTokenType(1) == TokenType::IMPORT ) return import_stat();
     else if ( getTokenType(1) == TokenType::UNSAFE ) return unsafe_block();
+    else if ( getTokenType(1) == TokenType::EXTERN ) return extern_stat();
     else                                             return expression();
 }
 
@@ -806,4 +807,54 @@ AST* Parser::unsafe_block()
     match(TokenType::UNSAFE);
 
     return new UnsafeBlockNode(static_cast<StatementNode*>(block()));
+}
+
+AST* Parser::extern_stat()
+{
+    match(TokenType::EXTERN);
+
+    bool is_unsafe = false;
+
+    if ( getTokenType(1) == TokenType::UNSAFE )
+    {
+        is_unsafe = true;
+        match(TokenType::UNSAFE);
+    }
+
+    std::string function_name = (getTokenType(1) == TokenType::OPERATOR ? operator_name() : id());
+
+    std::vector< std::pair<std::string, TypeInfo> > params;
+
+    match(TokenType::LPAREN);
+
+    if ( getTokenType(1) != TokenType::RPAREN )
+    {
+        auto type_info = typeInfo();
+        auto name = id();
+
+        params.push_back({std::move(name), std::move(type_info)});
+
+        while ( getTokenType(1) != TokenType::RPAREN )
+        {
+            match(TokenType::COMMA);
+
+            type_info = typeInfo();
+            name = id();
+            params.push_back({std::move(name), std::move(type_info)});
+        }
+    }
+
+    match(TokenType::RPAREN);
+
+    TypeInfo return_type_info;
+
+    if ( getTokenType(1) == TokenType::COLON )
+    {
+        match(TokenType::COLON);
+        return_type_info = typeInfo();
+    }
+    else
+        return_type_info = TypeInfo("void", false, false);
+
+    return new ExternNode(std::move(function_name), std::move(params), std::move(return_type_info), is_unsafe);
 }

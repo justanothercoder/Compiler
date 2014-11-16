@@ -25,6 +25,7 @@
 #include "templatestructdeclarationnode.hpp"
 #include "importnode.hpp"
 #include "varinfertypedeclarationnode.hpp"
+#include "externnode.hpp"
 
 #include "typefactory.hpp"
 #include "logger.hpp"
@@ -55,8 +56,8 @@ GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__mmap")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fork")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+//    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fork")) -> getType()) -> getTypeInfo().symbols )
+//        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator[]")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
@@ -85,6 +86,11 @@ Arg GenSSAVisitor::getArg(AST *node)
 void GenSSAVisitor::visit(ImportNode *node)
 {
     node -> root -> accept(*this);
+}
+
+void GenSSAVisitor::visit(ExternNode *node)
+{
+    code.globaltable.has_definition[node -> definedSymbol] = false;
 }
 
 void GenSSAVisitor::visit(IfNode *node)

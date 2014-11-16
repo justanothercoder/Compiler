@@ -133,9 +133,9 @@ void BuiltIns::defineBuiltIns()
                                                                       )
                                           );
 
-    global_scope -> defineBuiltInFunction("__fork", TypeFactory::getFunctionType(int_struct, { }));
+//    global_scope -> defineBuiltInFunction("__fork", TypeFactory::getFunctionType(int_struct, { }));
 
     global_scope -> resolve("__mmap") -> is_defined = true;
-    global_scope -> resolve("__fork") -> is_defined = true;
+//    global_scope -> resolve("__fork") -> is_defined = true;
 }
 

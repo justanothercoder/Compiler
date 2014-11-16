@@ -23,6 +23,7 @@
 #include "whilenode.hpp"
 #include "fornode.hpp"
 #include "importnode.hpp"
+#include "externnode.hpp"
 
 #include "dotnode.hpp"
 #include "callnode.hpp"
@@ -59,6 +60,7 @@ private:
     DeclarationNode* varInferDecl(boost::optional<string> struct_name = boost::none);
 
     AST* import_stat();
+    AST* extern_stat();
 
     AST* for_stat();
     AST* while_stat();

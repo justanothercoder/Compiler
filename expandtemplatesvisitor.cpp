@@ -187,4 +187,4 @@ void ExpandTemplatesVisitor::visit(NullNode *) { }
 void ExpandTemplatesVisitor::visit(VariableNode *) { }
 void ExpandTemplatesVisitor::visit(StringNode *) { }
 void ExpandTemplatesVisitor::visit(NumberNode *) { }
-
+void ExpandTemplatesVisitor::visit(ExternNode *) { }

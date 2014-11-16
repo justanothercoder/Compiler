@@ -31,6 +31,7 @@ public:
     void visit(UnsafeBlockNode *node) override;
     void visit(VarInferTypeDeclarationNode *node) override;
     void visit(TemplateStructDeclarationNode *node) override;
+    void visit(ExternNode *node) override;
 
 };
 
