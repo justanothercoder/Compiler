@@ -17,6 +17,7 @@
 	global ___brk_void~ptr:function
 
     global ___mmap_int_int_int_int_int_int:function
+    global ___fork
 
 _putchar_char:
 	push rbp
@@ -394,6 +395,21 @@ ___mmap_int_int_int_int_int_int:
     syscall
 
     mov rbx, rax
+    mov rax, [rbp + 16]
+    mov [rax], rbx
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+___fork:
+    push rbp
+    mov rbp, rsp
+
+    mov rax, 57
+    syscall
+
+    mov rbx, rax    
     mov rax, [rbp + 16]
     mov [rax], rbx
 
