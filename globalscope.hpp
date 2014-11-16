@@ -9,6 +9,8 @@
 #include "templateinfo.hpp"
 #include "globaltable.hpp"
 
+class FunctionType;
+
 class GlobalScope : public BaseScope
 {
 public:
@@ -25,6 +27,9 @@ public:
 
     const TemplateInfo& getTemplateInfo() const override;
     bool isUnsafeBlock() const override;
+
+    void defineBuiltInFunction(std::string name, const FunctionType *type);
+    void defineBuiltInOperator(std::string name, const FunctionType *type);
 
 private:
 

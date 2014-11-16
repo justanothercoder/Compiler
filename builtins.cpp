@@ -4,6 +4,7 @@
 #include "functionsymbol.hpp"
 #include "globalscope.hpp"
 #include "typefactory.hpp"
+#include "logger.hpp"
 
 Scope *BuiltIns::global_scope;
 Type *BuiltIns::void_type;
@@ -13,7 +14,7 @@ Type *BuiltIns::ASCII_string_type;
 
 void BuiltIns::defineBuiltIns()
 {
-    Scope *global_scope = new GlobalScope();
+    auto global_scope = new GlobalScope();
 
     BuiltIns::global_scope = global_scope;
 
@@ -50,29 +51,33 @@ void BuiltIns::defineBuiltIns()
     int_struct  -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~int", GlobalConfig::int_size), VariableSymbolType::FIELD));
     char_struct -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~char", GlobalConfig::int_size), VariableSymbolType::FIELD));
 
-    int_struct -> define(new FunctionSymbol("int", ref_int, {ref_int}, int_struct, constructor_traits));
-    int_struct -> define(new FunctionSymbol("int", ref_int, {ref_int, const_ref_int}, int_struct, constructor_traits));
+    int_struct -> defineBuiltInConstructor(TypeFactory::getFunctionType(ref_int, {ref_int}));
+    int_struct -> defineBuiltInConstructor(TypeFactory::getFunctionType(ref_int, {ref_int, const_ref_int}));
 
-    int_struct -> define(new FunctionSymbol("operator=" , ref_int, {ref_int, const_ref_int}, int_struct, method_oper_traits));
-    int_struct -> define(new FunctionSymbol("operator+" , int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
-    int_struct -> define(new FunctionSymbol("operator-" , int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
-    int_struct -> define(new FunctionSymbol("operator*" , int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
-    int_struct -> define(new FunctionSymbol("operator==", int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
-    int_struct -> define(new FunctionSymbol("operator!=", int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
-    int_struct -> define(new FunctionSymbol("operator/" , int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
-    int_struct -> define(new FunctionSymbol("operator%" , int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
-    int_struct -> define(new FunctionSymbol("operator&&", int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
-    int_struct -> define(new FunctionSymbol("operator||", int_struct, {ref_int, int_struct}, int_struct, method_oper_traits));
+    auto tp = TypeFactory::getFunctionType(int_struct, {ref_int, int_struct});
+
+    int_struct -> defineBuiltInOperator("operator=", TypeFactory::getFunctionType(ref_int, {ref_int, const_ref_int}));
+
+    int_struct -> defineBuiltInOperator("operator+", tp);
+    int_struct -> defineBuiltInOperator("operator-", tp);
+    int_struct -> defineBuiltInOperator("operator*", tp);
+    int_struct -> defineBuiltInOperator("operator/", tp);
+    int_struct -> defineBuiltInOperator("operator%", tp);
+    int_struct -> defineBuiltInOperator("operator==", tp);
+    int_struct -> defineBuiltInOperator("operator!=", tp);
+    int_struct -> defineBuiltInOperator("operator&&", tp);
+    int_struct -> defineBuiltInOperator("operator||", tp);
 
 //	int_plus  -> is_constexpr = true;
 //	int_minus -> is_constexpr = true;
 
-    char_struct -> define(new FunctionSymbol("char", ref_char, {ref_char}, char_struct, constructor_traits));
-    char_struct -> define(new FunctionSymbol("char", ref_char, {ref_char, const_ref_char}, char_struct, constructor_traits));
-    char_struct -> define(new FunctionSymbol("char", ref_char, {ref_char, const_ref_int}, char_struct, constructor_traits));
-    char_struct -> define(new FunctionSymbol("operator=", ref_char, {ref_char, const_ref_char}, char_struct, method_oper_traits));
+    char_struct -> defineBuiltInConstructor(TypeFactory::getFunctionType(ref_char, {ref_char}));
+    char_struct -> defineBuiltInConstructor(TypeFactory::getFunctionType(ref_char, {ref_char, const_ref_char}));
+    char_struct -> defineBuiltInConstructor(TypeFactory::getFunctionType(ref_char, {ref_char, const_ref_int}));
 
-    int_struct -> define(new FunctionSymbol("int", ref_int, {ref_int, char_struct}, int_struct, constructor_traits));
+    char_struct -> defineBuiltInOperator("operator=", TypeFactory::getFunctionType(ref_char, {ref_char, const_ref_char}));
+
+    int_struct -> defineBuiltInConstructor(TypeFactory::getFunctionType(ref_int, {ref_int, char_struct}));
 
     BuiltInTypeSymbol *void_type = new BuiltInTypeSymbol("void", 0);
     auto void_ptr = TypeFactory::getPointer(void_type);
@@ -80,25 +85,27 @@ void BuiltIns::defineBuiltIns()
     BuiltIns::void_type = void_type;
 
     global_scope -> define(const_cast<Symbol*>(BuiltIns::void_type -> getSymbol()));
-    global_scope -> define(new FunctionSymbol("putchar", void_type, {char_struct}, global_scope, simple_traits));
-    global_scope -> define(new FunctionSymbol("getchar", int_struct, { }, global_scope, simple_traits));
+
+    global_scope -> defineBuiltInFunction("putchar", TypeFactory::getFunctionType(void_type, {char_struct}));    
+    global_scope -> defineBuiltInFunction("getchar", TypeFactory::getFunctionType(int_struct, { }));
 
     ASCII_string -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~string", 256), VariableSymbolType::FIELD));
 
-    ASCII_string -> define(new FunctionSymbol("string", ref_ASCII_string, {ref_ASCII_string, const_ref_ASCII_string}, ASCII_string, constructor_traits));
-    ASCII_string -> define(new FunctionSymbol("operator[]", ref_char, {ref_ASCII_string, int_struct}, ASCII_string, method_oper_traits));
-    ASCII_string -> define(new FunctionSymbol("length", int_struct, {ref_ASCII_string}, ASCII_string, method_traits));
-    ASCII_string -> define(new FunctionSymbol("operator+", ASCII_string, {ref_ASCII_string, const_ref_ASCII_string}, ASCII_string, method_oper_traits));
-    ASCII_string -> define(new FunctionSymbol("operator=", ref_ASCII_string, {ref_ASCII_string, const_ref_ASCII_string}, ASCII_string, method_oper_traits));
+    auto str_tp = TypeFactory::getFunctionType(ref_ASCII_string, {ref_ASCII_string, const_ref_ASCII_string});
 
-    global_scope -> define(new FunctionSymbol("print", void_type, {const_ref_ASCII_string}, global_scope, simple_traits));
+    ASCII_string -> defineBuiltInConstructor(str_tp);
+    ASCII_string -> defineBuiltInMethod("length", TypeFactory::getFunctionType(int_struct, {ref_ASCII_string}));
 
-    global_scope -> define(new FunctionSymbol("__fopen", int_struct, {const_ref_ASCII_string, int_struct, int_struct}, global_scope, simple_traits));
-    global_scope -> define(new FunctionSymbol("__fclose", void_type, {int_struct}, global_scope, simple_traits));
-    global_scope -> define(new FunctionSymbol("__fwrite", int_struct, {int_struct, const_ref_ASCII_string, int_struct}, global_scope, simple_traits));
-    global_scope -> define(new FunctionSymbol("__fread", int_struct, {int_struct, ref_ASCII_string, int_struct}, global_scope, simple_traits));
+    ASCII_string -> defineBuiltInOperator("operator[]", TypeFactory::getFunctionType(ref_char, {ref_ASCII_string, int_struct}));
+    ASCII_string -> defineBuiltInOperator("operator+", TypeFactory::getFunctionType(ASCII_string, {ref_ASCII_string, const_ref_ASCII_string}));
+    ASCII_string -> defineBuiltInOperator("operator=", str_tp);
 
-    global_scope -> define(new FunctionSymbol("__brk", void_ptr, {void_ptr}, global_scope, simple_traits));
+    global_scope -> defineBuiltInFunction("print" , TypeFactory::getFunctionType(void_type, {const_ref_ASCII_string}));
+    global_scope -> defineBuiltInFunction("__fopen", TypeFactory::getFunctionType(int_struct, {const_ref_ASCII_string, int_struct, int_struct}));
+    global_scope -> defineBuiltInFunction("__fclose", TypeFactory::getFunctionType(void_type, {int_struct}));
+    global_scope -> defineBuiltInFunction("__fwrite", TypeFactory::getFunctionType(int_struct, {int_struct, const_ref_ASCII_string, int_struct}));
+    global_scope -> defineBuiltInFunction("__fread", TypeFactory::getFunctionType(int_struct, {int_struct, ref_ASCII_string, int_struct}));
+    global_scope -> defineBuiltInFunction("__brk", TypeFactory::getFunctionType(void_ptr, {void_ptr}));
 
     int_struct -> is_defined = true;
     ASCII_string -> is_defined = true;
@@ -114,5 +121,18 @@ void BuiltIns::defineBuiltIns()
     global_scope -> resolve("__fread") -> is_defined  = true;
 
     global_scope -> resolve("__brk") -> is_defined  = true;
+
+    global_scope -> defineBuiltInFunction("__mmap", 
+                                          TypeFactory::getFunctionType(void_ptr, 
+                                                                       {int_struct
+                                                                      , int_struct
+                                                                      , int_struct
+                                                                      , int_struct
+                                                                      , int_struct
+                                                                      , int_struct}
+                                                                      )
+                                          );
+
+    global_scope -> resolve("__mmap") -> is_defined = true;
 }
 

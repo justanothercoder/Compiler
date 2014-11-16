@@ -16,6 +16,8 @@
 	
 	global ___brk_void~ptr:function
 
+    global ___mmap_int_int_int_int_int_int:function
+
 _putchar_char:
 	push rbp
 	mov rbp, rsp
@@ -367,13 +369,34 @@ ___brk_void~ptr:
 	mov rbp, rsp
 
 	mov rax, 12
-	mov rdi, [rbp + 16]
+	mov rdi, [rbp + 24]
 	syscall
 
 	mov rbx, rax
-	mov rax, [rbp + 24]
+	mov rax, [rbp + 16]
 	mov [rax], rbx
 
 	mov rsp, rbp
 	pop rbp
 	ret
+    
+___mmap_int_int_int_int_int_int:
+    push rbp
+    mov rbp, rsp
+
+    mov rax, 9
+    mov rdi, [rbp + 24]
+    mov rsi, [rbp + 32]
+    mov rdx, [rbp + 40]
+    mov r10, [rbp + 48]
+    mov r8,  [rbp + 56]
+    mov r9,  [rbp + 64]
+    syscall
+
+    mov rbx, rax
+    mov rax, [rbp + 16]
+    mov [rax], rbx
+
+    mov rsp, rbp
+    pop rbp
+    ret

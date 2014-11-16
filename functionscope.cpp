@@ -1,13 +1,16 @@
 #include "functionscope.hpp"
 #include "scopevisitor.hpp"
 #include "globalconfig.hpp"
+#include "functionsymbol.hpp"
 
 FunctionScope::FunctionScope(std::string scope_name
                            , Scope *enclosing_scope
-                           , bool is_constr) : scope_name(scope_name)
+                           , bool is_constr
+                           , bool is_unsafe) : scope_name(scope_name)
                                              , enclosing_scope(enclosing_scope)
-                                             , template_info(enclosing_scope -> getTemplateInfo())
                                              , var_alloc(GlobalConfig::int_size * (is_constr ? 1 : 2))
+                                             , template_info(enclosing_scope -> getTemplateInfo())
+                                             , is_unsafe(is_unsafe)
 {
 
 }
@@ -42,3 +45,7 @@ const TemplateInfo& FunctionScope::getTemplateInfo() const
     return template_info;
 }
 
+bool FunctionScope::isUnsafeBlock() const
+{
+    return is_unsafe;
+}

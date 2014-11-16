@@ -214,12 +214,23 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         {
             code_obj.emit("push rax");
         }
-        else if ( param_type -> getUnqualifiedType() == BuiltIns::int_type 
-               || param_type -> getUnqualifiedType() == BuiltIns::char_type )
+        else if ( param_type -> getUnqualifiedType() == BuiltIns::int_type
+               || param_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::POINTER )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rax, [rax]");
+
             code_obj.emit("push qword [rax]");
+        }
+        else if ( param_type -> getUnqualifiedType() == BuiltIns::char_type )
+        {
+            if ( param_type -> isReference() )
+                code_obj.emit("mov rax, [rax]");
+
+            code_obj.emit("mov qword [rsp], 0");
+            code_obj.emit("mov bl, byte [rax]");
+            code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+            code_obj.emit("mov byte [rsp], bl");
         }
         else if ( conversion_info.conversion )
         {
@@ -267,7 +278,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         else
         {
             command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-            scope.getTempAlloc().claim(callee -> return_type -> getSize());
+            scope.getTempAlloc().claim(callee -> getType() -> getReturnType() -> getSize());
 
             code_obj.emit("lea rax, [rbp - " + std::to_string(command.offset) + "]");
             code_obj.emit("push rax");
@@ -293,14 +304,22 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
 
         const Type *param_type = command.arg1.expr_type;
            
-        if ( param_type -> getUnqualifiedType() == BuiltIns::int_type 
-          || param_type -> getUnqualifiedType() == BuiltIns::char_type )
+        if ( param_type -> getUnqualifiedType() == BuiltIns::int_type
+          || param_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::POINTER )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rbx, [rbx]");
 
             code_obj.emit("mov rcx, [rbx]");
             code_obj.emit("mov [rax], rcx");
+        }
+        else if ( param_type -> getUnqualifiedType() == BuiltIns::char_type )
+        {
+            if ( param_type -> isReference() )
+                code_obj.emit("mov rbx, [rbx]");
+
+            code_obj.emit("mov cl, byte [rbx]");
+            code_obj.emit("mov [rax], cl");
         }
         else
         {
@@ -316,6 +335,11 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             code_obj.emit("call " + dynamic_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
             code_obj.emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
         }
+
+        code_obj.emit("mov rsp, rbp");
+        code_obj.emit("pop rbp");
+        code_obj.emit("ret");
+
         return;
     }
     case SSAOp::RETURNREF:
@@ -352,12 +376,33 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         genArg(command.arg2, code_obj);
         if ( command.arg2.expr_type -> isReference() )
             code_obj.emit("mov rax, [rax]");
-        code_obj.emit("mov rbx, [rax]");
+        
+        if ( command.arg2.expr_type -> getUnqualifiedType() == BuiltIns::char_type )
+        {
+            code_obj.emit("xor rbx, rbx");
+            code_obj.emit("mov bl, byte [rax]");
+        }
+        else
+            code_obj.emit("mov rbx, [rax]");
 
         genArg(command.arg1, code_obj);
         if ( command.arg1.expr_type -> isReference() )
             code_obj.emit("mov rax, [rax]");
         code_obj.emit("mov [rax], rbx");
+       
+        return;
+    }
+    case SSAOp::ASSIGNCHAR:
+    {
+        genArg(command.arg2, code_obj);
+        if ( command.arg2.expr_type -> isReference() )
+            code_obj.emit("mov rax, [rax]");
+        code_obj.emit("mov bl, byte [rax]");
+
+        genArg(command.arg1, code_obj);
+        if ( command.arg1.expr_type -> isReference() )
+            code_obj.emit("mov rax, [rax]");
+        code_obj.emit("mov byte [rax], bl");
        
         return;
     }
@@ -382,7 +427,15 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         if ( command.arg2.expr_type -> isReference() )
             code_obj.emit("mov rax, [rax]");
 
-        code_obj.emit("push qword [rax]");
+        if ( command.arg2.expr_type -> getUnqualifiedType() == BuiltIns::char_type )
+        {
+            code_obj.emit("mov qword [rsp], 0");
+            code_obj.emit("mov bl, byte [rax]");
+            code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+            code_obj.emit("mov byte [rsp], bl");
+        }
+        else
+            code_obj.emit("push qword [rax]");
 
         genArg(command.arg1, code_obj);
         
@@ -390,21 +443,26 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             code_obj.emit("mov rax, [rax]");
 
         code_obj.emit("pop rbx");
+
+        if ( command.arg1.expr_type -> getUnqualifiedType() == BuiltIns::char_type )
+            code_obj.emit("mov rax, byte [rax]");
+        else
+            code_obj.emit("mov rax, [rax]");
         
         switch ( command.op )
         {
-            case SSAOp::PLUS   : code_obj.emit("add rbx, [rax]"); break;
-            case SSAOp::MINUS  : code_obj.emit("sub rbx, [rax]"); break;
-            case SSAOp::MUL    : code_obj.emit("imul rbx, [rax]"); break;
-            case SSAOp::DIV    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx, [rax]"); break;
-            case SSAOp::MOD    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx, [rax]"); code_obj.emit("mov rbx, rdx"); break;
-            case SSAOp::EQUALS : code_obj.emit("cmp rbx, [rax]"); code_obj.emit("mov rbx, qword 0"); code_obj.emit("sete bl"); break;
-            case SSAOp::NEQUALS: code_obj.emit("cmp rbx, [rax]"); code_obj.emit("mov rbx, qword 0"); code_obj.emit("setne bl"); break;
+            case SSAOp::PLUS   : code_obj.emit("add rax, rbx"); break;
+            case SSAOp::MINUS  : code_obj.emit("sub rax, rbx"); break;
+            case SSAOp::MUL    : code_obj.emit("imul rbx"); break;
+            case SSAOp::DIV    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx"); break;
+            case SSAOp::MOD    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx"); code_obj.emit("mov rax, rdx"); break;
+            case SSAOp::EQUALS : code_obj.emit("cmp rax, rbx"); code_obj.emit("mov rax, qword 0"); code_obj.emit("sete al"); break;
+            case SSAOp::NEQUALS: code_obj.emit("cmp rax, rbx"); code_obj.emit("mov rax, qword 0"); code_obj.emit("setne al"); break;
             default:
                    throw std::logic_error("internal error.");
         }
                                 
-        code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rbx");
+        code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
         return;
     }
     case SSAOp::ELEM:
@@ -456,6 +514,7 @@ std::string Block::toString(Command command) const
     case SSAOp::IFFALSE: return "ifFalse " + toString(command.arg1) + " goto " + toString(command.arg2);
     case SSAOp::GOTO   : return "goto " + toString(command.arg1);
     case SSAOp::NEW    : return "new " + table.type_by_id[command.arg1.id] -> getName();
+    case SSAOp::ASSIGNCHAR : return toString(command.arg1) + " = "  + toString(command.arg2);
     default:
         throw std::logic_error("not all SSAOp catched in Block::toString");
     }

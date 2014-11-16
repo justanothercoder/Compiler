@@ -6,13 +6,15 @@
 #include "paramvarallocator.hpp"
 #include "templateinfo.hpp"
 
+class FunctionSymbol;
+
 class FunctionScope : public BaseScope
 {
     friend class VariableSymbolDefine;
 
 public:
 
-    FunctionScope(std::string scope_name, Scope *enclosing_scope, bool is_constr);
+    FunctionScope(std::string scope_name, Scope *enclosing_scope, bool is_constr, bool is_unsafe);
 
     std::string getScopeName() const override;
     Scope* getEnclosingScope() const override;
@@ -23,6 +25,10 @@ public:
 
     const TemplateInfo& getTemplateInfo() const override;
 
+    bool isUnsafeBlock() const override;
+
+    FunctionSymbol *func;
+
 private:
 
     std::string scope_name;
@@ -32,6 +38,8 @@ private:
     mutable ParamVarAllocator var_alloc;
 
     TemplateInfo template_info;
+
+    bool is_unsafe;
 };
 
 #endif

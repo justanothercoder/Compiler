@@ -1,4 +1,5 @@
 #include "overloadedfunctiontypeinfo.hpp"
+#include "logger.hpp"
 
 OverloadedFunctionTypeInfo::OverloadedFunctionTypeInfo(std::set<FunctionTypeInfo> overloads) : overloads(overloads)
 {

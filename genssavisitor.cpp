@@ -24,6 +24,7 @@
 #include "newexpressionnode.hpp"
 #include "templatestructdeclarationnode.hpp"
 #include "importnode.hpp"
+#include "varinfertypedeclarationnode.hpp"
 
 #include "typefactory.hpp"
 #include "logger.hpp"
@@ -48,10 +49,19 @@ GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__brk")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__mmap")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator[]")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("length")) -> getType()) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator+")) -> getType()) -> getTypeInfo().symbols )
         code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("string")) -> getType()) -> getTypeInfo().symbols )
@@ -201,10 +211,12 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
     
     if ( expr_type == BuiltIns::int_type || expr_type == BuiltIns::char_type )
     {
+        SSAOp assign_op = expr_type == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR;
+
         if ( node -> params.empty() )
         {
             code.addConst(0);
-            code.add(Command(SSAOp::ASSIGN,
+            code.add(Command(assign_op,
                              tmp_obj,
                              Arg(IdType::NUMBER, 
                                  code.getConstId(0), 
@@ -214,7 +226,7 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
         }
         else
         {
-            code.add(Command(SSAOp::ASSIGN,
+            code.add(Command(assign_op,
                              tmp_obj,
                              getArg(*std::begin(params))
                             )
@@ -270,8 +282,13 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
     auto lhs_type = node -> lhs -> getType();
     auto rhs_type = node -> rhs -> getType();
 
-    if ( (lhs_type -> getUnqualifiedType() == BuiltIns::int_type || lhs_type -> getUnqualifiedType() == BuiltIns::char_type)
-      && (rhs_type -> getUnqualifiedType() == BuiltIns::int_type || rhs_type -> getUnqualifiedType() == BuiltIns::char_type) )
+    if ( (lhs_type -> getUnqualifiedType() == BuiltIns::int_type 
+       || lhs_type -> getUnqualifiedType() == BuiltIns::char_type
+       || lhs_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::POINTER)
+      && 
+         (rhs_type -> getUnqualifiedType() == BuiltIns::int_type 
+       || rhs_type -> getUnqualifiedType() == BuiltIns::char_type
+       || rhs_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::POINTER) )
     {
         auto rhs = getArg(node -> rhs);
         auto lhs = getArg(node -> lhs);
@@ -284,7 +301,7 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
         case BinaryOp::MUL    : op = SSAOp::MUL   ; break;
         case BinaryOp::DIV    : op = SSAOp::DIV   ; break;
         case BinaryOp::MOD    : op = SSAOp::MOD   ; break;
-        case BinaryOp::ASSIGN : op = SSAOp::ASSIGN; break;
+        case BinaryOp::ASSIGN : op = (lhs_type -> getUnqualifiedType() == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR); break;
         case BinaryOp::EQUALS : op = SSAOp::EQUALS; break;
         case BinaryOp::NEQUALS: op = SSAOp::NEQUALS; break;        
         default: throw std::logic_error("internal error");
@@ -350,7 +367,7 @@ void GenSSAVisitor::visit(FunctionDeclarationNode *node)
 {
     auto scope_name = node -> definedSymbol -> getScopedTypedName();
 
-    code.newBlock(*node -> definedSymbol, scope_name);
+    code.newBlock(*node -> definedSymbol -> getScope(), scope_name);
     code.add(Command(SSAOp::LABEL, code.newLabel(scope_name)));
 
     node -> statements -> accept(*this);
@@ -394,10 +411,11 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
             if ( var_type -> getUnqualifiedType() == BuiltIns::int_type
               || var_type -> getUnqualifiedType() == BuiltIns::char_type )
             {
+                SSAOp assign_op = (var_type -> getUnqualifiedType() == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR);
                 if ( node -> constructor_call_params.empty() )
                 {
                     code.addConst(0);
-                    code.add(Command(SSAOp::ASSIGN,
+                    code.add(Command(assign_op,
                                      Arg(IdType::VARIABLE,
                                          code.getVarId(node -> definedSymbol),
                                          var_type),
@@ -408,7 +426,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                 }
                 else
                 {
-                    code.add(Command(SSAOp::ASSIGN,
+                    code.add(Command(assign_op,
                                      Arg(IdType::VARIABLE,
                                          code.getVarId(node -> definedSymbol),
                                          var_type),
@@ -464,7 +482,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
 
 void GenSSAVisitor::visit(AddrNode *node)
 {
-    _arg = code.add(Command(SSAOp::ADDR, getArg(node -> expr)));
+    _arg = code.add(Command(node -> op == AddrOp::REF ? SSAOp::ADDR : SSAOp::DEREF, getArg(node -> expr)));
 }
 
 void GenSSAVisitor::visit(NullNode *)
@@ -571,7 +589,7 @@ void GenSSAVisitor::visit(CallNode *node)
 
 void GenSSAVisitor::visit(ReturnNode *node)
 {
-    if ( node -> enclosing_func -> return_type -> isReference() )
+    if ( node -> enclosing_func -> getType() -> getReturnType() -> isReference() )
         code.add(Command(SSAOp::RETURNREF, getArg(node -> expr)));
     else
         code.add(Command(SSAOp::RETURN, getArg(node -> expr)));
@@ -582,9 +600,46 @@ void GenSSAVisitor::visit(UnsafeBlockNode *node)
     node -> block -> accept(*this);
 }
 
-void GenSSAVisitor::visit(VarInferTypeDeclarationNode *)
+void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
 {
+    auto expr_type = node -> expr -> getType() -> getUnqualifiedType();
 
+    code.addVariable(node -> definedSymbol);
+    auto var = Arg(IdType::VARIABLE, code.getVarId(node -> definedSymbol), expr_type);
+
+    if ( expr_type == BuiltIns::int_type || expr_type == BuiltIns::char_type )
+    {
+        code.add(Command(expr_type == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR, var, getArg(node -> expr)));
+        return;
+    }
+    
+    auto info = *std::begin(node -> call_info.conversions);
+    code.addParamInfo(info);
+    code.add(Command(SSAOp::PARAM,
+                     getArg(node -> expr),
+                     Arg(IdType::NOID, code.getInfoId(info))
+                    )
+            );
+
+    info = ConversionInfo(nullptr);
+    info.desired_type = TypeFactory::getReference(expr_type);
+
+    code.addParamInfo(info);
+    code.add(Command(SSAOp::PARAM, 
+                     var,
+                     Arg(IdType::NOID, code.getInfoId(info))
+                    )
+    );
+
+    int params_size = expr_type -> getSize() + GlobalConfig::int_size;
+
+    code.addFunction(node -> call_info.callee);
+    code.add(Command(SSAOp::CALL,
+                     Arg(IdType::PROCEDURE,
+                         code.getFuncId(node -> call_info.callee)),
+                     Arg(IdType::NOID, params_size)
+                    )
+    );
 }
 
 void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)
