@@ -28,13 +28,13 @@ CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector
             throw SemanticError("parameter is not an lvalue.");
     }
 
-    function_sym -> is_used = true;
-
     return getCallInfo(function_sym, params);
 }
 
 CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector<ExprNode*> params)
 {
+    function_sym -> is_used = true;
+
     auto function_info = function_sym -> getType() -> getTypeInfo();
 
     auto params_types = CallHelper::extractTypes(params);

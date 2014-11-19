@@ -279,8 +279,13 @@ void CheckVisitor::visit(CallNode *node)
     else
     {
         auto ov_func = static_cast<const OverloadedFunctionSymbol*>(caller_type);
-        auto _scope = ov_func -> isMethod() ? static_cast<const StructSymbol*>(ov_func -> getBaseType() -> getSymbol()) : node -> scope;
-        node -> call_info = CallHelper::callCheck(ov_func -> getName(), _scope, node -> params);
+
+        std::vector<const Type*> params;
+        for ( auto param : node -> params )
+            params.push_back(param -> getType());
+
+        auto func = ov_func -> getViableOverload(FunctionTypeInfo(params));
+        node -> call_info = CallHelper::getCallInfo(func, node -> params);
     }
 
     node -> caller -> type_hint = node -> call_info.callee -> getType();
