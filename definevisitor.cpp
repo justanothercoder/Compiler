@@ -31,9 +31,11 @@
 #include "builtins.hpp"
 #include "externnode.hpp"
 #include "checkvisitor.hpp"
+#include "modulesymbol.hpp"
 
 void DefineVisitor::visit(ImportNode *node)
 {
+    node -> scope -> define(new ModuleSymbol(node -> lib, node -> scope));
     node -> root -> accept(*this);
 }
 
@@ -219,3 +221,7 @@ void DefineVisitor::visit(VariableNode *) { }
 void DefineVisitor::visit(StringNode *) { }
 void DefineVisitor::visit(NumberNode *) { }
 void DefineVisitor::visit(CallNode *) { }
+void DefineVisitor::visit(ModuleNode* ) { }
+void DefineVisitor::visit(TypeNode* ) { }
+void DefineVisitor::visit(FunctionNode* ) { }
+void DefineVisitor::visit(ModuleMemberAccessNode* node) { }

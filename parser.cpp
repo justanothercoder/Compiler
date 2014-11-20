@@ -1,17 +1,67 @@
 #include "parser.hpp"
 #include "semanticerror.hpp"
+#include "functionnode.hpp"
+#include "typenode.hpp"
+#include "modulenode.hpp"
+#include "filehelper.hpp"
+#include "modulememberaccessnode.hpp"
 
 Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer)
 {
 
 }
+    
+void Parser::pushScope()
+{
+    symbol_table_stack.emplace_back();
+}
+
+void Parser::popScope()
+{
+    symbol_table_stack.pop_back();
+}
+    
+void Parser::rememberSymbol(std::string name, SymbolType type)
+{
+    auto& table = symbol_table_stack.back();
+
+    if ( table.find(name) == std::end(table) )
+        table[name] = type;
+    else
+        throw SemanticError("Symbol " + name + " is already defined");
+}
+    
+boost::optional<SymbolType> Parser::resolveSymbolType(std::string name)
+{
+    boost::optional<SymbolType> sym_type = boost::none;
+    for ( auto it = symbol_table_stack.rbegin(); it != symbol_table_stack.rend(); ++it )
+    {
+        auto map_it = it -> find(name);
+        if ( map_it != std::end(*it) )
+        {
+            sym_type = map_it -> second;
+            break;
+        }            
+    }
+    return sym_type;
+}
 
 AST* Parser::parse()
 {
+    pushScope();
+    
+    rememberSymbol("int", SymbolType::BUILTINTYPE);
+    rememberSymbol("char", SymbolType::BUILTINTYPE);
+    rememberSymbol("putchar", SymbolType::FUNCTION);
+    rememberSymbol("__brk", SymbolType::FUNCTION);
+    rememberSymbol("__mmap", SymbolType::FUNCTION);
+
     std::vector<AST*> statements;
 
     while ( getTokenType(1) != TokenType::EOF_TYPE )
         statements.push_back(statement());
+
+    popScope();
 
     return new StatementNode(std::move(statements));
 }
@@ -56,7 +106,7 @@ AST* Parser::block()
     return new StatementNode(std::move(statements));
 }
 
-DeclarationNode* Parser::declaration(boost::optional<string> struct_name)
+DeclarationNode* Parser::declaration(boost::optional<std::string> struct_name)
 {
     if      ( getTokenType(1) == TokenType::STRUCT )   return structDecl();
     else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateStructDecl();
@@ -87,7 +137,7 @@ bool Parser::tryVarDecl()
     return success;
 }
 
-DeclarationNode* Parser::variableDecl(boost::optional<string> struct_name)
+DeclarationNode* Parser::variableDecl(boost::optional<std::string> struct_name)
 {
     auto type_info = typeInfo();
     std::string var_name  = id();
@@ -102,6 +152,8 @@ DeclarationNode* Parser::variableDecl(boost::optional<string> struct_name)
         constructor_call_params = {expression()};
     }
 
+    rememberSymbol(var_name, SymbolType::VARIABLE);
+
     return new VariableDeclarationNode(std::move(var_name), std::move(type_info), bool(struct_name), std::move(constructor_call_params));
 }
 
@@ -115,6 +167,8 @@ DeclarationNode* Parser::structDecl()
     match(TokenType::LBRACE);
 
     std::vector<AST*> functions;
+
+    pushScope();
 
     while ( getTokenType(1) != TokenType::RBRACE )
     {
@@ -134,6 +188,9 @@ DeclarationNode* Parser::structDecl()
 
     for ( auto i : functions )
         struct_in.push_back(i);
+
+    rememberSymbol(struct_name, SymbolType::STRUCT);
+    popScope();
 
     return new StructDeclarationNode(std::move(struct_name), std::move(struct_in));
 }
@@ -178,6 +235,8 @@ DeclarationNode* Parser::templateStructDecl()
     std::vector<AST*> struct_in;
     match(TokenType::LBRACE);
 
+    pushScope();
+
     while ( getTokenType(1) != TokenType::RBRACE )
     {
         while ( getTokenType(1) == TokenType::SEMICOLON )
@@ -188,6 +247,9 @@ DeclarationNode* Parser::templateStructDecl()
     }
 
     match(TokenType::RBRACE);
+
+    rememberSymbol(struct_name, SymbolType::TEMPLATESTRUCT);
+    popScope();
 
     return new TemplateStructDeclarationNode(std::move(struct_name), std::move(struct_in), std::move(template_params));
 }
@@ -204,6 +266,8 @@ DeclarationNode* Parser::functionDecl(boost::optional<std::string> struct_name)
         match(TokenType::UNSAFE);
     }
 
+    pushScope();
+
     bool is_operator = getTokenType(1) == TokenType::OPERATOR;
 
     std::string function_name = (is_operator ? operator_name() : id());
@@ -216,6 +280,8 @@ DeclarationNode* Parser::functionDecl(boost::optional<std::string> struct_name)
     {
         auto type_info = typeInfo();
         auto name = id();
+
+        rememberSymbol(name, SymbolType::VARIABLE);
 
         params.push_back({std::move(name), std::move(type_info)});
 
@@ -250,13 +316,16 @@ DeclarationNode* Parser::functionDecl(boost::optional<std::string> struct_name)
 
     AST *statements = block();
 
+    rememberSymbol(function_name, SymbolType::FUNCTION);
+    popScope();
+
     return new FunctionDeclarationNode(std::move(function_name)
-                                       , std::move(params)
-                                       , std::move(return_type)
-                                       , statements
-                                       , {bool(struct_name), is_constructor, is_operator}
-                                       , is_unsafe
-                                      );
+                                     , std::move(params)
+                                     , std::move(return_type)
+                                     , statements
+                                     , {bool(struct_name), is_constructor, is_operator}
+                                     , is_unsafe
+                                    );
 }
 
 std::string Parser::id()
@@ -272,21 +341,11 @@ std::string Parser::operator_name()
 
     switch ( getTokenType(1) )
     {
-    case TokenType::PLUS :
-        match(TokenType::PLUS);
-        return "operator+";
-    case TokenType::MINUS:
-        match(TokenType::MINUS);
-        return "operator-";
-    case TokenType::MUL  :
-        match(TokenType::MUL);
-        return "operator*";
-    case TokenType::DIV  :
-        match(TokenType::DIV);
-        return "operator/";
-    case TokenType::MOD  :
-        match(TokenType::MOD);
-        return "operator%";
+    case TokenType::PLUS : match(TokenType::PLUS); return "operator+";
+    case TokenType::MINUS: match(TokenType::MINUS); return "operator-";
+    case TokenType::MUL  : match(TokenType::MUL); return "operator*";
+    case TokenType::DIV  : match(TokenType::DIV); return "operator/";
+    case TokenType::MOD  : match(TokenType::MOD); return "operator%";
     case TokenType::LPAREN:
     {
         match(TokenType::LPAREN);
@@ -299,10 +358,8 @@ std::string Parser::operator_name()
         match(TokenType::RBRACKET);
         return "operator[]";
     }
-    case TokenType::ID:
-        return "operator " + id();
-    default:
-        throw SemanticError("No such operator " + getToken(1).text);
+    case TokenType::ID: return "operator " + id();
+    default: throw SemanticError("No such operator " + getToken(1).text);
     }
 }
 
@@ -316,7 +373,22 @@ ExprNode* Parser::literal()
 
 ExprNode* Parser::variable()
 {
-    return new VariableNode(id());
+    auto var_name = id();
+
+    auto sym_type = resolveSymbolType(var_name);
+
+    if ( !sym_type )
+        throw SemanticError("No such symbol " + var_name);
+
+    switch ( *sym_type )
+    {
+    case SymbolType::VARIABLE: return new VariableNode(var_name);
+    case SymbolType::FUNCTION: return new FunctionNode(var_name);
+    case SymbolType::MODULE  : return new ModuleNode(var_name);
+    case SymbolType::STRUCT  : return new TypeNode(var_name);
+    case SymbolType::BUILTINTYPE: return new TypeNode(var_name);
+    default: throw std::logic_error("Internal error");
+    }
 }
 
 ExprNode* Parser::get_string()
@@ -360,6 +432,15 @@ ExprNode* Parser::primary()
 
 ExprNode* Parser::unary_right()
 {
+    if ( tryModuleName() )
+    {
+        auto module_name = id();
+        match(TokenType::DOT);
+
+        auto member = id();
+        return new ModuleMemberAccessNode(module_name, member);
+    }
+
     ExprNode *res = primary();
 
     while ( getTokenType(1) == TokenType::LPAREN || getTokenType(1) == TokenType::DOT || getTokenType(1) == TokenType::LBRACKET )
@@ -766,7 +847,13 @@ ExprNode* Parser::new_expr()
 AST* Parser::import_stat()
 {
     match(TokenType::IMPORT);
-    return new ImportNode(id());
+
+    auto module_name = id();
+    rememberSymbol(module_name, SymbolType::MODULE);
+
+    auto root = FileHelper::parse((module_name + ".txt").c_str());
+    
+    return new ImportNode(module_name, root);
 }
 
 bool Parser::tryTypeInfo()
@@ -789,6 +876,30 @@ bool Parser::tryTypeInfo()
     return success;
 }
 
+bool Parser::tryModuleName()
+{
+    bool success = true;
+
+    mark();
+
+    try
+    {
+        auto str = id();
+        auto sym_type = resolveSymbolType(str);
+
+        if ( !sym_type || *sym_type != SymbolType::MODULE )
+            throw RecognitionError("");
+    }
+    catch ( RecognitionError& e )
+    {
+        success = false;        
+    }
+
+    release();
+    
+    return success;
+}
+
 DeclarationNode* Parser::varInferDecl(boost::optional<string>)
 {
     match(TokenType::VAR);
@@ -799,6 +910,8 @@ DeclarationNode* Parser::varInferDecl(boost::optional<string>)
 
     auto expr = expression();
 
+    rememberSymbol(name, SymbolType::VARIABLE);
+
     return new VarInferTypeDeclarationNode(std::move(name), expr);
 }
 
@@ -806,7 +919,11 @@ AST* Parser::unsafe_block()
 {
     match(TokenType::UNSAFE);
 
-    return new UnsafeBlockNode(static_cast<StatementNode*>(block()));
+    pushScope();
+    auto stat = block();
+    popScope();
+
+    return new UnsafeBlockNode(static_cast<StatementNode*>(stat));
 }
 
 AST* Parser::extern_stat()
@@ -855,6 +972,8 @@ AST* Parser::extern_stat()
     }
     else
         return_type_info = TypeInfo("void", false, false);
+
+    rememberSymbol(function_name, SymbolType::FUNCTION);
 
     return new ExternNode(std::move(function_name), std::move(params), std::move(return_type_info), is_unsafe);
 }

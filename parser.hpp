@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <fstream>
+#include <stack>
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
 
@@ -36,6 +37,7 @@
 #include "nullnode.hpp"
 
 #include "unsafeblocknode.hpp"
+#include "symbol.hpp"
 
 class Parser : public AbstractParser
 {
@@ -46,6 +48,13 @@ public:
     virtual AST* parse();
 
 private:
+    
+    void pushScope();
+    void popScope();    
+    void rememberSymbol(std::string name, SymbolType type);
+    boost::optional<SymbolType> resolveSymbolType(std::string name); 
+
+    std::vector< std::map< std::string, SymbolType > > symbol_table_stack; 
 
     std::string id();
     std::string operator_name();
@@ -92,6 +101,8 @@ private:
     bool tryAssignment();
     bool tryVarDecl();
     bool tryTypeInfo();
+
+    bool tryModuleName();
 };
 
 #endif

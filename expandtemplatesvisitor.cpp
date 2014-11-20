@@ -179,12 +179,16 @@ void ExpandTemplatesVisitor::visit(DotNode *node)
     node -> base -> accept(*this);
 }
 
-void ExpandTemplatesVisitor::visit(BracketNode *) { }
-void ExpandTemplatesVisitor::visit(UnaryNode *) { }
-void ExpandTemplatesVisitor::visit(BinaryOperatorNode *) { }
-void ExpandTemplatesVisitor::visit(AddrNode *) { }
-void ExpandTemplatesVisitor::visit(NullNode *) { }
-void ExpandTemplatesVisitor::visit(VariableNode *) { }
-void ExpandTemplatesVisitor::visit(StringNode *) { }
-void ExpandTemplatesVisitor::visit(NumberNode *) { }
-void ExpandTemplatesVisitor::visit(ExternNode *) { }
+void ExpandTemplatesVisitor::visit(BracketNode* ) { }
+void ExpandTemplatesVisitor::visit(UnaryNode* ) { }
+void ExpandTemplatesVisitor::visit(BinaryOperatorNode* ) { }
+void ExpandTemplatesVisitor::visit(AddrNode* ) { }
+void ExpandTemplatesVisitor::visit(NullNode* ) { }
+void ExpandTemplatesVisitor::visit(VariableNode* ) { }
+void ExpandTemplatesVisitor::visit(StringNode* ) { }
+void ExpandTemplatesVisitor::visit(NumberNode* ) { }
+void ExpandTemplatesVisitor::visit(ExternNode* ) { }
+void ExpandTemplatesVisitor::visit(TypeNode* ) { }
+void ExpandTemplatesVisitor::visit(ModuleNode* ) { }
+void ExpandTemplatesVisitor::visit(FunctionNode* ) { }
+void ExpandTemplatesVisitor::visit(ModuleMemberAccessNode* node) { } 

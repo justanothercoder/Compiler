@@ -13,9 +13,9 @@ class AST
 public:
 
     virtual ~AST();
-    virtual AST* copyTree() const = 0;
     virtual void build_scope();
     virtual std::vector<AST*> getChildren() const;
+    virtual AST* copyTree() const = 0;
     virtual std::string toString() const = 0;
     virtual void accept(ASTVisitor& visitor) = 0;
 

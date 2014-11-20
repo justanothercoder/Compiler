@@ -6,7 +6,7 @@
 class ImportNode : public AST
 {
 public:
-    ImportNode(std::string lib);
+    ImportNode(std::string lib, AST* root);
 
     void build_scope();        
 
@@ -16,7 +16,7 @@ public:
     void accept(ASTVisitor& visitor) override;
 
     std::string lib;
-    AST *root;
+    AST* root;
 };
 
 #endif

@@ -26,6 +26,11 @@
 #include "templatestructdeclarationnode.hpp"
 #include "builtins.hpp"
 #include "importnode.hpp"
+#include "modulenode.hpp"
+#include "typenode.hpp"
+#include "functionnode.hpp"
+#include "modulesymbol.hpp"
+#include "modulememberaccessnode.hpp"
 
 void CheckVisitor::visit(ImportNode *node)
 {
@@ -210,6 +215,11 @@ void CheckVisitor::visit(DotNode *node)
 
     auto _base_type = node -> base -> getType();
 
+    if ( _base_type == nullptr ) // module
+    {
+
+    }
+
     if ( _base_type -> isReference() )
         node -> scope -> getTempAlloc().add(GlobalConfig::int_size);
 
@@ -228,6 +238,57 @@ void CheckVisitor::visit(StatementNode *node)
 {
     for ( auto i : node -> statements )
         i -> accept(*this);
+}
+
+void CheckVisitor::visit(ModuleMemberAccessNode* node)
+{
+    auto module_sym = node -> scope -> resolve(node -> name);
+
+    assert(!(module_sym == nullptr || module_sym -> getSymbolType() != SymbolType::MODULE));
+
+    node -> member_sym = static_cast<ModuleSymbol*>(module_sym) -> resolve(node -> member);
+}
+
+void CheckVisitor::visit(ModuleNode* node) 
+{
+    auto sym = node -> scope -> resolve(node -> name);
+
+    if ( sym == nullptr )
+        throw SemanticError("No such symbol '" + node -> name + "'");
+
+    if ( sym -> getSymbolType() != SymbolType::MODULE )
+        throw SemanticError("'" + node -> name + "' is not a module.");
+
+    node -> module = static_cast<ModuleSymbol*>(sym);
+}
+
+void CheckVisitor::visit(TypeNode* node) 
+{
+    auto sym = node -> scope -> resolve(node -> name);
+
+    if ( sym == nullptr )
+        throw SemanticError("No such symbol '" + node -> name + "'");
+
+    if ( sym -> getSymbolType() != SymbolType::STRUCT || sym -> getSymbolType() != SymbolType::BUILTINTYPE )
+        throw SemanticError("'" + node -> name + "' is not a type.");
+
+    if ( sym -> getSymbolType() == SymbolType::STRUCT )
+        node -> type_symbol = static_cast<StructSymbol*>(sym);
+    else
+        node -> type_symbol = static_cast<BuiltInTypeSymbol*>(sym);
+}
+
+void CheckVisitor::visit(FunctionNode* node) 
+{
+    auto sym = node -> scope -> resolve(node -> name);
+
+    if ( sym == nullptr )
+        throw SemanticError("No such symbol '" + node -> name + "'");
+
+    if ( sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
+        throw SemanticError("'" + node -> name + "' is not a function.");
+
+    node -> function = static_cast<OverloadedFunctionSymbol*>(sym);
 }
 
 void CheckVisitor::visit(VariableNode *node)
