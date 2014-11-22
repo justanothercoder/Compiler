@@ -61,12 +61,14 @@ void CheckVisitor::visit(BracketNode *node)
     node -> base -> accept(*this);
     node -> expr -> accept(*this);
 
-    auto base_type = dynamic_cast<const StructSymbol*>(node -> base -> getType() -> getSymbol());    
-
     if ( node -> base -> getType() -> getTypeKind() == TypeKind::ARRAY )
         node -> call_info = CallHelper::callCheck("operator[]", BuiltIns::global_scope, {node -> base, node -> expr});
     else
+    {
+        assert(node -> base -> getType() -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT); 
+        auto base_type = static_cast<const StructSymbol*>(node -> base -> getType() -> getUnqualifiedType());
         node -> call_info = CallHelper::callCheck("operator[]", base_type, {node -> expr});
+    }
 
     node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
@@ -215,20 +217,16 @@ void CheckVisitor::visit(DotNode *node)
 
     auto _base_type = node -> base -> getType();
 
-    if ( _base_type == nullptr ) // module
-    {
-
-    }
-
     if ( _base_type -> isReference() )
         node -> scope -> getTempAlloc().add(GlobalConfig::int_size);
 
-    node -> base_type = dynamic_cast<const StructSymbol*>(_base_type -> getUnqualifiedType());
+    assert(_base_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT);
+    node -> base_type = static_cast<const StructSymbol*>(_base_type -> getUnqualifiedType());
 
     if ( node -> base_type == nullptr )
         throw SemanticError("'" + node -> base -> toString() + "' is not an instance of struct.");
 
-    node -> member = dynamic_cast<VariableSymbol*>(node -> base_type -> resolveMember(node -> member_name));
+    node -> member = node -> base_type -> resolveMember(node -> member_name);
 
     if ( node -> member == nullptr )
         throw SemanticError(node -> member_name + " is not member of " + node -> base_type -> getName());
@@ -342,10 +340,18 @@ void CheckVisitor::visit(CallNode *node)
         auto ov_func = static_cast<const OverloadedFunctionSymbol*>(caller_type);
 
         std::vector<const Type*> params;
+        
+        if ( ov_func -> isMethod() )
+            params.push_back(ov_func -> getBaseType());
+
         for ( auto param : node -> params )
             params.push_back(param -> getType());
 
         auto func = ov_func -> getViableOverload(FunctionTypeInfo(params));
+
+        if ( func == nullptr )
+            throw SemanticError("No viable overload for " + ov_func -> getName() + " with params " + FunctionTypeInfo(params).toString());
+
         node -> call_info = CallHelper::getCallInfo(func, node -> params);
     }
 

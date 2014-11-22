@@ -33,46 +33,46 @@
 GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
 {
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__fopen")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__fread")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__fwrite")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__fclose")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__brk")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__mmap")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
 //    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fork")) -> getType()) -> getTypeInfo().symbols )
 //        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator[]")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("length")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator+")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("string")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator=")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+        code.globaltable.has_definition[func.second] = false;
     
     code.newBlock(*BuiltIns::global_scope);
 }
@@ -502,21 +502,16 @@ void GenSSAVisitor::visit(NullNode *)
 
 void GenSSAVisitor::visit(DotNode *node)
 {
-    if ( node -> member -> getType() -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
+    if ( node -> member -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION )
     {
         _arg = getArg(node -> base);
     }
     else
     {
-        code.addVariable(node -> member);
-        _arg = code.add(
-                   Command(SSAOp::DOT,
-                           getArg(node -> base),
-                           Arg(IdType::VARIABLE, 
-                               code.getVarId(node -> member), 
-                               node -> member -> getType())
-                          )
-               );
+        auto var = static_cast<VariableSymbol*>(node -> member);
+
+        code.addVariable(var);
+        _arg = code.add( Command(SSAOp::DOT, getArg(node -> base), Arg(IdType::VARIABLE, code.getVarId(var), var -> getType())));
     }
 }
 

@@ -1,3 +1,8 @@
+extern __fopen(const string& filename, int mode, int flags) : int;
+extern __fclose(int fd) : void;
+extern __fread(int fd, string& str, int len) : int;
+extern __fwrite(int fd, const string& str, int len) : int;
+
 struct InputStream
 {
 	int fd;

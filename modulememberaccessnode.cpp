@@ -2,6 +2,7 @@
 #include "symbol.hpp"
 #include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
+#include "overloadedfunctionsymbol.hpp"
 
 ModuleMemberAccessNode::ModuleMemberAccessNode(std::string name, std::string member) : name(name), member(member) 
 {
@@ -27,7 +28,7 @@ const Type* ModuleMemberAccessNode::getType() const
 {    
     if ( member_sym -> getSymbolType() == SymbolType::VARIABLE ) 
         return static_cast<VariableSymbol*>(member_sym) -> getType();
-    return static_cast<const FunctionSymbol*>(member_sym) -> getType();
+    return static_cast<const OverloadedFunctionSymbol*>(member_sym);
 }
 
 bool ModuleMemberAccessNode::isLeftValue() const

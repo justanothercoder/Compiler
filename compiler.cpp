@@ -13,8 +13,8 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
 
     const Type *type = scope -> resolveType(type_name);
 
-    if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )
-        throw SemanticError("Using pointer type in safe block " + scope -> getScopeName() + ".");
+//    if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )
+//        throw SemanticError("Using pointer type in safe block " + scope -> getScopeName() + ".");
     
 //    if ( type_info.array_dimensions.size() > 0 && !scope -> isUnsafeBlock() )
 //        throw SemanticError("Using plain array type in safe block " + scope -> getScopeName() + ".");

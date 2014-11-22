@@ -38,7 +38,7 @@ const Type* Scope::resolveType(std::string name)
 
         sym = scope -> resolve(name);
 
-        if ( dynamic_cast<Type*>(sym) != nullptr )
+        if ( sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION && dynamic_cast<Type*>(sym) != nullptr )
             return dynamic_cast<Type*>(sym);
     }
 }

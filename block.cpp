@@ -332,7 +332,9 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             code_obj.emit("push rbx");
             code_obj.emit("push rax");
 
-            code_obj.emit("call " + dynamic_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
+            assert(param_type -> getTypeKind() == TypeKind::STRUCT);
+
+            code_obj.emit("call " + static_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
             code_obj.emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
         }
 

@@ -19,7 +19,8 @@ public:
            , bool                           is_const
            , std::vector<TemplateParamInfo> template_params = { }
            , int                            pointer_depth = 0
-           , std::vector<ExprNode*>         array_dimensions = { });
+           , std::vector<ExprNode*>         array_dimensions = { }
+           , std::string module_name = "");
 
     TypeInfo(const TypeInfo& type_info);
     TypeInfo& operator=(const TypeInfo& type_info);
@@ -34,6 +35,7 @@ public:
     std::vector<TemplateParamInfo> template_params;
     int pointer_depth;
     std::vector<ExprNode*> array_dimensions;
+    std::string module_name;
 };
 
 #endif

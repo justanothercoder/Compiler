@@ -1,3 +1,6 @@
+extern unsafe __brk(void* break) : void*;
+extern unsafe __mmap(int a, int size, int b, int c, int d, int e) : void*;
+
 def unsafe sbrk(int size) : void*
 {
 	void* break = __brk(null)

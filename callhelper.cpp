@@ -33,6 +33,7 @@ CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector
 
 CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector<ExprNode*> params)
 {
+    assert(function_sym != nullptr);
     function_sym -> is_used = true;
 
     auto function_info = function_sym -> getType() -> getTypeInfo();
@@ -64,7 +65,7 @@ const OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(std::string name, 
     if ( sym == nullptr || sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
         throw SemanticError("No such function " + name + ".");
 
-    return dynamic_cast<const OverloadedFunctionSymbol*>(sym);
+    return static_cast<const OverloadedFunctionSymbol*>(sym);
 }
 
 const OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(std::string name, const StructSymbol *scope)
@@ -74,7 +75,7 @@ const OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(std::string name
     if ( sym == nullptr || sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
         throw SemanticError("No such method " + name + ".");
 
-    return dynamic_cast<const OverloadedFunctionSymbol*>(sym);
+    return static_cast<const OverloadedFunctionSymbol*>(sym);
 }
 
 const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope *scope, std::vector<const Type*> params_types)

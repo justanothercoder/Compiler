@@ -55,18 +55,19 @@ private:
     boost::optional<SymbolType> resolveSymbolType(std::string name); 
 
     std::vector< std::map< std::string, SymbolType > > symbol_table_stack; 
+    std::stack<std::string> current_struct;
 
     std::string id();
     std::string operator_name();
     TypeInfo typeInfo();
     std::vector<ExprNode*> call_params_list();
 
-    DeclarationNode* declaration(boost::optional<string> struct_name = boost::none);
+    DeclarationNode* declaration();
     DeclarationNode* templateStructDecl();
     DeclarationNode* structDecl();
-    DeclarationNode* variableDecl(boost::optional<string> struct_name = boost::none);
-    DeclarationNode* functionDecl(boost::optional<string> struct_name = boost::none);
-    DeclarationNode* varInferDecl(boost::optional<string> struct_name = boost::none);
+    DeclarationNode* variableDecl();
+    DeclarationNode* functionDecl();
+    DeclarationNode* varInferDecl();
 
     AST* import_stat();
     AST* extern_stat();

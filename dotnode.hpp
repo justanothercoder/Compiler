@@ -3,6 +3,7 @@
 
 #include "exprnode.hpp"
 
+class Symbol;
 class StructSymbol;
 class VariableSymbol;
 
@@ -38,7 +39,7 @@ private:
     std::string member_name;
 
     const StructSymbol *base_type;
-    VariableSymbol *member;
+    Symbol *member;
 };
 
 #endif

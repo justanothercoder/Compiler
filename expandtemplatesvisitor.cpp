@@ -191,4 +191,4 @@ void ExpandTemplatesVisitor::visit(ExternNode* ) { }
 void ExpandTemplatesVisitor::visit(TypeNode* ) { }
 void ExpandTemplatesVisitor::visit(ModuleNode* ) { }
 void ExpandTemplatesVisitor::visit(FunctionNode* ) { }
-void ExpandTemplatesVisitor::visit(ModuleMemberAccessNode* node) { } 
+void ExpandTemplatesVisitor::visit(ModuleMemberAccessNode* ) { } 

@@ -224,4 +224,4 @@ void DefineVisitor::visit(CallNode *) { }
 void DefineVisitor::visit(ModuleNode* ) { }
 void DefineVisitor::visit(TypeNode* ) { }
 void DefineVisitor::visit(FunctionNode* ) { }
-void DefineVisitor::visit(ModuleMemberAccessNode* node) { }
+void DefineVisitor::visit(ModuleMemberAccessNode* ) { }

@@ -19,7 +19,8 @@ AST* DotNode::copyTree() const
 
 const Type* DotNode::getType() const
 {
-    return member -> getType();
+    return member -> getSymbolType() == SymbolType::VARIABLE ? static_cast<VariableSymbol*>(member) -> getType() : static_cast<OverloadedFunctionSymbol*>(member);
+//    return member -> getType();
 }
 
 bool DotNode::isLeftValue() const
