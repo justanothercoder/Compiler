@@ -61,6 +61,7 @@ AST* Parser::parse()
     rememberSymbol("class", SymbolType::STRUCT);
     rememberSymbol("putchar", SymbolType::FUNCTION);
     rememberSymbol("print", SymbolType::FUNCTION);
+    rememberSymbol("string", SymbolType::STRUCT);
 
     std::vector<AST*> statements;
 
@@ -112,13 +113,13 @@ AST* Parser::block()
     return new StatementNode(std::move(statements));
 }
 
-DeclarationNode* Parser::declaration()
+DeclarationNode* Parser::declaration(boost::optional<std::string> struct_name)
 {
     if      ( getTokenType(1) == TokenType::STRUCT )   return structDecl();
     else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateStructDecl();
-    else if ( getTokenType(1) == TokenType::DEF )      return functionDecl();
-    else if ( getTokenType(1) == TokenType::VAR )      return varInferDecl();
-    else if ( tryVarDecl() )                           return variableDecl();
+    else if ( getTokenType(1) == TokenType::DEF )      return functionDecl(struct_name);
+    else if ( getTokenType(1) == TokenType::VAR )      return varInferDecl(struct_name);
+    else if ( tryVarDecl() )                           return variableDecl(struct_name);
     else                                               throw RecognitionError("Declaration expected.");
 }
 
@@ -143,7 +144,7 @@ bool Parser::tryVarDecl()
     return success;
 }
 
-DeclarationNode* Parser::variableDecl()
+DeclarationNode* Parser::variableDecl(boost::optional<std::string> struct_name)
 {
     auto type_info = typeInfo();
     std::string var_name  = id();
@@ -160,7 +161,7 @@ DeclarationNode* Parser::variableDecl()
 
     rememberSymbol(var_name, SymbolType::VARIABLE);
 
-    return new VariableDeclarationNode(std::move(var_name), std::move(type_info), !current_struct.empty(), std::move(constructor_call_params));
+    return new VariableDeclarationNode(std::move(var_name), std::move(type_info), bool(struct_name), std::move(constructor_call_params));
 }
 
 DeclarationNode* Parser::structDecl()
@@ -271,7 +272,7 @@ DeclarationNode* Parser::templateStructDecl()
     return new TemplateStructDeclarationNode(std::move(struct_name), std::move(struct_in), std::move(template_params));
 }
 
-DeclarationNode* Parser::functionDecl()
+DeclarationNode* Parser::functionDecl(boost::optional<std::string> struct_name)
 {
     match(TokenType::DEF);
 
@@ -799,10 +800,20 @@ TypeInfo Parser::typeInfo()
     {
         module_name = "";
         type_name = id();
+    
+        boost::optional<SymbolType> sym_type = boost::none;
+        for ( auto it = symbol_table_stack.rbegin(); it != symbol_table_stack.rend(); ++it )
+        {
+            auto map_it = it -> find(type_name);
 
-        auto sym_type = resolveSymbolType(type_name);
+            if ( map_it != std::end(*it) && (map_it -> second == SymbolType::STRUCT || map_it -> second == SymbolType::TEMPLATESTRUCT) )
+            {
+                sym_type = SymbolType::STRUCT;
+                break;
+            }            
+        }
 
-        if ( !sym_type || sym_type != SymbolType::STRUCT )
+        if ( !sym_type || (sym_type != SymbolType::STRUCT && sym_type != SymbolType::TEMPLATESTRUCT) )
             throw SemanticError("'" + type_name + "' is not a type name");
     }
 

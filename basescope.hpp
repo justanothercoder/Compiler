@@ -18,6 +18,7 @@ public:
     ~BaseScope() override;
 
     Symbol* resolve(std::string name) const override;
+    Symbol* resolveHere(std::string name) const override;
 
 public:
     std::map<std::string, Symbol*> table;

@@ -7,14 +7,14 @@ BaseScope::~BaseScope()
         delete name_and_sym.second;
 }
 
-Symbol* BaseScope::resolve(std::string name) const
+Symbol* BaseScope::resolveHere(std::string name) const
 {
     auto it = table.find(name);
-    if ( it == std::end(table) )
-    {
-        if ( getEnclosingScope() )
-            return getEnclosingScope()->resolve(name);
-        return nullptr;
-    }
-    return it->second;
+    return it == std::end(table) ? nullptr : it -> second;
+}
+
+Symbol* BaseScope::resolve(std::string name) const
+{
+    auto symbol = resolveHere(name);
+    return symbol == nullptr ? getEnclosingScope() -> resolve(name) : symbol;
 }
