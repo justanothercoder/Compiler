@@ -187,9 +187,9 @@ DeclarationNode* Parser::structDecl()
         if ( getTokenType(1) != TokenType::RBRACE )
         {
             if ( getTokenType(1) == TokenType::DEF )
-                functions.push_back(functionDecl());
+                functions.push_back(functionDecl(struct_name));
             else
-                struct_in.push_back(declaration());
+                struct_in.push_back(declaration(struct_name));
         }
     }
 
@@ -262,7 +262,7 @@ DeclarationNode* Parser::templateStructDecl()
             match(TokenType::SEMICOLON);
 
         if ( getTokenType(1) != TokenType::RBRACE )
-            struct_in.push_back(declaration());
+            struct_in.push_back(declaration(struct_name));
     }
 
     match(TokenType::RBRACE);

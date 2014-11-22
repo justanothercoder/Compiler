@@ -62,8 +62,11 @@ const OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(std::string name, 
 {
     auto sym = scope -> resolve(name);
 
-    if ( sym == nullptr || sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
-        throw SemanticError("No such function " + name + ".");
+//    if ( sym == nullptr || sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
+//        throw SemanticError("No such function " + name + ".");
+
+    if ( sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
+        return nullptr;
 
     return static_cast<const OverloadedFunctionSymbol*>(sym);
 }
@@ -82,16 +85,10 @@ const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope 
 {
     while ( scope != nullptr )
     {
-        const OverloadedFunctionSymbol *ov_func = nullptr;
+        const OverloadedFunctionSymbol *ov_func = CallHelper::getOverloadedFunc(name, scope);
 
-        try
-        {
-            ov_func = CallHelper::getOverloadedFunc(name, scope);
-        }
-        catch ( SemanticError& e )
-        {
+        if ( ov_func == nullptr )
             return nullptr;
-        }
 
         auto pt = params_types;
 

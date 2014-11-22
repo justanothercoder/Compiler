@@ -16,5 +16,7 @@ Symbol* BaseScope::resolveHere(std::string name) const
 Symbol* BaseScope::resolve(std::string name) const
 {
     auto symbol = resolveHere(name);
+    if ( getEnclosingScope() == nullptr ) 
+        return symbol;
     return symbol == nullptr ? getEnclosingScope() -> resolve(name) : symbol;
 }

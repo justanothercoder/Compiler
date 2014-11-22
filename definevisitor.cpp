@@ -92,14 +92,9 @@ void DefineVisitor::visit(StructDeclarationNode *node)
 
 void DefineVisitor::visit(FunctionDeclarationNode *node)
 {
-    const auto& template_info = node -> scope -> getTemplateInfo();
-
     auto fromTypeInfo = [&] (TypeInfo type_info) -> const Type*
     {
-        if ( template_info.sym != nullptr && type_info.type_name == template_info.sym -> getName() )
-            type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
-
-        if ( node -> traits.is_method && type_info.type_name == static_cast<StructSymbol*>(node -> scope) -> getName() )
+        if ( node -> traits.is_constructor )
         {
             const Type *type = static_cast<const StructSymbol*>(node -> scope);
 
