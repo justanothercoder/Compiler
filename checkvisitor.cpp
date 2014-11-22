@@ -165,7 +165,8 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 
             if ( var_type -> getTypeKind() != TypeKind::POINTER )
             {
-                auto struct_symbol = static_cast<const StructSymbol*>(var_type -> getSymbol());
+//                auto struct_symbol = static_cast<const StructSymbol*>(var_type -> getSymbol());
+                auto struct_symbol = static_cast<const StructSymbol*>(var_type -> getUnqualifiedType());
 
                 for ( auto param : node -> constructor_call_params )
                     param -> accept(*this);

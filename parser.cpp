@@ -57,6 +57,7 @@ AST* Parser::parse()
     pushScope();
     
     rememberSymbol("int", SymbolType::STRUCT);
+    rememberSymbol("void", SymbolType::STRUCT);
     rememberSymbol("char", SymbolType::STRUCT);
     rememberSymbol("class", SymbolType::STRUCT);
     rememberSymbol("putchar", SymbolType::FUNCTION);

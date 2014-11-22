@@ -1,5 +1,6 @@
 #include "functiontypeinfo.hpp"
 #include "structsymbol.hpp"
+#include "logger.hpp"
 
 FunctionTypeInfo::FunctionTypeInfo(std::vector<const Type*> params_types) : params_types(params_types)
 {
@@ -66,6 +67,8 @@ bool FunctionTypeInfo::isCompatibleWith(const FunctionTypeInfo& info) const
 {
     if ( params_types.size() != info.params_types.size() )
         return false;
+
+    Logger::log(toString() + " " + info.toString());
 
     for ( size_t i = 0; i < info.params_types.size(); ++i )
     {

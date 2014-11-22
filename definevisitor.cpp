@@ -94,7 +94,7 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
 {
     auto fromTypeInfo = [&] (TypeInfo type_info) -> const Type*
     {
-        if ( node -> traits.is_constructor )
+        if ( node -> traits.is_constructor && type_info.type_name == static_cast<StructSymbol*>(node -> scope) -> getName() )
         {
             const Type *type = static_cast<const StructSymbol*>(node -> scope);
 
