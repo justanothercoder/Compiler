@@ -47,8 +47,8 @@ int main()
 //		std::cerr << "code:\n" << visitor.getString() << '\n';
 
 //        visitor.optimize();
-        Optimizer optimizer(Comp::code);
-        optimizer.optimize();
+//        Optimizer optimizer(Comp::code);
+//        optimizer.optimize();
 
 		std::cerr << "optimized code:\n" << (Comp::code).toString() << '\n';
 

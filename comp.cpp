@@ -15,11 +15,8 @@ ThreeAddressCode Comp::code;
 
 CompilableUnit& Comp::compile(std::string filename)
 {
-    for ( auto& unit : Comp::units )
-    {
-        if ( unit.module_name == filename )
-            return unit;
-    }
+    if ( boost::optional<CompilableUnit&> mu = getUnit(filename) )
+        return *mu;
 
     CompilableUnit unit(filename);
 
@@ -46,4 +43,15 @@ CompilableUnit& Comp::compile(std::string filename)
 
     Comp::units.push_back(unit);
     return Comp::units.back();
+}
+    
+boost::optional<CompilableUnit&> Comp::getUnit(std::string module_name)
+{
+    for ( auto& unit : Comp::units )
+    {
+        if ( unit.module_name == module_name )
+            return unit;
+    }
+
+    return boost::none;
 }

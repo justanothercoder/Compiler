@@ -65,6 +65,7 @@ const OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(std::string name, 
 //    if ( sym == nullptr || sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
 //        throw SemanticError("No such function " + name + ".");
 
+    assert(sym != nullptr);
     if ( sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
         return nullptr;
 

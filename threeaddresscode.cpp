@@ -39,7 +39,7 @@ Arg ThreeAddressCode::add(Command command)
         return Arg(IdType::NOID, -1);
     case SSAOp::PLUS: case SSAOp::MINUS: case SSAOp::MUL:
     case SSAOp::DIV: case SSAOp::MOD: case SSAOp::EQUALS:
-    case SSAOp::NEQUALS: case SSAOp::ELEM:
+    case SSAOp::NEQUALS: case SSAOp::ELEM: case SSAOp::AND:
         command_type = BuiltIns::int_type;
         break;
     case SSAOp::DEREF: command_type = static_cast<const PointerType*>(command.arg1.expr_type); break;
@@ -102,21 +102,27 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 
     code_obj.emit("section .text");
 
-    auto block = blocks.cbegin();
+    auto mainblock = blocks.cbegin();
 
-    for ( ; block + 1 != blocks.cend(); ++block )
+    for ( auto block = blocks.cbegin(); block != blocks.cend(); ++block )
     {
-        if ( !(dynamic_cast<FunctionScope*>(&block -> scope) && dynamic_cast<FunctionScope*>(&block -> scope) -> func -> is_used) )
+        if ( !dynamic_cast<FunctionScope*>(&block -> scope) )
+        {
+            mainblock = block;
             continue;
+        }
 
-        block -> genAsm(code_obj);
-        code_obj.emit("ret");
+        if ( dynamic_cast<FunctionScope*>(&block -> scope) -> func -> is_used )
+        {
+            block -> genAsm(code_obj);
+            code_obj.emit("ret");
+        }
     }
     
     code_obj.emit("global _start");
     code_obj.emit("_start:");
 
-    block -> genAsm(code_obj);    
+    mainblock -> genAsm(code_obj);    
 
     code_obj.emit("mov rax, 60");
     code_obj.emit("mov rdi, 0");

@@ -1,6 +1,9 @@
 #include "lexer.hpp"
 
-Lexer::Lexer(string input) : AbstractLexer(input) { }
+Lexer::Lexer(string input) : AbstractLexer(input) 
+{
+
+}
 
 Token Lexer::getToken()
 {
@@ -126,7 +129,7 @@ Token Lexer::getToken()
         }
         else if ( std::isdigit(cur) )
         {
-            string buf = "";
+            std::string buf = "";
             while ( std::isdigit(cur) )
             {
                 buf += cur;
@@ -135,7 +138,7 @@ Token Lexer::getToken()
             return Token(TokenType::NUMBER, buf, l, s);
         }
         else
-            throw RecognitionError(string("unknown character '") + cur + "'.");
+            throw RecognitionError(std::string("unknown character '") + cur + "'", line, symbol);
     }
 
     return Token(TokenType::EOF_TYPE, "", line, symbol);

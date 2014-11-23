@@ -15,11 +15,9 @@
 #include "callnode.hpp"
 #include "dotnode.hpp"
 #include "importnode.hpp"
-
-void ExpandTemplatesVisitor::visit(ImportNode *node) 
-{
-//    node -> root -> accept(*this);
-}
+#include "modulesymbol.hpp"
+#include "compilableunit.hpp"
+#include "comp.hpp"
 
 void ExpandTemplatesVisitor::visit(IfNode *node)
 {
@@ -101,6 +99,14 @@ void ExpandTemplatesVisitor::visit(NewExpressionNode *node)
 {
     node -> type_info = preprocessTypeInfo(node -> type_info, node -> scope);
 }
+    
+TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
+{
+    if ( info.which() == 1 )
+        return TemplateParam(boost::get<TypeInfo>(info));
+    else
+        return TemplateParam(*boost::get<ExprNode*>(info) -> getCompileTimeValue());
+}
 
 TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *scope)
 {
@@ -109,10 +115,10 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
     if ( template_info.sym && template_info.sym -> isIn(type_info.type_name) )
     {
         auto replace = template_info.getReplacement(type_info.type_name);
-//        type_info = boost::get<TypeInfo>(*replace);        
 
         auto temp_info = boost::get<TypeInfo>(*replace);
         temp_info.pointer_depth += type_info.pointer_depth;
+        temp_info.module_name = type_info.module_name;
 
         if ( type_info.is_ref )
             temp_info.is_ref = true;
@@ -125,8 +131,19 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
 
         type_info = temp_info;
     }
+   
+    Scope* sc;
+    if ( type_info.module_name == "" )
+    {
+        sc = scope;
+    }
+    else
+    {
+        sc = Comp::getUnit(type_info.module_name) -> module_symbol;
+        assert(sc != nullptr);
+    }
 
-    auto type = scope -> resolveType(type_info.type_name);
+    auto type = sc -> resolveType(type_info.type_name);
 
     if ( type == nullptr )
         throw SemanticError(type_info.type_name + " is not a type");
@@ -141,16 +158,9 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
             throw SemanticError("Wrong number of template parameters");
         }
 
-        auto getTemplateParam = [] ( TemplateParamInfo tp_info )
-        {
-            if ( tp_info.which() == 1 )
-                return TemplateParam(boost::get<TypeInfo>(tp_info));
-            else
-                return TemplateParam(*boost::get<ExprNode*>(tp_info) -> getCompileTimeValue());
-        };
-
-        std::vector<TemplateParam> tmpl_params(type_info.template_params.size());
-        std::transform(std::begin(type_info.template_params), std::end(type_info.template_params), std::begin(tmpl_params), getTemplateParam);
+        std::vector<TemplateParam> tmpl_params;
+        for ( auto param_info : type_info.template_params )
+           tmpl_params.push_back(getTemplateParam(param_info)); 
 
         auto decl = getSpecDecl(tmpl, tmpl_params);
         static_cast<TemplateStructDeclarationNode*>(tmpl -> holder) -> instances.insert(decl);
@@ -192,3 +202,4 @@ void ExpandTemplatesVisitor::visit(TypeNode* ) { }
 void ExpandTemplatesVisitor::visit(ModuleNode* ) { }
 void ExpandTemplatesVisitor::visit(FunctionNode* ) { }
 void ExpandTemplatesVisitor::visit(ModuleMemberAccessNode* ) { } 
+void ExpandTemplatesVisitor::visit(ImportNode* ) { } 

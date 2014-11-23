@@ -164,12 +164,16 @@ ___fread_int_string~ref_int:
 	mov rdx, [rbp + 40]
 	syscall
 
+    mov byte [rsi + rax], 0
+
 	mov rbx, rax
 	mov rax, [rbp + 16]
 	mov [rax], rbx
 
 	lea rsi, [rbp - 264]
 	mov rdi, [rbp + 32]
+
+    mov rcx, 0
 
 .loop:
 	
@@ -182,6 +186,7 @@ ___fread_int_string~ref_int:
 	inc rsi
 	dec rdi
 
+    inc ecx
 	jmp .loop
 
 .end:

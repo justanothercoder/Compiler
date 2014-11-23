@@ -285,6 +285,7 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
         case BinaryOp::ASSIGN : op = (lhs_type -> getUnqualifiedType() == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR); break;
         case BinaryOp::EQUALS : op = SSAOp::EQUALS; break;
         case BinaryOp::NEQUALS: op = SSAOp::NEQUALS; break;        
+        case BinaryOp::AND    : op = SSAOp::AND; break;
         default: throw std::logic_error("internal error");
         }
 

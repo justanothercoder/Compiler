@@ -32,11 +32,6 @@
 #include "modulesymbol.hpp"
 #include "modulememberaccessnode.hpp"
 
-void CheckVisitor::visit(ImportNode *node)
-{
-//    node -> root -> accept(*this);
-}
-
 void CheckVisitor::visit(IfNode *node)
 {
     node -> scope -> getTempAlloc().add(2 * GlobalConfig::int_size);
@@ -403,3 +398,5 @@ void CheckVisitor::visit(TemplateStructDeclarationNode *node)
 void CheckVisitor::visit(NumberNode *) { }
 void CheckVisitor::visit(StringNode *) { }
 void CheckVisitor::visit(ExternNode *) { }
+void CheckVisitor::visit(ImportNode* ) { }
+

@@ -6,6 +6,8 @@
 #include "templateinfo.hpp"
 #include "templatestructsymbol.hpp"
 #include "modulesymbol.hpp"
+#include "compilableunit.hpp"
+#include "comp.hpp"
 
 const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
 {
@@ -17,7 +19,8 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
         type = scope -> resolveType(type_name);
     else
     {
-        auto module = scope -> resolve(type_info.module_name);
+//        auto module = scope -> resolve(type_info.module_name);
+        auto module = Comp::getUnit(type_info.module_name) -> module_symbol;
         assert(module -> getSymbolType() == SymbolType::MODULE);
         type = static_cast<ModuleSymbol*>(module) -> resolveType(type_name);
     }

@@ -3,6 +3,10 @@
 
 #include <stdexcept>
 
-using RecognitionError = std::logic_error;
+class RecognitionError : public std::logic_error
+{
+public:
+    RecognitionError(const std::string& message, int line, int symbol);
+};
 
 #endif

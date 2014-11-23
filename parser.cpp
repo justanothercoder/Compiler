@@ -123,9 +123,8 @@ DeclarationNode* Parser::declaration(boost::optional<std::string> struct_name)
     else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateStructDecl();
     else if ( getTokenType(1) == TokenType::DEF )      return functionDecl(struct_name);
     else if ( getTokenType(1) == TokenType::VAR )      return varInferDecl(struct_name);
-    else                                               return variableDecl(struct_name);
-//    else if ( tryVarDecl() )                           return variableDecl(struct_name);
-//    else                                               throw RecognitionError("Declaration expected at " + std::to_string(getToken(1).line));
+    else if ( tryVarDecl() )                           return variableDecl(struct_name);
+    else                                               throw RecognitionError("Declaration expected", getToken(1).line, getToken(1).symbol);
 }
 
 bool Parser::tryVarDecl()
@@ -744,14 +743,10 @@ AST* Parser::for_stat()
 
     AST *init;
 
-    if ( getTokenType(1) == TokenType::SEMICOLON )
-        init = new StatementNode({ });
-    else if ( tryVarDecl() )
-        init = variableDecl();
-    else if ( tryAssignment() )
-        init = assignment();
-    else
-        throw RecognitionError("");
+    if ( getTokenType(1) == TokenType::SEMICOLON ) init = new StatementNode({ });
+    else if ( tryVarDecl() )                       init = variableDecl();
+    else if ( tryAssignment() )                    init = assignment();
+    else                                           throw RecognitionError("Expected declaration or expression", getToken(1).line, getToken(1).symbol);
 
     match(TokenType::SEMICOLON);
 
@@ -818,8 +813,11 @@ TypeInfo Parser::typeInfo()
             }            
         }
 
-        if ( !sym_type || (sym_type != SymbolType::STRUCT && sym_type != SymbolType::TEMPLATESTRUCT) )
-            throw SemanticError("'" + type_name + "' is not a type name");
+        if ( !isSpeculating() )
+        {
+            if ( !sym_type || (sym_type != SymbolType::STRUCT && sym_type != SymbolType::TEMPLATESTRUCT) )
+                throw SemanticError("'" + type_name + "' is not a type name");
+        }
     }
 
     bool is_ref = false;
@@ -955,7 +953,7 @@ bool Parser::tryModuleName()
         auto sym_type = resolveSymbolType(str);
 
         if ( !sym_type || *sym_type != SymbolType::MODULE )
-            throw RecognitionError("");
+            throw RecognitionError("", 0, 0);
     }
     catch ( RecognitionError& e )
     {

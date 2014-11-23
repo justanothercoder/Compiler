@@ -419,7 +419,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     }    
     case SSAOp::PLUS: case SSAOp::NEQUALS: case SSAOp::EQUALS:
     case SSAOp::MINUS: case SSAOp::MUL: case SSAOp::DIV:
-    case SSAOp::MOD:
+    case SSAOp::MOD: case SSAOp::AND:
     {
         command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
         scope.getTempAlloc().claim(GlobalConfig::int_size);
@@ -460,6 +460,18 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             case SSAOp::MOD    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx"); code_obj.emit("mov rax, rdx"); break;
             case SSAOp::EQUALS : code_obj.emit("cmp rax, rbx"); code_obj.emit("mov rax, qword 0"); code_obj.emit("sete al"); break;
             case SSAOp::NEQUALS: code_obj.emit("cmp rax, rbx"); code_obj.emit("mov rax, qword 0"); code_obj.emit("setne al"); break;
+            case SSAOp::AND    : 
+            {
+                code_obj.emit("cmp rax, 0"); 
+                code_obj.emit("setne al");
+                
+                code_obj.emit("cmp rbx, 0");
+                code_obj.emit("setne bl");
+
+                code_obj.emit("test al, bl");
+                code_obj.emit("setnz al");
+                break;
+            }
             default:
                    throw std::logic_error("internal error.");
         }
@@ -486,7 +498,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     default:
     {
         Logger::log(toString(command));
-        throw "internal error.";
+        throw std::logic_error("internal error.");
     }
     }
 }
@@ -503,6 +515,7 @@ std::string Block::toString(Command command) const
     case SSAOp::MOD    : return toString(command.arg1) + " % "  + toString(command.arg2);
     case SSAOp::EQUALS : return toString(command.arg1) + " == " + toString(command.arg2);
     case SSAOp::NEQUALS: return toString(command.arg1) + " != " + toString(command.arg2);
+    case SSAOp::AND    : return toString(command.arg1) + " && " + toString(command.arg2);
     case SSAOp::ELEM   : return toString(command.arg1) + "[" + toString(command.arg2) + "]";
     case SSAOp::DOT    : return toString(command.arg1) + "." + toString(command.arg2);
     case SSAOp::DEREF  : return "*" + toString(command.arg1);

@@ -43,6 +43,8 @@ public:
 
 private:
 
+    TemplateParam getTemplateParam(TemplateParamInfo info);
+
     std::set<TemplateStructSymbol*> template_symbols;
 };
 
