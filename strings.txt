@@ -1,0 +1,42 @@
+def str(int x) : string {
+
+    if ( x == 0 )
+        return "0"
+
+	string tmp = ""
+
+	int pos = 0
+
+	while ( x != 0 ) {
+		tmp[pos] = new char(x % 10 + 48)
+		pos = pos + 1
+		x = x / 10
+	}
+    tmp[pos] = 0
+
+	int p = 0
+
+	pos = pos - 1
+
+	string ans = ""
+	while ( pos + 1 != 0 ) {
+
+		ans[p] = tmp[pos]
+		pos = pos - 1
+		p = p + 1
+	}
+
+	return ans
+}
+
+def toInt(string s) : int {
+	int ans = 0
+
+	int len = s.length()
+
+	for ( int i = 0; i != len; i = i + 1 ) {
+		ans = 10 * ans + (new int(s[i]) - 48)
+	}
+
+	return ans
+}

@@ -68,6 +68,7 @@ private:
     DeclarationNode* functionDecl(boost::optional<std::string> struct_name = boost::none);
     DeclarationNode* varInferDecl(boost::optional<std::string> struct_name = boost::none);
 
+    AST* from_import_stat();
     AST* import_stat();
     AST* extern_stat();
 

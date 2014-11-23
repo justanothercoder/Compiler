@@ -104,7 +104,7 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 
     auto block = blocks.cbegin();
 
-    for ( ++block; block != blocks.cend(); ++block )
+    for ( ; block + 1 != blocks.cend(); ++block )
     {
         if ( !(dynamic_cast<FunctionScope*>(&block -> scope) && dynamic_cast<FunctionScope*>(&block -> scope) -> func -> is_used) )
             continue;
@@ -116,7 +116,7 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
     code_obj.emit("global _start");
     code_obj.emit("_start:");
 
-    blocks.cbegin() -> genAsm(code_obj);    
+    block -> genAsm(code_obj);    
 
     code_obj.emit("mov rax, 60");
     code_obj.emit("mov rdi, 0");

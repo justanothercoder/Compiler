@@ -68,8 +68,6 @@ bool FunctionTypeInfo::isCompatibleWith(const FunctionTypeInfo& info) const
     if ( params_types.size() != info.params_types.size() )
         return false;
 
-    Logger::log(toString() + " " + info.toString());
-
     for ( size_t i = 0; i < info.params_types.size(); ++i )
     {
         if ( !info.params_types[i] -> isConvertableTo(params_types[i]) )

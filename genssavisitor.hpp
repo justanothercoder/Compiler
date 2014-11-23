@@ -14,7 +14,7 @@ class GenSSAVisitor : public ASTVisitor, public Compiler
 
 public:
 
-    GenSSAVisitor();
+    GenSSAVisitor(ThreeAddressCode& code);
 
     Arg getArg(AST* node);
 
@@ -47,16 +47,10 @@ public:
     void visit(VarInferTypeDeclarationNode* node) override;
     void visit(TemplateStructDeclarationNode* node) override;
 
-    std::string getString();
-
-    const ThreeAddressCode& getCode() const;
-
-    void optimize();
-
 private:
 
     Arg _arg;
-    ThreeAddressCode code;
+    ThreeAddressCode& code;
 };
 
 #endif

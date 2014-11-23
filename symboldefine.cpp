@@ -5,6 +5,7 @@
 #include "structscope.hpp"
 #include "functionsymbol.hpp"
 #include "modulesymbol.hpp"
+#include "logger.hpp"
 
 SymbolDefine::SymbolDefine(Symbol* sym) : sym(sym)
 {

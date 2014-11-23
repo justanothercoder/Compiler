@@ -34,7 +34,7 @@
 
 void CheckVisitor::visit(ImportNode *node)
 {
-    node -> root -> accept(*this);
+//    node -> root -> accept(*this);
 }
 
 void CheckVisitor::visit(IfNode *node)

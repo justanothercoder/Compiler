@@ -17,7 +17,6 @@
 #include "dotnode.hpp"
 #include "stringnode.hpp"
 #include "builtins.hpp"
-#include "optimizer.hpp"
 #include "functionsymbol.hpp"
 #include "nullnode.hpp"
 #include "variabledeclarationnode.hpp"
@@ -26,38 +25,16 @@
 #include "importnode.hpp"
 #include "varinfertypedeclarationnode.hpp"
 #include "externnode.hpp"
-
 #include "typefactory.hpp"
 #include "logger.hpp"
 
-GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
+GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : _arg(IdType::NOID, -1), code(code)
 {
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> getTypeInfo().symbols )
         code.globaltable.has_definition[func.second] = false;
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__fopen")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[func.second] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__fread")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[func.second] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__fwrite")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[func.second] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__fclose")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[func.second] = false;
-    
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getTypeInfo().symbols )
         code.globaltable.has_definition[func.second] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__brk")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[func.second] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("__mmap")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[func.second] = false;
-    
-//    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fork")) -> getType()) -> getTypeInfo().symbols )
-//        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator[]")) -> getTypeInfo().symbols )
         code.globaltable.has_definition[func.second] = false;
@@ -81,11 +58,6 @@ Arg GenSSAVisitor::getArg(AST *node)
 {
     node -> accept(*this);
     return _arg;
-}
-
-void GenSSAVisitor::visit(ImportNode *node)
-{
-    node -> root -> accept(*this);
 }
 
 void GenSSAVisitor::visit(ExternNode *node)
@@ -655,21 +627,6 @@ void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)
 void GenSSAVisitor::visit(ModuleNode* ) { }
 void GenSSAVisitor::visit(TypeNode* ) { }
 void GenSSAVisitor::visit(FunctionNode* ) { }
-
-std::string GenSSAVisitor::getString()
-{
-    return code.toString();
-}
-
-const ThreeAddressCode& GenSSAVisitor::getCode() const
-{
-    return code;
-}
-
-void GenSSAVisitor::optimize()
-{
-    Optimizer optimizer(code);
-    optimizer.optimize();
-}
-    
 void GenSSAVisitor::visit(ModuleMemberAccessNode* ) { }
+void GenSSAVisitor::visit(ImportNode *) { }
+

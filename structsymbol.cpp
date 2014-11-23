@@ -6,8 +6,7 @@
 
 StructSymbol::StructSymbol(std::string name
                            , Scope *enclosing_scope
-                           , const TemplateInfo& template_info) : StructScope(name, enclosing_scope, template_info)
-    , name(name)
+                           , const TemplateInfo& template_info) : StructScope(name, enclosing_scope, template_info), name(name)
 {
 
 }

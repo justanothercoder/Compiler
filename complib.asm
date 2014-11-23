@@ -153,13 +153,14 @@ ___fread_int_string~ref_int:
 	push rbp
 	mov rbp, rsp
 	
-	sub rsp, 256
+	sub rsp, 264
 
-	mov qword [rbp - 256], 0
+    mov qword [rbp - 8], 0
+	mov qword [rbp - 264], 0
 
 	mov rax, qword 0
 	mov rdi, [rbp + 24]
-	lea rsi, [rbp - 256]
+	lea rsi, [rbp - 264]
 	mov rdx, [rbp + 40]
 	syscall
 
@@ -167,7 +168,7 @@ ___fread_int_string~ref_int:
 	mov rax, [rbp + 16]
 	mov [rax], rbx
 
-	lea rsi, [rbp - 256]
+	lea rsi, [rbp - 264]
 	mov rdi, [rbp + 32]
 
 .loop:

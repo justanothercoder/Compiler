@@ -35,8 +35,8 @@
 
 void DefineVisitor::visit(ImportNode *node)
 {
-    node -> scope -> define(new ModuleSymbol(node -> lib, node -> scope));
-    node -> root -> accept(*this);
+//    node -> scope -> define(new ModuleSymbol(node -> lib, node -> scope));
+//    node -> root -> accept(*this);
 }
 
 void DefineVisitor::visit(ExternNode *node) 

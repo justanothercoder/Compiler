@@ -8,124 +8,40 @@ Token Lexer::getToken()
     {
         int l = line, s = symbol;
 
-        if      ( cur == '(' )
-        {
-            consume();
-            return Token(TokenType::LPAREN, "(", l, s);
-        }
-        else if ( cur == ')' )
-        {
-            consume();
-            return Token(TokenType::RPAREN, ")", l, s);
-        }
-        else if ( cur == ',' )
-        {
-            consume();
-            return Token(TokenType::COMMA, ",", l, s);
-        }
-        else if ( cur == '{' )
-        {
-            consume();
-            return Token(TokenType::LBRACE, "{", l, s);
-        }
-        else if ( cur == '}' )
-        {
-            consume();
-            return Token(TokenType::RBRACE, "}", l, s);
-        }
-        else if ( cur == ':' )
-        {
-            consume();
-            return Token(TokenType::COLON, ":", l, s);
-        }
-        else if ( cur == ';' )
-        {
-            consume();
-            return Token(TokenType::SEMICOLON, ";", l, s);
-        }
-        else if ( cur == '+' )
-        {
-            consume();
-            return Token(TokenType::PLUS, "+", l, s);
-        }
-        else if ( cur == '.' )
-        {
-            consume();
-            return Token(TokenType::DOT, ".", l, s);
-        }
-        else if ( cur == '-' )
-        {
-            consume();
-            return Token(TokenType::MINUS, "-", l, s);
-        }
-        else if ( cur == '*' )
-        {
-            consume();
-            return Token(TokenType::MUL, "*", l, s);
-        }
-        else if ( cur == '<' )
-        {
-            consume();
-            return Token(TokenType::LESS, "<", l, s);
-        }
-        else if ( cur == '>' )
-        {
-            consume();
-            return Token(TokenType::GREATER, ">", l, s);
-        }
-        else if ( cur == '[' )
-        {
-            consume();
-            return Token(TokenType::LBRACKET, "[", l, s);
-        }
-        else if ( cur == ']' )
-        {
-            consume();
-            return Token(TokenType::RBRACKET, "]", l, s);
-        }
-        else if ( cur == '%' )
-        {
-            consume();
-            return Token(TokenType::MOD, "%", l, s);
-        }
-        else if ( cur == '|' )
-        {
-            consume();
-            match('|');
-            return Token(TokenType::OR, "||", l, s);
-        }
+        if      ( cur == '(' ) { consume(); return Token(TokenType::LPAREN, "(", l, s); }
+        else if ( cur == ')' ) { consume(); return Token(TokenType::RPAREN, ")", l, s); }
+        else if ( cur == ',' ) { consume(); return Token(TokenType::COMMA, ",", l, s); }
+        else if ( cur == '{' ) { consume(); return Token(TokenType::LBRACE, "{", l, s); }
+        else if ( cur == '}' ) { consume(); return Token(TokenType::RBRACE, "}", l, s); }
+        else if ( cur == ':' ) { consume(); return Token(TokenType::COLON, ":", l, s); }
+        else if ( cur == ';' ) { consume(); return Token(TokenType::SEMICOLON, ";", l, s); }
+        else if ( cur == '+' ) { consume(); return Token(TokenType::PLUS, "+", l, s); }
+        else if ( cur == '.' ) { consume(); return Token(TokenType::DOT, ".", l, s); }
+        else if ( cur == '-' ) { consume(); return Token(TokenType::MINUS, "-", l, s); }
+        else if ( cur == '*' ) { consume(); return Token(TokenType::MUL, "*", l, s); }
+        else if ( cur == '<' ) { consume(); return Token(TokenType::LESS, "<", l, s); }
+        else if ( cur == '>' ) { consume(); return Token(TokenType::GREATER, ">", l, s); }
+        else if ( cur == '[' ) { consume(); return Token(TokenType::LBRACKET, "[", l, s); }
+        else if ( cur == ']' ) { consume(); return Token(TokenType::RBRACKET, "]", l, s); }
+        else if ( cur == '%' ) { consume(); return Token(TokenType::MOD, "%", l, s); }
+        else if ( cur == '|' ) { consume(); match('|'); return Token(TokenType::OR, "||", l, s); }
         else if ( cur == '&' )
         {
             consume();
-            if ( cur == '&' )
-            {
-                consume();
-                return Token(TokenType::AND, "&&", l, s);
-            }
-            else
-                return Token(TokenType::REF, "&", l, s);
+            if ( cur == '&' ) { consume(); return Token(TokenType::AND, "&&", l, s); }
+            else                           return Token(TokenType::REF, "&", l, s);
         }
         else if ( cur == '!' )
         {
             consume();
-            if ( cur == '=' )
-            {
-                consume();
-                return Token(TokenType::NEQUALS, "!=", l, s);
-            }
-            else
-                return Token(TokenType::NOT, "!", l, s);
+            if ( cur == '=' ) { consume(); return Token(TokenType::NEQUALS, "!=", l, s); }
+            else                           return Token(TokenType::NOT, "!", l, s);
         }
         else if ( cur == '=' )
         {
             consume();
-            if ( cur == '=' )
-            {
-                consume();
-                return Token(TokenType::EQUALS, "==", l, s);
-            }
-            else
-                return Token(TokenType::ASSIGN, "=", l, s);
+            if ( cur == '=' ) { consume(); return Token(TokenType::EQUALS, "==", l, s); }
+            else                           return Token(TokenType::ASSIGN, "=", l, s);
         }
         else if ( cur == '"' )
         {
@@ -203,6 +119,7 @@ Token Lexer::getToken()
             else if ( buf == "unsafe"   ) token_type = TokenType::UNSAFE;
             else if ( buf == "null"     ) token_type = TokenType::NULLTOKEN;
             else if ( buf == "extern"   ) token_type = TokenType::EXTERN;
+            else if ( buf == "from"     ) token_type = TokenType::FROM;
             else                          token_type = TokenType::ID;
 
             return Token(token_type, buf, l, s);

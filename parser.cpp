@@ -5,6 +5,8 @@
 #include "modulenode.hpp"
 #include "filehelper.hpp"
 #include "modulememberaccessnode.hpp"
+#include "compilableunit.hpp"
+#include "comp.hpp"
 
 Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer)
 {
@@ -97,6 +99,7 @@ AST* Parser::statement()
     else if ( getTokenType(1) == TokenType::IMPORT ) return import_stat();
     else if ( getTokenType(1) == TokenType::UNSAFE ) return unsafe_block();
     else if ( getTokenType(1) == TokenType::EXTERN ) return extern_stat();
+    else if ( getTokenType(1) == TokenType::FROM   ) return from_import_stat();
     else                                             return expression();
 }
 
@@ -120,8 +123,9 @@ DeclarationNode* Parser::declaration(boost::optional<std::string> struct_name)
     else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateStructDecl();
     else if ( getTokenType(1) == TokenType::DEF )      return functionDecl(struct_name);
     else if ( getTokenType(1) == TokenType::VAR )      return varInferDecl(struct_name);
-    else if ( tryVarDecl() )                           return variableDecl(struct_name);
-    else                                               throw RecognitionError("Declaration expected.");
+    else                                               return variableDecl(struct_name);
+//    else if ( tryVarDecl() )                           return variableDecl(struct_name);
+//    else                                               throw RecognitionError("Declaration expected at " + std::to_string(getToken(1).line));
 }
 
 bool Parser::tryVarDecl()
@@ -913,9 +917,10 @@ AST* Parser::import_stat()
     auto module_name = id();
     rememberSymbol(module_name, SymbolType::MODULE);
     
-    auto root = FileHelper::parse((module_name + ".txt").c_str());
+//    auto root = FileHelper::parse((module_name + ".txt").c_str());
+    auto unit = Comp::compile(module_name);
 
-    return new ImportNode(module_name, root);
+    return new ImportNode(module_name, unit.root, { });
 }
 
 bool Parser::tryTypeInfo()
@@ -1038,4 +1043,26 @@ AST* Parser::extern_stat()
     rememberSymbol(function_name, SymbolType::FUNCTION);
 
     return new ExternNode(std::move(function_name), std::move(params), std::move(return_type_info), is_unsafe);
+}
+    
+AST* Parser::from_import_stat()
+{
+    match(TokenType::FROM);
+    std::string module_name = id();
+
+    auto unit = Comp::compile(module_name);
+
+//    auto root = FileHelper::parse((module_name + ".txt").c_str());
+
+    match(TokenType::IMPORT);
+    std::string member_name = id();
+
+    auto it = std::find_if(std::begin(unit.module_globals), std::end(unit.module_globals), [&](Symbol* sym) 
+    { 
+        return sym -> getName() == member_name; 
+    });
+
+    rememberSymbol(member_name, (*it) -> getSymbolType()); 
+
+    return new ImportNode(module_name, unit.root, {*it}); 
 }

@@ -1,6 +1,7 @@
 #include "importnode.hpp"
+#include "scope.hpp"
 
-ImportNode::ImportNode(std::string lib, AST* root) : lib(lib), root(root)
+ImportNode::ImportNode(std::string lib, AST* root, std::vector<Symbol*> imports) : lib(lib), root(root), imports(imports)
 {
 
 }
@@ -8,12 +9,15 @@ ImportNode::ImportNode(std::string lib, AST* root) : lib(lib), root(root)
 void ImportNode::build_scope()
 {
     root -> scope = scope;
-    root -> build_scope();
+//    root -> build_scope();
+
+    for ( auto import : imports )
+        scope -> define(import);
 }
 
 AST* ImportNode::copyTree() const
 {
-    return new ImportNode(lib, root -> copyTree());
+    return new ImportNode(lib, root -> copyTree(), imports);
 }
 
 std::string ImportNode::toString() const

@@ -16,8 +16,9 @@ enum class TokenType
     FOR, CONST, STRING, EQUALS,
     NEQUALS, NOT, AND, OR, IMPORT,
     MOD, VAR, UNSAFE, NULLTOKEN,
-    EXTERN
+    EXTERN, FROM
 };
+
 
 std::string to_string(TokenType tt);
 
