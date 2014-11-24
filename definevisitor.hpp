@@ -16,6 +16,7 @@ public:
     void visit(AddrNode* node) override;
     void visit(NullNode* node) override;
     void visit(UnaryNode* node) override;
+    void visit(BreakNode* node) override;
     void visit(WhileNode* node) override;
     void visit(StringNode* node) override;
     void visit(NumberNode* node) override;

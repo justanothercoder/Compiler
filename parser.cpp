@@ -1,5 +1,6 @@
 #include "parser.hpp"
 #include "semanticerror.hpp"
+#include "breaknode.hpp"
 #include "functionnode.hpp"
 #include "typenode.hpp"
 #include "modulenode.hpp"
@@ -58,6 +59,8 @@ AST* Parser::parse()
 {
     pushScope();
     
+    is_in_loop.push(false);
+
     rememberSymbol("int", SymbolType::STRUCT);
     rememberSymbol("void", SymbolType::STRUCT);
     rememberSymbol("char", SymbolType::STRUCT);
@@ -100,6 +103,7 @@ AST* Parser::statement()
     else if ( getTokenType(1) == TokenType::UNSAFE ) return unsafe_block();
     else if ( getTokenType(1) == TokenType::EXTERN ) return extern_stat();
     else if ( getTokenType(1) == TokenType::FROM   ) return from_import_stat();
+    else if ( getTokenType(1) == TokenType::BREAK  ) return break_stat();
     else                                             return expression();
 }
 
@@ -707,9 +711,13 @@ AST* Parser::while_stat()
     ExprNode *cond = expression();
     match(TokenType::RPAREN);
 
+    is_in_loop.push(true);
+
     pushScope();
     AST *stats = statement();
     popScope();
+
+    is_in_loop.pop();
 
     return new WhileNode(cond, stats);
 }
@@ -761,16 +769,15 @@ AST* Parser::for_stat()
 
     AST *step;
 
-    if ( getTokenType(1) == TokenType::RPAREN )
-        step = new StatementNode({ });
-    else if ( tryAssignment() )
-        step = assignment();
-    else
-        step = expression();
+    if ( getTokenType(1) == TokenType::RPAREN ) step = new StatementNode({ });
+    else if ( tryAssignment() )                 step = assignment();
+    else                                        step = expression();
 
     match(TokenType::RPAREN);
 
+    is_in_loop.push(true);
     AST *stats = statement();
+    is_in_loop.pop();
 
     popScope();
 
@@ -1063,4 +1070,12 @@ AST* Parser::from_import_stat()
     rememberSymbol(member_name, (*it) -> getSymbolType()); 
 
     return new ImportNode(module_name, unit.root, {*it}); 
+}
+
+AST* Parser::break_stat()
+{
+    if ( !is_in_loop.top() )
+        throw RecognitionError("Break not in loop", getToken(1).line, getToken(1).symbol);
+    match(TokenType::BREAK);
+    return new BreakNode();
 }

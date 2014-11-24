@@ -89,6 +89,8 @@ void GenSSAVisitor::visit(ForNode *node)
     auto cycle_label = code.newLabel();
     auto exit_label  = code.newLabel();
 
+    loop_label.push(std::make_pair(cycle_label, exit_label));
+
     node -> init -> accept(*this);
     code.add(Command(SSAOp::LABEL, cycle_label));
 
@@ -99,6 +101,8 @@ void GenSSAVisitor::visit(ForNode *node)
     node -> stats -> accept(*this);
     node -> step  -> accept(*this);
 
+    loop_label.pop();
+
     code.add(Command(SSAOp::GOTO, cycle_label));
     code.add(Command(SSAOp::LABEL, exit_label));
 }
@@ -108,6 +112,8 @@ void GenSSAVisitor::visit(WhileNode *node)
     auto exit_label  = code.newLabel();
     auto cycle_label = code.newLabel();
 
+    loop_label.push(std::make_pair(cycle_label, exit_label));
+
     code.add(Command(SSAOp::LABEL, cycle_label));
 
     auto cond = getArg(node -> cond);
@@ -115,6 +121,8 @@ void GenSSAVisitor::visit(WhileNode *node)
     code.add(Command(SSAOp::IFFALSE, cond, exit_label));
 
     node -> stats -> accept(*this);
+
+    loop_label.pop();
 
     code.add(Command(SSAOp::GOTO, cycle_label));
     code.add(Command(SSAOp::LABEL, exit_label));
@@ -623,6 +631,11 @@ void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)
 {
     for ( auto instance : node -> instances )
         instance -> accept(*this);
+}
+
+void GenSSAVisitor::visit(BreakNode* )
+{
+    code.add(Command(SSAOp::GOTO, loop_label.top().second));
 }
 
 void GenSSAVisitor::visit(ModuleNode* ) { }

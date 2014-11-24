@@ -203,3 +203,4 @@ void ExpandTemplatesVisitor::visit(ModuleNode* ) { }
 void ExpandTemplatesVisitor::visit(FunctionNode* ) { }
 void ExpandTemplatesVisitor::visit(ModuleMemberAccessNode* ) { } 
 void ExpandTemplatesVisitor::visit(ImportNode* ) { } 
+void ExpandTemplatesVisitor::visit(BreakNode* ) { } 

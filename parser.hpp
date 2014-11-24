@@ -55,6 +55,7 @@ private:
     boost::optional<SymbolType> resolveSymbolType(std::string name); 
 
     std::vector< std::map< std::string, SymbolType > > symbol_table_stack; 
+    std::stack<bool> is_in_loop;
 
     std::string id();
     std::string operator_name();
@@ -68,6 +69,7 @@ private:
     DeclarationNode* functionDecl(boost::optional<std::string> struct_name = boost::none);
     DeclarationNode* varInferDecl(boost::optional<std::string> struct_name = boost::none);
 
+    AST* break_stat();
     AST* from_import_stat();
     AST* import_stat();
     AST* extern_stat();

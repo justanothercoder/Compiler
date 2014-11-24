@@ -11,6 +11,7 @@ class TypeNode;
 class NullNode;
 class DotNode;
 class CallNode;
+class BreakNode;
 class ReturnNode;
 class ImportNode;
 class StringNode;
@@ -40,6 +41,7 @@ public:
     virtual void visit(TypeNode* node) = 0;
     virtual void visit(CallNode* node) = 0;
     virtual void visit(NullNode* node) = 0;
+    virtual void visit(BreakNode* node) = 0;
     virtual void visit(WhileNode* node) = 0;
     virtual void visit(UnaryNode* node) = 0;
     virtual void visit(StringNode* node) = 0;

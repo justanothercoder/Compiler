@@ -123,6 +123,7 @@ Token Lexer::getToken()
             else if ( buf == "null"     ) token_type = TokenType::NULLTOKEN;
             else if ( buf == "extern"   ) token_type = TokenType::EXTERN;
             else if ( buf == "from"     ) token_type = TokenType::FROM;
+            else if ( buf == "break"    ) token_type = TokenType::BREAK;
             else                          token_type = TokenType::ID;
 
             return Token(token_type, buf, l, s);

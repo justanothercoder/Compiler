@@ -215,4 +215,4 @@ void DefineVisitor::visit(TypeNode* ) { }
 void DefineVisitor::visit(FunctionNode* ) { }
 void DefineVisitor::visit(ModuleMemberAccessNode* ) { }
 void DefineVisitor::visit(ImportNode* ) { }
-
+void DefineVisitor::visit(BreakNode* ) { } 

@@ -27,6 +27,7 @@ public:
     void visit(CallNode* node) override;
     void visit(WhileNode* node) override;
     void visit(UnaryNode* node) override;
+    void visit(BreakNode* node) override;
     void visit(ImportNode* node) override;
     void visit(StringNode* node) override;
     void visit(NumberNode* node) override;
@@ -49,7 +50,9 @@ public:
 
 private:
 
-    Arg _arg;
+    std::stack< std::pair<Arg, Arg> > loop_label;
+
+    Arg _arg;    
     ThreeAddressCode& code;
 };
 

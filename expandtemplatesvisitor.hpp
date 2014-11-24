@@ -18,6 +18,7 @@ public:
     void visit(CallNode* node) override;
     void visit(TypeNode* node) override;
     void visit(UnaryNode* node) override;
+    void visit(BreakNode* node) override;
     void visit(WhileNode* node) override;
     void visit(ModuleNode* node) override;
     void visit(ImportNode* node) override;

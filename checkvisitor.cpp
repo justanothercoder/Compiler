@@ -31,6 +31,8 @@
 #include "functionnode.hpp"
 #include "modulesymbol.hpp"
 #include "modulememberaccessnode.hpp"
+#include "compilableunit.hpp"
+#include "comp.hpp"
 
 void CheckVisitor::visit(IfNode *node)
 {
@@ -236,7 +238,7 @@ void CheckVisitor::visit(StatementNode *node)
 
 void CheckVisitor::visit(ModuleMemberAccessNode* node)
 {
-    auto module_sym = node -> scope -> resolve(node -> name);
+    auto module_sym = Comp::getUnit(node -> name) -> module_symbol;
 
     assert(!(module_sym == nullptr || module_sym -> getSymbolType() != SymbolType::MODULE));
 
@@ -374,7 +376,7 @@ void CheckVisitor::visit(ReturnNode *node)
 
 }
 
-void CheckVisitor::visit(UnsafeBlockNode *node)
+void CheckVisitor::visit(UnsafeBlockNode* node)
 {
     node -> block -> accept(*this);
 }
@@ -389,14 +391,14 @@ void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
         node -> call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {node -> expr});
 }
 
-void CheckVisitor::visit(TemplateStructDeclarationNode *node)
+void CheckVisitor::visit(TemplateStructDeclarationNode* node)
 {
     for ( auto instance : node -> instances )
         instance -> accept(*this);
 }
 
+void CheckVisitor::visit(BreakNode* ) { }
 void CheckVisitor::visit(NumberNode *) { }
 void CheckVisitor::visit(StringNode *) { }
 void CheckVisitor::visit(ExternNode *) { }
 void CheckVisitor::visit(ImportNode* ) { }
-
