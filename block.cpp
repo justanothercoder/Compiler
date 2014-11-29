@@ -97,10 +97,7 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
 
         if ( variable -> isField() )
         {
-            auto _this = scope.resolve("this");
-
-            auto sym = static_cast<VariableSymbol*>(_this);
-
+            auto sym = static_cast<VariableSymbol*>(scope.resolve("this"));
             auto struc_scope = static_cast<const StructSymbol*>(sym -> getType() -> getSymbol());
 
             code_obj.emit("mov rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(sym)) + "]");
@@ -495,6 +492,21 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
         return;
     }
+    case SSAOp::STRINGELEM:
+    {
+        command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
+        scope.getTempAlloc().claim(GlobalConfig::int_size);
+
+        genArg(command.arg2, code_obj);
+        code_obj.emit("push qword [rax]");
+
+        genArg(command.arg1, code_obj);
+        code_obj.emit("pop rbx");
+        code_obj.emit("sub rax, rbx");
+
+        code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
+        return;
+    }
     default:
     {
         Logger::log(toString(command));
@@ -529,7 +541,8 @@ std::string Block::toString(Command command) const
     case SSAOp::IFFALSE: return "ifFalse " + toString(command.arg1) + " goto " + toString(command.arg2);
     case SSAOp::GOTO   : return "goto " + toString(command.arg1);
     case SSAOp::NEW    : return "new " + table.type_by_id[command.arg1.id] -> getName();
-    case SSAOp::ASSIGNCHAR : return toString(command.arg1) + " = "  + toString(command.arg2);
+    case SSAOp::ASSIGNCHAR: return toString(command.arg1) + " = "  + toString(command.arg2);
+    case SSAOp::STRINGELEM: return toString(command.arg1) + "[" + toString(command.arg2) + "]";
     default:
         throw std::logic_error("not all SSAOp catched in Block::toString");
     }

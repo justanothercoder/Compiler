@@ -36,9 +36,6 @@ GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : _arg(IdType::NOID, -1), c
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getTypeInfo().symbols )
         code.globaltable.has_definition[func.second] = false;
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator[]")) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[func.second] = false;
-    
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("length")) -> getTypeInfo().symbols )
         code.globaltable.has_definition[func.second] = false;
     
@@ -132,11 +129,13 @@ void GenSSAVisitor::visit(BracketNode *node)
 {
     if ( node -> base -> getType() -> getTypeKind() == TypeKind::ARRAY )
     {
-        _arg = code.add(Command(SSAOp::ELEM,
-                                getArg(node -> base),
-                                getArg(node -> expr)
-                        )
-        );
+        _arg = code.add(Command(SSAOp::ELEM, getArg(node -> base), getArg(node -> expr)));
+        return;
+    }
+    
+    if ( node -> base -> getType() -> getUnqualifiedType() == BuiltIns::ASCII_string_type )
+    {
+        _arg = code.add(Command(SSAOp::STRINGELEM, getArg(node -> base), getArg(node -> expr)));
         return;
     }
 
@@ -318,8 +317,10 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
                                     Arg(IdType::PROCEDURE, 
                                         code.getFuncId(node -> call_info.callee)),
                                     Arg(IdType::NOID, 
-                                        lhs_type -> getSize() + 
-                                        rhs_type -> getSize())
+//                                        lhs_type -> getSize() + 
+//                                        rhs_type -> getSize())
+                                        rhs_info.desired_type -> getSize() +
+                                        lhs_info.desired_type -> getSize()) 
                             )
             );
         }
@@ -339,8 +340,10 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
                                     Arg(IdType::PROCEDURE, 
                                         code.getFuncId(node -> call_info.callee)),
                                     Arg(IdType::NOID, 
-                                        lhs_type -> getSize() + 
-                                        rhs_type -> getSize())
+//                                        lhs_type -> getSize() + 
+//                                        rhs_type -> getSize())
+                                        rhs_info.desired_type -> getSize() +
+                                        lhs_info.desired_type -> getSize())
                             )
             );
         }

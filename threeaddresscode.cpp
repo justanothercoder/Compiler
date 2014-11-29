@@ -47,6 +47,7 @@ Arg ThreeAddressCode::add(Command command)
     case SSAOp::DOT  : command_type = globaltable.var_by_id[command.arg2.id] -> getType(); break;
     case SSAOp::CALL : command_type = globaltable.func_by_id[command.arg1.id] -> getType() -> getReturnType(); break;
     case SSAOp::NEW  : command_type = globaltable.type_by_id[command.arg1.id]; break;
+    case SSAOp::STRINGELEM: command_type = TypeFactory::getReference(BuiltIns::char_type); break;
     default:
         throw std::logic_error("Not all SSAOp's handled in ThreeAddressCode::add.");
     }

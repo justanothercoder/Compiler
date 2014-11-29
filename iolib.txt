@@ -15,10 +15,8 @@ struct InputStream
 		fd = __fopen(filename, 438, 0);
 	}
 
-	def read(int len) : string  {
-		string tmp = ""
-		__fread(fd, tmp, len)
-		return tmp
+	def read(string& s, int len)  {
+		__fread(fd, s, len)
 	}
 
 	def close() {

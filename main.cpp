@@ -50,7 +50,7 @@ int main()
 //        Optimizer optimizer(Comp::code);
 //        optimizer.optimize();
 
-		std::cerr << "optimized code:\n" << (Comp::code).toString() << '\n';
+//		std::cerr << "optimized code:\n" << (Comp::code).toString() << '\n';
 
 //        std::cerr << "\nasm code:\n";
 
