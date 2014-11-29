@@ -101,11 +101,11 @@ void BuiltIns::defineBuiltIns()
     ASCII_string -> defineBuiltInOperator("operator=", str_tp);
 
     global_scope -> defineBuiltInFunction("print" , TypeFactory::getFunctionType(void_type, {const_ref_ASCII_string}));
-    global_scope -> defineBuiltInFunction("__fopen", TypeFactory::getFunctionType(int_struct, {const_ref_ASCII_string, int_struct, int_struct}));
-    global_scope -> defineBuiltInFunction("__fclose", TypeFactory::getFunctionType(void_type, {int_struct}));
-    global_scope -> defineBuiltInFunction("__fwrite", TypeFactory::getFunctionType(int_struct, {int_struct, const_ref_ASCII_string, int_struct}));
-    global_scope -> defineBuiltInFunction("__fread", TypeFactory::getFunctionType(int_struct, {int_struct, ref_ASCII_string, int_struct}));
-    global_scope -> defineBuiltInFunction("__brk", TypeFactory::getFunctionType(void_ptr, {void_ptr}));
+//    global_scope -> defineBuiltInFunction("__fopen", TypeFactory::getFunctionType(int_struct, {const_ref_ASCII_string, int_struct, int_struct}));
+//    global_scope -> defineBuiltInFunction("__fclose", TypeFactory::getFunctionType(void_type, {int_struct}));
+//    global_scope -> defineBuiltInFunction("__fwrite", TypeFactory::getFunctionType(int_struct, {int_struct, const_ref_ASCII_string, int_struct}));
+//    global_scope -> defineBuiltInFunction("__fread", TypeFactory::getFunctionType(int_struct, {int_struct, ref_ASCII_string, int_struct}));
+//    global_scope -> defineBuiltInFunction("__brk", TypeFactory::getFunctionType(void_ptr, {void_ptr}));
 
     int_struct -> is_defined = true;
     ASCII_string -> is_defined = true;
@@ -115,12 +115,12 @@ void BuiltIns::defineBuiltIns()
     global_scope -> resolve("getchar") -> is_defined = true;
     global_scope -> resolve("print") -> is_defined   = true;
 
-    global_scope -> resolve("__fopen") -> is_defined  = true;
-    global_scope -> resolve("__fclose") -> is_defined = true;
-    global_scope -> resolve("__fwrite") -> is_defined = true;
-    global_scope -> resolve("__fread") -> is_defined  = true;
+//    global_scope -> resolve("__fopen") -> is_defined  = true;
+//    global_scope -> resolve("__fclose") -> is_defined = true;
+//    global_scope -> resolve("__fwrite") -> is_defined = true;
+//    global_scope -> resolve("__fread") -> is_defined  = true;
 
-    global_scope -> resolve("__brk") -> is_defined  = true;
+//    global_scope -> resolve("__brk") -> is_defined  = true;
 
     global_scope -> defineBuiltInFunction("__mmap", 
                                           TypeFactory::getFunctionType(void_ptr, 

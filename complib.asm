@@ -4,6 +4,7 @@
 	global ___fopen_const~string~ref_int_int:function
 	global ___fclose_int:function
 	global ___fwrite_int_const~string~ref_int:function
+	global ___fwrite_int_void~ptr_int:function
 	global ___fread_int_string~ref_int:function
 
 	global _string_string_string~ref_const~string~ref:function
@@ -113,7 +114,8 @@ ___fclose_int:
 	pop rbp
 	ret
 
-___fwrite_int_const~string~ref_int:
+;___fwrite_int_const~string~ref_int:
+___fwrite_int_void~ptr_int:
 	push rbp 
 	mov rbp, rsp	
 
@@ -122,9 +124,11 @@ ___fwrite_int_const~string~ref_int:
 	mov rsi, [rbp + 32]
 	lea rdi, [rbp - 256]
 
+    mov rcx, [rbp + 40]
+
 .reverse.loop:
 
-	cmp byte [rsi], 0
+	cmp rcx, qword 0
 	jz .end
 
 	mov bl, byte [rsi]
@@ -133,6 +137,7 @@ ___fwrite_int_const~string~ref_int:
 	dec rsi
 	inc rdi
 
+    dec rcx
 	jmp .reverse.loop
 
 .end:
@@ -142,7 +147,7 @@ ___fwrite_int_const~string~ref_int:
 	mov rax, qword 1
 	mov rdi, [rbp + 24]
 	lea rsi, [rbp - 256]
-	mov rdx, [rbp + 16]
+	mov rdx, [rbp + 40]
 	syscall
 
 	mov rsp, rbp
@@ -173,8 +178,6 @@ ___fread_int_string~ref_int:
 	lea rsi, [rbp - 264]
 	mov rdi, [rbp + 32]
 
-    mov rcx, 0
-
 .loop:
 	
 	cmp byte [rsi], 0
@@ -186,7 +189,6 @@ ___fread_int_string~ref_int:
 	inc rsi
 	dec rdi
 
-    inc ecx
 	jmp .loop
 
 .end:
