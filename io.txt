@@ -45,15 +45,17 @@ struct OutputStream
 	}
 }
 
-
-
 struct BufferedInputStream
 {
-	InputStream istream;
-	string buffer;
+	InputStream istream
+	string buffer
+    int pos
+    int read
 
 	def BufferedInputStream() {
 		istream.fd = 0
+        pos = 0
+        read = 0
 	}
 
 	def open(const string& filename) {
@@ -61,9 +63,31 @@ struct BufferedInputStream
 	}
 
 	def readLine() : string {
-		__fread(istream.fd, buffer, 256)
-		
-		return buffer
+
+        int i = 0
+        string res = ""
+            
+        while ( 1 )
+        {
+            if ( pos == read ) {
+                read = __fread(istream.fd, buffer, 255)
+                pos = 0
+            }
+
+            res[i] = buffer[pos]
+
+            if ( new int(res[i]) == 10 )
+                break
+
+            pos = pos + 1
+            i = i + 1
+        }
+
+        pos = pos + 1
+        i = i + 1
+        res[i] = 0
+    	
+		return res
 	}
 
 	def close() {
