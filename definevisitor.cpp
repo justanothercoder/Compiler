@@ -29,11 +29,35 @@
 #include "typefactory.hpp"
 #include "globaltable.hpp"
 #include "builtins.hpp"
+#include "externnode.hpp"
 #include "checkvisitor.hpp"
+#include "modulesymbol.hpp"
 
-void DefineVisitor::visit(ImportNode *node)
+void DefineVisitor::visit(ExternNode *node) 
 {
-    node -> root -> accept(*this);
+    auto return_type = fromTypeInfo(node -> return_type_info, node -> scope);
+
+    std::vector<const Type*> params_types;
+
+    for ( auto i : node -> params )
+    {
+        auto param_type = fromTypeInfo(i.second, node -> scope);
+        params_types.push_back(param_type);
+    }
+
+    auto type = TypeFactory::getFunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
+
+    node -> definedSymbol = new FunctionSymbol(node -> name
+                                             , type
+                                             , new FunctionScope("_" + node -> name
+                                                               , node -> scope
+                                                               , false
+                                                               , false)
+                                             , {false, false, false}
+                                             );
+    
+    node -> definedSymbol -> is_unsafe = node -> is_unsafe;
+    node -> scope -> define(node -> definedSymbol);
 }
 
 void DefineVisitor::visit(IfNode *node)
@@ -62,14 +86,9 @@ void DefineVisitor::visit(StructDeclarationNode *node)
 
 void DefineVisitor::visit(FunctionDeclarationNode *node)
 {
-    const auto& template_info = node -> scope -> getTemplateInfo();
-
     auto fromTypeInfo = [&] (TypeInfo type_info) -> const Type*
     {
-        if ( template_info.sym != nullptr && type_info.type_name == template_info.sym -> getName() )
-            type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
-
-        if ( node -> traits.is_method && type_info.type_name == static_cast<StructSymbol*>(node -> scope) -> getName() )
+        if ( node -> traits.is_constructor && type_info.type_name == static_cast<StructSymbol*>(node -> scope) -> getName() )
         {
             const Type *type = static_cast<const StructSymbol*>(node -> scope);
 
@@ -191,3 +210,9 @@ void DefineVisitor::visit(VariableNode *) { }
 void DefineVisitor::visit(StringNode *) { }
 void DefineVisitor::visit(NumberNode *) { }
 void DefineVisitor::visit(CallNode *) { }
+void DefineVisitor::visit(ModuleNode* ) { }
+void DefineVisitor::visit(TypeNode* ) { }
+void DefineVisitor::visit(FunctionNode* ) { }
+void DefineVisitor::visit(ModuleMemberAccessNode* ) { }
+void DefineVisitor::visit(ImportNode* ) { }
+void DefineVisitor::visit(BreakNode* ) { } 

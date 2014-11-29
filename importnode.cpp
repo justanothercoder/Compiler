@@ -1,22 +1,23 @@
 #include "importnode.hpp"
-#include "filehelper.hpp"
+#include "scope.hpp"
 
-ImportNode::ImportNode(std::string lib) : lib(lib), root(nullptr)
+ImportNode::ImportNode(std::string lib, AST* root, std::vector<Symbol*> imports) : lib(lib), root(root), imports(imports)
 {
 
 }
 
 void ImportNode::build_scope()
 {
-    root = FileHelper::parse((lib + ".txt").c_str());
-    
     root -> scope = scope;
-    root -> build_scope();
+//    root -> build_scope();
+
+    for ( auto import : imports )
+        scope -> define(import);
 }
 
 AST* ImportNode::copyTree() const
 {
-    return new ImportNode(lib);
+    return new ImportNode(lib, root -> copyTree(), imports);
 }
 
 std::string ImportNode::toString() const

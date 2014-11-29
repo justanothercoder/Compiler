@@ -10,10 +10,11 @@
 #include "functionsymbol.hpp"
 
 #include "definevisitor.hpp"
-#include "isdefinedvisitor.hpp"
 #include "checkvisitor.hpp"
 #include "genssavisitor.hpp"
 #include "expandtemplatesvisitor.hpp"
+#include "comp.hpp"
+#include "optimizer.hpp"
 
 #include "statementnode.hpp"
 
@@ -30,7 +31,6 @@ int main()
         shared_ptr<AST> root(FileHelper::parse(filename));
 
         root -> scope = BuiltIns::global_scope;
-
         root -> build_scope();
         
         ExpandTemplatesVisitor expand_visitor;
@@ -39,23 +39,23 @@ int main()
         DefineVisitor define_visitor;
         root -> accept(define_visitor);
 
-//        IsDefinedVisitor is_defined_visitor;
-//        root -> accept(is_defined_visitor);
-
         CheckVisitor check_visitor;
         root -> accept(check_visitor);
 
-        GenSSAVisitor visitor;
+        GenSSAVisitor visitor(Comp::code);
         root -> accept(visitor);
 //		std::cerr << "code:\n" << visitor.getString() << '\n';
 
 //        visitor.optimize();
-		std::cerr << "optimized code:\n" << visitor.getString() << '\n';
+//        Optimizer optimizer(Comp::code);
+//        optimizer.optimize();
+
+//		std::cerr << "optimized code:\n" << (Comp::code).toString() << '\n';
 
 //        std::cerr << "\nasm code:\n";
 
         CodeObject code_obj;
-        visitor.getCode().genAsm(code_obj);
+        (Comp::code).genAsm(code_obj);
 
         code_obj.gen();
     }

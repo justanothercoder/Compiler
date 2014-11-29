@@ -15,8 +15,10 @@ enum class TokenType
     LBRACKET, RBRACKET, OPERATOR,
     FOR, CONST, STRING, EQUALS,
     NEQUALS, NOT, AND, OR, IMPORT,
-    MOD, VAR, UNSAFE, NULLTOKEN
+    MOD, VAR, UNSAFE, NULLTOKEN,
+    EXTERN, FROM, BREAK
 };
+
 
 std::string to_string(TokenType tt);
 

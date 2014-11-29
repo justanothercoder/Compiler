@@ -11,12 +11,14 @@ TypeInfo::TypeInfo(std::string                    type_name
                  , bool                           is_const
                  , std::vector<TemplateParamInfo> template_params
                  , int                            pointer_depth
-                 , std::vector<ExprNode*>         array_dimensions) : type_name       (type_name)
+                 , std::vector<ExprNode*>         array_dimensions
+                 , std::string module_name                        ) : type_name       (type_name)
                                                                     , is_ref          (is_ref)
                                                                     , is_const        (is_const)
                                                                     , template_params (template_params)
                                                                     , pointer_depth   (pointer_depth)
                                                                     , array_dimensions(array_dimensions)
+                                                                    , module_name     (module_name)
 {
 
 }
@@ -27,6 +29,7 @@ TypeInfo::TypeInfo(const TypeInfo& type_info) : type_name       (type_info.type_
                                               , template_params (type_info.template_params)
                                               , pointer_depth   (type_info.pointer_depth)
                                               , array_dimensions(type_info.array_dimensions)
+                                              , module_name     (type_info.module_name)
 {
 
 }
@@ -38,6 +41,7 @@ TypeInfo::TypeInfo(TypeInfo&& type_info) : type_name       (std::move(type_info.
                                          , template_params (std::move(type_info.template_params))
                                          , pointer_depth   (type_info.pointer_depth)
                                          , array_dimensions(std::move(type_info.array_dimensions))
+                                         , module_name     (std::move(type_info.module_name))
 {
 
 }
@@ -50,6 +54,7 @@ TypeInfo& TypeInfo::operator=(const TypeInfo& type_info)
     type_name        = type_info.type_name;
     template_params  = type_info.template_params;
     array_dimensions = type_info.array_dimensions;
+    module_name      = type_info.module_name;
     return *this;
 }
 
@@ -61,12 +66,16 @@ TypeInfo& TypeInfo::operator=(TypeInfo&& type_info)
     type_name        = std::move(type_info.type_name);
     template_params  = std::move(type_info.template_params);
     array_dimensions = std::move(type_info.array_dimensions);
+    module_name      = std::move(type_info.module_name);
     return *this;
 }
 
 std::string TypeInfo::toString() const
 {
     std::string res = type_name;
+
+    if ( !module_name.empty() )
+        res = module_name + "." + res;
 
     if ( is_const )
         res = "const " + res;

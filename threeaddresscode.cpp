@@ -39,7 +39,7 @@ Arg ThreeAddressCode::add(Command command)
         return Arg(IdType::NOID, -1);
     case SSAOp::PLUS: case SSAOp::MINUS: case SSAOp::MUL:
     case SSAOp::DIV: case SSAOp::MOD: case SSAOp::EQUALS:
-    case SSAOp::NEQUALS: case SSAOp::ELEM:
+    case SSAOp::NEQUALS: case SSAOp::ELEM: case SSAOp::AND:
         command_type = BuiltIns::int_type;
         break;
     case SSAOp::DEREF: command_type = static_cast<const PointerType*>(command.arg1.expr_type); break;
@@ -47,6 +47,7 @@ Arg ThreeAddressCode::add(Command command)
     case SSAOp::DOT  : command_type = globaltable.var_by_id[command.arg2.id] -> getType(); break;
     case SSAOp::CALL : command_type = globaltable.func_by_id[command.arg1.id] -> getType() -> getReturnType(); break;
     case SSAOp::NEW  : command_type = globaltable.type_by_id[command.arg1.id]; break;
+    case SSAOp::STRINGELEM: command_type = TypeFactory::getReference(BuiltIns::char_type); break;
     default:
         throw std::logic_error("Not all SSAOp's handled in ThreeAddressCode::add.");
     }
@@ -102,21 +103,27 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 
     code_obj.emit("section .text");
 
-    auto block = blocks.cbegin();
+    auto mainblock = blocks.cbegin();
 
-    for ( ++block; block != blocks.cend(); ++block )
+    for ( auto block = blocks.cbegin(); block != blocks.cend(); ++block )
     {
-        if ( !(dynamic_cast<FunctionScope*>(&block -> scope) && dynamic_cast<FunctionScope*>(&block -> scope) -> func -> is_used) )
+        if ( !dynamic_cast<FunctionScope*>(&block -> scope) )
+        {
+            mainblock = block;
             continue;
+        }
 
-        block -> genAsm(code_obj);
-        code_obj.emit("ret");
+        if ( dynamic_cast<FunctionScope*>(&block -> scope) -> func -> is_used )
+        {
+            block -> genAsm(code_obj);
+            code_obj.emit("ret");
+        }
     }
     
     code_obj.emit("global _start");
     code_obj.emit("_start:");
 
-    blocks.cbegin() -> genAsm(code_obj);    
+    mainblock -> genAsm(code_obj);    
 
     code_obj.emit("mov rax, 60");
     code_obj.emit("mov rdi, 0");

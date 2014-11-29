@@ -6,8 +6,7 @@
 
 StructSymbol::StructSymbol(std::string name
                            , Scope *enclosing_scope
-                           , const TemplateInfo& template_info) : StructScope(name, enclosing_scope, template_info)
-    , name(name)
+                           , const TemplateInfo& template_info) : StructScope(name, enclosing_scope, template_info), name(name)
 {
 
 }
@@ -126,11 +125,11 @@ boost::optional<int> StructSymbol::rankOfConversion(const Type *type) const
 
 FunctionSymbol* StructSymbol::methodWith(std::string name, FunctionTypeInfo ft) const
 {
-    auto member = dynamic_cast<VariableSymbol*>(resolveMember(name));
-    if ( member == nullptr )
+    auto member = resolveMember(name);
+    if ( member == nullptr || member -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
         return nullptr;
 
-    auto func = dynamic_cast<const OverloadedFunctionSymbol*>(member -> getType());
+    auto func = dynamic_cast<const OverloadedFunctionSymbol*>(member);
     auto info = func -> getTypeInfo();
 
     auto it = info.symbols.find(ft);

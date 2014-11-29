@@ -27,6 +27,7 @@ public:
 
     virtual Scope* getEnclosingScope() const = 0;
     virtual Symbol* resolve(std::string name) const = 0;
+    virtual Symbol* resolveHere(std::string name) const = 0;
 
     virtual VarAllocator& getVarAlloc() const = 0;
     virtual TempAllocator& getTempAlloc() const = 0;

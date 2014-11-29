@@ -17,7 +17,6 @@
 #include "dotnode.hpp"
 #include "stringnode.hpp"
 #include "builtins.hpp"
-#include "optimizer.hpp"
 #include "functionsymbol.hpp"
 #include "nullnode.hpp"
 #include "variabledeclarationnode.hpp"
@@ -25,50 +24,29 @@
 #include "templatestructdeclarationnode.hpp"
 #include "importnode.hpp"
 #include "varinfertypedeclarationnode.hpp"
-
+#include "externnode.hpp"
 #include "typefactory.hpp"
 #include "logger.hpp"
 
-GenSSAVisitor::GenSSAVisitor() : _arg(IdType::NOID, -1)
+GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : _arg(IdType::NOID, -1), code(code)
 {
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[func.second] = false;
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fopen")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[func.second] = false;
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fread")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("length")) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[func.second] = false;
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fwrite")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator+")) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[func.second] = false;
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__fclose")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("string")) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[func.second] = false;
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__brk")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(BuiltIns::global_scope -> resolve("__mmap")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator[]")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("length")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator+")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("string")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator=")) -> getType()) -> getTypeInfo().symbols )
-        code.globaltable.has_definition[dynamic_cast<FunctionSymbol*>(func.second)] = false;
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<StructSymbol*>(BuiltIns::global_scope -> resolve("string")) -> resolve("operator=")) -> getTypeInfo().symbols )
+        code.globaltable.has_definition[func.second] = false;
     
     code.newBlock(*BuiltIns::global_scope);
 }
@@ -79,9 +57,9 @@ Arg GenSSAVisitor::getArg(AST *node)
     return _arg;
 }
 
-void GenSSAVisitor::visit(ImportNode *node)
+void GenSSAVisitor::visit(ExternNode *node)
 {
-    node -> root -> accept(*this);
+    code.globaltable.has_definition[node -> definedSymbol] = false;
 }
 
 void GenSSAVisitor::visit(IfNode *node)
@@ -108,6 +86,8 @@ void GenSSAVisitor::visit(ForNode *node)
     auto cycle_label = code.newLabel();
     auto exit_label  = code.newLabel();
 
+    loop_label.push(std::make_pair(cycle_label, exit_label));
+
     node -> init -> accept(*this);
     code.add(Command(SSAOp::LABEL, cycle_label));
 
@@ -118,6 +98,8 @@ void GenSSAVisitor::visit(ForNode *node)
     node -> stats -> accept(*this);
     node -> step  -> accept(*this);
 
+    loop_label.pop();
+
     code.add(Command(SSAOp::GOTO, cycle_label));
     code.add(Command(SSAOp::LABEL, exit_label));
 }
@@ -127,6 +109,8 @@ void GenSSAVisitor::visit(WhileNode *node)
     auto exit_label  = code.newLabel();
     auto cycle_label = code.newLabel();
 
+    loop_label.push(std::make_pair(cycle_label, exit_label));
+
     code.add(Command(SSAOp::LABEL, cycle_label));
 
     auto cond = getArg(node -> cond);
@@ -134,6 +118,8 @@ void GenSSAVisitor::visit(WhileNode *node)
     code.add(Command(SSAOp::IFFALSE, cond, exit_label));
 
     node -> stats -> accept(*this);
+
+    loop_label.pop();
 
     code.add(Command(SSAOp::GOTO, cycle_label));
     code.add(Command(SSAOp::LABEL, exit_label));
@@ -143,11 +129,13 @@ void GenSSAVisitor::visit(BracketNode *node)
 {
     if ( node -> base -> getType() -> getTypeKind() == TypeKind::ARRAY )
     {
-        _arg = code.add(Command(SSAOp::ELEM,
-                                getArg(node -> base),
-                                getArg(node -> expr)
-                        )
-        );
+        _arg = code.add(Command(SSAOp::ELEM, getArg(node -> base), getArg(node -> expr)));
+        return;
+    }
+    
+    if ( node -> base -> getType() -> getUnqualifiedType() == BuiltIns::ASCII_string_type )
+    {
+        _arg = code.add(Command(SSAOp::STRINGELEM, getArg(node -> base), getArg(node -> expr)));
         return;
     }
 
@@ -304,6 +292,7 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
         case BinaryOp::ASSIGN : op = (lhs_type -> getUnqualifiedType() == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR); break;
         case BinaryOp::EQUALS : op = SSAOp::EQUALS; break;
         case BinaryOp::NEQUALS: op = SSAOp::NEQUALS; break;        
+        case BinaryOp::AND    : op = SSAOp::AND; break;
         default: throw std::logic_error("internal error");
         }
 
@@ -328,8 +317,10 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
                                     Arg(IdType::PROCEDURE, 
                                         code.getFuncId(node -> call_info.callee)),
                                     Arg(IdType::NOID, 
-                                        lhs_type -> getSize() + 
-                                        rhs_type -> getSize())
+//                                        lhs_type -> getSize() + 
+//                                        rhs_type -> getSize())
+                                        rhs_info.desired_type -> getSize() +
+                                        lhs_info.desired_type -> getSize()) 
                             )
             );
         }
@@ -349,8 +340,10 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
                                     Arg(IdType::PROCEDURE, 
                                         code.getFuncId(node -> call_info.callee)),
                                     Arg(IdType::NOID, 
-                                        lhs_type -> getSize() + 
-                                        rhs_type -> getSize())
+//                                        lhs_type -> getSize() + 
+//                                        rhs_type -> getSize())
+                                        rhs_info.desired_type -> getSize() +
+                                        lhs_info.desired_type -> getSize())
                             )
             );
         }
@@ -493,21 +486,16 @@ void GenSSAVisitor::visit(NullNode *)
 
 void GenSSAVisitor::visit(DotNode *node)
 {
-    if ( node -> member -> getType() -> getTypeKind() == TypeKind::OVERLOADEDFUNCTION )
+    if ( node -> member -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION )
     {
         _arg = getArg(node -> base);
     }
     else
     {
-        code.addVariable(node -> member);
-        _arg = code.add(
-                   Command(SSAOp::DOT,
-                           getArg(node -> base),
-                           Arg(IdType::VARIABLE, 
-                               code.getVarId(node -> member), 
-                               node -> member -> getType())
-                          )
-               );
+        auto var = static_cast<VariableSymbol*>(node -> member);
+
+        code.addVariable(var);
+        _arg = code.add( Command(SSAOp::DOT, getArg(node -> base), Arg(IdType::VARIABLE, code.getVarId(var), var -> getType())));
     }
 }
 
@@ -648,18 +636,14 @@ void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)
         instance -> accept(*this);
 }
 
-std::string GenSSAVisitor::getString()
+void GenSSAVisitor::visit(BreakNode* )
 {
-    return code.toString();
+    code.add(Command(SSAOp::GOTO, loop_label.top().second));
 }
 
-const ThreeAddressCode& GenSSAVisitor::getCode() const
-{
-    return code;
-}
+void GenSSAVisitor::visit(ModuleNode* ) { }
+void GenSSAVisitor::visit(TypeNode* ) { }
+void GenSSAVisitor::visit(FunctionNode* ) { }
+void GenSSAVisitor::visit(ModuleMemberAccessNode* ) { }
+void GenSSAVisitor::visit(ImportNode *) { }
 
-void GenSSAVisitor::optimize()
-{
-    Optimizer optimizer(code);
-    optimizer.optimize();
-}

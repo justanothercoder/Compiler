@@ -97,10 +97,7 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
 
         if ( variable -> isField() )
         {
-            auto _this = scope.resolve("this");
-
-            auto sym = static_cast<VariableSymbol*>(_this);
-
+            auto sym = static_cast<VariableSymbol*>(scope.resolve("this"));
             auto struc_scope = static_cast<const StructSymbol*>(sym -> getType() -> getSymbol());
 
             code_obj.emit("mov rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(sym)) + "]");
@@ -332,7 +329,9 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             code_obj.emit("push rbx");
             code_obj.emit("push rax");
 
-            code_obj.emit("call " + dynamic_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
+            assert(param_type -> getTypeKind() == TypeKind::STRUCT);
+
+            code_obj.emit("call " + static_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
             code_obj.emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
         }
 
@@ -417,7 +416,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     }    
     case SSAOp::PLUS: case SSAOp::NEQUALS: case SSAOp::EQUALS:
     case SSAOp::MINUS: case SSAOp::MUL: case SSAOp::DIV:
-    case SSAOp::MOD:
+    case SSAOp::MOD: case SSAOp::AND:
     {
         command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
         scope.getTempAlloc().claim(GlobalConfig::int_size);
@@ -458,6 +457,18 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             case SSAOp::MOD    : code_obj.emit("xor rdx, rdx"); code_obj.emit("idiv rbx"); code_obj.emit("mov rax, rdx"); break;
             case SSAOp::EQUALS : code_obj.emit("cmp rax, rbx"); code_obj.emit("mov rax, qword 0"); code_obj.emit("sete al"); break;
             case SSAOp::NEQUALS: code_obj.emit("cmp rax, rbx"); code_obj.emit("mov rax, qword 0"); code_obj.emit("setne al"); break;
+            case SSAOp::AND    : 
+            {
+                code_obj.emit("cmp rax, 0"); 
+                code_obj.emit("setne al");
+                
+                code_obj.emit("cmp rbx, 0");
+                code_obj.emit("setne bl");
+
+                code_obj.emit("test al, bl");
+                code_obj.emit("setnz al");
+                break;
+            }
             default:
                    throw std::logic_error("internal error.");
         }
@@ -481,10 +492,25 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
         return;
     }
+    case SSAOp::STRINGELEM:
+    {
+        command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
+        scope.getTempAlloc().claim(GlobalConfig::int_size);
+
+        genArg(command.arg2, code_obj);
+        code_obj.emit("push qword [rax]");
+
+        genArg(command.arg1, code_obj);
+        code_obj.emit("pop rbx");
+        code_obj.emit("sub rax, rbx");
+
+        code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
+        return;
+    }
     default:
     {
         Logger::log(toString(command));
-        throw "internal error.";
+        throw std::logic_error("internal error.");
     }
     }
 }
@@ -501,6 +527,7 @@ std::string Block::toString(Command command) const
     case SSAOp::MOD    : return toString(command.arg1) + " % "  + toString(command.arg2);
     case SSAOp::EQUALS : return toString(command.arg1) + " == " + toString(command.arg2);
     case SSAOp::NEQUALS: return toString(command.arg1) + " != " + toString(command.arg2);
+    case SSAOp::AND    : return toString(command.arg1) + " && " + toString(command.arg2);
     case SSAOp::ELEM   : return toString(command.arg1) + "[" + toString(command.arg2) + "]";
     case SSAOp::DOT    : return toString(command.arg1) + "." + toString(command.arg2);
     case SSAOp::DEREF  : return "*" + toString(command.arg1);
@@ -514,7 +541,8 @@ std::string Block::toString(Command command) const
     case SSAOp::IFFALSE: return "ifFalse " + toString(command.arg1) + " goto " + toString(command.arg2);
     case SSAOp::GOTO   : return "goto " + toString(command.arg1);
     case SSAOp::NEW    : return "new " + table.type_by_id[command.arg1.id] -> getName();
-    case SSAOp::ASSIGNCHAR : return toString(command.arg1) + " = "  + toString(command.arg2);
+    case SSAOp::ASSIGNCHAR: return toString(command.arg1) + " = "  + toString(command.arg2);
+    case SSAOp::STRINGELEM: return toString(command.arg1) + "[" + toString(command.arg2) + "]";
     default:
         throw std::logic_error("not all SSAOp catched in Block::toString");
     }

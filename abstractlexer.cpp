@@ -37,5 +37,5 @@ void AbstractLexer::match(char c)
     if ( cur == c )
         consume();
     else
-        throw RecognitionError(string("expected ") + c + string(", but found ") + cur);
+        throw RecognitionError(std::string("expected ") + c + std::string(", but found ") + cur, line, symbol);
 }

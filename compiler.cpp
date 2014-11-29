@@ -5,16 +5,28 @@
 #include "exprnode.hpp"
 #include "templateinfo.hpp"
 #include "templatestructsymbol.hpp"
-
+#include "modulesymbol.hpp"
+#include "compilableunit.hpp"
+#include "comp.hpp"
 
 const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
 {
     auto type_name = type_info.type_name;
 
-    const Type *type = scope -> resolveType(type_name);
+    const Type *type;
 
-    if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )
-        throw SemanticError("Using pointer type in safe block " + scope -> getScopeName() + ".");
+    if ( type_info.module_name == "" )
+        type = scope -> resolveType(type_name);
+    else
+    {
+//        auto module = scope -> resolve(type_info.module_name);
+        auto module = Comp::getUnit(type_info.module_name) -> module_symbol;
+        assert(module -> getSymbolType() == SymbolType::MODULE);
+        type = static_cast<ModuleSymbol*>(module) -> resolveType(type_name);
+    }
+
+//    if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )
+//        throw SemanticError("Using pointer type in safe block " + scope -> getScopeName() + ".");
     
 //    if ( type_info.array_dimensions.size() > 0 && !scope -> isUnsafeBlock() )
 //        throw SemanticError("Using plain array type in safe block " + scope -> getScopeName() + ".");

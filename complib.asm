@@ -17,6 +17,7 @@
 	global ___brk_void~ptr:function
 
     global ___mmap_int_int_int_int_int_int:function
+    global ___fork
 
 _putchar_char:
 	push rbp
@@ -152,22 +153,27 @@ ___fread_int_string~ref_int:
 	push rbp
 	mov rbp, rsp
 	
-	sub rsp, 256
+	sub rsp, 264
 
-	mov qword [rbp - 256], 0
+    mov qword [rbp - 8], 0
+	mov qword [rbp - 264], 0
 
 	mov rax, qword 0
 	mov rdi, [rbp + 24]
-	lea rsi, [rbp - 256]
+	lea rsi, [rbp - 264]
 	mov rdx, [rbp + 40]
 	syscall
+
+    mov byte [rsi + rax], 0
 
 	mov rbx, rax
 	mov rax, [rbp + 16]
 	mov [rax], rbx
 
-	lea rsi, [rbp - 256]
+	lea rsi, [rbp - 264]
 	mov rdi, [rbp + 32]
+
+    mov rcx, 0
 
 .loop:
 	
@@ -180,6 +186,7 @@ ___fread_int_string~ref_int:
 	inc rsi
 	dec rdi
 
+    inc ecx
 	jmp .loop
 
 .end:
@@ -394,6 +401,21 @@ ___mmap_int_int_int_int_int_int:
     syscall
 
     mov rbx, rax
+    mov rax, [rbp + 16]
+    mov [rax], rbx
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+___fork:
+    push rbp
+    mov rbp, rsp
+
+    mov rax, 57
+    syscall
+
+    mov rbx, rax    
     mov rax, [rbp + 16]
     mov [rax], rbx
 

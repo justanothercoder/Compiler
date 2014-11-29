@@ -28,13 +28,14 @@ CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector
             throw SemanticError("parameter is not an lvalue.");
     }
 
-    function_sym -> is_used = true;
-
     return getCallInfo(function_sym, params);
 }
 
 CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector<ExprNode*> params)
 {
+    assert(function_sym != nullptr);
+    function_sym -> is_used = true;
+
     auto function_info = function_sym -> getType() -> getTypeInfo();
 
     auto params_types = CallHelper::extractTypes(params);
@@ -59,38 +60,36 @@ CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector
 
 const OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(std::string name, const Scope *scope)
 {
-    auto _ = scope -> resolve(name);
+    auto sym = scope -> resolve(name);
 
-    if ( _ == nullptr || _ -> getSymbolType() != SymbolType::VARIABLE )
-        throw SemanticError("No such symbol " + name + ".");
+//    if ( sym == nullptr || sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
+//        throw SemanticError("No such function " + name + ".");
 
-    return dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_) -> getType() -> getSymbol());
+    assert(sym != nullptr);
+    if ( sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
+        return nullptr;
+
+    return static_cast<const OverloadedFunctionSymbol*>(sym);
 }
 
 const OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(std::string name, const StructSymbol *scope)
 {
-    auto _ = scope -> resolveMember(name);
+    auto sym = scope -> resolveMember(name);
 
-    if ( _ == nullptr || _ -> getSymbolType() != SymbolType::VARIABLE )
-        throw SemanticError("No such symbol " + name + ".");
+    if ( sym == nullptr || sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
+        throw SemanticError("No such method " + name + ".");
 
-    return dynamic_cast<const OverloadedFunctionSymbol*>(dynamic_cast<VariableSymbol*>(_) -> getType() -> getSymbol());
+    return static_cast<const OverloadedFunctionSymbol*>(sym);
 }
 
 const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope *scope, std::vector<const Type*> params_types)
 {
     while ( scope != nullptr )
     {
-        const OverloadedFunctionSymbol *ov_func = nullptr;
+        const OverloadedFunctionSymbol *ov_func = CallHelper::getOverloadedFunc(name, scope);
 
-        try
-        {
-            ov_func = CallHelper::getOverloadedFunc(name, scope);
-        }
-        catch ( SemanticError& e )
-        {
+        if ( ov_func == nullptr )
             return nullptr;
-        }
 
         auto pt = params_types;
 

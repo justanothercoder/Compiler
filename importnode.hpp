@@ -3,10 +3,12 @@
 
 #include "ast.hpp"
 
+class Symbol;
+
 class ImportNode : public AST
 {
 public:
-    ImportNode(std::string lib);
+    ImportNode(std::string lib, AST* root, std::vector<Symbol*> imports);
 
     void build_scope();        
 
@@ -16,7 +18,8 @@ public:
     void accept(ASTVisitor& visitor) override;
 
     std::string lib;
-    AST *root;
+    AST* root;
+    std::vector<Symbol*> imports;
 };
 
 #endif

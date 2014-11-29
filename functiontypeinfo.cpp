@@ -1,5 +1,6 @@
 #include "functiontypeinfo.hpp"
 #include "structsymbol.hpp"
+#include "logger.hpp"
 
 FunctionTypeInfo::FunctionTypeInfo(std::vector<const Type*> params_types) : params_types(params_types)
 {

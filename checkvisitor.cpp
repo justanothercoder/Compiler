@@ -26,11 +26,13 @@
 #include "templatestructdeclarationnode.hpp"
 #include "builtins.hpp"
 #include "importnode.hpp"
-
-void CheckVisitor::visit(ImportNode *node)
-{
-    node -> root -> accept(*this);
-}
+#include "modulenode.hpp"
+#include "typenode.hpp"
+#include "functionnode.hpp"
+#include "modulesymbol.hpp"
+#include "modulememberaccessnode.hpp"
+#include "compilableunit.hpp"
+#include "comp.hpp"
 
 void CheckVisitor::visit(IfNode *node)
 {
@@ -56,12 +58,14 @@ void CheckVisitor::visit(BracketNode *node)
     node -> base -> accept(*this);
     node -> expr -> accept(*this);
 
-    auto base_type = dynamic_cast<const StructSymbol*>(node -> base -> getType() -> getSymbol());    
-
     if ( node -> base -> getType() -> getTypeKind() == TypeKind::ARRAY )
         node -> call_info = CallHelper::callCheck("operator[]", BuiltIns::global_scope, {node -> base, node -> expr});
     else
+    {
+        assert(node -> base -> getType() -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT); 
+        auto base_type = static_cast<const StructSymbol*>(node -> base -> getType() -> getUnqualifiedType());
         node -> call_info = CallHelper::callCheck("operator[]", base_type, {node -> expr});
+    }
 
     node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
@@ -158,7 +162,8 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 
             if ( var_type -> getTypeKind() != TypeKind::POINTER )
             {
-                auto struct_symbol = static_cast<const StructSymbol*>(var_type -> getSymbol());
+//                auto struct_symbol = static_cast<const StructSymbol*>(var_type -> getSymbol());
+                auto struct_symbol = static_cast<const StructSymbol*>(var_type -> getUnqualifiedType());
 
                 for ( auto param : node -> constructor_call_params )
                     param -> accept(*this);
@@ -213,12 +218,13 @@ void CheckVisitor::visit(DotNode *node)
     if ( _base_type -> isReference() )
         node -> scope -> getTempAlloc().add(GlobalConfig::int_size);
 
-    node -> base_type = dynamic_cast<const StructSymbol*>(_base_type -> getUnqualifiedType());
+    assert(_base_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT);
+    node -> base_type = static_cast<const StructSymbol*>(_base_type -> getUnqualifiedType());
 
     if ( node -> base_type == nullptr )
         throw SemanticError("'" + node -> base -> toString() + "' is not an instance of struct.");
 
-    node -> member = dynamic_cast<VariableSymbol*>(node -> base_type -> resolveMember(node -> member_name));
+    node -> member = node -> base_type -> resolveMember(node -> member_name);
 
     if ( node -> member == nullptr )
         throw SemanticError(node -> member_name + " is not member of " + node -> base_type -> getName());
@@ -228,6 +234,57 @@ void CheckVisitor::visit(StatementNode *node)
 {
     for ( auto i : node -> statements )
         i -> accept(*this);
+}
+
+void CheckVisitor::visit(ModuleMemberAccessNode* node)
+{
+    auto module_sym = Comp::getUnit(node -> name) -> module_symbol;
+
+    assert(!(module_sym == nullptr || module_sym -> getSymbolType() != SymbolType::MODULE));
+
+    node -> member_sym = static_cast<ModuleSymbol*>(module_sym) -> resolve(node -> member);
+}
+
+void CheckVisitor::visit(ModuleNode* node) 
+{
+    auto sym = node -> scope -> resolve(node -> name);
+
+    if ( sym == nullptr )
+        throw SemanticError("No such symbol '" + node -> name + "'");
+
+    if ( sym -> getSymbolType() != SymbolType::MODULE )
+        throw SemanticError("'" + node -> name + "' is not a module.");
+
+    node -> module = static_cast<ModuleSymbol*>(sym);
+}
+
+void CheckVisitor::visit(TypeNode* node) 
+{
+    auto sym = node -> scope -> resolve(node -> name);
+
+    if ( sym == nullptr )
+        throw SemanticError("No such symbol '" + node -> name + "'");
+
+    if ( sym -> getSymbolType() != SymbolType::STRUCT || sym -> getSymbolType() != SymbolType::BUILTINTYPE )
+        throw SemanticError("'" + node -> name + "' is not a type.");
+
+    if ( sym -> getSymbolType() == SymbolType::STRUCT )
+        node -> type_symbol = static_cast<StructSymbol*>(sym);
+    else
+        node -> type_symbol = static_cast<BuiltInTypeSymbol*>(sym);
+}
+
+void CheckVisitor::visit(FunctionNode* node) 
+{
+    auto sym = node -> scope -> resolve(node -> name);
+
+    if ( sym == nullptr )
+        throw SemanticError("No such symbol '" + node -> name + "'");
+
+    if ( sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
+        throw SemanticError("'" + node -> name + "' is not a function.");
+
+    node -> function = static_cast<OverloadedFunctionSymbol*>(sym);
 }
 
 void CheckVisitor::visit(VariableNode *node)
@@ -250,6 +307,9 @@ void CheckVisitor::visit(VariableNode *node)
     }
 
     auto sym = node -> scope -> resolve(node -> name);
+
+    if ( sym == nullptr )
+        throw SemanticError("No such symbol '" + node -> name + "'");
 
     if ( sym -> getSymbolType() != SymbolType::VARIABLE )
         throw SemanticError("'" + node -> name + "' is not a variable.");
@@ -276,8 +336,21 @@ void CheckVisitor::visit(CallNode *node)
     else
     {
         auto ov_func = static_cast<const OverloadedFunctionSymbol*>(caller_type);
-        auto _scope = ov_func -> isMethod() ? static_cast<const StructSymbol*>(ov_func -> getBaseType() -> getSymbol()) : node -> scope;
-        node -> call_info = CallHelper::callCheck(ov_func -> getName(), _scope, node -> params);
+
+        std::vector<const Type*> params;
+        
+        if ( ov_func -> isMethod() )
+            params.push_back(ov_func -> getBaseType());
+
+        for ( auto param : node -> params )
+            params.push_back(param -> getType());
+
+        auto func = ov_func -> getViableOverload(FunctionTypeInfo(params));
+
+        if ( func == nullptr )
+            throw SemanticError("No viable overload for " + ov_func -> getName() + " with params " + FunctionTypeInfo(params).toString());
+
+        node -> call_info = CallHelper::getCallInfo(func, node -> params);
     }
 
     node -> caller -> type_hint = node -> call_info.callee -> getType();
@@ -303,7 +376,7 @@ void CheckVisitor::visit(ReturnNode *node)
 
 }
 
-void CheckVisitor::visit(UnsafeBlockNode *node)
+void CheckVisitor::visit(UnsafeBlockNode* node)
 {
     node -> block -> accept(*this);
 }
@@ -318,12 +391,14 @@ void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
         node -> call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {node -> expr});
 }
 
-void CheckVisitor::visit(TemplateStructDeclarationNode *node)
+void CheckVisitor::visit(TemplateStructDeclarationNode* node)
 {
     for ( auto instance : node -> instances )
         instance -> accept(*this);
 }
 
+void CheckVisitor::visit(BreakNode* ) { }
 void CheckVisitor::visit(NumberNode *) { }
 void CheckVisitor::visit(StringNode *) { }
-
+void CheckVisitor::visit(ExternNode *) { }
+void CheckVisitor::visit(ImportNode* ) { }

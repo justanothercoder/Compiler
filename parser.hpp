@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <fstream>
+#include <stack>
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
 
@@ -23,6 +24,7 @@
 #include "whilenode.hpp"
 #include "fornode.hpp"
 #include "importnode.hpp"
+#include "externnode.hpp"
 
 #include "dotnode.hpp"
 #include "callnode.hpp"
@@ -35,6 +37,7 @@
 #include "nullnode.hpp"
 
 #include "unsafeblocknode.hpp"
+#include "symbol.hpp"
 
 class Parser : public AbstractParser
 {
@@ -45,20 +48,31 @@ public:
     virtual AST* parse();
 
 private:
+    
+    void pushScope();
+    void popScope();    
+    void rememberSymbol(std::string name, SymbolType type);
+    boost::optional<SymbolType> resolveSymbolType(std::string name); 
+
+    std::vector< std::map< std::string, SymbolType > > symbol_table_stack; 
+    std::stack<bool> is_in_loop;
 
     std::string id();
     std::string operator_name();
     TypeInfo typeInfo();
     std::vector<ExprNode*> call_params_list();
 
-    DeclarationNode* declaration(boost::optional<string> struct_name = boost::none);
+    DeclarationNode* declaration(boost::optional<std::string> struct_name = boost::none);
     DeclarationNode* templateStructDecl();
     DeclarationNode* structDecl();
-    DeclarationNode* variableDecl(boost::optional<string> struct_name = boost::none);
-    DeclarationNode* functionDecl(boost::optional<string> struct_name = boost::none);
-    DeclarationNode* varInferDecl(boost::optional<string> struct_name = boost::none);
+    DeclarationNode* variableDecl(boost::optional<std::string> struct_name = boost::none);
+    DeclarationNode* functionDecl(boost::optional<std::string> struct_name = boost::none);
+    DeclarationNode* varInferDecl(boost::optional<std::string> struct_name = boost::none);
 
+    AST* break_stat();
+    AST* from_import_stat();
     AST* import_stat();
+    AST* extern_stat();
 
     AST* for_stat();
     AST* while_stat();
@@ -90,6 +104,8 @@ private:
     bool tryAssignment();
     bool tryVarDecl();
     bool tryTypeInfo();
+
+    bool tryModuleName();
 };
 
 #endif
