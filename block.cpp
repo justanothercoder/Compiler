@@ -388,7 +388,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         if ( command.arg1.expr_type -> isReference() )
             code_obj.emit("mov rax, [rax]");
         code_obj.emit("mov [rax], rbx");
-       
+
         return;
     }
     case SSAOp::ASSIGNCHAR:
@@ -396,12 +396,12 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         genArg(command.arg2, code_obj);
         if ( command.arg2.expr_type -> isReference() )
             code_obj.emit("mov rax, [rax]");
-        code_obj.emit("mov bl, byte [rax]");
+        code_obj.emit("mov cl, byte [rax]");
 
         genArg(command.arg1, code_obj);
         if ( command.arg1.expr_type -> isReference() )
             code_obj.emit("mov rax, [rax]");
-        code_obj.emit("mov byte [rax], bl");
+        code_obj.emit("mov byte [rax], cl");
        
         return;
     }

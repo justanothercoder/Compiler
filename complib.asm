@@ -6,6 +6,7 @@
 	global ___fwrite_int_const~string~ref_int:function
 	global ___fwrite_int_void~ptr_int:function
 	global ___fread_int_string~ref_int:function
+	global ___fread_int_void~ptr_int:function
 
 	global _string_string_string~ref_const~string~ref:function
 	global _string_operatorelem_string~ref_int:function
@@ -122,7 +123,7 @@ ___fwrite_int_void~ptr_int:
 	sub rsp, 256
 
 	mov rsi, [rbp + 32]
-	lea rdi, [rbp - 256]
+	lea rdi, [rbp - 264]
 
     mov rcx, [rbp + 40]
 
@@ -146,7 +147,7 @@ ___fwrite_int_void~ptr_int:
 
 	mov rax, qword 1
 	mov rdi, [rbp + 24]
-	lea rsi, [rbp - 256]
+	lea rsi, [rbp - 264]
 	mov rdx, [rbp + 40]
 	syscall
 
@@ -154,14 +155,12 @@ ___fwrite_int_void~ptr_int:
 	pop rbp
 	ret
 
-___fread_int_string~ref_int:
+;___fread_int_string~ref_int:
+___fread_int_void~ptr_int:
 	push rbp
 	mov rbp, rsp
 	
 	sub rsp, 264
-
-    mov qword [rbp - 8], 0
-	mov qword [rbp - 264], 0
 
 	mov rax, qword 0
 	mov rdi, [rbp + 24]
@@ -169,14 +168,14 @@ ___fread_int_string~ref_int:
 	mov rdx, [rbp + 40]
 	syscall
 
-    mov byte [rsi + rax], 0
-
 	mov rbx, rax
 	mov rax, [rbp + 16]
 	mov [rax], rbx
 
 	lea rsi, [rbp - 264]
 	mov rdi, [rbp + 32]
+
+    mov byte [rsi + rbx], 0
 
 .loop:
 	
@@ -188,12 +187,12 @@ ___fread_int_string~ref_int:
 
 	inc rsi
 	dec rdi
-
-	jmp .loop
+	
+    jmp .loop
 
 .end:
 
-	mov byte [rdi], 0
+;	mov byte [rdi], 0
 
 	mov rsp, rbp
 	pop rbp

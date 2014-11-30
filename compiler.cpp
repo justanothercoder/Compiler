@@ -50,8 +50,8 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
     if ( type_info.is_const )
         type = TypeFactory::getConst(type);
 
+    assert(type != nullptr);
     return type;
-
 }
 
 DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vector<TemplateParam> template_params)

@@ -16,7 +16,10 @@ AddrNode::AddrNode(ExprNode *expr, AddrOp op) : expr(expr), op(op)
 const Type* AddrNode::getType() const
 {
     if ( op == AddrOp::REF )
-        return TypeFactory::getPointer(expr -> getType());
+    {
+//        return TypeFactory::getPointer(expr -> getType());
+        return TypeFactory::getPointer(expr -> getType() -> getUnqualifiedType());
+    }
     else
     {
         auto type = expr -> getType();
