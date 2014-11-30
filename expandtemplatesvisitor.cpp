@@ -18,7 +18,7 @@
 #include "modulesymbol.hpp"
 #include "compilableunit.hpp"
 #include "comp.hpp"
-#include "logger.hpp"
+#include "definevisitor.hpp"
 
 void ExpandTemplatesVisitor::visit(IfNode *node)
 {
@@ -114,8 +114,6 @@ TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
 
 TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *scope)
 {
-    Logger::log("Preprocessing " + type_info.toString());        
-
     const auto& template_info = scope -> getTemplateInfo();
 
     if ( template_info.sym && template_info.sym -> isIn(type_info.type_name) )
@@ -170,13 +168,14 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
 
         auto decl = getSpecDecl(tmpl, tmpl_params);
 
-        Logger::log("Template symbol " + type_info.type_name);
-        Logger::log("Number of instances: " + std::to_string(static_cast<TemplateStructDeclarationNode*>(tmpl -> holder) -> instances.size()));
-
         static_cast<TemplateStructDeclarationNode*>(tmpl -> holder) -> instances.insert(decl);
         type_info.type_name = static_cast<StructDeclarationNode*>(decl) -> name;
-        
-        Logger::log("Number of instances: " + std::to_string(static_cast<TemplateStructDeclarationNode*>(tmpl -> holder) -> instances.size()));
+
+        if ( type_info.module_name != "" )
+        {
+            DefineVisitor define_visitor;
+            decl -> accept(define_visitor);
+        }
 
         decl -> accept(*this);
     }

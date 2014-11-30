@@ -195,8 +195,6 @@ void DefineVisitor::visit(VarInferTypeDeclarationNode *node)
 
 void DefineVisitor::visit(TemplateStructDeclarationNode *node)
 {
-    Logger::log("Processing template struct " + node -> name + "; number of instances: " + std::to_string(node -> instances.size()));
-
     for ( auto instance : node -> instances )
         instance -> accept(*this);
 }

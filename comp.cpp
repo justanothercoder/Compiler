@@ -19,8 +19,6 @@ CompilableUnit& Comp::compile(std::string filename)
     if ( boost::optional<CompilableUnit&> mu = getUnit(filename) )
         return *mu;
 
-    Logger::log("Processing " + filename + ".txt");
-
     CompilableUnit unit(filename);
 
     auto root = FileHelper::parse((filename + ".txt").c_str());
@@ -43,8 +41,6 @@ CompilableUnit& Comp::compile(std::string filename)
 
     GenSSAVisitor visitor(Comp::code);
     root -> accept(visitor);
-    
-    Logger::log("Processed " + filename + ".txt");
 
     Comp::units.push_back(unit);
     return Comp::units.back();
