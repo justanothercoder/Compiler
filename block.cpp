@@ -102,7 +102,7 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
 
             code_obj.emit("mov rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(sym)) + "]");
             if ( struc_scope -> getVarAlloc().getAddress(variable) != 0 )
-                code_obj.emit("lea rax, [rax - " + std::to_string(struc_scope -> getVarAlloc().getAddress(variable)) + "]");
+                code_obj.emit("lea rax, [rax + " + std::to_string(struc_scope -> getVarAlloc().getAddress(variable)) + "]");
         }
         else if ( variable -> getType() -> isReference() )
         {
@@ -126,7 +126,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     case SSAOp::DOT:
     {
         auto base_type = command.arg1.expr_type;
-        auto base_sym = base_type -> getUnqualifiedType() -> getSymbol();
+        auto base_sym = static_cast<const StructSymbol*>(base_type -> getUnqualifiedType());
 
         auto member = table.var_by_id[command.arg2.id];
         
@@ -140,7 +140,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
                 command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
                 scope.getTempAlloc().claim(GlobalConfig::int_size);
 
-                code_obj.emit("mov rax, [rax - " + std::to_string(static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member)) + "]");
+                code_obj.emit("mov rax, [rax + " + std::to_string(base_sym -> getVarAlloc().getAddress(member)) + "]");
                 code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
 
                 return;
@@ -155,7 +155,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
                 command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
                 scope.getTempAlloc().claim(GlobalConfig::int_size);
 
-                code_obj.emit("mov rax, [rax - " + std::to_string(static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member)) + "]");
+                code_obj.emit("mov rax, [rax + " + std::to_string(base_sym -> getVarAlloc().getAddress(member)) + "]");
                 code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
 
                 return;
@@ -172,8 +172,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             arg_addr = 0;
         }
 
-        command.offset = arg_addr + static_cast<const StructSymbol*>(base_sym) -> getVarAlloc().getAddress(member);
-
+        command.offset = arg_addr - base_sym -> getVarAlloc().getAddress(member);
         return;
     }
     case SSAOp::DEREF:
@@ -487,7 +486,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         genArg(command.arg1, code_obj);
         code_obj.emit("pop rbx");
         code_obj.emit("imul rbx, " + std::to_string(static_cast<const ArrayType*>(command.arg1.expr_type) -> type -> getSize()));
-        code_obj.emit("sub rax, rbx");
+        code_obj.emit("add rax, rbx");
 
         code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
         return;
@@ -502,7 +501,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
 
         genArg(command.arg1, code_obj);
         code_obj.emit("pop rbx");
-        code_obj.emit("sub rax, rbx");
+        code_obj.emit("add rax, rbx");
 
         code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
         return;

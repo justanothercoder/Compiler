@@ -18,6 +18,7 @@
 #include "modulesymbol.hpp"
 #include "compilableunit.hpp"
 #include "comp.hpp"
+#include "logger.hpp"
 
 void ExpandTemplatesVisitor::visit(IfNode *node)
 {
@@ -97,6 +98,9 @@ void ExpandTemplatesVisitor::visit(VariableDeclarationNode *node)
 
 void ExpandTemplatesVisitor::visit(NewExpressionNode *node)
 {
+    for ( auto& dim : node -> type_info.array_dimensions )
+        dim -> scope = node -> scope;
+
     node -> type_info = preprocessTypeInfo(node -> type_info, node -> scope);
 }
     
@@ -110,6 +114,8 @@ TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
 
 TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *scope)
 {
+    Logger::log("Preprocessing " + type_info.toString());        
+
     const auto& template_info = scope -> getTemplateInfo();
 
     if ( template_info.sym && template_info.sym -> isIn(type_info.type_name) )
@@ -163,8 +169,14 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
            tmpl_params.push_back(getTemplateParam(param_info)); 
 
         auto decl = getSpecDecl(tmpl, tmpl_params);
+
+        Logger::log("Template symbol " + type_info.type_name);
+        Logger::log("Number of instances: " + std::to_string(static_cast<TemplateStructDeclarationNode*>(tmpl -> holder) -> instances.size()));
+
         static_cast<TemplateStructDeclarationNode*>(tmpl -> holder) -> instances.insert(decl);
         type_info.type_name = static_cast<StructDeclarationNode*>(decl) -> name;
+        
+        Logger::log("Number of instances: " + std::to_string(static_cast<TemplateStructDeclarationNode*>(tmpl -> holder) -> instances.size()));
 
         decl -> accept(*this);
     }

@@ -82,23 +82,27 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
     {
         auto str_label = "string_label" + std::to_string(p.first);
 
-        std::string res = "0";
+        std::string res = "";
         const auto& str = p.second;
-        for ( int i = str.length() - 1; i >= 0; --i )
-        {
-            if ( i >= 1 && str[i - 1] == '\\' && str[i] == 'n' )
+       
+        if ( !str.empty() )
+        { 
+            res.append(std::to_string(static_cast<int>(str.front())));
+            for ( size_t i = 1; i < str.length(); ++i )
             {
-                res.append(", 10");
-                --i;
+                if ( i < str.length() - 1 && str[i] == '\\' && str[i + 1] == 'n' )
+                {
+                    res.append(", 10");
+                    ++i;
+                }
+                else
+                {
+                    res.append(", " + std::to_string(static_cast<int>(str[i])));
+                }
             }
-            else
-            {
-                res.append(", " + std::to_string(static_cast<int>(str[i])));
-            }
+            res.append(", 0");
         }
-
-        code_obj.emit("@" + str_label + ": db " + res);
-        code_obj.emit(str_label + ": equ $ - 1");
+        code_obj.emit(str_label + ": db " + res);
     }
 
     code_obj.emit("section .text");
