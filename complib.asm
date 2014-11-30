@@ -213,8 +213,8 @@ _string_string_string~ref_const~string~ref:
 	mov bl, byte [rdi]
 	mov byte [rsi], bl
 	
-	dec rsi 
-	dec rdi
+	inc rsi 
+	inc rdi
 
 	jmp .loop
 
@@ -274,24 +274,24 @@ _print_const~string~ref:
 	push rbp
 	mov rbp, rsp
 
-	mov r10, [rbp + 24]
+    mov rdx, 0
+    mov rdi, [rbp + 24]
 
 .loop:
 
-	cmp byte [r10], 0
-	jz .end
+    cmp byte [rdi], 0
+    jz .end
 
-	mov rax, 1
-	mov rdi, 1
-	lea rsi, [r10]
-	mov rdx, 1
-	syscall
-
-	dec r10
-
-	jmp .loop
+    inc rdx
+    inc rdi
+    jmp .loop
 
 .end:
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, [rbp + 24]
+    syscall
 
 	mov rsp, rbp
 	pop rbp
@@ -314,8 +314,8 @@ _string_operatorplus_string~ref_const~string~ref:
 	mov bl, byte [rsi]
 	mov byte [rdi], bl
 
-	dec rsi
-	dec rdi
+	inc rsi
+	inc rdi
 
 	jmp .floop
 
@@ -331,8 +331,8 @@ _string_operatorplus_string~ref_const~string~ref:
 	mov bl, byte [rsi]
 	mov byte [rdi], bl
 
-	dec rsi
-	dec rdi
+	inc rsi
+	inc rdi
 
 	jmp .sloop
 

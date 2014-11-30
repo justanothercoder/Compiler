@@ -87,8 +87,17 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
        
         if ( !str.empty() )
         { 
-            res.append(std::to_string(static_cast<int>(str.front())));
-            for ( size_t i = 1; i < str.length(); ++i )
+            size_t i = 0;
+            if ( i < str.length() - 1 && str[i] == '\\' && str[i + 1] == 'n' )
+            {
+                res.append("10");
+                ++i;
+            }
+            else
+            {
+                res.append(std::to_string(static_cast<int>(str[i])));
+            }
+            for ( ; i < str.length() - 1; ++i )
             {
                 if ( i < str.length() - 1 && str[i] == '\\' && str[i + 1] == 'n' )
                 {
@@ -102,6 +111,11 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
             }
             res.append(", 0");
         }
+        else
+        {
+            res = "0";
+        }
+
         code_obj.emit(str_label + ": db " + res);
     }
 

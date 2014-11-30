@@ -19,6 +19,8 @@
 #include "compilableunit.hpp"
 #include "comp.hpp"
 #include "definevisitor.hpp"
+#include "checkvisitor.hpp"
+#include "genssavisitor.hpp"
 
 void ExpandTemplatesVisitor::visit(IfNode *node)
 {
@@ -173,8 +175,13 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
 
         if ( type_info.module_name != "" )
         {
+            decl -> accept(*this);
             DefineVisitor define_visitor;
             decl -> accept(define_visitor);
+            CheckVisitor check_visitor;
+            decl -> accept(check_visitor);
+            GenSSAVisitor gen_visitor(Comp::code);
+            decl -> accept(gen_visitor);            
         }
 
         decl -> accept(*this);
