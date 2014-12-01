@@ -97,7 +97,7 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
             {
                 res.append(std::to_string(static_cast<int>(str[i])));
             }
-            for ( ; i < str.length() - 1; ++i )
+            for ( ++i; i < str.length(); ++i )
             {
                 if ( i < str.length() - 1 && str[i] == '\\' && str[i + 1] == 'n' )
                 {
