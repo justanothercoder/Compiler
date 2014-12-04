@@ -6,12 +6,13 @@
 #include "builtins.hpp"
 
 VariableDeclarationNode::VariableDeclarationNode(std::string name
-        , TypeInfo type_info
-        , bool is_field
-        , std::vector<ExprNode*> constructor_call_params) : name(name)
-    , type_info(type_info)
-    , is_field(is_field)
-    , constructor_call_params(constructor_call_params)
+                                               , TypeInfo type_info
+                                               , bool is_field
+                                               , std::vector<ExprNode*> constructor_call_params) : name                   (name)
+                                                                                                 , type_info              (type_info)
+                                                                                                 , is_field               (is_field)
+                                                                                                 , constructor_call_params(constructor_call_params)
+                                                                                                 , definedSymbol          (nullptr)
 {
 
 }

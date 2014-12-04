@@ -4,7 +4,7 @@
 #include "functionsymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 
-ModuleMemberAccessNode::ModuleMemberAccessNode(std::string name, std::string member) : name(name), member(member) 
+ModuleMemberAccessNode::ModuleMemberAccessNode(std::string name, std::string member) : name(name), member(member), member_sym(nullptr)
 {
 
 }

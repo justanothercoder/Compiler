@@ -3,10 +3,11 @@
 ExternNode::ExternNode(std::string name
                      , std::vector< std::pair<std::string, TypeInfo> > params
                      , TypeInfo return_type_info
-                     , bool is_unsafe) : name(name)
-                                       , params(params)
+                     , bool is_unsafe) : name            (name)
+                                       , params          (params)
                                        , return_type_info(return_type_info)
-                                       , is_unsafe(is_unsafe)
+                                       , is_unsafe       (is_unsafe)
+                                       , definedSymbol   (nullptr)
 {
 
 }

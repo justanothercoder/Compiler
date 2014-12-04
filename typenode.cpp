@@ -1,6 +1,6 @@
 #include "typenode.hpp"
 
-TypeNode::TypeNode(std::string name) : name(name)
+TypeNode::TypeNode(std::string name) : name(name), type_symbol(nullptr)
 {
 
 }

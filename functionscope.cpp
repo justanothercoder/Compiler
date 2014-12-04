@@ -8,9 +8,10 @@ FunctionScope::FunctionScope(std::string scope_name
                            , bool is_constr
                            , bool is_unsafe) : scope_name(scope_name)
                                              , enclosing_scope(enclosing_scope)
-                                             , var_alloc(GlobalConfig::int_size * (is_constr ? 1 : 2))
-                                             , template_info(enclosing_scope -> getTemplateInfo())
-                                             , is_unsafe(is_unsafe)
+                                             , var_alloc      (GlobalConfig::int_size * (is_constr ? 1 : 2))
+                                             , template_info  (enclosing_scope -> getTemplateInfo())
+                                             , is_unsafe      (is_unsafe)
+                                             , func           (nullptr)
 {
 
 }

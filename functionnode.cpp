@@ -1,6 +1,6 @@
 #include "functionnode.hpp"
 
-FunctionNode::FunctionNode(std::string name) : name(name)
+FunctionNode::FunctionNode(std::string name) : name(name), function(nullptr)
 {
 
 }    

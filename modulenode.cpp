@@ -1,6 +1,6 @@
 #include "modulenode.hpp"
 
-ModuleNode::ModuleNode(std::string name) : name(name)
+ModuleNode::ModuleNode(std::string name) : name(name), module(nullptr)
 {
 
 }
