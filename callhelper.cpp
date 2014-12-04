@@ -62,22 +62,9 @@ const OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(std::string name, 
 {
     auto sym = scope -> resolve(name);
 
-//    if ( sym == nullptr || sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
-//        throw SemanticError("No such function " + name + ".");
-
     assert(sym != nullptr);
     if ( sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
         return nullptr;
-
-    return static_cast<const OverloadedFunctionSymbol*>(sym);
-}
-
-const OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(std::string name, const StructSymbol *scope)
-{
-    auto sym = scope -> resolveMember(name);
-
-    if ( sym == nullptr || sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
-        throw SemanticError("No such method " + name + ".");
 
     return static_cast<const OverloadedFunctionSymbol*>(sym);
 }
@@ -86,7 +73,7 @@ const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope 
 {
     while ( scope != nullptr )
     {
-        const OverloadedFunctionSymbol *ov_func = CallHelper::getOverloadedFunc(name, scope);
+        const OverloadedFunctionSymbol *ov_func = getOverloadedFunc(name, scope);
 
         if ( ov_func == nullptr )
             return nullptr;
@@ -100,16 +87,9 @@ const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope 
 
         if ( func_sym == nullptr )
         {
-            try
-            {
-                while ( scope != nullptr && CallHelper::getOverloadedFunc(name, scope) == ov_func )
-                    scope = scope -> getEnclosingScope();
-                continue;
-            }
-            catch ( SemanticError& e )
-            {
-                return nullptr;
-            }
+            while ( scope != nullptr && getOverloadedFunc(name, scope) == ov_func )
+                scope = scope -> getEnclosingScope();
+            continue;
         }
 
         return func_sym;
@@ -130,14 +110,13 @@ std::vector<const Type*> CallHelper::extractTypes(std::vector<ExprNode*> params)
 
 ConversionInfo CallHelper::getConversionInfo(const Type *lhs, const Type *rhs)
 {
+    if ( !lhs -> isConvertableTo(rhs) )
+        throw SemanticError("Invalid initialization of '" + rhs -> getName() + "' with type '" + lhs -> getName() + "'.");
+
     auto _lhs = lhs -> getUnqualifiedType();
     auto _rhs = rhs -> getUnqualifiedType();
 
     auto conv = (_lhs == _rhs) ? nullptr : _lhs -> getConversionTo(_rhs);
-
-//    if ( _lhs != _rhs && conv == nullptr )
-    if ( !lhs -> isConvertableTo(rhs) )
-        throw SemanticError("Invalid initialization of '" + rhs -> getName() + "' with type '" + lhs -> getName() + "'.");
 
     ConversionInfo conv_info(conv);
 
