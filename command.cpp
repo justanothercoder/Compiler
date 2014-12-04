@@ -30,7 +30,7 @@ bool Command::isExpr() const
     {
     case SSAOp::GOTO: case SSAOp::IFFALSE: case SSAOp::IF:
     case SSAOp::RETURN: case SSAOp::RETURNREF: case SSAOp::LABEL:
-    case SSAOp::PARAM: case SSAOp::ASSIGN:
+    case SSAOp::PARAM: case SSAOp::ASSIGN: case SSAOp::ASSIGNCHAR:
         return false;
     default:
         return true;

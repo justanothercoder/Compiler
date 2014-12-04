@@ -223,10 +223,12 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             if ( param_type -> isReference() )
                 code_obj.emit("mov rax, [rax]");
 
-            code_obj.emit("mov qword [rsp], 0");
+//            code_obj.emit("mov qword [rsp], 0");
+            code_obj.emit("xor rbx, rbx");
             code_obj.emit("mov bl, byte [rax]");
-            code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
-            code_obj.emit("mov byte [rsp], bl");
+            code_obj.emit("push rbx");
+//            code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+//            code_obj.emit("mov byte [rsp], bl");
         }
         else if ( conversion_info.conversion )
         {
