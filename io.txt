@@ -56,14 +56,10 @@ struct BufferedInputStream
     int pos
     int read
 
-    OutputStream log
-
 	def BufferedInputStream() {
 		istream.fd = 0
         pos = 0
         read = 0
-
-        log.open("log.log")
 	}
 
 	def open(const string& filename) {
@@ -81,19 +77,11 @@ struct BufferedInputStream
                 read = istream.read(buffer, 250)
                 pos = 0
 
-//                print("updated buffer")
-
                 if ( read == 0 ) {
                     res[i] = 0
                     return res   
                 }
             }
-
-//            if ( new int(buffer[pos]) == 0 ) {
-//                print("buffer[pos] is 0 ")
-//            }
-
-            log.put(buffer[pos])
 
             res[i] = buffer[pos]
 
