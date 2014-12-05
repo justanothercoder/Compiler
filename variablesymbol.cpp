@@ -3,8 +3,8 @@
 #include "type.hpp"
 
 VariableSymbol::VariableSymbol(std::string name, const Type *type, VariableSymbolType sym_type) : name(name)
-    , type(type)
-    , sym_type(sym_type)
+                                                                                                , type(type)
+                                                                                                , sym_type(sym_type)
 {
 
 }

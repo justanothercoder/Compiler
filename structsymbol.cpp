@@ -154,7 +154,7 @@ void StructSymbol::defineBuiltInMethod(std::string name, const FunctionType *typ
                                               , this
                                               , false
                                               , false)
-                            , {true, false, false}
+                            , FunctionTraits::method()
                             )
             );
 }
@@ -167,7 +167,7 @@ void StructSymbol::defineBuiltInOperator(std::string name, const FunctionType *t
                                               , this
                                               , false
                                               , false)
-                            , {true, false, true}
+                            , FunctionTraits::methodOper()
                             )
             );
 }
@@ -180,7 +180,7 @@ void StructSymbol::defineBuiltInConstructor(const FunctionType *type)
                                               , this
                                               , true
                                               , false)
-                            , {true, true, false}
+                            , FunctionTraits::constructor()
                             )
             );
 }

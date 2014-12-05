@@ -4,7 +4,6 @@
 
 WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond)
                                                  , stats(stats)
-                                                 , while_scope(nullptr)
 {
 
 }

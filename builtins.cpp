@@ -43,11 +43,6 @@ void BuiltIns::defineBuiltIns()
     global_scope -> define(ASCII_string);
     global_scope -> define(char_struct);
 
-    FunctionTraits simple_traits      = {false, false, false};
-    FunctionTraits method_traits      = {true, false, false};
-    FunctionTraits method_oper_traits = {true, false, true};
-    FunctionTraits constructor_traits = {true, true, false};
-
     int_struct  -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~int", GlobalConfig::int_size), VariableSymbolType::FIELD));
     char_struct -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~char", GlobalConfig::int_size), VariableSymbolType::FIELD));
 
@@ -80,8 +75,6 @@ void BuiltIns::defineBuiltIns()
     int_struct -> defineBuiltInConstructor(TypeFactory::getFunctionType(ref_int, {ref_int, char_struct}));
 
     BuiltInTypeSymbol *void_type = new BuiltInTypeSymbol("void", 0);
-    auto void_ptr = TypeFactory::getPointer(void_type);
-
     BuiltIns::void_type = void_type;
 
     global_scope -> define(const_cast<Symbol*>(BuiltIns::void_type -> getSymbol()));
@@ -101,11 +94,6 @@ void BuiltIns::defineBuiltIns()
     ASCII_string -> defineBuiltInOperator("operator=", str_tp);
 
     global_scope -> defineBuiltInFunction("print" , TypeFactory::getFunctionType(void_type, {const_ref_ASCII_string}));
-//    global_scope -> defineBuiltInFunction("__fopen", TypeFactory::getFunctionType(int_struct, {const_ref_ASCII_string, int_struct, int_struct}));
-//    global_scope -> defineBuiltInFunction("__fclose", TypeFactory::getFunctionType(void_type, {int_struct}));
-//    global_scope -> defineBuiltInFunction("__fwrite", TypeFactory::getFunctionType(int_struct, {int_struct, const_ref_ASCII_string, int_struct}));
-//    global_scope -> defineBuiltInFunction("__fread", TypeFactory::getFunctionType(int_struct, {int_struct, ref_ASCII_string, int_struct}));
-//    global_scope -> defineBuiltInFunction("__brk", TypeFactory::getFunctionType(void_ptr, {void_ptr}));
 
     int_struct -> is_defined = true;
     ASCII_string -> is_defined = true;
@@ -114,28 +102,5 @@ void BuiltIns::defineBuiltIns()
     global_scope -> resolve("putchar") -> is_defined = true;
     global_scope -> resolve("getchar") -> is_defined = true;
     global_scope -> resolve("print") -> is_defined   = true;
-
-//    global_scope -> resolve("__fopen") -> is_defined  = true;
-//    global_scope -> resolve("__fclose") -> is_defined = true;
-//    global_scope -> resolve("__fwrite") -> is_defined = true;
-//    global_scope -> resolve("__fread") -> is_defined  = true;
-
-//    global_scope -> resolve("__brk") -> is_defined  = true;
-
-    global_scope -> defineBuiltInFunction("__mmap", 
-                                          TypeFactory::getFunctionType(void_ptr, 
-                                                                       {int_struct
-                                                                      , int_struct
-                                                                      , int_struct
-                                                                      , int_struct
-                                                                      , int_struct
-                                                                      , int_struct}
-                                                                      )
-                                          );
-
-//    global_scope -> defineBuiltInFunction("__fork", TypeFactory::getFunctionType(int_struct, { }));
-
-    global_scope -> resolve("__mmap") -> is_defined = true;
-//    global_scope -> resolve("__fork") -> is_defined = true;
 }
 

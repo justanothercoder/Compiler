@@ -10,7 +10,6 @@ ArrayType::ArrayType(const Type *type, int size) : type(type), size(size)
 
 std::string ArrayType::getName() const
 {
-// return type -> getName() + "*";
     return type -> getName() + "~arr" + std::to_string(size);
 }
 

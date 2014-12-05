@@ -12,11 +12,11 @@ FunctionSymbol::FunctionSymbol(std::string name
   //                               + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name), enclosing_scope,
 //                                 traits.is_constructor)
                                 : is_constexpr(false)
-                                , is_used(false)
-                                , name(name)
-                                , traits(traits)
-                                , type(type)
-                                , scope(scope)
+                                , is_used     (false)
+                                , name        (name)
+                                , traits      (traits)
+                                , type        (type)
+                                , scope       (scope)
 {
 
 }

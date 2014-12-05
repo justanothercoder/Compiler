@@ -9,7 +9,6 @@ ReferenceType::ReferenceType(const Type *type) : type(type)
 
 std::string ReferenceType::getName() const
 {
-//	return type -> getName() + "&";
     return type -> getName() + "~ref";
 }
 

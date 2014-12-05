@@ -2,10 +2,10 @@
 #include "globalconfig.hpp"
 
 OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name
-        , OverloadedFunctionTypeInfo type_info
-        , FunctionTraits traits) : name(name)
-    , type_info(type_info)
-    , traits(traits)
+                                                 , OverloadedFunctionTypeInfo type_info
+                                                 , FunctionTraits traits) : name     (name)
+                                                                          , type_info(type_info)
+                                                                          , traits   (traits)
 {
 
 }

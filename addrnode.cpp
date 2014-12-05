@@ -17,7 +17,6 @@ const Type* AddrNode::getType() const
 {
     if ( op == AddrOp::REF )
     {
-//        return TypeFactory::getPointer(expr -> getType());
         return TypeFactory::getPointer(expr -> getType() -> getUnqualifiedType());
     }
     else
@@ -36,7 +35,6 @@ const Type* AddrNode::getType() const
 
 bool AddrNode::isLeftValue() const
 {
-//	return false;
     return (op == AddrOp::DEREF);
 }
 

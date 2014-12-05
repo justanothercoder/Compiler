@@ -15,3 +15,13 @@ FunctionTraits::FunctionTraits(std::initializer_list<bool> init_list) : is_metho
 {
 
 }
+    
+FunctionTraits FunctionTraits::simple() { return {false, false, false}; }
+
+FunctionTraits FunctionTraits::oper() { return {false, false, true}; }
+
+FunctionTraits FunctionTraits::method() { return {true, false, false}; }
+
+FunctionTraits FunctionTraits::methodOper() { return {true, false, true}; }
+
+FunctionTraits FunctionTraits::constructor() { return {true, true, false}; }

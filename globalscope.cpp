@@ -53,7 +53,7 @@ void GlobalScope::defineBuiltInFunction(std::string name, const FunctionType *ty
                                               , this
                                               , false
                                               , false)
-                            , {false, false, false}
+                            , FunctionTraits::simple()
                             )
             ); 
 }
@@ -66,7 +66,7 @@ void GlobalScope::defineBuiltInOperator(std::string name, const FunctionType *ty
                                               , this
                                               , false
                                               , false)
-                            , {false, false, true}
+                            , FunctionTraits::oper()
                             )
             ); 
 }

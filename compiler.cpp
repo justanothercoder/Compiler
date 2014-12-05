@@ -19,7 +19,6 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
         type = scope -> resolveType(type_name);
     else
     {
-//        auto module = scope -> resolve(type_info.module_name);
         auto module = Comp::getUnit(type_info.module_name) -> module_symbol;
         assert(module -> getSymbolType() == SymbolType::MODULE);
         type = static_cast<ModuleSymbol*>(module) -> resolveType(type_name);
@@ -96,7 +95,6 @@ DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vec
             templates_name += std::to_string(boost::get<int>(param));
     }
 
-//    auto decl = new StructDeclarationNode(sym -> getName() + "~hash" + std::to_string(hash_), 
     auto decl = new StructDeclarationNode(templates_name, 
                                           vec, 
                                           *(new TemplateInfo(const_cast<TemplateStructSymbol*>(sym), 

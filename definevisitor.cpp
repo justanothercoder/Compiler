@@ -53,7 +53,7 @@ void DefineVisitor::visit(ExternNode *node)
                                                                , node -> scope
                                                                , false
                                                                , false)
-                                             , {false, false, false}
+                                             , FunctionTraits::simple()
                                              );
     
     node -> definedSymbol -> is_unsafe = node -> is_unsafe;

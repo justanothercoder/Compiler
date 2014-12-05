@@ -1,10 +1,4 @@
 #include "arg.hpp"
-#include "globaltable.hpp"
-#include "functionsymbol.hpp"
-#include "variablesymbol.hpp"
-#include "builtins.hpp"
-
-#include <iostream>
 #include <cassert>
 
 Arg::Arg(IdType type, int id) : type(type), id(id), expr_type(nullptr)

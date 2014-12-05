@@ -1,5 +1,4 @@
 #include "command.hpp"
-
 #include <cassert>
 
 Command::Command(SSAOp op, Arg arg) : op(op), arg1(arg), arg2(IdType::NOID, -1), offset(0)
