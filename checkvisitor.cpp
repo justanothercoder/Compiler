@@ -352,8 +352,6 @@ void CheckVisitor::visit(CallNode *node)
         node -> call_info = CallHelper::getCallInfo(func, node -> params);
     }
 
-    node -> caller -> type_hint = node -> call_info.callee -> getType();
-
     node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
 
