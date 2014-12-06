@@ -38,9 +38,9 @@ std::vector<AST*> NewExpressionNode::getChildren() const
     return std::vector<AST*>(std::begin(params), std::end(params));
 }
 
-const Type* NewExpressionNode::getType() const
+VariableType NewExpressionNode::getType() const
 {
-    return call_info.callee -> getType() -> getReturnType() -> getUnqualifiedType();
+    return VariableType(call_info.callee -> getType() -> getReturnType().unqualified(), false);
 }
 
 bool NewExpressionNode::isLeftValue() const

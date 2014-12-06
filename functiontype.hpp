@@ -4,28 +4,28 @@
 #include "type.hpp"
 #include "functiontypeinfo.hpp"
 
-class FunctionType : public Type
+class FunctionType
 {
 public:
 
-    FunctionType(const Type *return_type, FunctionTypeInfo type_info);
+    FunctionType(VariableType return_type, FunctionTypeInfo type_info);
 
-    std::string getName() const override;
+    std::string getName() const;
 
-    const Type* getReturnType() const;
+    VariableType getReturnType() const;
     const FunctionTypeInfo& getTypeInfo() const;
 
-    bool isConvertableTo(const Type *type) const override;
-    boost::optional<int> rankOfConversion(const Type *type) const override;
+//    bool isConvertableTo(const Type *type) const override;
+//    boost::optional<int> rankOfConversion(const Type *type) const override;
 
-    FunctionSymbol* getConversionTo(const Type *type) const override;
+//    FunctionSymbol* getConversionTo(const Type *type) const override;
 
-    TypeKind getTypeKind() const override;
-    size_t getSize() const override;
+//    TypeKind getTypeKind() const override;
+//    size_t getSize() const override;
 
 private:
 
-    const Type *return_type;
+    VariableType return_type;
     FunctionTypeInfo type_info;
 };
 

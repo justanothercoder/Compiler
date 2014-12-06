@@ -15,8 +15,8 @@ FunctionDeclarationNode::FunctionDeclarationNode(std::string name
                                                                  , statements      (statements)
                                                                  , traits          (traits)
                                                                  , definedSymbol   (nullptr)
-                                                                 , is_unsafe       (is_unsafe)
                                                                  , func_scope      (nullptr)
+                                                                 , is_unsafe       (is_unsafe)
 {
 
 }

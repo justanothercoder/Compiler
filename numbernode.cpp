@@ -14,9 +14,9 @@ AST* NumberNode::copyTree() const
     return new NumberNode(num);
 }
 
-const Type* NumberNode::getType() const
+VariableType NumberNode::getType() const
 {
-    return TypeFactory::getConst(BuiltIns::int_type);
+    return VariableType(BuiltIns::int_type, true);
 }
 
 bool NumberNode::isLeftValue() const

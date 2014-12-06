@@ -22,7 +22,7 @@ std::vector<AST*> BracketNode::getChildren() const
     return {base, expr};
 }
 
-const Type* BracketNode::getType() const
+VariableType BracketNode::getType() const
 {
     return call_info.callee -> getType() -> getReturnType();
 }

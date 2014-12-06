@@ -18,11 +18,9 @@ std::string StringNode::getStr() const
     return str;
 }
 
-const Type* StringNode::getType() const
+VariableType StringNode::getType() const
 {
-    static const Type *type = BuiltIns::global_scope -> resolveType("string");
-
-    return TypeFactory::getConst(type);
+    return VariableType(BuiltIns::ASCII_string_type, true);
 }
 
 bool StringNode::isLeftValue() const

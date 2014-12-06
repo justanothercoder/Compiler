@@ -43,8 +43,11 @@ void BuiltIns::defineBuiltIns()
     global_scope -> define(ASCII_string);
     global_scope -> define(char_struct);
 
-    int_struct  -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~int", GlobalConfig::int_size), VariableSymbolType::FIELD));
-    char_struct -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~char", GlobalConfig::int_size), VariableSymbolType::FIELD));
+    auto int_builtin = VariableType(new BuiltInTypeSymbol("~~int", GlobalConfig::int_size), false);
+    int_struct  -> define(new VariableSymbol("~~impl", int_builtin, VariableSymbolType::FIELD));
+
+    auto char_builtin = VariableType(new BuiltInTypeSymbol("~~char", GlobalConfig::int_size), false);
+    char_struct -> define(new VariableSymbol("~~impl", char_builtin, VariableSymbolType::FIELD));
 
     int_struct -> defineBuiltInConstructor(TypeFactory::getFunctionType(ref_int, {ref_int}));
     int_struct -> defineBuiltInConstructor(TypeFactory::getFunctionType(ref_int, {ref_int, const_ref_int}));
@@ -83,7 +86,8 @@ void BuiltIns::defineBuiltIns()
     global_scope -> defineBuiltInFunction("putchar", TypeFactory::getFunctionType(void_type, {char_struct}));    
     global_scope -> defineBuiltInFunction("getchar", TypeFactory::getFunctionType(int_struct, { }));
 
-    ASCII_string -> define(new VariableSymbol("~~impl", new BuiltInTypeSymbol("~~string", 256), VariableSymbolType::FIELD));
+    auto string_builtin = VariableType(new BuiltInTypeSymbol("~~string", 256), false);
+    ASCII_string -> define(new VariableSymbol("~~impl", string_builtin, VariableSymbolType::FIELD));
 
     auto str_tp = TypeFactory::getFunctionType(ref_ASCII_string, {ref_ASCII_string, const_ref_ASCII_string});
 

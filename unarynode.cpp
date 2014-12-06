@@ -39,7 +39,7 @@ AST* UnaryNode::copyTree() const
     return new UnaryNode(static_cast<ExprNode*>(exp -> copyTree()), op_type);
 }
 
-const Type* UnaryNode::getType() const
+VariableType UnaryNode::getType() const
 {
     return call_info.callee -> getType() -> getReturnType();
 }

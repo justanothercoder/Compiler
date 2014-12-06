@@ -4,15 +4,13 @@
 #include <boost/optional.hpp>
 
 #include "ast.hpp"
-#include "logger.hpp"
-
-class Type;
+#include "variabletype.hpp"
 
 class ExprNode : public AST
 {
 public:
 
-    virtual const Type* getType() const = 0;
+    virtual VariableType getType() const = 0;
     virtual bool isLeftValue() const = 0;
 
     virtual bool isCompileTimeExpr() const = 0;

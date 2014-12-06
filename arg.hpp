@@ -15,8 +15,6 @@ struct Arg
     Arg(IdType type, int id);
     Arg(IdType type, int id, const Type *expr_type);
 
-//	std::string toString() const;
-
     bool operator==(const Arg& a) const;
 
     IdType type;

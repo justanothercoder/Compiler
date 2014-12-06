@@ -29,7 +29,7 @@ void VariableSymbolDefine::visit(StructScope* sc)
 {
     sc -> table[sym -> getName()] = sym;
     sc -> getVarAlloc().addVariable(sym);
-    sc -> type_size += sym -> getType() -> getSize();
+    sc -> type_size += sym -> getType().size();
 }
 
 void VariableSymbolDefine::visit(FunctionScope* sc)

@@ -28,8 +28,8 @@ public:
     const TemplateInfo& getTemplateInfo() const override;
     bool isUnsafeBlock() const override;
 
-    void defineBuiltInFunction(std::string name, const FunctionType *type);
-    void defineBuiltInOperator(std::string name, const FunctionType *type);
+    void defineBuiltInFunction(std::string name, FunctionType type);
+    void defineBuiltInOperator(std::string name, FunctionType type);
 
 private:
 

@@ -21,7 +21,7 @@ AST* VariableNode::copyTree() const
     return new VariableNode(name);
 }
 
-const Type* VariableNode::getType() const
+VariableType VariableNode::getType() const
 {
     if ( isTemplateParam() )
     {
@@ -29,7 +29,7 @@ const Type* VariableNode::getType() const
 
         auto replace = template_info.getReplacement(name);
 
-        return BuiltIns::global_scope -> resolveType("int");
+        return VariableType(BuiltIns::int_type, true);
     }
 
     return variable -> getType();

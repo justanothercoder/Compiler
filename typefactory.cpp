@@ -22,15 +22,16 @@ const Type* TypeFactory::getPointer(const Type *type)
     if ( it == std::end(pointers) )
     {
         pointers[type] = new PointerType(type);
+        const auto& _tp = pointers[type];
 
-        const auto& tp = pointers[type];
-        auto tp_ref = getReference(tp);
-        static_cast<GlobalScope*>(BuiltIns::global_scope) -> defineBuiltInOperator("operator="
-                                                                                 , getFunctionType(tp_ref, {tp_ref, getConst(tp_ref)})
-                                                             );
-        static_cast<GlobalScope*>(BuiltIns::global_scope) -> defineBuiltInOperator("operator+"
-                                                                                 , getFunctionType(tp, {tp, BuiltIns::int_type})
-                                                             );
+        auto tp = VariableType(_tp, false);
+        auto tp_ref = VariableType(getReference(_tp), false);
+        auto const_tp_ref = VariableType(getReference(_tp), true);            
+    
+        auto nonconst_int = VariableType(BuiltIns::int_type, false);
+
+        static_cast<GlobalScope*>(BuiltIns::global_scope) -> defineBuiltInOperator("operator=", FunctionType(tp_ref, {tp_ref, const_tp_ref}));
+        static_cast<GlobalScope*>(BuiltIns::global_scope) -> defineBuiltInOperator("operator+", FunctionType(tp, {tp, nonconst_int}));
     }
 
     return pointers[type];
@@ -51,21 +52,6 @@ const Type* TypeFactory::getReference(const Type *type)
     return references[type];
 }
 
-const Type* TypeFactory::getConst(const Type *type)
-{
-    static std::map<const Type*, const Type*> consts;
-
-    if ( type -> getTypeKind() == TypeKind::CONSTTYPE )
-        return type;
-
-    auto it = consts.find(type);
-
-    if ( it == std::end(consts) )
-        consts[type] = new ConstType(type);
-
-    return consts[type];
-}
-    
 const Type* TypeFactory::getArray(const Type *type, int size)
 {
     static std::map<const Type*, std::map<int, const Type*> > arrays;
@@ -79,50 +65,21 @@ const Type* TypeFactory::getArray(const Type *type, int size)
     {
         arrays[type][size] = new ArrayType(type, size);
 
-        const auto& tp = arrays[type][size];
-        auto tp_ref = getReference(tp);
+        const auto& _tp = arrays[type][size];
 
-        auto array_assign = new FunctionSymbol("operator=", 
-                                               getFunctionType(tp_ref, {tp_ref, getConst(tp_ref)}), 
-                                               nullptr, 
-                                               {false, false, true}
-        );
-        BuiltIns::global_scope -> define(array_assign);
+        auto tp = VariableType(_tp, false);
+        auto tp_ref = VariableType(getReference(_tp), false);
+        auto const_tp_ref = VariableType(getReference(_tp), true);
 
-        auto array_add = new FunctionSymbol("operator+", 
-                                            getFunctionType(getPointer(type), {tp, BuiltIns::int_type}),
-                                            nullptr, 
-                                            {false, false, true}
-        );
-        BuiltIns::global_scope -> define(array_add);
+        auto type_ptr = VariableType(getPointer(type), false);
+        auto type_ref = VariableType(getReference(type), false);
 
-        auto array_elem = new FunctionSymbol("operator[]", 
-                                             getFunctionType(getReference(type), {tp, BuiltIns::int_type}), 
-                                             nullptr, 
-                                             {false, false, true}
-        );
-        BuiltIns::global_scope -> define(array_elem);
+        auto nonconst_int = VariableType(BuiltIns::int_type, false);
+
+        static_cast<GlobalScope*>(BuiltIns::global_scope) -> defineBuiltInOperator("operator=", FunctionType(tp_ref, {tp_ref, const_tp_ref}));
+        static_cast<GlobalScope*>(BuiltIns::global_scope) -> defineBuiltInOperator("operator+", FunctionType(type_ptr, {tp, nonconst_int}));
+        static_cast<GlobalScope*>(BuiltIns::global_scope) -> defineBuiltInOperator("operator[]", FunctionType(type_ref, {tp, nonconst_int}));
     }
 
     return arrays[type][size];
-}
-    
-const FunctionType* TypeFactory::getFunctionType(const Type *return_type, const FunctionTypeInfo& func_info)
-{
-    static std::map<const Type*, std::map<long long, const FunctionType*> > functions;
-
-    auto it = functions.find(return_type);
-
-    if ( it != std::end(functions) )
-    {
-        auto hash = std::hash<std::string>()(func_info.toString());
-        auto it2 = it -> second.find(hash);
-
-        if ( it2 == std::end(it -> second) )
-            it -> second[hash] = new FunctionType(return_type, func_info);
-    }
-    else
-        functions[return_type][std::hash<std::string>()(func_info.toString())] = new FunctionType(return_type, func_info); 
-
-    return functions[return_type][std::hash<std::string>()(func_info.toString())];
 }

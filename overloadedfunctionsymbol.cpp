@@ -44,7 +44,7 @@ bool OverloadedFunctionSymbol::isOperator() const
     return traits.is_operator;
 }
 
-const Type* OverloadedFunctionSymbol::getBaseType() const
+VariableType OverloadedFunctionSymbol::getBaseType() const
 {
     if ( !isMethod() )
         throw;

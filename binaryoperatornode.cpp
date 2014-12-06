@@ -56,7 +56,7 @@ std::vector<AST*> BinaryOperatorNode::getChildren() const
     return {lhs, rhs};
 }
 
-const Type* BinaryOperatorNode::getType() const
+VariableType BinaryOperatorNode::getType() const
 {
     return call_info.callee -> getType() -> getReturnType();
 }

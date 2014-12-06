@@ -127,13 +127,13 @@ void GenSSAVisitor::visit(WhileNode *node)
 
 void GenSSAVisitor::visit(BracketNode *node)
 {
-    if ( node -> base -> getType() -> getTypeKind() == TypeKind::ARRAY )
+    if ( node -> base -> getType().base() -> getTypeKind() == TypeKind::ARRAY )
     {
         _arg = code.add(Command(SSAOp::ELEM, getArg(node -> base), getArg(node -> expr)));
         return;
     }
     
-    if ( node -> base -> getType() -> getUnqualifiedType() == BuiltIns::ASCII_string_type )
+    if ( node -> base -> getType().base() -> getUnqualifiedType() == BuiltIns::ASCII_string_type )
     {
         _arg = code.add(Command(SSAOp::STRINGELEM, getArg(node -> base), getArg(node -> expr)));
         return;
@@ -149,7 +149,7 @@ void GenSSAVisitor::visit(BracketNode *node)
     );
 
     auto base_info = ConversionInfo(nullptr);
-    base_info.desired_type = TypeFactory::getReference(node -> base -> getType());
+    base_info.desired_type = TypeFactory::getReference(node -> base -> getType().base());
     code.addParamInfo(base_info);
 
     code.add(Command(SSAOp::PARAM, 
@@ -163,7 +163,7 @@ void GenSSAVisitor::visit(BracketNode *node)
                             Arg(IdType::PROCEDURE, 
                                 code.getFuncId(node -> call_info.callee)), 
                             Arg(IdType::NOID, 
-                                node -> expr -> getType() -> getSize() + 
+                                node -> expr -> getType().sizeOf() + 
                                 GlobalConfig::int_size)
                    )
     );
@@ -178,7 +178,7 @@ void GenSSAVisitor::visit(UnaryNode *node)
                             Arg(IdType::PROCEDURE, 
                                 code.getFuncId(node -> call_info.callee)), 
                             Arg(IdType::NOID, 
-                                node -> exp -> getType() -> getSize())
+                                node -> exp -> getType().sizeOf())
                     )
     );
 }
@@ -187,15 +187,11 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
 {
     const auto& params = node -> params;
 
-    auto expr_type = node -> getType() -> getUnqualifiedType();
+    auto expr_type = node -> getType().unqualified();
 
     code.addType(expr_type);
 
-    auto tmp_obj = code.add(Command(SSAOp::NEW, 
-                                    Arg(IdType::NOID, 
-                                        code.getTypeId(expr_type))
-                   )
-    );
+    auto tmp_obj = code.add(Command(SSAOp::NEW, Arg(IdType::NOID, code.getTypeId(expr_type))));
     
     if ( expr_type == BuiltIns::int_type || expr_type == BuiltIns::char_type )
     {
@@ -270,13 +266,13 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
     auto lhs_type = node -> lhs -> getType();
     auto rhs_type = node -> rhs -> getType();
 
-    if ( (lhs_type -> getUnqualifiedType() == BuiltIns::int_type 
-       || lhs_type -> getUnqualifiedType() == BuiltIns::char_type
-       || lhs_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::POINTER)
+    if ( (lhs_type.unqualified() == BuiltIns::int_type 
+       || lhs_type.unqualified() == BuiltIns::char_type
+       || lhs_type.unqualified() -> getTypeKind() == TypeKind::POINTER)
       && 
-         (rhs_type -> getUnqualifiedType() == BuiltIns::int_type 
-       || rhs_type -> getUnqualifiedType() == BuiltIns::char_type
-       || rhs_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::POINTER) )
+         (rhs_type.unqualified() == BuiltIns::int_type 
+       || rhs_type.unqualified() == BuiltIns::char_type
+       || rhs_type.unqualified() -> getTypeKind() == TypeKind::POINTER) )
     {
         auto rhs = getArg(node -> rhs);
         auto lhs = getArg(node -> lhs);
@@ -289,7 +285,7 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
         case BinaryOp::MUL    : op = SSAOp::MUL   ; break;
         case BinaryOp::DIV    : op = SSAOp::DIV   ; break;
         case BinaryOp::MOD    : op = SSAOp::MOD   ; break;
-        case BinaryOp::ASSIGN : op = (lhs_type -> getUnqualifiedType() == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR); break;
+        case BinaryOp::ASSIGN : op = (lhs_type.unqualified() == BuiltIns::int_type ? SSAOp::ASSIGN : SSAOp::ASSIGNCHAR); break;
         case BinaryOp::EQUALS : op = SSAOp::EQUALS; break;
         case BinaryOp::NEQUALS: op = SSAOp::NEQUALS; break;        
         case BinaryOp::AND    : op = SSAOp::AND; break;
@@ -307,7 +303,7 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
             code.add(Command(SSAOp::PARAM, getArg(node -> rhs), Arg(IdType::NOID, code.getInfoId(rhs_info))));
 
             auto lhs_info = ConversionInfo(nullptr);
-            lhs_info.desired_type = TypeFactory::getReference(node -> lhs -> getType() -> getUnqualifiedType());
+            lhs_info.desired_type = TypeFactory::getReference(node -> lhs -> getType().unqualified());
 
             code.addParamInfo(lhs_info);                      
             code.add(Command(SSAOp::PARAM, getArg(node -> lhs), Arg(IdType::NOID, code.getInfoId(lhs_info))));

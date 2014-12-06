@@ -23,7 +23,7 @@ public:
     bool isConstructor() const;
     bool isOperator() const;
 
-    const Type* getBaseType() const;
+    VariableType getBaseType() const;
 
     SymbolType getSymbolType() const override;
     TypeKind getTypeKind() const override;

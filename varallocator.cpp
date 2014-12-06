@@ -9,7 +9,7 @@ VarAllocator::VarAllocator() : space_for_variables(0)
 
 void VarAllocator::addVariable(VariableSymbol *var)
 {
-    int type_size = var -> getType() -> getSize();
+    int type_size = var -> getType().sizeOf();
 
     space_for_variables += type_size;
     var_addresses[var] = space_for_variables;

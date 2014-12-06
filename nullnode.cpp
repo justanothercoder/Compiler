@@ -19,9 +19,9 @@ std::string NullNode::toString() const
     return "null";
 }
 
-const Type* NullNode::getType() const
+VariableType NullNode::getType() const
 {
-    return TypeFactory::getPointer(BuiltIns::void_type);
+    return VariableType(TypeFactory::getPointer(BuiltIns::void_type), true);
 }
 
 bool NullNode::isLeftValue() const

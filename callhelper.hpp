@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "callinfo.hpp"
+#include "variabletype.hpp"
 
 class Scope;
 class ExprNode;
@@ -21,10 +22,10 @@ public:
     static const OverloadedFunctionSymbol* getOverloadedFunc(std::string name, const Scope *scope);
     static const OverloadedFunctionSymbol* getOverloadedMethod(std::string name, const StructSymbol *scope);
 
-    static const FunctionSymbol* resolveOverload(std::string name, const Scope *sc, std::vector<const Type*> params_types);
+    static const FunctionSymbol* resolveOverload(std::string name, const Scope *sc, std::vector<VariableType> params_types);
 
     static ConversionInfo getConversionInfo(const Type *lhs, const Type *rhs);
-    static std::vector<const Type*> extractTypes(std::vector<ExprNode*> params);
+    static std::vector<VariableType> extractTypes(std::vector<ExprNode*> params);
 };
 
 #endif

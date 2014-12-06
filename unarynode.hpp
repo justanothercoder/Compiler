@@ -25,7 +25,7 @@ public:
     std::string getOperatorName();
     std::string getCodeOperatorName();
 
-    const Type* getType() const override;
+    VariableType getType() const override;
     bool isLeftValue() const override;
 
     bool isCompileTimeExpr() const override;
