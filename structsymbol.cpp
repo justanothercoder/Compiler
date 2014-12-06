@@ -136,11 +136,6 @@ FunctionSymbol* StructSymbol::methodWith(std::string name, FunctionTypeInfo ft) 
     return it == std::end(info.symbols) ? nullptr : it -> second;
 }
 
-const Symbol* StructSymbol::getSymbol() const
-{
-    return this;
-}
-
 bool StructSymbol::isUnsafeBlock() const
 {
     return is_unsafe;

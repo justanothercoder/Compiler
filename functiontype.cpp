@@ -59,8 +59,3 @@ FunctionSymbol* FunctionType::getConversionTo(const Type *) const
 {
     return nullptr;
 }
-
-const Symbol* FunctionType::getSymbol() const
-{
-    return nullptr;
-}

@@ -54,8 +54,3 @@ const Type* ReferenceType::getUnqualifiedType() const
 {
     return type -> getUnqualifiedType();
 }
-
-const Symbol* ReferenceType::getSymbol() const
-{
-    return type -> getSymbol();
-}

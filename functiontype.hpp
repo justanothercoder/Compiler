@@ -20,8 +20,6 @@ public:
 
     FunctionSymbol* getConversionTo(const Type *type) const override;
 
-    const Symbol* getSymbol() const override;
-
     TypeKind getTypeKind() const override;
     size_t getSize() const override;
 

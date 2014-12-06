@@ -51,11 +51,6 @@ FunctionSymbol* ArrayType::getConversionTo(const Type *) const
     return nullptr;
 }
 
-const Symbol* ArrayType::getSymbol() const
-{
-    return type -> getSymbol();
-}
-
 const Type* ArrayType::getPointedType() const
 {
     return type;

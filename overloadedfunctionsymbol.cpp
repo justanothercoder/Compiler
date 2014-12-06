@@ -81,8 +81,3 @@ FunctionSymbol* OverloadedFunctionSymbol::getConversionTo(const Type *) const
 {
     return nullptr;
 }
-
-const Symbol* OverloadedFunctionSymbol::getSymbol() const
-{
-    return this;
-}

@@ -51,8 +51,8 @@ CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector
 
         conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type));
 
-        if ( !(desired_type -> isReference() || desired_type -> getTypeKind() == TypeKind::POINTER) )
-            static_cast<const StructSymbol*>(desired_type -> getSymbol()) -> getCopyConstructor() -> is_used = true;
+        if ( !desired_type -> isReference() && desired_type -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT )
+            static_cast<const StructSymbol*>(desired_type -> getUnqualifiedType()) -> getCopyConstructor() -> is_used = true;
     }
 
     return CallInfo(function_sym, conversions);

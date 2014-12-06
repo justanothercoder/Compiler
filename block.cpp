@@ -98,7 +98,7 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
         if ( variable -> isField() )
         {
             auto sym = static_cast<VariableSymbol*>(scope.resolve("this"));
-            auto struc_scope = static_cast<const StructSymbol*>(sym -> getType() -> getSymbol());
+            auto struc_scope = static_cast<const StructSymbol*>(sym -> getType() -> getUnqualifiedType());
 
             code_obj.emit("mov rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(sym)) + "]");
             if ( struc_scope -> getVarAlloc().getAddress(variable) != 0 )

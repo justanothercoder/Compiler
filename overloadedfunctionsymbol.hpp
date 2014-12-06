@@ -35,8 +35,6 @@ public:
 
     FunctionSymbol* getConversionTo(const Type *type) const override;
 
-    const Symbol* getSymbol() const override;
-
 private:
 
     std::string name;

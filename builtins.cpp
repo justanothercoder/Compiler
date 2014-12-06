@@ -77,7 +77,8 @@ void BuiltIns::defineBuiltIns()
     BuiltInTypeSymbol *void_type = new BuiltInTypeSymbol("void", 0);
     BuiltIns::void_type = void_type;
 
-    global_scope -> define(const_cast<Symbol*>(BuiltIns::void_type -> getSymbol()));
+//    global_scope -> define(const_cast<Symbol*>(BuiltIns::void_type -> getSymbol()));
+    global_scope -> define(void_type);
 
     global_scope -> defineBuiltInFunction("putchar", TypeFactory::getFunctionType(void_type, {char_struct}));    
     global_scope -> defineBuiltInFunction("getchar", TypeFactory::getFunctionType(int_struct, { }));

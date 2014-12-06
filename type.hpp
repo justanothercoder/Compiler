@@ -31,8 +31,6 @@ public:
 
     virtual FunctionSymbol* getConversionTo(const Type *type) const = 0;
 
-    virtual const Symbol* getSymbol() const;
-
     virtual const Type* getUnqualifiedType() const;
 };
 

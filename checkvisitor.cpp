@@ -74,7 +74,9 @@ void CheckVisitor::visit(UnaryNode *node)
 {
     node -> exp -> accept(*this);
 
-    node -> call_info = CallHelper::callCheck(node -> getOperatorName(), static_cast<const StructSymbol*>(node -> exp -> getType() -> getSymbol()), { });
+    auto type = static_cast<const StructSymbol*>(node -> exp -> getType() -> getUnqualifiedType());
+
+    node -> call_info = CallHelper::callCheck(node -> getOperatorName(), type, { });
 
     node -> scope -> getTempAlloc().add(node -> getType() -> getSize());
 }
@@ -102,8 +104,15 @@ void CheckVisitor::visit(BinaryOperatorNode *node)
     node -> rhs -> accept(*this);
     try
     {
-        if ( node -> lhs -> getType() -> getUnqualifiedType() -> getTypeKind() == TypeKind::STRUCT )
-            node -> call_info = CallHelper::callCheck(node -> getOperatorName(), static_cast<const StructSymbol*>(node -> lhs -> getType() -> getSymbol()), {node -> rhs});
+        auto lhs_type = node -> lhs -> getType();
+        auto lhs_unqualified = lhs_type -> getUnqualifiedType();
+
+        if ( lhs_unqualified -> getTypeKind() == TypeKind::STRUCT )
+        {       
+            node -> call_info = CallHelper::callCheck(node -> getOperatorName()
+                                                    , static_cast<const StructSymbol*>(lhs_unqualified)
+                                                    , {node -> rhs});
+        }
         else
             throw SemanticError("");
     }
@@ -327,10 +336,11 @@ void CheckVisitor::visit(CallNode *node)
 
     if ( caller_type -> getTypeKind() != TypeKind::OVERLOADEDFUNCTION )
     {
-        if ( caller_type -> getSymbol() -> getSymbolType() != SymbolType::STRUCT )
+        if ( caller_type -> getUnqualifiedType() -> getTypeKind() != TypeKind::STRUCT )
             throw SemanticError("caller '" + node -> caller -> toString() + "' is not a function.");
 
-        node -> call_info = CallHelper::callCheck("operator()", static_cast<const StructSymbol*>(caller_type -> getSymbol()), node -> params);
+        auto type = static_cast<const StructSymbol*>(caller_type -> getUnqualifiedType());
+        node -> call_info = CallHelper::callCheck("operator()", type, node -> params);
     }
     else
     {
@@ -369,7 +379,10 @@ void CheckVisitor::visit(ReturnNode *node)
     node -> expr -> accept(*this);
 
     if ( node -> expr -> getType() -> getTypeKind() != TypeKind::POINTER )
-        CallHelper::callCheck(node -> expr -> getType() -> getUnqualifiedType() -> getName(), static_cast<const StructSymbol*>(node -> expr -> getType() -> getSymbol()), {node -> expr});
+    {
+        auto unqualified_type = node -> expr -> getType() -> getUnqualifiedType();
+        CallHelper::callCheck(unqualified_type -> getName(), static_cast<const StructSymbol*>(unqualified_type), {node -> expr});
+    }
 
 }
 

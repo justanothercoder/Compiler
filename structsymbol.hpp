@@ -45,8 +45,6 @@ public:
 
     FunctionSymbol* methodWith(std::string name, FunctionTypeInfo ft) const;
 
-    const Symbol* getSymbol() const override;
-
     bool isUnsafeBlock() const override;
 
     void defineBuiltInMethod(std::string name, const FunctionType *type);

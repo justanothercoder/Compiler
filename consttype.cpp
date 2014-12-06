@@ -53,8 +53,3 @@ const Type* ConstType::getUnqualifiedType() const
 {
     return type -> getUnqualifiedType();
 }
-
-const Symbol* ConstType::getSymbol() const
-{
-    return type -> getSymbol();
-}
