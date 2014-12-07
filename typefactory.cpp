@@ -3,7 +3,6 @@
 #include "pointertype.hpp"
 #include "referencetype.hpp"
 #include "arraytype.hpp"
-#include "consttype.hpp"
 #include "builtins.hpp"
 #include "functionsymbol.hpp"
 #include "globalscope.hpp"
