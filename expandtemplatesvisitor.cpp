@@ -21,6 +21,7 @@
 #include "definevisitor.hpp"
 #include "checkvisitor.hpp"
 #include "genssavisitor.hpp"
+#include "logger.hpp"
 
 void ExpandTemplatesVisitor::visit(IfNode *node)
 {

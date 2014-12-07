@@ -10,7 +10,7 @@ AST* TypeNode::copyTree() const
     return new TypeNode(name);
 }
 
-const Type* TypeNode::getType() const 
+VariableType TypeNode::getType() const 
 {
     return nullptr;
 }

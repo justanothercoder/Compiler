@@ -1,13 +1,12 @@
 #include "functiontypeinfo.hpp"
 #include "structsymbol.hpp"
-#include "logger.hpp"
 
-FunctionTypeInfo::FunctionTypeInfo(std::vector<const Type*> params_types) : params_types(params_types)
+FunctionTypeInfo::FunctionTypeInfo(std::vector<VariableType> params_types) : params_types(params_types)
 {
 
 }
 
-FunctionTypeInfo::FunctionTypeInfo(std::initializer_list<const Type*> init_list) : params_types(init_list)
+FunctionTypeInfo::FunctionTypeInfo(std::initializer_list<VariableType> init_list) : params_types(init_list)
 {
 
 }
@@ -41,9 +40,9 @@ std::string FunctionTypeInfo::toString() const
     {
         auto it = std::begin(params_types);
 
-        res += (*it) -> getName();
+        res += it -> getName();
         for ( ++it; it != std::end(params_types); ++it )
-            res += ", " + (*it) -> getName();
+            res += ", " + it -> getName();
     }
 
     res += ")";
@@ -58,7 +57,7 @@ long long FunctionTypeInfo::hash_func() const
     std::hash<std::string> hash_fn;
 
     for ( auto type : params_types )
-        res += hash_fn(type -> getName());
+        res += hash_fn(type.getName());
 
     return res;
 }
@@ -70,7 +69,8 @@ bool FunctionTypeInfo::isCompatibleWith(const FunctionTypeInfo& info) const
 
     for ( size_t i = 0; i < info.params_types.size(); ++i )
     {
-        if ( !info.params_types[i] -> isConvertableTo(params_types[i]) )
+        if ( /*(info.params_types[i].isConst() && !params_types[i].isConst())
+          || */(!info.params_types[i].base() -> isConvertableTo(params_types[i].base())) )
             return false;
     }
 
@@ -82,7 +82,7 @@ int FunctionTypeInfo::rankOfConversion(const FunctionTypeInfo& info) const
     int rank = 0;
 
     for ( int i = 0; i < static_cast<int>(params_types.size()); ++i )
-        rank += *(info.params_types[i] -> rankOfConversion(params_types[i]));
+        rank += *(info.params_types[i].base() -> rankOfConversion(params_types[i].base()));
 
     return rank;
 }

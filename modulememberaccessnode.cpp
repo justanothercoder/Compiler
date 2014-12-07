@@ -27,7 +27,7 @@ void ModuleMemberAccessNode::accept(ASTVisitor& visitor)
     visitor.visit(this);
 }
     
-const Type* ModuleMemberAccessNode::getType() const
+VariableType ModuleMemberAccessNode::getType() const
 {    
     if ( member_sym -> getSymbolType() == SymbolType::VARIABLE ) 
         return static_cast<VariableSymbol*>(member_sym) -> getType();

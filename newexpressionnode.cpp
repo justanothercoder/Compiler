@@ -40,7 +40,7 @@ std::vector<AST*> NewExpressionNode::getChildren() const
 
 VariableType NewExpressionNode::getType() const
 {
-    return VariableType(call_info.callee -> getType() -> getReturnType().unqualified(), false);
+    return VariableType(call_info.callee -> type().returnType().unqualified(), false);
 }
 
 bool NewExpressionNode::isLeftValue() const

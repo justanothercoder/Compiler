@@ -1,5 +1,5 @@
 extern unsafe __brk(void* brk) : void*;
-extern unsafe __mmap(int a, int size, int b, int c, int d, int e) : void*;
+extern unsafe __mmap(int addr, int len, int prot, int flags, int fd, int off) : void*;
 
 def unsafe sbrk(int size) : void*
 {

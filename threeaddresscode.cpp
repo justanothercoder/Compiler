@@ -43,9 +43,9 @@ Arg ThreeAddressCode::add(Command command)
         command_type = BuiltIns::int_type;
         break;
     case SSAOp::DEREF: command_type = static_cast<const PointerType*>(command.arg1.expr_type); break;
-    case SSAOp::ADDR : command_type = TypeFactory::getPointer(command.arg1.expr_type -> getUnqualifiedType()); break;
-    case SSAOp::DOT  : command_type = globaltable.var_by_id[command.arg2.id] -> getType(); break;
-    case SSAOp::CALL : command_type = globaltable.func_by_id[command.arg1.id] -> getType() -> getReturnType(); break;
+    case SSAOp::ADDR : command_type = TypeFactory::getPointer(VariableType(command.arg1.expr_type).unqualified()); break;
+    case SSAOp::DOT  : command_type = globaltable.var_by_id[command.arg2.id] -> getType().base(); break;
+    case SSAOp::CALL : command_type = globaltable.func_by_id[command.arg1.id] -> type().returnType().base(); break;
     case SSAOp::NEW  : command_type = globaltable.type_by_id[command.arg1.id]; break;
     case SSAOp::STRINGELEM: command_type = TypeFactory::getReference(BuiltIns::char_type); break;
     default:

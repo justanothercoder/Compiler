@@ -21,7 +21,7 @@ public:
 
     AST* copyTree() const override;
 
-    const Type* getType() const override;
+    VariableType getType() const override;
     bool isLeftValue() const override;
 
     bool isCompileTimeExpr() const override;

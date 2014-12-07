@@ -10,7 +10,7 @@ AST* FunctionNode::copyTree() const
     return new FunctionNode(name);
 }
 
-const Type* FunctionNode::getType() const 
+VariableType FunctionNode::getType() const 
 {
     return function;   
 }

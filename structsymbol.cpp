@@ -55,9 +55,9 @@ bool StructSymbol::hasConversionOperator(const StructSymbol *st) const
 
 FunctionSymbol* StructSymbol::getConversionConstructor(const StructSymbol *st) const
 {
-    auto ref_this     = TypeFactory::getReference(this);
-    auto ref_st       = TypeFactory::getReference(st);
-    auto const_ref_st = TypeFactory::getConst(ref_st);
+    auto ref_this     = VariableType(TypeFactory::getReference(this), false);
+    auto ref_st       = VariableType(TypeFactory::getReference(st), false);
+    auto const_ref_st = VariableType(TypeFactory::getReference(st), true);
 
     auto constr_const_ref = constructorWith({ref_this, const_ref_st});
 
@@ -76,9 +76,6 @@ FunctionSymbol* StructSymbol::getConversionOperator(const StructSymbol *st) cons
 
 FunctionSymbol* StructSymbol::getConversionTo(const Type *type) const
 {
-//	if ( type -> getTypeKind() != TypeKind::STRUCT )
-//		return nullptr;
-
     type = type -> getUnqualifiedType();
 
     auto st = static_cast<const StructSymbol*>(type);
@@ -95,8 +92,8 @@ FunctionSymbol* StructSymbol::getConversionTo(const Type *type) const
 
 FunctionSymbol* StructSymbol::getCopyConstructor() const
 {
-    auto ref_this       = TypeFactory::getReference(this);
-    auto const_ref_this = TypeFactory::getConst(ref_this);
+    auto ref_this       = VariableType(TypeFactory::getReference(this), false);
+    auto const_ref_this = VariableType(TypeFactory::getReference(this), true);
 
     return constructorWith({ref_this, const_ref_this});
 }
@@ -141,7 +138,7 @@ bool StructSymbol::isUnsafeBlock() const
     return is_unsafe;
 }
     
-void StructSymbol::defineBuiltInMethod(std::string name, const FunctionType *type)
+void StructSymbol::defineBuiltInMethod(std::string name, FunctionType type)
 {
     define(new FunctionSymbol(name
                             , type
@@ -154,7 +151,7 @@ void StructSymbol::defineBuiltInMethod(std::string name, const FunctionType *typ
             );
 }
 
-void StructSymbol::defineBuiltInOperator(std::string name, const FunctionType *type)
+void StructSymbol::defineBuiltInOperator(std::string name, FunctionType type)
 {
     define(new FunctionSymbol(name
                             , type
@@ -167,7 +164,7 @@ void StructSymbol::defineBuiltInOperator(std::string name, const FunctionType *t
             );
 }
 
-void StructSymbol::defineBuiltInConstructor(const FunctionType *type)
+void StructSymbol::defineBuiltInConstructor(FunctionType type)
 {
     define(new FunctionSymbol(name
                             , type

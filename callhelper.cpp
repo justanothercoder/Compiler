@@ -14,7 +14,7 @@ CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector
     if ( function_sym == nullptr )
         throw NoViableOverloadError(name, params_types);
 
-    auto function_info = function_sym -> getType() -> getTypeInfo();
+    auto function_info = function_sym -> type().typeInfo();
 
     int is_meth = (function_sym -> isMethod() ? 1 : 0);
 
@@ -36,7 +36,7 @@ CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector
     assert(function_sym != nullptr);
     function_sym -> is_used = true;
 
-    auto function_info = function_sym -> getType() -> getTypeInfo();
+    auto function_info = function_sym -> type().typeInfo();
 
     auto params_types = CallHelper::extractTypes(params);
 

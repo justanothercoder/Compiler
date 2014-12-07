@@ -17,12 +17,12 @@ class FunctionSymbol : public Symbol
 {
 public:
 
-    FunctionSymbol(std::string name, const FunctionType *type, FunctionScope *scope, FunctionTraits traits);
+    FunctionSymbol(std::string name, FunctionType type, FunctionScope *scope, FunctionTraits traits);
 
     std::string getTypedName() const;
     std::string getScopedTypedName() const;
 
-    const FunctionType* getType() const;
+    FunctionType type() const;
 
     Scope* getScope() const;
 
@@ -46,7 +46,7 @@ private:
     std::string name;
 
     FunctionTraits traits;
-    const FunctionType *type;
+    FunctionType _type;
     FunctionScope *scope;
 };
 

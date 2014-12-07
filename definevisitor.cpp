@@ -37,7 +37,7 @@ void DefineVisitor::visit(ExternNode *node)
 {
     auto return_type = fromTypeInfo(node -> return_type_info, node -> scope);
 
-    std::vector<const Type*> params_types;
+    std::vector<VariableType> params_types;
 
     for ( auto i : node -> params )
     {
@@ -45,7 +45,7 @@ void DefineVisitor::visit(ExternNode *node)
         params_types.push_back(param_type);
     }
 
-    auto type = TypeFactory::getFunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
+    auto type = FunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
 
     node -> definedSymbol = new FunctionSymbol(node -> name
                                              , type
@@ -86,7 +86,7 @@ void DefineVisitor::visit(StructDeclarationNode *node)
 
 void DefineVisitor::visit(FunctionDeclarationNode *node)
 {
-    auto fromTypeInfo = [&] (TypeInfo type_info) -> const Type*
+    auto fromTypeInfo = [&] (TypeInfo type_info) -> VariableType
     {
         if ( node -> traits.is_constructor && type_info.type_name == static_cast<StructSymbol*>(node -> scope) -> getName() )
         {
@@ -95,17 +95,14 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
             if ( type_info.is_ref )
                 type = TypeFactory::getReference(type);
 
-            if ( type_info.is_const )
-                type = TypeFactory::getConst(type);
-
-            return type;
+            return VariableType(type, type_info.is_const);
         }
         return DefineVisitor::fromTypeInfo(type_info, node -> func_scope);
     };
 
     auto return_type = fromTypeInfo(node -> return_type_info);
 
-    std::vector<const Type*> params_types;
+    std::vector<VariableType> params_types;
 
     if ( node -> traits.is_method )
     {
@@ -130,7 +127,7 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
         node -> func_scope -> define(param_sym);
     }
 
-    auto type = TypeFactory::getFunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
+    auto type = FunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
 
     node -> definedSymbol = new FunctionSymbol(
                                            node -> traits.is_constructor ? static_cast<StructSymbol*>(node -> scope) -> getName() : node -> name

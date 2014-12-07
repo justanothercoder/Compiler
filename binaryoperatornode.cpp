@@ -58,7 +58,7 @@ std::vector<AST*> BinaryOperatorNode::getChildren() const
 
 VariableType BinaryOperatorNode::getType() const
 {
-    return call_info.callee -> getType() -> getReturnType();
+    return call_info.callee -> type().returnType();
 }
 
 bool BinaryOperatorNode::isLeftValue() const

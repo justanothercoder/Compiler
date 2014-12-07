@@ -47,9 +47,9 @@ public:
 
     bool isUnsafeBlock() const override;
 
-    void defineBuiltInMethod(std::string name, const FunctionType *type);
-    void defineBuiltInOperator(std::string name, const FunctionType *type);
-    void defineBuiltInConstructor(const FunctionType *type);
+    void defineBuiltInMethod(std::string name, FunctionType type);
+    void defineBuiltInOperator(std::string name, FunctionType type);
+    void defineBuiltInConstructor(FunctionType type);
 
 private:
 

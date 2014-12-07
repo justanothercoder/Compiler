@@ -10,7 +10,7 @@ AST* ModuleNode::copyTree() const
     return new ModuleNode(name);
 }
 
-const Type* ModuleNode::getType() const 
+VariableType ModuleNode::getType() const 
 {
     return nullptr;
 }

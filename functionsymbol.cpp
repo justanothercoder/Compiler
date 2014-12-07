@@ -4,18 +4,15 @@
 #include "globalconfig.hpp"
 
 FunctionSymbol::FunctionSymbol(std::string name
-                               , const FunctionType *type
+                               , FunctionType _type
                                , FunctionScope *scope
                                , FunctionTraits traits
                               ) 
-//: FunctionScope(enclosing_scope -> getScopeName() 
-  //                               + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name), enclosing_scope,
-//                                 traits.is_constructor)
                                 : is_constexpr(false)
                                 , is_used     (false)
                                 , name        (name)
                                 , traits      (traits)
-                                , type        (type)
+                                , _type       (_type)
                                 , scope       (scope)
 {
 
@@ -25,20 +22,20 @@ std::string FunctionSymbol::getTypedName() const
 {
     auto res = (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name);
 
-    for ( auto type : type -> getTypeInfo().params_types )
-        res += "_" + type -> getName();
+    for ( auto param_type : _type.typeInfo().params_types )
+        res += "_" + param_type.getName();
 
     return res;
 }
 
 std::string FunctionSymbol::getScopedTypedName() const
 {
-    auto res = scope -> getScopeName(); //scope_name;
+    auto res = scope -> getScopeName(); 
 
-    auto& pt = type -> getTypeInfo().params_types;
+    auto& pt = _type.typeInfo().params_types;
 
-    for ( auto type : pt )
-        res += "_" + type -> getName();
+    for ( auto param_type : pt )
+        res += "_" + param_type.getName();
 
     return res;
 }
@@ -79,9 +76,9 @@ ScopeVisitor& FunctionSymbol::getScopeVisitor()
 }
 
   
-const FunctionType* FunctionSymbol::getType() const
+FunctionType FunctionSymbol::type() const
 {
-    return type;
+    return _type;
 }
 
 Scope* FunctionSymbol::getScope() const

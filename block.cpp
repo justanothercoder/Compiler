@@ -98,13 +98,13 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
         if ( variable -> isField() )
         {
             auto sym = static_cast<VariableSymbol*>(scope.resolve("this"));
-            auto struc_scope = static_cast<const StructSymbol*>(sym -> getType() -> getUnqualifiedType());
+            auto struc_scope = static_cast<const StructSymbol*>(sym -> getType().unqualified());
 
             code_obj.emit("mov rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(sym)) + "]");
             if ( struc_scope -> getVarAlloc().getAddress(variable) != 0 )
                 code_obj.emit("lea rax, [rax + " + std::to_string(struc_scope -> getVarAlloc().getAddress(variable)) + "]");
         }
-        else if ( variable -> getType() -> isReference() )
+        else if ( variable -> getType().isReference() )
         {
             code_obj.emit("mov rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(variable)) + "]");
         }
@@ -273,7 +273,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         else
         {
             command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-            scope.getTempAlloc().claim(callee -> getType() -> getReturnType() -> getSize());
+            scope.getTempAlloc().claim(callee -> type().returnType().sizeOf());
 
             code_obj.emit("lea rax, [rbp - " + std::to_string(command.offset) + "]");
             code_obj.emit("push rax");

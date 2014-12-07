@@ -12,8 +12,8 @@ public:
 
     std::string getName() const;
 
-    VariableType getReturnType() const;
-    const FunctionTypeInfo& getTypeInfo() const;
+    VariableType returnType() const;
+    const FunctionTypeInfo& typeInfo() const;
 
 //    bool isConvertableTo(const Type *type) const override;
 //    boost::optional<int> rankOfConversion(const Type *type) const override;

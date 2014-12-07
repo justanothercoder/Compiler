@@ -9,7 +9,7 @@
 #include "compilableunit.hpp"
 #include "comp.hpp"
 
-const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
+VariableType Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
 {
     auto type_name = type_info.type_name;
 
@@ -46,11 +46,8 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
     if ( type_info.is_ref )
         type = TypeFactory::getReference(type);
 
-    if ( type_info.is_const )
-        type = TypeFactory::getConst(type);
-
     assert(type != nullptr);
-    return type;
+    return VariableType(type, type_info.is_const);
 }
 
 DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vector<TemplateParam> template_params)

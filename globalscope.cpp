@@ -45,7 +45,7 @@ bool GlobalScope::isUnsafeBlock() const
     return false;
 }
     
-void GlobalScope::defineBuiltInFunction(std::string name, const FunctionType *type)
+void GlobalScope::defineBuiltInFunction(std::string name, FunctionType type)
 {
     define(new FunctionSymbol(name
                             , type
@@ -58,7 +58,7 @@ void GlobalScope::defineBuiltInFunction(std::string name, const FunctionType *ty
             ); 
 }
 
-void GlobalScope::defineBuiltInOperator(std::string name, const FunctionType *type)
+void GlobalScope::defineBuiltInOperator(std::string name, FunctionType type)
 {
     define(new FunctionSymbol(name
                             , type
