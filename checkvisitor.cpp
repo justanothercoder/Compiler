@@ -365,14 +365,14 @@ void CheckVisitor::visit(CallNode *node)
 
 void CheckVisitor::visit(ReturnNode *node)
 {
-    auto _scope = node -> scope;
-    while ( _scope != nullptr && dynamic_cast<FunctionScope*>(_scope) == nullptr )
-        _scope = _scope -> enclosingScope();
+    auto scope = node -> scope;
+    while ( scope != nullptr && dynamic_cast<FunctionScope*>(scope) == nullptr )
+        scope = scope -> enclosingScope();
 
-    if ( _scope == nullptr )
+    if ( scope == nullptr )
         throw SemanticError("return is not in a function");
 
-    node -> enclosing_func = dynamic_cast<FunctionScope*>(_scope) -> func;
+    node -> enclosing_func = static_cast<FunctionScope*>(scope) -> func;
 
     node -> expr -> accept(*this);
    
