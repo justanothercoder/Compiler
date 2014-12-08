@@ -26,7 +26,7 @@
 #include "varinfertypedeclarationnode.hpp"
 #include "externnode.hpp"
 #include "typefactory.hpp"
-#include "logger.hpp"
+#include "localscope.hpp"
 
 GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : _arg(IdType::NOID, -1), code(code)
 {
@@ -528,6 +528,12 @@ void GenSSAVisitor::visit(NumberNode *node)
 
 void GenSSAVisitor::visit(CallNode *node)
 {
+    if ( shouldBeInlined(node -> call_info) )
+    {
+        genInlineCall(node);
+        return;
+    }
+
     int params_size = 0;
     
     for ( auto param = node -> params.rbegin(); param != node -> params.rend(); ++param )
@@ -639,3 +645,65 @@ void GenSSAVisitor::visit(FunctionNode* ) { }
 void GenSSAVisitor::visit(ModuleMemberAccessNode* ) { }
 void GenSSAVisitor::visit(ImportNode *) { }
 
+bool GenSSAVisitor::shouldBeInlined(CallInfo call_info)
+{
+    return false;
+
+    auto func = call_info.callee;
+
+    return std::all_of(std::begin(func -> type().typeInfo().params_types)
+                     , std::end(func -> type().typeInfo().params_types)
+                     , [](VariableType type) {
+                         return type.base() == BuiltIns::int_type 
+                             || type.base() == BuiltIns::char_type 
+                             || type.isReference() 
+                             || type.base() -> getTypeKind() == TypeKind::POINTER;
+    });
+}
+
+void GenSSAVisitor::genInlineCall(CallNode* node)
+{
+/*
+    const auto& call_info = node -> call_info;
+    const auto& params    = node -> params;
+
+    auto decl = call_info.callee -> function_decl;
+    auto tree = decl -> getChildren().front() -> copyTree();
+
+    tree -> scope = new LocalScope(node -> scope);
+    
+    auto it = std::begin(params);
+
+    for ( auto param : decl -> params )
+    {
+        auto param_type = fromTypeInfo(param.second, tree -> scope);
+        auto param_symbol = new VariableSymbol(param.first, param_type);
+        tree -> scope -> define(param_symbol);
+
+        ConversionInfo info = *(call_info.conversions.rbegin() + (it - std::begin(params)));
+        code.addParamInfo(info);
+        code.add(Command(SSAOp::PARAM, getArg(*it), code.getInfoId(info)));
+            
+        code.addVariable(param_symbol);
+        Arg var(IdType::VARIABLE, code.getVarId(param_symbol), param_symbol -> getType().base()); 
+
+        ConversionInfo copy_info(nullptr);
+        copy_info.desired_type = TypeFactory::getReference(param_type.unqualified());
+        code.addParamInfo(copy_info);
+        code.add(Command(SSAOp::PARAM, var, code.getInfoId(copy_info)));
+
+        auto copy_constr = static_cast<const StructSymbol*>(param_type.unqualified()) -> getCopyConstructor();
+        code.addFunction(copy_constr);
+
+        _arg = code.add(Command(SSAOp::CALL, 
+                                Arg(IdType::PROCEDURE, 
+                                    code.getFuncId(copy_constr)), 
+                                Arg(IdType::NOID, 
+                                    param_type.sizeOf() + 
+                                    GlobalConfig::int_size)
+                       )
+    }
+    
+    tree -> accept(*this);
+*/    
+}

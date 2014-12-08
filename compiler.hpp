@@ -6,6 +6,8 @@
 
 class DeclarationNode;
 class DefineVisitor;
+class Symbol;
+class TemplateStructSymbol;
 
 class Compiler
 {

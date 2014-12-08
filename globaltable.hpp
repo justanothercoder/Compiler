@@ -8,17 +8,10 @@
 #include "templateparam.hpp"
 #include "conversioninfo.hpp"
 
-class AST;
-class ExprNode;
 class Type;
 class Scope;
-class Symbol;
 class FunctionSymbol;
 class VariableSymbol;
-
-class TypeInfo;
-class TemplateStructSymbol;
-struct TemplateInfo;
 
 class GlobalTable
 {

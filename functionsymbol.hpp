@@ -12,6 +12,7 @@
 #include "globaltable.hpp"
 
 class VariableSymbol;
+class FunctionDeclarationNode;
 
 class FunctionSymbol : public Symbol
 {
@@ -41,6 +42,7 @@ public:
 
     ScopeVisitor& getScopeVisitor() override;
 
+    FunctionDeclarationNode* function_decl;
 private:
 
     std::string name;

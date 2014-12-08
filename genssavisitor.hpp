@@ -47,8 +47,11 @@ public:
     void visit(VariableDeclarationNode* node) override;
     void visit(VarInferTypeDeclarationNode* node) override;
     void visit(TemplateStructDeclarationNode* node) override;
-
+    
 private:
+
+    bool shouldBeInlined(CallInfo call_info);
+    void genInlineCall(CallNode* node);
 
     std::stack< std::pair<Arg, Arg> > loop_label;
 

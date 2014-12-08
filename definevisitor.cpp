@@ -135,6 +135,8 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
                                          , node -> func_scope
                                          , node -> traits
     );
+
+    node -> definedSymbol -> function_decl = node;
     
     node -> func_scope -> func = node -> definedSymbol;
     node -> definedSymbol -> is_unsafe = node -> is_unsafe;
