@@ -13,7 +13,7 @@ std::string PointerType::getName() const
     return type -> getName() + "~ptr";
 }
 
-size_t PointerType::getSize() const
+size_t PointerType::sizeOf() const
 {
     return GlobalConfig::int_size;
 }

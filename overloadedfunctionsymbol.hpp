@@ -13,7 +13,7 @@ public:
     OverloadedFunctionSymbol(std::string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits);
 
     std::string getName() const override;
-    size_t getSize() const override;
+    size_t sizeOf() const override;
 
     OverloadedFunctionTypeInfo getTypeInfo() const;
 

@@ -19,7 +19,7 @@ public:
     virtual ~Type();
 
     virtual std::string getName() const = 0;
-    virtual size_t getSize() const = 0;
+    virtual size_t sizeOf() const = 0;
 
     virtual TypeKind getTypeKind() const = 0;
 

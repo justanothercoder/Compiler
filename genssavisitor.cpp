@@ -233,7 +233,7 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
                         )
                 );
 
-        params_size += info.desired_type -> getSize();
+        params_size += info.desired_type -> sizeOf();
     }
 
     
@@ -313,10 +313,8 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
                                     Arg(IdType::PROCEDURE, 
                                         code.getFuncId(node -> call_info.callee)),
                                     Arg(IdType::NOID, 
-//                                        lhs_type -> getSize() + 
-//                                        rhs_type -> getSize())
-                                        rhs_info.desired_type -> getSize() +
-                                        lhs_info.desired_type -> getSize()) 
+                                        rhs_info.desired_type -> sizeOf() +
+                                        lhs_info.desired_type -> sizeOf()) 
                             )
             );
         }
@@ -336,10 +334,8 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
                                     Arg(IdType::PROCEDURE, 
                                         code.getFuncId(node -> call_info.callee)),
                                     Arg(IdType::NOID, 
-//                                        lhs_type -> getSize() + 
-//                                        rhs_type -> getSize())
-                                        rhs_info.desired_type -> getSize() +
-                                        lhs_info.desired_type -> getSize())
+                                        rhs_info.desired_type -> sizeOf() +
+                                        lhs_info.desired_type -> sizeOf())
                             )
             );
         }
@@ -439,7 +435,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                                 )
                         );
 
-                params_size += info.desired_type -> getSize();
+                params_size += info.desired_type -> sizeOf();
             }
 
             auto info = ConversionInfo(nullptr); 
@@ -544,7 +540,7 @@ void GenSSAVisitor::visit(CallNode *node)
                         )
                 );
 
-        params_size += info.desired_type -> getSize();
+        params_size += info.desired_type -> sizeOf();
     }
 
     if ( node -> call_info.callee -> isMethod() )
@@ -615,7 +611,7 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
                     )
     );
 
-    int params_size = expr_type -> getSize() + GlobalConfig::int_size;
+    int params_size = expr_type -> sizeOf() + GlobalConfig::int_size;
 
     code.addFunction(node -> call_info.callee);
     code.add(Command(SSAOp::CALL,

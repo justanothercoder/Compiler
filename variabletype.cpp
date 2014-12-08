@@ -32,7 +32,7 @@ const Type* VariableType::unqualified() const
     
 int VariableType::sizeOf() const
 {
-    return type -> getSize();
+    return type -> sizeOf();
 }
     
 bool VariableType::isReference() const

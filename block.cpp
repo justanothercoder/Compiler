@@ -232,7 +232,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             auto conv = conversion_info.conversion;
 
             code_obj.emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
-            code_obj.emit("sub rsp, " + std::to_string(param_type -> getSize()));
+            code_obj.emit("sub rsp, " + std::to_string(param_type -> sizeOf()));
 
             code_obj.emit("push rax");
             code_obj.emit("push rbx");
@@ -244,7 +244,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         else
         {
             code_obj.emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
-            code_obj.emit("sub rsp, " + std::to_string(param_type -> getSize()));
+            code_obj.emit("sub rsp, " + std::to_string(param_type -> sizeOf()));
 
             if ( param_type -> isReference() )
             {
@@ -408,7 +408,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         auto object_type = table.type_by_id.at(command.arg1.id);
 
         command.offset = GlobalTable::transformAddress(&scope, scope.tempAlloc().getOffset());
-        scope.tempAlloc().claim(object_type -> getSize());
+        scope.tempAlloc().claim(object_type -> sizeOf());
 
         return;
     }    
@@ -484,7 +484,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
 
         genArg(command.arg1, code_obj);
         code_obj.emit("pop rbx");
-        code_obj.emit("imul rbx, " + std::to_string(static_cast<const ArrayType*>(command.arg1.expr_type) -> type -> getSize()));
+        code_obj.emit("imul rbx, " + std::to_string(static_cast<const ArrayType*>(command.arg1.expr_type) -> type -> sizeOf()));
         code_obj.emit("add rax, rbx");
 
         code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");

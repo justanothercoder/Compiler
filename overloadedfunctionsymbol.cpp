@@ -15,7 +15,7 @@ std::string OverloadedFunctionSymbol::getName() const
     return name;
 }
 
-size_t OverloadedFunctionSymbol::getSize() const
+size_t OverloadedFunctionSymbol::sizeOf() const
 {
     return GlobalConfig::int_size;
 }

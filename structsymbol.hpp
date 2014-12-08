@@ -23,7 +23,7 @@ public:
     SymbolType getSymbolType() const override;
     std::string getName() const override;
 
-    size_t getSize() const override;
+    size_t sizeOf() const override;
     TypeKind getTypeKind() const override;
 
     FunctionSymbol* getConversionTo(const Type *type) const;

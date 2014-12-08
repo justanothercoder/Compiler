@@ -12,7 +12,7 @@ std::string ReferenceType::getName() const
     return type -> getName() + "~ref";
 }
 
-size_t ReferenceType::getSize() const
+size_t ReferenceType::sizeOf() const
 {
     return GlobalConfig::int_size;
 }

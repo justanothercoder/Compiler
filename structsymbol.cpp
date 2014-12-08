@@ -11,7 +11,7 @@ StructSymbol::StructSymbol(std::string name
 
 }
 
-size_t StructSymbol::getSize() const
+size_t StructSymbol::sizeOf() const
 {
     return type_size;
 }

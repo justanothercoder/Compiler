@@ -10,7 +10,7 @@ std::string BuiltInTypeSymbol::getName() const
     return name;
 }
 
-size_t BuiltInTypeSymbol::getSize() const
+size_t BuiltInTypeSymbol::sizeOf() const
 {
     return size;
 }

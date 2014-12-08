@@ -10,7 +10,7 @@ public:
     ReferenceType(const Type *type);
 
     std::string getName() const override;
-    size_t getSize() const override;
+    size_t sizeOf() const override;
     TypeKind getTypeKind() const override;
 
     bool isConvertableTo(const Type *type) const override;

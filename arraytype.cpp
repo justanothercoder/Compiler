@@ -13,9 +13,9 @@ std::string ArrayType::getName() const
     return type -> getName() + "~arr" + std::to_string(size);
 }
 
-size_t ArrayType::getSize() const
+size_t ArrayType::sizeOf() const
 {
-    return type -> getSize() * size;
+    return type -> sizeOf() * size;
 }
 
 TypeKind ArrayType::getTypeKind() const
