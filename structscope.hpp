@@ -26,7 +26,7 @@ public:
 
     void accept(ScopeVisitor& visitor) override;
 
-    const TemplateInfo& getTemplateInfo() const override;
+    const TemplateInfo& templateInfo() const override;
 
 private:
     mutable FieldVarAllocator var_alloc;

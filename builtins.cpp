@@ -18,21 +18,21 @@ void BuiltIns::defineBuiltIns()
 
     BuiltIns::global_scope = global_scope;
 
-    StructSymbol *int_struct = new StructSymbol("int", global_scope, global_scope -> getTemplateInfo());
+    StructSymbol *int_struct = new StructSymbol("int", global_scope, global_scope -> templateInfo());
 
     BuiltIns::int_type = int_struct;
 
     auto ref_int       = VariableType(TypeFactory::getReference(int_struct), false);
     auto const_ref_int = VariableType(TypeFactory::getReference(int_struct), true);
 
-    StructSymbol *char_struct = new StructSymbol("char", global_scope, global_scope -> getTemplateInfo());
+    StructSymbol *char_struct = new StructSymbol("char", global_scope, global_scope -> templateInfo());
 
     BuiltIns::char_type = char_struct;
 
     auto ref_char       = VariableType(TypeFactory::getReference(char_struct), false);
     auto const_ref_char = VariableType(TypeFactory::getReference(char_struct), true);
 
-    StructSymbol *ASCII_string = new StructSymbol("string", global_scope, global_scope -> getTemplateInfo());
+    StructSymbol *ASCII_string = new StructSymbol("string", global_scope, global_scope -> templateInfo());
 
     ASCII_string_type = ASCII_string;
 

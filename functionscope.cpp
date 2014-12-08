@@ -10,7 +10,7 @@ FunctionScope::FunctionScope(std::string scope_name
                                              , scope_name     (scope_name)
                                              , enclosing_scope(enclosing_scope)
                                              , var_alloc      (GlobalConfig::int_size * (is_constr ? 1 : 2))
-                                             , template_info  (enclosing_scope -> getTemplateInfo())
+                                             , template_info  (enclosing_scope -> templateInfo())
                                              , is_unsafe      (is_unsafe)
 {
 
@@ -41,7 +41,7 @@ TempAllocator& FunctionScope::getTempAlloc() const
     return temp_alloc;
 }
 
-const TemplateInfo& FunctionScope::getTemplateInfo() const
+const TemplateInfo& FunctionScope::templateInfo() const
 {
     return template_info;
 }

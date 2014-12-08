@@ -31,9 +31,9 @@ TempAllocator& LocalScope::getTempAlloc() const
     return getEnclosingScope() -> getTempAlloc();
 }
 
-const TemplateInfo& LocalScope::getTemplateInfo() const
+const TemplateInfo& LocalScope::templateInfo() const
 {
-    return getEnclosingScope() -> getTemplateInfo();
+    return getEnclosingScope() -> templateInfo();
 }
 
 bool LocalScope::isUnsafeBlock() const

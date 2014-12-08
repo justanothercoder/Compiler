@@ -55,7 +55,7 @@ std::string StructScope::getScopeName() const
     return scope_name;
 }
 
-const TemplateInfo& StructScope::getTemplateInfo() const
+const TemplateInfo& StructScope::templateInfo() const
 {
     return template_info;
 }

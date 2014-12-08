@@ -49,7 +49,7 @@ void ExpandTemplatesVisitor::visit(StructDeclarationNode *node)
 
 void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
 {
-    const auto& template_info = node -> scope -> getTemplateInfo();
+    const auto& template_info = node -> scope -> templateInfo();
 
     if ( template_info.sym && node -> return_type_info.type_name == template_info.sym -> getName() )
         node -> return_type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
@@ -117,7 +117,7 @@ TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
 
 TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *scope)
 {
-    const auto& template_info = scope -> getTemplateInfo();
+    const auto& template_info = scope -> templateInfo();
 
     if ( template_info.sym && template_info.sym -> isIn(type_info.type_name) )
     {

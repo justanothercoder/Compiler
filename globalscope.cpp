@@ -35,7 +35,7 @@ TempAllocator& GlobalScope::getTempAlloc() const
     return temp_alloc;
 }
 
-const TemplateInfo& GlobalScope::getTemplateInfo() const
+const TemplateInfo& GlobalScope::templateInfo() const
 {
     return template_info;
 }

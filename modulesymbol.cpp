@@ -44,7 +44,7 @@ void ModuleSymbol::accept(ScopeVisitor& visitor)
     visitor.visit(this);
 }
 
-const TemplateInfo& ModuleSymbol::getTemplateInfo() const 
+const TemplateInfo& ModuleSymbol::templateInfo() const 
 {
     return *(new TemplateInfo());
 }

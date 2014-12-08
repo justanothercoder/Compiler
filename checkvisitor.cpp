@@ -295,7 +295,7 @@ void CheckVisitor::visit(FunctionNode* node)
 
 void CheckVisitor::visit(VariableNode *node)
 {
-    const auto& template_info = node -> scope -> getTemplateInfo();
+    const auto& template_info = node -> scope -> templateInfo();
 
     if ( template_info.sym && template_info.sym -> isIn(node -> name) )
     {

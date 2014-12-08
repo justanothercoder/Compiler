@@ -12,7 +12,7 @@ VariableNode::VariableNode(std::string name) : name(name), variable(nullptr), te
 
 bool VariableNode::isTemplateParam() const
 {
-    const auto& template_info = scope -> getTemplateInfo();
+    const auto& template_info = scope -> templateInfo();
     return template_info.sym != nullptr && template_info.sym -> isIn(name);
 }
 
@@ -25,8 +25,7 @@ VariableType VariableNode::getType() const
 {
     if ( isTemplateParam() )
     {
-        const auto& template_info = scope -> getTemplateInfo();
-
+        const auto& template_info = scope -> templateInfo();
         auto replace = template_info.getReplacement(name);
 
         return VariableType(BuiltIns::int_type, true);
@@ -42,19 +41,15 @@ bool VariableNode::isLeftValue() const
 
 bool VariableNode::isCompileTimeExpr() const
 {
-    const auto& template_info = scope -> getTemplateInfo();
-
-    if ( template_info.sym != nullptr && template_info.sym -> isIn(name) )
-        return true;
-    else
-        return false;
+    const auto& template_info = scope -> templateInfo();
+    return (template_info.sym != nullptr && template_info.sym -> isIn(name));
 }
 
 boost::optional<int> VariableNode::getCompileTimeValue() const
 {
-    const auto& template_info = scope -> getTemplateInfo();
+    const auto& template_info = scope -> templateInfo();
 
-    if ( template_info.sym != nullptr && template_info.sym -> isIn(name) )
+    if ( isCompileTimeExpr() )
         return boost::get<int>(*template_info.getReplacement(name));
     else
         return boost::none;
