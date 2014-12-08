@@ -15,10 +15,10 @@ public:
     std::string getName() const override;
     SymbolType getSymbolType() const override;
     
-    Scope* getEnclosingScope() const override;
+    Scope* enclosingScope() const override;
 
-    VarAllocator& getVarAlloc() const override;
-    TempAllocator& getTempAlloc() const override;
+    VarAllocator& varAlloc() const override;
+    TempAllocator& tempAlloc() const override;
 
     std::string getScopeName() const override;
 

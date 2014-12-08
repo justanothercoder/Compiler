@@ -48,11 +48,11 @@ void Block::genAsm(CodeObject& code_obj) const
     code_obj.emit("push rbp");
     code_obj.emit("mov rbp, rsp");
 
-    if ( scope.getVarAlloc().getSpace() > 0 )
-        code_obj.emit("sub rsp, " + std::to_string(scope.getVarAlloc().getSpace()));
+    if ( scope.varAlloc().getSpace() > 0 )
+        code_obj.emit("sub rsp, " + std::to_string(scope.varAlloc().getSpace()));
 
-    if ( scope.getTempAlloc().getSpaceNeeded() )
-        code_obj.emit("sub rsp, " + std::to_string(scope.getTempAlloc().getSpaceNeeded()));
+    if ( scope.tempAlloc().getSpaceNeeded() )
+        code_obj.emit("sub rsp, " + std::to_string(scope.tempAlloc().getSpaceNeeded()));
 
     for ( ; it != std::end(code); ++it )
         genCommand(*it, code_obj);
@@ -100,17 +100,17 @@ void Block::genArg(Arg arg, CodeObject& code_obj) const
             auto sym = static_cast<VariableSymbol*>(scope.resolve("this"));
             auto struc_scope = static_cast<const StructSymbol*>(sym -> getType().unqualified());
 
-            code_obj.emit("mov rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(sym)) + "]");
-            if ( struc_scope -> getVarAlloc().getAddress(variable) != 0 )
-                code_obj.emit("lea rax, [rax + " + std::to_string(struc_scope -> getVarAlloc().getAddress(variable)) + "]");
+            code_obj.emit("mov rax, [rbp - " + std::to_string(scope.varAlloc().getAddress(sym)) + "]");
+            if ( struc_scope -> varAlloc().getAddress(variable) != 0 )
+                code_obj.emit("lea rax, [rax + " + std::to_string(struc_scope -> varAlloc().getAddress(variable)) + "]");
         }
         else if ( variable -> getType().isReference() )
         {
-            code_obj.emit("mov rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(variable)) + "]");
+            code_obj.emit("mov rax, [rbp - " + std::to_string(scope.varAlloc().getAddress(variable)) + "]");
         }
         else
         {
-            code_obj.emit("lea rax, [rbp - " + std::to_string(scope.getVarAlloc().getAddress(variable)) + "]");
+            code_obj.emit("lea rax, [rbp - " + std::to_string(scope.varAlloc().getAddress(variable)) + "]");
         }
         return;
     }
@@ -137,10 +137,10 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             {
                 genArg(command.arg1, code_obj);
 
-                command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-                scope.getTempAlloc().claim(GlobalConfig::int_size);
+                command.offset = GlobalTable::transformAddress(&scope, scope.tempAlloc().getOffset());
+                scope.tempAlloc().claim(GlobalConfig::int_size);
 
-                code_obj.emit("mov rax, [rax + " + std::to_string(base_sym -> getVarAlloc().getAddress(member)) + "]");
+                code_obj.emit("mov rax, [rax + " + std::to_string(base_sym -> varAlloc().getAddress(member)) + "]");
                 code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
 
                 return;
@@ -152,16 +152,16 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             {
                 genArg(command.arg1, code_obj);
 
-                command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-                scope.getTempAlloc().claim(GlobalConfig::int_size);
+                command.offset = GlobalTable::transformAddress(&scope, scope.tempAlloc().getOffset());
+                scope.tempAlloc().claim(GlobalConfig::int_size);
 
-                code_obj.emit("mov rax, [rax + " + std::to_string(base_sym -> getVarAlloc().getAddress(member)) + "]");
+                code_obj.emit("mov rax, [rax + " + std::to_string(base_sym -> varAlloc().getAddress(member)) + "]");
                 code_obj.emit("mov [rbp - " + std::to_string(command.offset) + "], rax");
 
                 return;
             }
 
-            arg_addr = scope.getVarAlloc().getAddress(table.var_by_id[command.arg1.id]);
+            arg_addr = scope.varAlloc().getAddress(table.var_by_id[command.arg1.id]);
         }
         else if ( command.arg1.type == IdType::TEMP )
         {
@@ -172,7 +172,7 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
             arg_addr = 0;
         }
 
-        command.offset = arg_addr - base_sym -> getVarAlloc().getAddress(member);
+        command.offset = arg_addr - base_sym -> varAlloc().getAddress(member);
         return;
     }
     case SSAOp::DEREF:
@@ -187,8 +187,8 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     }
     case SSAOp::ADDR:
     {
-        command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-        scope.getTempAlloc().claim(GlobalConfig::int_size);
+        command.offset = GlobalTable::transformAddress(&scope, scope.tempAlloc().getOffset());
+        scope.tempAlloc().claim(GlobalConfig::int_size);
         
         auto addr = "[rbp - " + std::to_string(command.offset) + "]";
 
@@ -272,8 +272,8 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
         }
         else
         {
-            command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-            scope.getTempAlloc().claim(callee -> type().returnType().sizeOf());
+            command.offset = GlobalTable::transformAddress(&scope, scope.tempAlloc().getOffset());
+            scope.tempAlloc().claim(callee -> type().returnType().sizeOf());
 
             code_obj.emit("lea rax, [rbp - " + std::to_string(command.offset) + "]");
             code_obj.emit("push rax");
@@ -407,8 +407,8 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     {
         auto object_type = table.type_by_id.at(command.arg1.id);
 
-        command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-        scope.getTempAlloc().claim(object_type -> getSize());
+        command.offset = GlobalTable::transformAddress(&scope, scope.tempAlloc().getOffset());
+        scope.tempAlloc().claim(object_type -> getSize());
 
         return;
     }    
@@ -416,8 +416,8 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     case SSAOp::MINUS: case SSAOp::MUL: case SSAOp::DIV:
     case SSAOp::MOD: case SSAOp::AND:
     {
-        command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-        scope.getTempAlloc().claim(GlobalConfig::int_size);
+        command.offset = GlobalTable::transformAddress(&scope, scope.tempAlloc().getOffset());
+        scope.tempAlloc().claim(GlobalConfig::int_size);
 
         genArg(command.arg2, code_obj);
     
@@ -476,8 +476,8 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     }
     case SSAOp::ELEM:
     {
-        command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-        scope.getTempAlloc().claim(GlobalConfig::int_size);
+        command.offset = GlobalTable::transformAddress(&scope, scope.tempAlloc().getOffset());
+        scope.tempAlloc().claim(GlobalConfig::int_size);
 
         genArg(command.arg2, code_obj);
         code_obj.emit("push qword [rax]");
@@ -492,8 +492,8 @@ void Block::genCommand(int command_id, CodeObject& code_obj) const
     }
     case SSAOp::STRINGELEM:
     {
-        command.offset = GlobalTable::transformAddress(&scope, scope.getTempAlloc().getOffset());
-        scope.getTempAlloc().claim(GlobalConfig::int_size);
+        command.offset = GlobalTable::transformAddress(&scope, scope.tempAlloc().getOffset());
+        scope.tempAlloc().claim(GlobalConfig::int_size);
 
         genArg(command.arg2, code_obj);
         code_obj.emit("push qword [rax]");

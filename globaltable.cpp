@@ -5,5 +5,5 @@
 
 int GlobalTable::transformAddress(Scope *scope, int addr)
 {
-    return scope -> getVarAlloc().getSpace() + GlobalConfig::int_size + addr;
+    return scope -> varAlloc().getSpace() + GlobalConfig::int_size + addr;
 }

@@ -25,12 +25,12 @@ public:
 
     virtual ~Scope();
 
-    virtual Scope* getEnclosingScope() const = 0;
+    virtual Scope* enclosingScope() const = 0;
     virtual Symbol* resolve(std::string name) const = 0;
     virtual Symbol* resolveHere(std::string name) const = 0;
 
-    virtual VarAllocator& getVarAlloc() const = 0;
-    virtual TempAllocator& getTempAlloc() const = 0;
+    virtual VarAllocator& varAlloc() const = 0;
+    virtual TempAllocator& tempAlloc() const = 0;
 
     virtual std::string getScopeName() const = 0;
 

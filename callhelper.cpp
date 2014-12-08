@@ -88,7 +88,7 @@ const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope 
         if ( func_sym == nullptr )
         {
             while ( scope != nullptr && getOverloadedFunc(name, scope) == ov_func )
-                scope = scope -> getEnclosingScope();
+                scope = scope -> enclosingScope();
             continue;
         }
 

@@ -17,11 +17,11 @@ public:
     FunctionScope(std::string scope_name, Scope *enclosing_scope, bool is_constr, bool is_unsafe);
 
     std::string getScopeName() const override;
-    Scope* getEnclosingScope() const override;
+    Scope* enclosingScope() const override;
     void accept(ScopeVisitor& visitor) override;
 
-    VarAllocator& getVarAlloc() const override;
-    TempAllocator& getTempAlloc() const override;
+    VarAllocator& varAlloc() const override;
+    TempAllocator& tempAlloc() const override;
 
     const TemplateInfo& templateInfo() const override;
 

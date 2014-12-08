@@ -36,7 +36,7 @@
 
 void CheckVisitor::visit(IfNode *node)
 {
-    node -> scope -> getTempAlloc().add(2 * GlobalConfig::int_size);
+    node -> scope -> tempAlloc().add(2 * GlobalConfig::int_size);
     for ( auto child : node -> getChildren() )
         child -> accept(*this);
 }
@@ -67,7 +67,7 @@ void CheckVisitor::visit(BracketNode *node)
         node -> call_info = CallHelper::callCheck("operator[]", base_type, {node -> expr});
     }
 
-    node -> scope -> getTempAlloc().add(node -> getType().sizeOf());
+    node -> scope -> tempAlloc().add(node -> getType().sizeOf());
 }
 
 void CheckVisitor::visit(UnaryNode *node)
@@ -76,7 +76,7 @@ void CheckVisitor::visit(UnaryNode *node)
 
     auto type = static_cast<const StructSymbol*>(node -> exp -> getType().unqualified());
     node -> call_info = CallHelper::callCheck(node -> getOperatorName(), type, { });
-    node -> scope -> getTempAlloc().add(node -> getType().sizeOf());
+    node -> scope -> tempAlloc().add(node -> getType().sizeOf());
 }
 
 void CheckVisitor::visit(NewExpressionNode *node)
@@ -93,7 +93,7 @@ void CheckVisitor::visit(NewExpressionNode *node)
         param -> accept(*this);        
 
     node -> call_info = CallHelper::callCheck(type -> getName(), type, node -> params);
-    node -> scope -> getTempAlloc().add(type -> getSize());
+    node -> scope -> tempAlloc().add(type -> getSize());
 }
 
 void CheckVisitor::visit(BinaryOperatorNode *node)
@@ -119,7 +119,7 @@ void CheckVisitor::visit(BinaryOperatorNode *node)
         node -> call_info = CallHelper::callCheck(node -> getOperatorName(), node -> scope, {node -> lhs, node -> rhs});
     }
 
-    node -> scope -> getTempAlloc().add(node -> getType().sizeOf());
+    node -> scope -> tempAlloc().add(node -> getType().sizeOf());
 }
 
 void CheckVisitor::visit(StructDeclarationNode *node)
@@ -163,7 +163,7 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 
             if ( var_type == BuiltIns::int_type && node -> constructor_call_params.empty() )
             {
-                node -> scope -> getTempAlloc().add(GlobalConfig::int_size);
+                node -> scope -> tempAlloc().add(GlobalConfig::int_size);
                 return;
             }
 
@@ -199,7 +199,7 @@ void CheckVisitor::visit(AddrNode *node)
         if ( !node -> expr -> isLeftValue() )
             throw SemanticError("expression is not an lvalue");
 
-        node -> scope -> getTempAlloc().add(GlobalConfig::int_size);
+        node -> scope -> tempAlloc().add(GlobalConfig::int_size);
     }
     else
     {
@@ -212,7 +212,7 @@ void CheckVisitor::visit(AddrNode *node)
 
 void CheckVisitor::visit(NullNode *node)
 {
-    node -> scope -> getTempAlloc().add(node -> getType().sizeOf());
+    node -> scope -> tempAlloc().add(node -> getType().sizeOf());
 }
 
 void CheckVisitor::visit(DotNode *node)
@@ -222,7 +222,7 @@ void CheckVisitor::visit(DotNode *node)
     auto _base_type = node -> base -> getType();
 
     if ( _base_type.isReference() )
-        node -> scope -> getTempAlloc().add(GlobalConfig::int_size);
+        node -> scope -> tempAlloc().add(GlobalConfig::int_size);
 
     assert(_base_type.unqualified() -> getTypeKind() == TypeKind::STRUCT);
     node -> base_type = static_cast<const StructSymbol*>(_base_type.unqualified());
@@ -360,14 +360,14 @@ void CheckVisitor::visit(CallNode *node)
         node -> call_info = CallHelper::getCallInfo(func, node -> params);
     }
 
-    node -> scope -> getTempAlloc().add(node -> getType().sizeOf());
+    node -> scope -> tempAlloc().add(node -> getType().sizeOf());
 }
 
 void CheckVisitor::visit(ReturnNode *node)
 {
     auto _scope = node -> scope;
     while ( _scope != nullptr && dynamic_cast<FunctionScope*>(_scope) == nullptr )
-        _scope = _scope -> getEnclosingScope();
+        _scope = _scope -> enclosingScope();
 
     if ( _scope == nullptr )
         throw SemanticError("return is not in a function");
@@ -388,7 +388,7 @@ void CheckVisitor::visit(UnsafeBlockNode* node)
 
 void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
 {
-    node -> scope -> getTempAlloc().add(node -> expr -> getType().sizeOf());
+    node -> scope -> tempAlloc().add(node -> expr -> getType().sizeOf());
 
     auto type = node -> expr -> getType().unqualified();
 

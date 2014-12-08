@@ -10,17 +10,17 @@ StructScope::StructScope(std::string name
     type_size = 0;
 }
 
-TempAllocator& StructScope::getTempAlloc() const
+TempAllocator& StructScope::tempAlloc() const
 {
     return temp_alloc;
 }
 
-VarAllocator& StructScope::getVarAlloc() const
+VarAllocator& StructScope::varAlloc() const
 {
     return var_alloc;
 }
 
-Scope* StructScope::getEnclosingScope() const
+Scope* StructScope::enclosingScope() const
 {
     return enclosing_scope;
 }
@@ -30,8 +30,8 @@ Symbol* StructScope::resolve(std::string name) const
     auto it = table.find(name);
     if ( it == std::end(table) )
     {
-        if ( getEnclosingScope() )
-            return getEnclosingScope() -> resolve(name);
+        if ( enclosingScope() )
+            return enclosingScope() -> resolve(name);
         return nullptr;
     }
     return it -> second;

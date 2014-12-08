@@ -10,7 +10,7 @@ GlobalScope::GlobalScope() : BaseScope(), template_info(TemplateInfo())
 
 }
 
-Scope* GlobalScope::getEnclosingScope() const
+Scope* GlobalScope::enclosingScope() const
 {
     return nullptr;
 }
@@ -25,12 +25,12 @@ void GlobalScope::accept(ScopeVisitor& visitor)
     visitor.visit(this);
 }
 
-VarAllocator& GlobalScope::getVarAlloc() const
+VarAllocator& GlobalScope::varAlloc() const
 {
     return var_alloc;
 }
 
-TempAllocator& GlobalScope::getTempAlloc() const
+TempAllocator& GlobalScope::tempAlloc() const
 {
     return temp_alloc;
 }

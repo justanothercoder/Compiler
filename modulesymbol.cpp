@@ -19,17 +19,17 @@ SymbolType ModuleSymbol::getSymbolType() const
     return SymbolType::MODULE;
 }
     
-Scope* ModuleSymbol::getEnclosingScope() const 
+Scope* ModuleSymbol::enclosingScope() const 
 {
     return enclosing_scope;
 }
 
-VarAllocator& ModuleSymbol::getVarAlloc() const 
+VarAllocator& ModuleSymbol::varAlloc() const 
 {
     return *(new VarAllocator());
 }
 
-TempAllocator& ModuleSymbol::getTempAlloc() const 
+TempAllocator& ModuleSymbol::tempAlloc() const 
 {
     return *(new TempAllocator());
 }

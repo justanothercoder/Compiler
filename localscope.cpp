@@ -6,7 +6,7 @@ LocalScope::LocalScope(Scope *enclosing_scope) : enclosing_scope(enclosing_scope
 
 }
 
-Scope* LocalScope::getEnclosingScope() const
+Scope* LocalScope::enclosingScope() const
 {
     return enclosing_scope;
 }
@@ -21,22 +21,22 @@ void LocalScope::accept(ScopeVisitor& visitor)
     visitor.visit(this);
 }
 
-VarAllocator& LocalScope::getVarAlloc() const
+VarAllocator& LocalScope::varAlloc() const
 {
-    return getEnclosingScope() -> getVarAlloc();
+    return enclosingScope() -> varAlloc();
 }
 
-TempAllocator& LocalScope::getTempAlloc() const
+TempAllocator& LocalScope::tempAlloc() const
 {
-    return getEnclosingScope() -> getTempAlloc();
+    return enclosingScope() -> tempAlloc();
 }
 
 const TemplateInfo& LocalScope::templateInfo() const
 {
-    return getEnclosingScope() -> templateInfo();
+    return enclosingScope() -> templateInfo();
 }
 
 bool LocalScope::isUnsafeBlock() const
 {
-    return getEnclosingScope() -> isUnsafeBlock();
+    return enclosingScope() -> isUnsafeBlock();
 }

@@ -14,10 +14,10 @@ public:
 
     StructScope(std::string scope_name, Scope *enclosing_scope, const TemplateInfo& template_info);
 
-    VarAllocator& getVarAlloc() const override;
-    TempAllocator& getTempAlloc() const override;
+    VarAllocator& varAlloc() const override;
+    TempAllocator& tempAlloc() const override;
 
-    Scope* getEnclosingScope() const override;
+    Scope* enclosingScope() const override;
 
     Symbol* resolveMember(std::string name) const;
     Symbol* resolve(std::string name) const override;

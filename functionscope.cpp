@@ -16,7 +16,7 @@ FunctionScope::FunctionScope(std::string scope_name
 
 }
 
-Scope* FunctionScope::getEnclosingScope() const
+Scope* FunctionScope::enclosingScope() const
 {
     return enclosing_scope;
 }
@@ -31,12 +31,12 @@ void FunctionScope::accept(ScopeVisitor& visitor)
     visitor.visit(this);
 }
 
-VarAllocator& FunctionScope::getVarAlloc() const
+VarAllocator& FunctionScope::varAlloc() const
 {
     return var_alloc;
 }
 
-TempAllocator& FunctionScope::getTempAlloc() const
+TempAllocator& FunctionScope::tempAlloc() const
 {
     return temp_alloc;
 }
