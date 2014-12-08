@@ -139,34 +139,13 @@ void GenSSAVisitor::visit(BracketNode *node)
         return;
     }
 
-    auto expr_info = node -> call_info.conversions.front();
-    code.addParamInfo(expr_info);
-
-    code.add(Command(SSAOp::PARAM, 
-                     getArg(node -> expr), 
-                     Arg(IdType::NOID, code.getInfoId(expr_info))
-             )
-    );
+    genParam(node -> expr, node -> call_info.conversions.front());
 
     auto base_info = ConversionInfo(nullptr);
     base_info.desired_type = TypeFactory::getReference(node -> base -> getType().base());
-    code.addParamInfo(base_info);
+    genParam(node -> base, base_info);
 
-    code.add(Command(SSAOp::PARAM, 
-                     getArg(node -> base),
-                     Arg(IdType::NOID, code.getInfoId(base_info))
-             )
-    );
-
-    code.addFunction(node -> call_info.callee);
-    _arg = code.add(Command(SSAOp::CALL, 
-                            Arg(IdType::PROCEDURE, 
-                                code.getFuncId(node -> call_info.callee)), 
-                            Arg(IdType::NOID, 
-                                node -> expr -> getType().sizeOf() + 
-                                GlobalConfig::int_size)
-                   )
-    );
+    genCall(node -> call_info.callee, node -> expr -> getType().sizeOf() + GlobalConfig::int_size);
 }
 
 void GenSSAVisitor::visit(UnaryNode *node)
@@ -200,21 +179,11 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
         if ( node -> params.empty() )
         {
             code.addConst(0);
-            code.add(Command(assign_op,
-                             tmp_obj,
-                             Arg(IdType::NUMBER, 
-                                 code.getConstId(0), 
-                                 BuiltIns::int_type)
-                            )
-            );
+            code.add(Command(assign_op, tmp_obj, Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type)));
         }
         else
         {
-            code.add(Command(assign_op,
-                             tmp_obj,
-                             getArg(*std::begin(params))
-                            )
-            );
+            code.add(Command(assign_op, tmp_obj, getArg(*std::begin(params))));
         }
 
         _arg = tmp_obj;
@@ -226,38 +195,18 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
     for ( auto param = params.rbegin(); param != params.rend(); ++param )
     {
         ConversionInfo info = *(node -> call_info.conversions.rbegin() + (param - params.rbegin()));
-        code.addParamInfo(info);
-        code.add(Command(SSAOp::PARAM,
-                         getArg(*param),
-                         Arg(IdType::NOID, code.getInfoId(info))
-                        )
-                );
-
+        genParam(*param, info);
         params_size += info.desired_type -> sizeOf();
     }
 
-    
-
     auto info = ConversionInfo(nullptr);
     info.desired_type = TypeFactory::getReference(expr_type);
-
     code.addParamInfo(info);
-    code.add(Command(SSAOp::PARAM, 
-                     tmp_obj,
-                     Arg(IdType::NOID, code.getInfoId(info))
-                    )
-    );
+    code.add(Command(SSAOp::PARAM, tmp_obj, Arg(IdType::NOID, code.getInfoId(info))));
 
     params_size += GlobalConfig::int_size;
 
-    code.addFunction(node -> call_info.callee);
-    code.add(Command(SSAOp::CALL,
-                     Arg(IdType::PROCEDURE,
-                         code.getFuncId(node -> call_info.callee)),
-                     Arg(IdType::NOID, params_size)
-                    )
-    );
-
+    genCall(node -> call_info.callee, params_size);
     _arg = tmp_obj;
 }
 
@@ -298,46 +247,23 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
     {
         if ( node -> call_info.callee -> isMethod() )
         {
-            auto rhs_info = *std::begin(node -> call_info.conversions);
-            code.addParamInfo(rhs_info);
-            code.add(Command(SSAOp::PARAM, getArg(node -> rhs), Arg(IdType::NOID, code.getInfoId(rhs_info))));
+            auto rhs_info = node -> call_info.conversions.front();
+            genParam(node -> rhs, rhs_info);
 
             auto lhs_info = ConversionInfo(nullptr);
             lhs_info.desired_type = TypeFactory::getReference(node -> lhs -> getType().unqualified());
+            genParam(node -> lhs, lhs_info);
 
-            code.addParamInfo(lhs_info);                      
-            code.add(Command(SSAOp::PARAM, getArg(node -> lhs), Arg(IdType::NOID, code.getInfoId(lhs_info))));
-
-            code.addFunction(node -> call_info.callee);
-            _arg = code.add(Command(SSAOp::CALL, 
-                                    Arg(IdType::PROCEDURE, 
-                                        code.getFuncId(node -> call_info.callee)),
-                                    Arg(IdType::NOID, 
-                                        rhs_info.desired_type -> sizeOf() +
-                                        lhs_info.desired_type -> sizeOf()) 
-                            )
-            );
+            genCall(node -> call_info.callee, lhs_info.desired_type -> sizeOf() + rhs_info.desired_type -> sizeOf()); 
         }
         else
-        {       
+        {   
             auto rhs_info = *(std::begin(node -> call_info.conversions) + 1);
             auto lhs_info = *(std::begin(node -> call_info.conversions) + 0);
 
-            code.addParamInfo(rhs_info);
-            code.addParamInfo(lhs_info);
-
-            code.add(Command(SSAOp::PARAM, getArg(node -> rhs), Arg(IdType::NOID, code.getInfoId(rhs_info))));
-            code.add(Command(SSAOp::PARAM, getArg(node -> lhs), Arg(IdType::NOID, code.getInfoId(lhs_info))));
-
-            code.addFunction(node -> call_info.callee);
-            _arg = code.add(Command(SSAOp::CALL, 
-                                    Arg(IdType::PROCEDURE, 
-                                        code.getFuncId(node -> call_info.callee)),
-                                    Arg(IdType::NOID, 
-                                        rhs_info.desired_type -> sizeOf() +
-                                        lhs_info.desired_type -> sizeOf())
-                            )
-            );
+            genParam(node -> rhs, rhs_info);
+            genParam(node -> lhs, lhs_info);
+            genCall(node -> call_info.callee, lhs_info.desired_type -> sizeOf() + rhs_info.desired_type -> sizeOf());
         }
     }
 }
@@ -371,24 +297,14 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
         if ( node -> type_info.is_ref )
         {
             auto arg = getArg(node -> constructor_call_params.front());
-            code.add(Command(SSAOp::ASSIGN,
-                             Arg(IdType::VARIABLE,
-                                 code.getVarId(node -> definedSymbol),
-                                 var_type.base()),
-                             arg
-                            ));
+            code.add(Command(SSAOp::ASSIGN, Arg(IdType::VARIABLE, code.getVarId(node -> definedSymbol), var_type.base()), arg));
         }
         else if ( node -> type_info.pointer_depth > 0 )
         {
             if ( !node -> constructor_call_params.empty() )
             {
                 auto arg = getArg(node -> constructor_call_params.front());
-                code.add(Command(SSAOp::ASSIGN,
-                                 Arg(IdType::VARIABLE,
-                                     code.getVarId(node -> definedSymbol),
-                                     var_type.base()),
-                                 arg
-                                ));
+                code.add(Command(SSAOp::ASSIGN, Arg(IdType::VARIABLE, code.getVarId(node -> definedSymbol), var_type.base()), arg));
             }
         }
         else
@@ -401,20 +317,14 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                 {
                     code.addConst(0);
                     code.add(Command(assign_op,
-                                     Arg(IdType::VARIABLE,
-                                         code.getVarId(node -> definedSymbol),
-                                         var_type.base()),
-                                     Arg(IdType::NUMBER, 
-                                         code.getConstId(0), 
-                                         BuiltIns::int_type)
+                                     Arg(IdType::VARIABLE, code.getVarId(node -> definedSymbol), var_type.base()),
+                                     Arg(IdType::NUMBER, code.getConstId(0), BuiltIns::int_type)
                                     ));
                 }
                 else
                 {
                     code.add(Command(assign_op,
-                                     Arg(IdType::VARIABLE,
-                                         code.getVarId(node -> definedSymbol),
-                                         var_type.base()),
+                                     Arg(IdType::VARIABLE, code.getVarId(node -> definedSymbol), var_type.base()),
                                      getArg(*std::begin(node -> constructor_call_params))
                                     ));
                 }
@@ -428,39 +338,23 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
             for ( auto param = params.rbegin(); param != params.rend(); ++param )
             {
                 ConversionInfo info = *(node -> call_info.conversions.rbegin() + (param - params.rbegin()));
-                code.addParamInfo(info);
-                code.add(Command(SSAOp::PARAM,
-                                 getArg(*param),
-                                 Arg(IdType::NOID, code.getInfoId(info))
-                                )
-                        );
+                genParam(*param, info);
 
                 params_size += info.desired_type -> sizeOf();
             }
 
             auto info = ConversionInfo(nullptr); 
             info.desired_type = TypeFactory::getReference(node -> definedSymbol -> getType().base());
-
             code.addParamInfo(info);
-
             code.add(Command(SSAOp::PARAM,
-                             Arg(IdType::VARIABLE,
-                                 code.getVarId(node -> definedSymbol),
-                                 var_type.base()
-                                ),
+                             Arg(IdType::VARIABLE, code.getVarId(node -> definedSymbol), var_type.base()),
                              Arg(IdType::NOID, code.getInfoId(info))
                             )
                     );
 
 
             params_size += GlobalConfig::int_size;
-
-            code.addFunction(node -> call_info.callee);
-            _arg = code.add(Command(SSAOp::CALL,
-                                    Arg(IdType::PROCEDURE,
-                                        code.getFuncId(node -> call_info.callee)),
-                                    Arg(IdType::NOID, params_size))
-                           );
+            genCall(node -> call_info.callee, params_size);
         }
     }
 }
@@ -539,38 +433,19 @@ void GenSSAVisitor::visit(CallNode *node)
     for ( auto param = node -> params.rbegin(); param != node -> params.rend(); ++param )
     {
         ConversionInfo info = *(node -> call_info.conversions.rbegin() + (param - node -> params.rbegin()));
-        code.addParamInfo(info);
-        code.add(Command(SSAOp::PARAM,
-                         getArg(*param),
-                         Arg(IdType::NOID, code.getInfoId(info))
-                        )
-                );
-
+        genParam(*param, info);
         params_size += info.desired_type -> sizeOf();
     }
 
     if ( node -> call_info.callee -> isMethod() )
     {
         params_size += GlobalConfig::int_size;
-        
         auto info = ConversionInfo(nullptr);
         info.desired_type = TypeFactory::getReference(node -> caller -> getType().base()); 
-
-        code.addParamInfo(info);
-        code.add(Command(SSAOp::PARAM,
-                         getArg(node -> caller),
-                         Arg(IdType::NOID, code.getInfoId(info))
-                        )
-                );
+        genParam(node -> caller, info);
     }
 
-    code.addFunction(node -> call_info.callee);
-    _arg = code.add(Command(SSAOp::CALL,
-                            Arg(IdType::PROCEDURE,
-                                code.getFuncId(node -> call_info.callee)),
-                            Arg(IdType::NOID, params_size)
-                           )
-                   );
+    genCall(node -> call_info.callee, params_size);
 }
 
 void GenSSAVisitor::visit(ReturnNode *node)
@@ -600,32 +475,15 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
     }
     
     auto info = *std::begin(node -> call_info.conversions);
-    code.addParamInfo(info);
-    code.add(Command(SSAOp::PARAM,
-                     getArg(node -> expr),
-                     Arg(IdType::NOID, code.getInfoId(info))
-                    )
-            );
+    genParam(node -> expr, info);
 
     info = ConversionInfo(nullptr);
     info.desired_type = TypeFactory::getReference(expr_type);
 
     code.addParamInfo(info);
-    code.add(Command(SSAOp::PARAM, 
-                     var,
-                     Arg(IdType::NOID, code.getInfoId(info))
-                    )
-    );
+    code.add(Command(SSAOp::PARAM, var, Arg(IdType::NOID, code.getInfoId(info))));
 
-    int params_size = expr_type -> sizeOf() + GlobalConfig::int_size;
-
-    code.addFunction(node -> call_info.callee);
-    code.add(Command(SSAOp::CALL,
-                     Arg(IdType::PROCEDURE,
-                         code.getFuncId(node -> call_info.callee)),
-                     Arg(IdType::NOID, params_size)
-                    )
-    );
+    genCall(node -> call_info.callee, expr_type -> sizeOf() + GlobalConfig::int_size);
 }
 
 void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)
@@ -706,4 +564,16 @@ void GenSSAVisitor::genInlineCall(CallNode* node)
     
     tree -> accept(*this);
 */    
+}
+    
+void GenSSAVisitor::genParam(ExprNode* node, ConversionInfo conversion_info)
+{
+    code.addParamInfo(conversion_info);
+    code.add(Command(SSAOp::PARAM, getArg(node), Arg(IdType::NOID, code.getInfoId(conversion_info))));
+}
+
+void GenSSAVisitor::genCall(const FunctionSymbol* func, int params_size)
+{
+    code.addFunction(func);
+    _arg = code.add(Command(SSAOp::CALL, Arg(IdType::PROCEDURE, code.getFuncId(func)), Arg(IdType::NOID, params_size)));
 }

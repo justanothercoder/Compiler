@@ -50,6 +50,9 @@ public:
     
 private:
 
+    void genParam(ExprNode* node, ConversionInfo conversion_info);
+    void genCall(const FunctionSymbol* func, int params_size);
+
     bool shouldBeInlined(CallInfo call_info);
     void genInlineCall(CallNode* node);
 
