@@ -133,7 +133,7 @@ void GenSSAVisitor::visit(BracketNode *node)
         return;
     }
     
-    if ( node -> base -> getType().base() -> getUnqualifiedType() == BuiltIns::ASCII_string_type )
+    if ( node -> base -> getType().unqualified() == BuiltIns::ASCII_string_type )
     {
         _arg = code.add(Command(SSAOp::STRINGELEM, getArg(node -> base), getArg(node -> expr)));
         return;

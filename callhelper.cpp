@@ -111,8 +111,8 @@ ConversionInfo CallHelper::getConversionInfo(const Type *lhs, const Type *rhs)
     if ( !lhs -> isConvertableTo(rhs) )
         throw SemanticError("Invalid initialization of '" + rhs -> getName() + "' with type '" + lhs -> getName() + "'.");
 
-    auto _lhs = lhs -> getUnqualifiedType();
-    auto _rhs = rhs -> getUnqualifiedType();
+    auto _lhs = lhs -> removeRef();
+    auto _rhs = rhs -> removeRef();
 
     auto conv = (_lhs == _rhs) ? nullptr : _lhs -> getConversionTo(_rhs);
 

@@ -25,7 +25,7 @@ TypeKind ArrayType::getTypeKind() const
 
 bool ArrayType::isConvertableTo(const Type *t) const
 {
-    return (this == t -> getUnqualifiedType());
+    return (this == t -> removeRef());
 }
 
 boost::optional<int> ArrayType::rankOfConversion(const Type *t) const

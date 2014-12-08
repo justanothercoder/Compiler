@@ -33,7 +33,7 @@ TypeKind StructSymbol::getTypeKind() const
 
 bool StructSymbol::isConvertableTo(const Type *type) const
 {
-    type = type -> getUnqualifiedType();
+    type = type -> removeRef();
 
     if ( type -> getTypeKind() != this -> getTypeKind() )
         return false;
@@ -76,7 +76,7 @@ FunctionSymbol* StructSymbol::getConversionOperator(const StructSymbol *st) cons
 
 FunctionSymbol* StructSymbol::getConversionTo(const Type *type) const
 {
-    type = type -> getUnqualifiedType();
+    type = type -> removeRef();
 
     auto st = static_cast<const StructSymbol*>(type);
 
@@ -113,7 +113,7 @@ boost::optional<int> StructSymbol::rankOfConversion(const Type *type) const
     if ( !isConvertableTo(type) )
         return boost::none;
 
-    type = type -> getUnqualifiedType();
+    type = type -> removeRef();
 
     auto st = static_cast<const StructSymbol*>(type);
 

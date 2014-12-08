@@ -9,7 +9,7 @@ class FunctionSymbol;
 
 enum class TypeKind
 {
-    BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE, POINTER, CONSTTYPE, ARRAY
+    BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE, POINTER, ARRAY
 };
 
 class Type
@@ -31,7 +31,7 @@ public:
 
     virtual FunctionSymbol* getConversionTo(const Type *type) const = 0;
 
-    virtual const Type* getUnqualifiedType() const;
+    virtual const Type* removeRef() const;
 };
 
 #endif

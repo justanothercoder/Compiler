@@ -21,7 +21,7 @@ public:
 
     FunctionSymbol* getConversionTo(const Type *type) const override;
 
-    const Type* getUnqualifiedType() const override;
+    const Type* removeRef() const override;
 
     const Type *type;
 };

@@ -50,7 +50,7 @@ FunctionSymbol* ReferenceType::getConversionTo(const Type *) const
     return nullptr;
 }
 
-const Type* ReferenceType::getUnqualifiedType() const
+const Type* ReferenceType::removeRef() const
 {
-    return type -> getUnqualifiedType();
+    return type;
 }

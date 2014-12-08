@@ -5,7 +5,7 @@ Type::~Type()
 
 }
 
-const Type* Type::getUnqualifiedType() const
+const Type* Type::removeRef() const
 {
     return this;
 }
