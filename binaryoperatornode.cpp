@@ -95,9 +95,6 @@ boost::optional<int> BinaryOperatorNode::getCompileTimeValue() const
 
 std::string BinaryOperatorNode::toString() const
 {
-    std::string lhs_str = lhs -> toString();
-    std::string rhs_str = rhs -> toString();
-
     std::string oper;
 
     switch ( op_type )
@@ -114,7 +111,7 @@ std::string BinaryOperatorNode::toString() const
     case BinaryOp::MOD    : oper = "%" ; break;
     }
 
-    return lhs_str + " " + oper + " " + rhs_str;
+    return lhs -> toString() + " " + oper + " " + rhs -> toString();
 }
 
 void BinaryOperatorNode::accept(ASTVisitor& visitor)

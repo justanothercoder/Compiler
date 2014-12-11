@@ -48,11 +48,11 @@ void Block::genAsm(CodeObject& code_obj) const
     code_obj.emit("push rbp");
     code_obj.emit("mov rbp, rsp");
 
-    if ( scope.varAlloc().getSpace() > 0 )
-        code_obj.emit("sub rsp, " + std::to_string(scope.varAlloc().getSpace()));
+    if ( int var_space = scope.varAlloc().getSpace() )
+        code_obj.emit("sub rsp, " + std::to_string(var_space));
 
-    if ( scope.tempAlloc().getSpaceNeeded() )
-        code_obj.emit("sub rsp, " + std::to_string(scope.tempAlloc().getSpaceNeeded()));
+    if ( int temp_space = scope.tempAlloc().getSpaceNeeded() )
+        code_obj.emit("sub rsp, " + std::to_string(temp_space));
 
     for ( ; it != std::end(code); ++it )
         genCommand(*it, code_obj);

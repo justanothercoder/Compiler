@@ -15,18 +15,11 @@ AddrNode::AddrNode(ExprNode *expr, AddrOp op) : expr(expr), op(op)
 
 VariableType AddrNode::getType() const
 {
+    auto type = expr -> getType();
     if ( op == AddrOp::REF )
-    {
-        auto ptr = VariableType(TypeFactory::getPointer(expr -> getType().unqualified()), expr -> getType().isConst());
-        return ptr;
-    }
+        return VariableType(TypeFactory::getPointer(type.unqualified()), type.isConst());
     else
-    {
-        auto type = expr -> getType();
-        bool is_const = type.isConst();
-
-        return VariableType(static_cast<const PointerType*>(type.unqualified()) -> getPointedType(), is_const);
-    }
+        return VariableType(static_cast<const PointerType*>(type.unqualified()) -> getPointedType(), type.isConst());
 }
 
 bool AddrNode::isLeftValue() const
