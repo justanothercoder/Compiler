@@ -207,6 +207,8 @@ void CheckVisitor::visit(AddrNode *node)
 
         if ( type -> getTypeKind() != TypeKind::POINTER )
             throw SemanticError("expression is not a pointer");
+        
+        node -> scope -> tempAlloc().add(GlobalConfig::int_size);
     }
 }
 

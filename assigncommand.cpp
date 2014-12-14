@@ -12,8 +12,6 @@ AssignCommand::AssignCommand(Arg* lhs, Arg* rhs, bool is_char) : lhs(lhs), rhs(r
 
 void AssignCommand::gen(const Block& block, CodeObject& code_obj) const
 {
-    Logger::log(toString());
-
     if ( is_char )
     {
         rhs -> gen(block, code_obj);

@@ -29,8 +29,13 @@ void UnaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
 
             //if ( expr -> getType() -> isReference() )
             //  code_obj.emit("mov rax, [rax]");
+            
+            block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
+            block.scope.tempAlloc().claim(GlobalConfig::int_size);
 
-            code_obj.emit("mov rax, [rax]");
+            auto addr = "[rbp - " + std::to_string(block.alloc.addressOf(this)) + "]";
+            code_obj.emit("mov " + addr + ", rax");
+            code_obj.emit("lea rax, " + addr);
         }
         else
         {
@@ -43,7 +48,6 @@ void UnaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
 
             code_obj.emit("mov " + addr + ", rax");
             code_obj.emit("lea rax, " + addr);
-            return;
         }
     }
 }

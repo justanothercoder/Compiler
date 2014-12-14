@@ -7,7 +7,8 @@ void SpaceAllocator::remember(const Command* command, int offset)
 
 int SpaceAllocator::addressOf(const Command* command)
 {
-    return offsets.at(command);
+//    return offsets.at(command);
+    return offsets[command];
 }
 
 int SpaceAllocator::totalSpaceUsed() const
