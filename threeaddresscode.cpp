@@ -6,31 +6,24 @@
 #include "typefactory.hpp"
 #include "pointertype.hpp"
 
-#include "logger.hpp"
+#include "labelarg.hpp"
+#include "temporaryarg.hpp"
 
-Arg ThreeAddressCode::newLabel(std::string label)
+Arg* ThreeAddressCode::newLabel(std::string label)
 {
     static int label_num = 0;
-
-    ++label_num;
-
-    if ( label == "" )
-        globaltable.label_name[label_num] = "label_" + std::to_string(label_num);
-    else
-        globaltable.label_name[label_num] = label;
-
-    return Arg(IdType::LABEL, label_num);
+    return new LabelArg(label != "" ? label : "label_" + std::to_string(++label_num));
 }
 
-Arg ThreeAddressCode::add(Command command)
+Arg* ThreeAddressCode::add(Command* command)
 {
     Block& current_block = blocks[blockStack.top()];
 
-    const Type *command_type;
+//    const Type *command_type;
     
     current_block.commands.push_back(command);
     current_block.code.push_back(current_block.commands.size() - 1);
-
+/*
     switch ( command.op )
     {
     case SSAOp::ASSIGN: case SSAOp::PARAM: case SSAOp::LABEL: case SSAOp::RETURN:
@@ -51,8 +44,9 @@ Arg ThreeAddressCode::add(Command command)
     default:
         throw std::logic_error("Not all SSAOp's handled in ThreeAddressCode::add.");
     }
-
-    return Arg(IdType::TEMP, current_block.commands.size() - 1, command_type);
+*/
+//    return Arg(IdType::TEMP, current_block.commands.size() - 1, command_type);
+    return new TemporaryArg(command);
 }
 
 
@@ -267,3 +261,7 @@ const Type* ThreeAddressCode::getTypeFromId(int id)
     return globaltable.type_by_id.at(id);
 }
 
+void ThreeAddressCode::addExternalFunction(const FunctionSymbol* function)
+{
+    globaltable.has_definition[function] = false;
+}    

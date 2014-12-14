@@ -15,6 +15,7 @@ void Optimizer::optimize()
 
 void Optimizer::constantPropagation()
 {
+    /*
     for ( auto& block : code.blocks )
     {
         for ( auto it = std::begin(block.code); it != std::end(block.code); ++it )
@@ -63,10 +64,12 @@ void Optimizer::constantPropagation()
             }
         }
     }
+    */
 }
 
 void Optimizer::eliminateUnusedTemporaries()
 {
+    /*
     for ( auto& block : code.blocks )
     {
         std::vector<int> is_used(block.code.size(), 0);
@@ -96,4 +99,5 @@ void Optimizer::eliminateUnusedTemporaries()
                 ++it;
         }
     }
+    */
 }

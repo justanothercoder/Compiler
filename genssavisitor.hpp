@@ -16,7 +16,7 @@ public:
 
     GenSSAVisitor(ThreeAddressCode& code);
 
-    Arg getArg(AST* node);
+    Arg* getArg(AST* node);
 
     void visit(IfNode* node) override;
     void visit(ForNode* node) override;
@@ -56,9 +56,9 @@ private:
     bool shouldBeInlined(CallInfo call_info);
     void genInlineCall(CallNode* node);
 
-    std::stack< std::pair<Arg, Arg> > loop_label;
+    std::stack< std::pair<Arg*, Arg*> > loop_label;
 
-    Arg _arg;    
+    Arg* _arg;    
     ThreeAddressCode& code;
 };
 

@@ -60,8 +60,8 @@ class ThreeAddressCode
 
 public:
 
-    Arg add(Command command);
-    Arg newLabel(std::string label = "");
+    Arg* add(Command* command);
+    Arg* newLabel(std::string label = "");
 
     std::string toString();
 
@@ -74,6 +74,8 @@ public:
     void addFunction(const FunctionSymbol *sym);
     void addVariable(VariableSymbol *sym);
     void addString(const std::string& str);
+
+    void addExternalFunction(const FunctionSymbol* sym);
 
     int getConstId(int c);
     int getFuncId(const FunctionSymbol *sym);

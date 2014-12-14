@@ -28,6 +28,8 @@ public:
 
     const TemplateInfo& templateInfo() const override;
 
+    int offsetOf(VariableSymbol* member) const;
+
 private:
     mutable FieldVarAllocator var_alloc;
     mutable TempAllocator temp_alloc;

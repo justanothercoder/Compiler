@@ -19,7 +19,7 @@ public:
 
     static int transformAddress(Scope *scope, int addr);
 
-    std::map<FunctionSymbol*, bool> has_definition;
+    std::map<const FunctionSymbol*, bool> has_definition;
 
     std::map<int, int> const_num_id;
     std::map<int, int> id_to_num;
