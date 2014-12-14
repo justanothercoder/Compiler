@@ -80,3 +80,8 @@ bool ParamCommand::isExpr() const
 {
     return false;
 }
+    
+const Type* ParamCommand::type() const 
+{
+    return nullptr;
+}

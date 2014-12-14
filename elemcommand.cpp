@@ -6,6 +6,8 @@
 #include "arraytype.hpp"
 #include "tempallocator.hpp"
 #include "globalconfig.hpp"
+#include "builtins.hpp"
+#include "typefactory.hpp"
 
 ElemCommand::ElemCommand(Arg* base, Arg* expr, bool is_string) : base(base), expr(expr), is_string(is_string)
 {
@@ -56,4 +58,12 @@ std::string ElemCommand::toString() const
 bool ElemCommand::isExpr() const
 {
     return true;
+}
+    
+const Type* ElemCommand::type() const 
+{
+    if ( is_string )
+        return TypeFactory::getReference(BuiltIns::char_type);
+
+    return TypeFactory::getReference(static_cast<const ArrayType*>(base -> type()) -> type);
 }

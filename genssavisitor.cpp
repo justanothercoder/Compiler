@@ -45,6 +45,8 @@
 #include "variablearg.hpp"
 #include "stringarg.hpp"
 
+#include "logger.hpp"
+
 GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : _arg(nullptr), code(code)
 {
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> getTypeInfo().symbols )
@@ -240,26 +242,25 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
     }
     else
     {
+        ConversionInfo lhs_info(nullptr);
+        ConversionInfo rhs_info(nullptr);
+
         if ( node -> call_info.callee -> isMethod() )
         {
-            auto rhs_info = node -> call_info.conversions.front();
-            genParam(node -> rhs, rhs_info);
+            rhs_info = node -> call_info.conversions.front();
 
-            auto lhs_info = ConversionInfo(nullptr);
+            lhs_info = ConversionInfo(nullptr);
             lhs_info.desired_type = TypeFactory::getReference(node -> lhs -> getType().unqualified());
-            genParam(node -> lhs, lhs_info);
-
-            genCall(node -> call_info.callee, lhs_info.desired_type -> sizeOf() + rhs_info.desired_type -> sizeOf()); 
         }
         else
         {   
-            auto rhs_info = *(std::begin(node -> call_info.conversions) + 1);
-            auto lhs_info = *(std::begin(node -> call_info.conversions) + 0);
-
-            genParam(node -> rhs, rhs_info);
-            genParam(node -> lhs, lhs_info);
-            genCall(node -> call_info.callee, lhs_info.desired_type -> sizeOf() + rhs_info.desired_type -> sizeOf());
+            rhs_info = node -> call_info.conversions[1];
+            lhs_info = node -> call_info.conversions[0];
         }
+        
+        genParam(node -> rhs, rhs_info);
+        genParam(node -> lhs, lhs_info);
+        genCall(node -> call_info.callee, lhs_info.desired_type -> sizeOf() + rhs_info.desired_type -> sizeOf());
     }
 }
 

@@ -40,3 +40,8 @@ bool CallCommand::isExpr() const
 {
     return true;
 }
+
+const Type* CallCommand::type() const
+{
+    return function -> type().returnType().base();
+}

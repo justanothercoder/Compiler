@@ -13,6 +13,8 @@ public:
     std::string toString() const override;
     bool isExpr() const override;
 
+    const Type* type() const override;
+
 private:
 
     Arg* base;

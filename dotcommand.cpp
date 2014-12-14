@@ -14,7 +14,6 @@ DotCommand::DotCommand(Arg* expr, int offset, VariableSymbol* member) : expr(exp
 void DotCommand::gen(const Block& block, CodeObject& code_obj) const
 {
     auto base_type = expr -> type();
-    auto base_sym = static_cast<const StructSymbol*>(base_type -> removeRef());
 
     int arg_addr;
     if ( dynamic_cast<VariableArg*>(expr) )
@@ -26,7 +25,7 @@ void DotCommand::gen(const Block& block, CodeObject& code_obj) const
             block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
             block.scope.tempAlloc().claim(GlobalConfig::int_size);
 
-            code_obj.emit("mov rax, [rax + " + std::to_string(base_sym -> varAlloc().getAddress(member)) + "]");
+            code_obj.emit("mov rax, [rax + " + std::to_string(offset) + "]");
             code_obj.emit("mov [rbp - " + std::to_string(block.alloc.addressOf(this)) + "], rax");
 
             return;
@@ -41,7 +40,7 @@ void DotCommand::gen(const Block& block, CodeObject& code_obj) const
             block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
             block.scope.tempAlloc().claim(GlobalConfig::int_size);
 
-            code_obj.emit("mov rax, [rax + " + std::to_string(base_sym -> varAlloc().getAddress(member)) + "]");
+            code_obj.emit("mov rax, [rax + " + std::to_string(offset) + "]");
             code_obj.emit("mov [rbp - " + std::to_string(block.alloc.addressOf(this)) + "], rax");
 
             return;
@@ -58,10 +57,20 @@ void DotCommand::gen(const Block& block, CodeObject& code_obj) const
         arg_addr = 0;
     }
 
-    block.alloc.remember(this, arg_addr - base_sym -> varAlloc().getAddress(member));
+    block.alloc.remember(this, arg_addr - offset);
 }
 
 std::string DotCommand::toString() const
 {
     return expr -> toString() + "." + member -> getName();
+}
+
+bool DotCommand::isExpr() const
+{
+    return true;
+}
+
+const Type* DotCommand::type() const
+{
+    return member -> getType().base();
 }

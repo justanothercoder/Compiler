@@ -13,10 +13,15 @@ void LabelCommand::gen(const Block&, CodeObject& code_obj) const
 
 std::string LabelCommand::toString() const
 {
-    return label -> toString();
+    return label -> toString() + ":";
 }
 
 bool LabelCommand::isExpr() const
 {
     return false;
+}
+    
+const Type* LabelCommand::type() const 
+{
+    return nullptr;
 }

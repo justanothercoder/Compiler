@@ -74,3 +74,13 @@ std::string ReturnCommand::toString() const
     if ( is_return_ref ) return "returnref " + expr -> toString();
     else                 return "return "    + expr -> toString();
 }
+
+bool ReturnCommand::isExpr() const
+{
+    return false;
+}
+
+const Type* ReturnCommand::type() const 
+{
+    return nullptr;
+}

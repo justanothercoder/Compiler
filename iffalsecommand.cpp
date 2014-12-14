@@ -22,3 +22,8 @@ bool IfFalseCommand::isExpr() const
 {
     return false;
 }
+
+const Type* IfFalseCommand::type() const
+{
+    return nullptr;
+}

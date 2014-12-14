@@ -3,6 +3,8 @@
 #include "type.hpp"
 #include "builtins.hpp"
 
+#include "logger.hpp"
+
 AssignCommand::AssignCommand(Arg* lhs, Arg* rhs, bool is_char) : lhs(lhs), rhs(rhs), is_char(is_char)
 {
 
@@ -10,6 +12,8 @@ AssignCommand::AssignCommand(Arg* lhs, Arg* rhs, bool is_char) : lhs(lhs), rhs(r
 
 void AssignCommand::gen(const Block& block, CodeObject& code_obj) const
 {
+    Logger::log(toString());
+
     if ( is_char )
     {
         rhs -> gen(block, code_obj);
@@ -51,4 +55,9 @@ std::string AssignCommand::toString() const
 bool AssignCommand::isExpr() const
 {
     return false;
+}
+    
+const Type* AssignCommand::type() const 
+{
+    return nullptr;
 }

@@ -35,3 +35,8 @@ std::string VariableArg::toString() const
 {
     return var -> getName();
 }
+
+const Type* VariableArg::type() const
+{
+    return var -> getType().base();
+}

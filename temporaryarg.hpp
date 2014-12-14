@@ -17,7 +17,7 @@ public:
     void gen(const Block& block, CodeObject& code_obj) const override;
     
     const Type* type() const override;
-
+   
     Command* command;
 };
 

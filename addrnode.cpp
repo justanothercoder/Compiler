@@ -19,7 +19,7 @@ VariableType AddrNode::getType() const
     if ( op == AddrOp::REF )
         return VariableType(TypeFactory::getPointer(type.unqualified()), type.isConst());
     else
-        return VariableType(static_cast<const PointerType*>(type.unqualified()) -> getPointedType(), type.isConst());
+        return VariableType(static_cast<const PointerType*>(type.unqualified()) -> pointedType(), type.isConst());
 }
 
 bool AddrNode::isLeftValue() const

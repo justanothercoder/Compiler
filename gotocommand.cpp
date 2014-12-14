@@ -20,3 +20,8 @@ bool GotoCommand::isExpr() const
 {
     return false;
 }
+
+const Type* GotoCommand::type() const
+{
+    return nullptr;
+}

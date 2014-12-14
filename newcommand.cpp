@@ -6,7 +6,7 @@
 #include "tempallocator.hpp"
 #include "type.hpp"
     
-NewCommand::NewCommand(const Type* type) : type(type)
+NewCommand::NewCommand(const Type* _type) : _type(_type)
 {
 
 }
@@ -14,15 +14,20 @@ NewCommand::NewCommand(const Type* type) : type(type)
 void NewCommand::gen(const Block& block, CodeObject&) const
 {
     block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
-    block.scope.tempAlloc().claim(type -> sizeOf());
+    block.scope.tempAlloc().claim(_type -> sizeOf());
 }
 
 std::string NewCommand::toString() const
 {
-    return "new " + type -> getName();
+    return "new " + _type -> getName();
 }
 
 bool NewCommand::isExpr() const
 {
     return true;
 }    
+
+const Type* NewCommand::type() const
+{
+    return _type;
+}

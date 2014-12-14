@@ -5,6 +5,9 @@
 #include "scope.hpp"
 #include "tempallocator.hpp"
 #include "globalconfig.hpp"
+#include "builtins.hpp"
+#include "pointertype.hpp"
+#include "typefactory.hpp"
     
 UnaryOpCommand::UnaryOpCommand(AddrOp op, Arg* expr) : op(op), expr(expr)
 {
@@ -49,4 +52,20 @@ std::string UnaryOpCommand::toString() const
 {
     if ( op.which() == 0 ) return "*" + expr -> toString();
     else                   return "&" + expr -> toString();
+}
+
+bool UnaryOpCommand::isExpr() const
+{
+    return true;
+}
+
+const Type* UnaryOpCommand::type() const
+{
+    if ( op.which() == 1 )
+        return BuiltIns::int_type;
+
+    if ( boost::get<AddrOp>(op) == AddrOp::DEREF )
+        return TypeFactory::getReference(static_cast<const PointerType*>(expr -> type()) -> pointedType());
+    else
+        return TypeFactory::getPointer(VariableType(expr -> type()).unqualified());
 }

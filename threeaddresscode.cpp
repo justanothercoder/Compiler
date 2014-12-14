@@ -19,33 +19,9 @@ Arg* ThreeAddressCode::add(Command* command)
 {
     Block& current_block = blocks[blockStack.top()];
 
-//    const Type *command_type;
-    
     current_block.commands.push_back(command);
     current_block.code.push_back(current_block.commands.size() - 1);
-/*
-    switch ( command.op )
-    {
-    case SSAOp::ASSIGN: case SSAOp::PARAM: case SSAOp::LABEL: case SSAOp::RETURN:
-    case SSAOp::IF: case SSAOp::IFFALSE: case SSAOp::GOTO: case SSAOp::RETURNREF:
-    case SSAOp::ASSIGNCHAR:
-        return Arg(IdType::NOID, -1);
-    case SSAOp::PLUS: case SSAOp::MINUS: case SSAOp::MUL:
-    case SSAOp::DIV: case SSAOp::MOD: case SSAOp::EQUALS:
-    case SSAOp::NEQUALS: case SSAOp::ELEM: case SSAOp::AND:
-        command_type = BuiltIns::int_type;
-        break;
-    case SSAOp::DEREF: command_type = static_cast<const PointerType*>(command.arg1.expr_type); break;
-    case SSAOp::ADDR : command_type = TypeFactory::getPointer(VariableType(command.arg1.expr_type).unqualified()); break;
-    case SSAOp::DOT  : command_type = globaltable.var_by_id[command.arg2.id] -> getType().base(); break;
-    case SSAOp::CALL : command_type = globaltable.func_by_id[command.arg1.id] -> type().returnType().base(); break;
-    case SSAOp::NEW  : command_type = globaltable.type_by_id[command.arg1.id]; break;
-    case SSAOp::STRINGELEM: command_type = TypeFactory::getReference(BuiltIns::char_type); break;
-    default:
-        throw std::logic_error("Not all SSAOp's handled in ThreeAddressCode::add.");
-    }
-*/
-//    return Arg(IdType::TEMP, current_block.commands.size() - 1, command_type);
+
     return new TemporaryArg(command);
 }
 

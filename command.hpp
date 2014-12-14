@@ -9,6 +9,7 @@ public:
     virtual void gen(const Block& block, CodeObject& code_obj) const = 0;
     virtual std::string toString() const = 0;
     virtual bool isExpr() const = 0;
+    virtual const Type* type() const = 0;
 };
 
 #endif

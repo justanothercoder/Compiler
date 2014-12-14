@@ -89,3 +89,8 @@ bool BinaryOpCommand::isExpr() const
 {
     return true;
 }
+
+const Type* BinaryOpCommand::type() const
+{
+    return BuiltIns::int_type;
+}
