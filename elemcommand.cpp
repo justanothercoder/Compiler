@@ -52,8 +52,7 @@ void ElemCommand::gen(const Block& block, CodeObject& code_obj) const
 
 std::string ElemCommand::toString() const
 {
-    if ( is_string ) return base -> toString() + "[" + expr -> toString() + "]";
-    else             return base -> toString() + "[" + expr -> toString() + "]";
+    return base -> toString() + "[" + expr -> toString() + "]";
 }
 
 bool ElemCommand::isExpr() const
