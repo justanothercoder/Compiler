@@ -5,6 +5,7 @@
 #include "structsymbol.hpp"
 #include "builtins.hpp"
 #include "functionsymbol.hpp"
+#include "commandvisitor.hpp"
 
 ParamCommand::ParamCommand(Arg* expr, ConversionInfo conversion_info) : expr(expr), conversion_info(conversion_info)
 {
@@ -84,4 +85,9 @@ bool ParamCommand::isExpr() const
 const Type* ParamCommand::type() const 
 {
     return nullptr;
+}
+
+void ParamCommand::accept(CommandVisitor* visitor)
+{
+    visitor -> visit(this);
 }

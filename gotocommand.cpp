@@ -1,5 +1,6 @@
 #include "gotocommand.hpp"
 #include "codeobject.hpp"
+#include "commandvisitor.hpp"
 
 GotoCommand::GotoCommand(Arg* label) : label(label)
 {
@@ -24,4 +25,9 @@ bool GotoCommand::isExpr() const
 const Type* GotoCommand::type() const
 {
     return nullptr;
+}
+
+void GotoCommand::accept(CommandVisitor* visitor)
+{
+    visitor -> visit(this);
 }

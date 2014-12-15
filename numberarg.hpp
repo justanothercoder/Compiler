@@ -7,16 +7,18 @@ class NumberArg : public Arg
 {
 public:    
     
-    NumberArg(int value);
+    NumberArg(int _value);
 
     std::string toString() const override;
     void gen(const Block& block, CodeObject& code_obj) const override;
 
     const Type* type() const override;
 
+    int value() const;
+
 private:
 
-    int value;
+    int _value;
 };
 
 #endif

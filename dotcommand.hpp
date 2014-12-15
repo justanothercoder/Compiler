@@ -16,8 +16,7 @@ public:
     bool isExpr() const override;
 
     const Type* type() const override;
-
-private:
+    void accept(CommandVisitor* visitor) override;
 
     Arg* expr;
     int offset;

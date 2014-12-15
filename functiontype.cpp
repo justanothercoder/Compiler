@@ -34,29 +34,3 @@ const FunctionTypeInfo& FunctionType::typeInfo() const
 {
     return type_info;
 }
-/*
-size_t FunctionType::getSize() const
-{
-    return GlobalConfig::int_size;
-}
-
-TypeKind FunctionType::getTypeKind() const
-{
-    return TypeKind::FUNCTION;
-}
-
-bool FunctionType::isConvertableTo(const Type *) const
-{
-    return false;
-}
-
-boost::optional<int> FunctionType::rankOfConversion(const Type *) const
-{
-    return boost::none;
-}
-
-FunctionSymbol* FunctionType::getConversionTo(const Type *) const
-{
-    return nullptr;
-}
-*/

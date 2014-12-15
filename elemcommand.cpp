@@ -8,6 +8,7 @@
 #include "globalconfig.hpp"
 #include "builtins.hpp"
 #include "typefactory.hpp"
+#include "commandvisitor.hpp"
 
 ElemCommand::ElemCommand(Arg* base, Arg* expr, bool is_string) : base(base), expr(expr), is_string(is_string)
 {
@@ -66,4 +67,9 @@ const Type* ElemCommand::type() const
         return TypeFactory::getReference(BuiltIns::char_type);
 
     return TypeFactory::getReference(static_cast<const ArrayType*>(base -> type()) -> type);
+}
+
+void ElemCommand::accept(CommandVisitor* visitor)
+{
+    visitor -> visit(this);
 }

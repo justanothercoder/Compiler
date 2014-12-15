@@ -1,6 +1,5 @@
 #include "breaknode.hpp"
 
-
 BreakNode::BreakNode()
 {
 

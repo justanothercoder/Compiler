@@ -18,8 +18,7 @@ public:
     bool isExpr() const override;
 
     const Type* type() const override;
-
-private:
+    void accept(CommandVisitor* visitor) override;
 
     boost::variant<AddrOp, UnaryOp> op;
     Arg* expr;

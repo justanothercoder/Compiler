@@ -179,8 +179,6 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
 
     auto expr_type = node -> getType().unqualified();
 
-    code.addType(expr_type);
-
     auto tmp_obj = code.add(new NewCommand(expr_type));
     
     if ( expr_type == BuiltIns::int_type || expr_type == BuiltIns::char_type )
@@ -210,7 +208,6 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
 
     auto info = ConversionInfo(nullptr);
     info.desired_type = TypeFactory::getReference(expr_type);
-    code.addParamInfo(info);
     code.add(new ParamCommand(tmp_obj, info));
 
     params_size += GlobalConfig::int_size;
@@ -286,8 +283,6 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
 {
     if ( !node -> is_field )
     {
-        code.addVariable(node -> definedSymbol);
-
         auto var_type = node -> definedSymbol -> getType();
         auto var_arg = new VariableArg(node -> definedSymbol);
 
@@ -441,7 +436,6 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
 {
     auto expr_type = node -> expr -> getType().unqualified();
 
-    code.addVariable(node -> definedSymbol);
     auto var = new VariableArg(node -> definedSymbol);
 
     if ( expr_type == BuiltIns::int_type || expr_type == BuiltIns::char_type )
@@ -547,6 +541,5 @@ void GenSSAVisitor::genParam(ExprNode* node, ConversionInfo conversion_info)
 
 void GenSSAVisitor::genCall(const FunctionSymbol* func, int params_size)
 {
-    code.addFunction(func);
     _arg = code.add(new CallCommand(func, params_size));
 }

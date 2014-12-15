@@ -5,6 +5,7 @@
 #include "codeobject.hpp"
 #include "temporaryarg.hpp"
 #include "tempallocator.hpp"
+#include "commandvisitor.hpp"
 
 DotCommand::DotCommand(Arg* expr, int offset, VariableSymbol* member) : expr(expr), offset(offset), member(member)
 {
@@ -73,4 +74,9 @@ bool DotCommand::isExpr() const
 const Type* DotCommand::type() const
 {
     return member -> getType().base();
+}
+
+void DotCommand::accept(CommandVisitor* visitor)
+{
+    visitor -> visit(this);
 }

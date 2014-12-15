@@ -3,6 +3,7 @@
 #include "globaltable.hpp"
 #include "codeobject.hpp"
 #include "builtins.hpp"
+#include "commandvisitor.hpp"
 
 BinaryOpCommand::BinaryOpCommand(BinaryOp op, Arg* lhs, Arg* rhs) : op(op), lhs(lhs), rhs(rhs)
 {
@@ -93,4 +94,9 @@ bool BinaryOpCommand::isExpr() const
 const Type* BinaryOpCommand::type() const
 {
     return BuiltIns::int_type;
+}
+
+void BinaryOpCommand::accept(CommandVisitor* visitor)
+{
+    visitor -> visit(this);
 }

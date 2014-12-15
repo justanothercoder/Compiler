@@ -80,7 +80,6 @@ void BuiltIns::defineBuiltIns()
     BuiltInTypeSymbol *void_type = new BuiltInTypeSymbol("void", 0);
     BuiltIns::void_type = void_type;
 
-//    global_scope -> define(const_cast<Symbol*>(BuiltIns::void_type -> getSymbol()));
     global_scope -> define(void_type);
 
     global_scope -> defineBuiltInFunction("putchar", FunctionType(void_type, {char_struct}));    
@@ -100,12 +99,12 @@ void BuiltIns::defineBuiltIns()
 
     global_scope -> defineBuiltInFunction("print" , FunctionType(void_type, {const_ref_ASCII_string}));
 
-    int_struct -> is_defined = true;
+    int_struct   -> is_defined = true;
     ASCII_string -> is_defined = true;
-    char_struct -> is_defined = true;
+    char_struct  -> is_defined = true;
 
     global_scope -> resolve("putchar") -> is_defined = true;
     global_scope -> resolve("getchar") -> is_defined = true;
-    global_scope -> resolve("print") -> is_defined   = true;
+    global_scope -> resolve("print")   -> is_defined = true;
 }
 

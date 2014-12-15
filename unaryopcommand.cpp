@@ -8,6 +8,7 @@
 #include "builtins.hpp"
 #include "pointertype.hpp"
 #include "typefactory.hpp"
+#include "commandvisitor.hpp"
     
 UnaryOpCommand::UnaryOpCommand(AddrOp op, Arg* expr) : op(op), expr(expr)
 {
@@ -72,4 +73,9 @@ const Type* UnaryOpCommand::type() const
         return TypeFactory::getReference(static_cast<const PointerType*>(expr -> type()) -> pointedType());
     else
         return TypeFactory::getPointer(VariableType(expr -> type()).unqualified());
+}
+
+void UnaryOpCommand::accept(CommandVisitor* visitor)
+{
+    visitor -> visit(this);
 }

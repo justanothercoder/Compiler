@@ -14,6 +14,7 @@ public:
     bool isExpr() const override;
 
     const Type* type() const override;
+    void accept(CommandVisitor* visitor) override;
 
 private:
 

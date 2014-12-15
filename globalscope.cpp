@@ -47,26 +47,16 @@ bool GlobalScope::isUnsafeBlock() const
     
 void GlobalScope::defineBuiltInFunction(std::string name, FunctionType type)
 {
-    define(new FunctionSymbol(name
-                            , type
+    define(new FunctionSymbol(name, type
                             , new FunctionScope(getScopeName() + "_" + name
-                                              , this
-                                              , false
-                                              , false)
-                            , FunctionTraits::simple()
-                            )
-            ); 
+                                              , this, false, false)
+                            , FunctionTraits::simple())); 
 }
 
 void GlobalScope::defineBuiltInOperator(std::string name, FunctionType type)
 {
-    define(new FunctionSymbol(name
-                            , type
+    define(new FunctionSymbol(name, type
                             , new FunctionScope(getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name)
-                                              , this
-                                              , false
-                                              , false)
-                            , FunctionTraits::oper()
-                            )
-            ); 
+                                              , this, false, false)
+                            , FunctionTraits::oper())); 
 }

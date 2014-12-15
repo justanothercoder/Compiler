@@ -5,7 +5,6 @@ ForNode::ForNode(AST *init, ExprNode *cond, AST *step, AST *stats) : init     (i
                                                                    , cond     (cond)
                                                                    , step     (step)
                                                                    , stats    (stats)
-                                                                   , for_scope(nullptr)
 {
 
 }

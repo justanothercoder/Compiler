@@ -129,13 +129,9 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
 
     auto type = FunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
 
-    node -> definedSymbol = new FunctionSymbol(
-                                           node -> traits.is_constructor ? static_cast<StructSymbol*>(node -> scope) -> getName() : node -> name
-                                         , type
-                                         , node -> func_scope
-                                         , node -> traits
-    );
+    auto function_name = node -> traits.is_constructor ? static_cast<StructSymbol*>(node -> scope) -> getName() : node -> name;
 
+    node -> definedSymbol = new FunctionSymbol(function_name, type, node -> func_scope, node -> traits);
     node -> definedSymbol -> function_decl = node;
     
     node -> func_scope -> func = node -> definedSymbol;
@@ -152,10 +148,8 @@ void DefineVisitor::visit(VariableDeclarationNode *node)
     if ( var_type == BuiltIns::void_type )
         throw SemanticError("can't declare a variable of 'void' type.");
 
-    node -> definedSymbol = new VariableSymbol(node -> name, 
-                                               var_type, 
-                                               (node -> is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE)
-    );
+    auto var_symbol_type = (node -> is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE);
+    node -> definedSymbol = new VariableSymbol(node -> name, var_type, var_symbol_type);
 
     node -> scope -> define(node -> definedSymbol);
 }
@@ -188,7 +182,6 @@ void DefineVisitor::visit(VarInferTypeDeclarationNode *node)
         throw SemanticError("can't define variable of 'void' type");
 
     node -> definedSymbol = new VariableSymbol(node -> name, node -> expr -> getType());
-
     node -> scope -> define(node -> definedSymbol);
 }
 

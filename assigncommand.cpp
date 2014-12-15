@@ -2,8 +2,7 @@
 #include "codeobject.hpp"
 #include "type.hpp"
 #include "builtins.hpp"
-
-#include "logger.hpp"
+#include "commandvisitor.hpp"
 
 AssignCommand::AssignCommand(Arg* lhs, Arg* rhs, bool is_char) : lhs(lhs), rhs(rhs), is_char(is_char)
 {
@@ -58,4 +57,9 @@ bool AssignCommand::isExpr() const
 const Type* AssignCommand::type() const 
 {
     return nullptr;
+}
+
+void AssignCommand::accept(CommandVisitor* visitor)
+{
+    visitor -> visit(this);
 }

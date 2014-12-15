@@ -4,6 +4,7 @@
 #include "builtins.hpp"
 #include "referencetype.hpp"
 #include "functionsymbol.hpp"
+#include "commandvisitor.hpp"
 
 ReturnCommand::ReturnCommand(Arg* expr, bool is_return_ref) : expr(expr), is_return_ref(is_return_ref)
 {
@@ -83,4 +84,9 @@ bool ReturnCommand::isExpr() const
 const Type* ReturnCommand::type() const 
 {
     return nullptr;
+}
+
+void ReturnCommand::accept(CommandVisitor* visitor)
+{
+    visitor -> visit(this);
 }

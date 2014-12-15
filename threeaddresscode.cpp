@@ -142,26 +142,6 @@ void ThreeAddressCode::addConst(int c)
     }
 }
 
-void ThreeAddressCode::addFunction(const FunctionSymbol *sym)
-{
-    if ( globaltable.id_by_func.find(sym) == std::end(globaltable.id_by_func) )
-    {
-        auto new_id = globaltable.id_by_func.size();
-        globaltable.id_by_func[sym] = new_id;
-        globaltable.func_by_id[new_id] = sym;
-    }
-}
-
-void ThreeAddressCode::addVariable(VariableSymbol *sym)
-{
-    if ( globaltable.id_by_var.find(sym) == std::end(globaltable.id_by_var) )
-    {
-        auto new_id = globaltable.id_by_var.size();
-        globaltable.id_by_var[sym] = new_id;
-        globaltable.var_by_id[new_id] = sym;
-    }
-}
-
 void ThreeAddressCode::addString(const std::string& str)
 {
     if ( globaltable.id_by_string.find(str) == std::end(globaltable.id_by_string) )
@@ -177,16 +157,6 @@ int ThreeAddressCode::getConstId(int c)
     return globaltable.const_num_id.at(c);
 }
 
-int ThreeAddressCode::getFuncId(const FunctionSymbol *sym)
-{
-    return globaltable.id_by_func.at(sym);
-}
-
-int ThreeAddressCode::getVarId(VariableSymbol *sym)
-{
-    return globaltable.id_by_var.at(sym);
-}
-
 int ThreeAddressCode::getStrId(const std::string& str)
 {
     return globaltable.id_by_string.at(str);
@@ -195,46 +165,6 @@ int ThreeAddressCode::getStrId(const std::string& str)
 int ThreeAddressCode::getConstFromId(int id)
 {
     return globaltable.id_to_num[id];
-}
-
-void ThreeAddressCode::addParamInfo(ConversionInfo info)
-{
-    if ( globaltable.id_by_info.find(info) == std::end(globaltable.id_by_info) )
-    {
-        auto new_id = globaltable.id_by_info.size();
-        globaltable.id_by_info[info] = new_id;
-        globaltable.info_by_id.insert({new_id, info});
-    }
-}
-
-int ThreeAddressCode::getInfoId(ConversionInfo info)
-{
-    return globaltable.id_by_info.at(info);
-}
-
-ConversionInfo ThreeAddressCode::getInfoFromId(int id)
-{
-    return globaltable.info_by_id.at(id);
-}
-    
-void ThreeAddressCode::addType(const Type *type)
-{
-    if ( globaltable.id_by_type.find(type) == std::end(globaltable.id_by_type) )
-    {
-        auto new_id = globaltable.id_by_type.size();
-        globaltable.id_by_type[type] = new_id;
-        globaltable.type_by_id.insert({new_id, type});
-    }
-}
-
-int ThreeAddressCode::getTypeId(const Type *type)
-{
-    return globaltable.id_by_type.at(type);
-}
-
-const Type* ThreeAddressCode::getTypeFromId(int id)
-{
-    return globaltable.type_by_id.at(id);
 }
 
 void ThreeAddressCode::addExternalFunction(const FunctionSymbol* function)

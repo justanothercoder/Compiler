@@ -1,5 +1,6 @@
 #include "iffalsecommand.hpp"
 #include "codeobject.hpp"
+#include "commandvisitor.hpp"
 
 IfFalseCommand::IfFalseCommand(Arg* expr, Arg* label_false) : expr(expr), label_false(label_false)
 {
@@ -26,4 +27,9 @@ bool IfFalseCommand::isExpr() const
 const Type* IfFalseCommand::type() const
 {
     return nullptr;
+}
+
+void IfFalseCommand::accept(CommandVisitor* visitor)
+{
+    visitor -> visit(this);
 }
