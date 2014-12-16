@@ -19,16 +19,17 @@ void Optimizer::optimize()
 {
     constantPropagation();
     eliminateUnusedTemporaries();
+    callInlining();
 }
 
 void Optimizer::constantPropagation()
 {
     for ( auto& block : code.blocks )
     {
-        for ( auto it = std::begin(block.code); it != std::end(block.code); ++it )
+        for ( auto it = std::begin(block -> code); it != std::end(block -> code); ++it )
         {
             int command_id = *it;
-            auto& command = block.commands[command_id];
+            auto& command = block -> commands[command_id];
     
             if ( auto com = dynamic_cast<BinaryOpCommand*>(command) )
             {
@@ -65,10 +66,10 @@ void Optimizer::constantPropagation()
                         return arg1;
                     }, std::placeholders::_1, com, new NumberArg(n3)));
 
-                    for ( ++it2; it2 != std::end(block.code); ++it2 )
+                    for ( ++it2; it2 != std::end(block -> code); ++it2 )
                     {
                         int next_command_id = *it2;
-                        auto& next_command = block.commands[next_command_id];
+                        auto& next_command = block -> commands[next_command_id];
 
                         next_command -> accept(&substitutor);
                     }
@@ -85,22 +86,40 @@ void Optimizer::eliminateUnusedTemporaries()
     {
         CheckForUseVisitor checker;
 
-        for ( auto command_id : block.code )
+        for ( auto command_id : block -> code )
         {
-            auto command = block.commands[command_id];
+            auto command = block -> commands[command_id];
             command -> accept(&checker);
         }
 
-        for ( auto it = std::begin(block.code); it != std::end(block.code); )
+        for ( auto it = std::begin(block -> code); it != std::end(block -> code); )
         {
-            int command_id = *it;
-            auto command = block.commands[command_id];
+            int  command_id = *it;
+            auto command    = block -> commands[command_id];
 
             if ( !checker.isUsed(command) )
-                it = block.code.erase(it);
+                it = block -> code.erase(it);
             else
                 ++it;
         }
     }
     
+}
+
+void Optimizer::callInlining()
+{
+    for ( auto& block : code.blocks )
+    {
+        for ( auto it = std::begin(block -> code); it != std::end(block -> code); ++it )
+        {
+            int  command_id = *it;
+            auto command    = block -> commands[command_id];
+            
+            if ( auto call_command = dynamic_cast<CallCommand*>(command) )
+            {
+                if ( block -> table.function_blocks.count(call_command -> function) )
+                    call_command -> setInlineCall();
+            }
+        }
+    }
 }

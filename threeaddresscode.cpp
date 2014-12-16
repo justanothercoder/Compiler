@@ -17,20 +17,19 @@ Arg* ThreeAddressCode::newLabel(std::string label)
 
 Arg* ThreeAddressCode::add(Command* command)
 {
-    Block& current_block = blocks[blockStack.top()];
+    Block* current_block = blocks[blockStack.top()];
 
-    current_block.commands.push_back(command);
-    current_block.code.push_back(current_block.commands.size() - 1);
+    current_block -> commands.push_back(command);
+    current_block -> code.push_back(current_block -> commands.size() - 1);
 
     return new TemporaryArg(command);
 }
-
 
 std::string ThreeAddressCode::toString()
 {
     std::string res;
     for ( auto block : blocks )
-        res += block.toString() + "\n";
+        res += block -> toString() + "\n";
 
     return res;
 }
@@ -95,15 +94,15 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 
     for ( auto block = blocks.cbegin(); block != blocks.cend(); ++block )
     {
-        if ( !dynamic_cast<FunctionScope*>(&block -> scope) )
+        if ( !dynamic_cast<FunctionScope*>(&(*block) -> scope) )
         {
             mainblock = block;
             continue;
         }
 
-        if ( dynamic_cast<FunctionScope*>(&block -> scope) -> func -> is_used )
+        if ( dynamic_cast<FunctionScope*>(&(*block) -> scope) -> func -> is_used )
         {
-            block -> genAsm(code_obj);
+            (*block) -> genAsm(code_obj);
             code_obj.emit("ret");
         }
     }
@@ -111,7 +110,7 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
     code_obj.emit("global _start");
     code_obj.emit("_start:");
 
-    mainblock -> genAsm(code_obj);    
+    (*mainblock) -> genAsm(code_obj);    
 
     code_obj.emit("mov rax, 60");
     code_obj.emit("mov rdi, 0");
@@ -123,7 +122,7 @@ void ThreeAddressCode::newBlock(Scope& scope, std::string block_name)
     if ( block_name == "" )
         block_name = scope.getScopeName();
 
-    blocks.push_back(Block(scope, globaltable, block_name));
+    blocks.push_back(new Block(scope, globaltable, block_name));
     blockStack.push(blocks.size() - 1);
 }
 

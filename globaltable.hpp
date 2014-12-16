@@ -13,6 +13,8 @@ class Scope;
 class FunctionSymbol;
 class VariableSymbol;
 
+struct Block;
+
 class GlobalTable
 {
 public:
@@ -26,6 +28,8 @@ public:
 
     std::map<std::string, int> id_by_string;
     std::map<int, std::string> string_by_id;
+
+    std::map<const FunctionSymbol*, Block*> function_blocks;
 };
 
 #endif

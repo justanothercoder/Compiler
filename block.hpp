@@ -23,13 +23,7 @@ struct Block
 
     void genAsm(CodeObject& code_obj) const;
 
-//    void genArg(Arg* arg, CodeObject& code_obj) const;
-//    void genCommand(int command_id, CodeObject& code_obj) const;
-
     std::string toString();
-
-//    std::string toString(Arg arg) const;
-//    std::string toString(Command command) const;
 
     std::list<int> code;
     Scope& scope;
