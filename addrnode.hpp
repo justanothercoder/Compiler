@@ -3,10 +3,7 @@
 
 #include "exprnode.hpp"
 
-enum class AddrOp
-{
-    REF, DEREF
-};
+enum class AddrOp { REF, DEREF };
 
 class AddrNode : public ExprNode
 {
@@ -18,7 +15,7 @@ public:
 
     AddrNode(ExprNode* expr, AddrOp op);
 
-    AST* copyTree() const;
+    AST* copyTree() const override;
 
     VariableType getType() const override;
     bool isLeftValue() const override;

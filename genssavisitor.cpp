@@ -49,22 +49,24 @@
 
 GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : _arg(nullptr), code(code)
 {
+    auto str_type = static_cast<StructSymbol*>(BuiltIns::ASCII_string_type);
+
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> getTypeInfo().symbols )
         code.addExternalFunction(func.second);
     
     for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getTypeInfo().symbols )
         code.addExternalFunction(func.second);
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(static_cast<StructSymbol*>(BuiltIns::ASCII_string_type) -> resolve("length")) -> getTypeInfo().symbols )
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("length")) -> getTypeInfo().symbols )
         code.addExternalFunction(func.second);
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(static_cast<StructSymbol*>(BuiltIns::ASCII_string_type) -> resolve("operator+")) -> getTypeInfo().symbols )
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator+")) -> getTypeInfo().symbols )
         code.addExternalFunction(func.second);
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(static_cast<StructSymbol*>(BuiltIns::ASCII_string_type) -> resolve("string")) -> getTypeInfo().symbols )
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("string")) -> getTypeInfo().symbols )
         code.addExternalFunction(func.second);
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(static_cast<StructSymbol*>(BuiltIns::ASCII_string_type) -> resolve("operator=")) -> getTypeInfo().symbols )
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator=")) -> getTypeInfo().symbols )
         code.addExternalFunction(func.second);
     
     code.newBlock(*BuiltIns::global_scope);

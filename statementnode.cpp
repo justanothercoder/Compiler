@@ -7,12 +7,10 @@ StatementNode::StatementNode(std::vector<AST*> statements) : statements(statemen
 
 AST* StatementNode::copyTree() const
 {
-    std::vector<AST*> stats(statements.size());
+    std::vector<AST*> stats;
 
-    std::transform(std::begin(statements), std::end(statements), std::begin(stats), [&](AST *t)
-    {
-        return t -> copyTree();
-    });
+    for ( auto statement : statements )
+        stats.push_back(statement -> copyTree());
 
     return new StatementNode(stats);
 }

@@ -1,20 +1,16 @@
 #include "externnode.hpp"
 
-ExternNode::ExternNode(std::string name
-                     , std::vector< std::pair<std::string, TypeInfo> > params
-                     , TypeInfo return_type_info
-                     , bool is_unsafe) : name            (name)
-                                       , params          (params)
-                                       , return_type_info(return_type_info)
-                                       , is_unsafe       (is_unsafe)
-                                       , definedSymbol   (nullptr)
+ExternNode::ExternNode(std::string name, FunctionDeclarationInfo info, bool is_unsafe) : name         (name)
+                                                                                       , info         (info)
+                                                                                       , is_unsafe    (is_unsafe)
+                                                                                       , definedSymbol(nullptr)
 {
 
 }
 
 AST* ExternNode::copyTree() const
 {
-    return new ExternNode(name, params, return_type_info, is_unsafe);
+    return new ExternNode(name, info, is_unsafe);
 }
 
 std::string ExternNode::toString() const
@@ -24,8 +20,10 @@ std::string ExternNode::toString() const
     
     res += "(";
     
-    if ( !params.empty() )
+    if ( !info.formalParams().empty() )
     {
+        const auto& params = info.formalParams();
+
         auto it = std::begin(params);
         res += it -> second.toString() + " " + it -> first;
 
@@ -35,7 +33,7 @@ std::string ExternNode::toString() const
 
     res += ")";
 
-    res += " : " + return_type_info.toString();
+    res += " : " + info.returnTypeInfo().toString();
     return res;
 }
 

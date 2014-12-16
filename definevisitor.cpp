@@ -35,11 +35,11 @@
 
 void DefineVisitor::visit(ExternNode *node) 
 {
-    auto return_type = fromTypeInfo(node -> return_type_info, node -> scope);
+    auto return_type = fromTypeInfo(node -> info.returnTypeInfo(), node -> scope);
 
     std::vector<VariableType> params_types;
 
-    for ( auto i : node -> params )
+    for ( auto i : node -> info.formalParams() )
     {
         auto param_type = fromTypeInfo(i.second, node -> scope);
         params_types.push_back(param_type);
@@ -47,14 +47,9 @@ void DefineVisitor::visit(ExternNode *node)
 
     auto type = FunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
 
-    node -> definedSymbol = new FunctionSymbol(node -> name
-                                             , type
-                                             , new FunctionScope("_" + node -> name
-                                                               , node -> scope
-                                                               , false
-                                                               , false)
-                                             , FunctionTraits::simple()
-                                             );
+    node -> definedSymbol = new FunctionSymbol(node -> name, type
+                                             , new FunctionScope("_" + node -> name, node -> scope, false, false)
+                                             , FunctionTraits::simple());
     
     node -> definedSymbol -> is_unsafe = node -> is_unsafe;
     node -> scope -> define(node -> definedSymbol);
@@ -100,7 +95,7 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
         return DefineVisitor::fromTypeInfo(type_info, node -> func_scope);
     };
 
-    auto return_type = fromTypeInfo(node -> return_type_info);
+    auto return_type = fromTypeInfo(node -> info.returnTypeInfo());
 
     std::vector<VariableType> params_types;
 
@@ -115,7 +110,7 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
         node -> func_scope -> define(_this_sym);
     }
 
-    for ( auto i : node -> params )
+    for ( auto i : node -> info.formalParams() )
     {
         auto param_type = fromTypeInfo(i.second);
 

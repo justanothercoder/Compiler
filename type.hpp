@@ -7,10 +7,7 @@
 class Symbol;
 class FunctionSymbol;
 
-enum class TypeKind
-{
-    BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE, POINTER, ARRAY
-};
+enum class TypeKind { BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE, POINTER, ARRAY };
 
 class Type
 {

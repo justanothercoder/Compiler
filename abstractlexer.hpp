@@ -6,14 +6,11 @@
 #include "token.hpp"
 #include "recognitionerror.hpp"
 
-using string = std::string;
-
 class AbstractLexer
 {
 public:
 
-    AbstractLexer(string input);
-
+    AbstractLexer(std::string input);
     virtual ~AbstractLexer();
 
     virtual Token getToken() = 0;
@@ -27,7 +24,7 @@ protected:
 
     char cur;
     int pos;
-    string input;
+    std::string input;
 
     int line, symbol;
 };

@@ -1,6 +1,6 @@
 #include "abstractlexer.hpp"
 
-AbstractLexer::AbstractLexer(string input) : input(input)
+AbstractLexer::AbstractLexer(std::string input) : input(input)
 {
     pos = 0;
     cur = '\0';

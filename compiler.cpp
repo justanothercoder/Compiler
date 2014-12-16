@@ -92,13 +92,7 @@ DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vec
             templates_name += std::to_string(boost::get<int>(param));
     }
 
-    auto decl = new StructDeclarationNode(templates_name, 
-                                          vec, 
-                                          *(new TemplateInfo(const_cast<TemplateStructSymbol*>(sym), 
-                                                             template_params)
-                                           )
-    );
-
+    auto decl = new StructDeclarationNode(templates_name, vec, *(new TemplateInfo(sym, template_params)));
 
 	decl -> scope = sym -> holder -> scope;
     decl -> build_scope();

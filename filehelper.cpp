@@ -8,14 +8,10 @@ AST* FileHelper::parse(std::string filename)
 {
     return std::shared_ptr<AbstractParser>(new Parser(
             std::shared_ptr<AbstractLexer>(new Lexer(
-                    extractContents(filename)
-                                           )
-                                          ).get()
-                                           )
-                                          )->parse();
+                extractContents(filename))).get())) -> parse();    
 }
 
-string FileHelper::extractContents(std::string filename)
+std::string FileHelper::extractContents(std::string filename)
 {
     std::ifstream in(filename.c_str());
 

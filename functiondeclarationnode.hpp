@@ -7,19 +7,17 @@
 #include "functionscope.hpp"
 #include "functiontraits.hpp"
 #include "typeinfo.hpp"
+#include "functiondeclarationinfo.hpp"
 
 class FunctionSymbol;
 class VariableSymbol;
-
-using std::pair;
 
 class FunctionDeclarationNode : public DeclarationNode
 {
 public:
 
     FunctionDeclarationNode(std::string name
-                            , std::vector< pair<std::string, TypeInfo> > params
-                            , TypeInfo return_type_info
+                            , FunctionDeclarationInfo info
                             , AST *statements
                             , FunctionTraits traits
                             , bool is_unsafe = false);
@@ -37,8 +35,7 @@ public:
     void accept(ASTVisitor& visitor) override;
 
     std::string name;
-    std::vector< pair<std::string, TypeInfo> > params;
-    TypeInfo return_type_info;
+    FunctionDeclarationInfo info;
     AST *statements;
 
     FunctionTraits traits;

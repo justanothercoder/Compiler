@@ -16,30 +16,11 @@ FunctionSymbolDefine::FunctionSymbolDefine(FunctionSymbol* sym) : sym(sym)
 
 }
 
-void FunctionSymbolDefine::visit(ModuleSymbol* sc)
-{
-    visit(static_cast<BaseScope*>(sc));
-}
-
-void FunctionSymbolDefine::visit(GlobalScope* sc)
-{
-    visit(static_cast<BaseScope*>(sc));
-}
-
-void FunctionSymbolDefine::visit(LocalScope* sc)
-{
-    visit(static_cast<BaseScope*>(sc));
-}
-
-void FunctionSymbolDefine::visit(StructScope* sc)
-{
-    visit(static_cast<BaseScope*>(sc));
-}
-
-void FunctionSymbolDefine::visit(FunctionScope* sc)
-{
-    visit(static_cast<BaseScope*>(sc));
-}
+void FunctionSymbolDefine::visit(ModuleSymbol* sc)  { visit(static_cast<BaseScope*>(sc)); }
+void FunctionSymbolDefine::visit(GlobalScope* sc)   { visit(static_cast<BaseScope*>(sc)); }
+void FunctionSymbolDefine::visit(LocalScope* sc)    { visit(static_cast<BaseScope*>(sc)); }
+void FunctionSymbolDefine::visit(StructScope* sc)   { visit(static_cast<BaseScope*>(sc)); }
+void FunctionSymbolDefine::visit(FunctionScope* sc) { visit(static_cast<BaseScope*>(sc)); }
 
 void FunctionSymbolDefine::visit(BaseScope* sc)
 {

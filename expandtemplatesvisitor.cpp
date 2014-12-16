@@ -51,12 +51,12 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
 {
     const auto& template_info = node -> scope -> templateInfo();
 
-    if ( template_info.sym && node -> return_type_info.type_name == template_info.sym -> getName() )
-        node -> return_type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
+    if ( template_info.sym && node -> info.returnTypeInfo().type_name == template_info.sym -> getName() )
+        node -> info.returnTypeInfo().type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
 
-    node -> return_type_info = preprocessTypeInfo(node -> return_type_info, node -> scope);
+    node -> info.returnTypeInfo() = preprocessTypeInfo(node -> info.returnTypeInfo(), node -> scope);
 
-    for ( auto& param : node -> params )
+    for ( auto& param : node -> info.formalParams() )
     {
         if ( template_info.sym && param.second.type_name == template_info.sym -> getName() )
             param.second.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();

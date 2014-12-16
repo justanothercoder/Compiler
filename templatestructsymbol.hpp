@@ -12,11 +12,13 @@ class AST;
 class StructSymbol;
 class StructDeclarationNode;
 
+using TemplateParamsList = std::vector< std::pair<std::string, TypeInfo> >;
+
 class TemplateStructSymbol : public StructSymbol, public TemplateSymbol
 {
 public:
 
-    TemplateStructSymbol(std::string name, Scope *enclosing_scope, std::vector< std::pair<std::string, TypeInfo> > template_symbols, AST *holder);
+    TemplateStructSymbol(std::string name, Scope *enclosing_scope, TemplateParamsList template_symbols, AST *holder);
 
     SymbolType getSymbolType() const override;
 

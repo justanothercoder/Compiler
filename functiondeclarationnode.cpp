@@ -5,29 +5,25 @@
 #include "templatestructsymbol.hpp"
 
 FunctionDeclarationNode::FunctionDeclarationNode(std::string name
-                                               , std::vector< pair<std::string, TypeInfo> > params
-                                               , TypeInfo return_type_info
+                                               , FunctionDeclarationInfo info
                                                , AST *statements
                                                , FunctionTraits traits
-                                               , bool is_unsafe) : name            (name)
-                                                                 , params          (params)
-                                                                 , return_type_info(return_type_info)
-                                                                 , statements      (statements)
-                                                                 , traits          (traits)
-                                                                 , definedSymbol   (nullptr)
-                                                                 , func_scope      (nullptr)
-                                                                 , is_unsafe       (is_unsafe)
+                                               , bool is_unsafe) : name         (name)
+                                                                 , info         (info)
+                                                                 , statements   (statements)
+                                                                 , traits       (traits)
+                                                                 , definedSymbol(nullptr)
+                                                                 , func_scope   (nullptr)
+                                                                 , is_unsafe    (is_unsafe)
 {
 
 }
 
 void FunctionDeclarationNode::build_scope()
 {
-    func_scope = new FunctionScope(scope -> getScopeName() + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name)
-                                 , scope
-                                 , traits.is_constructor
-                                 , is_unsafe
-    );
+    std::string function_name = (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name);
+
+    func_scope = new FunctionScope(scope -> getScopeName() + "_" + function_name, scope, traits.is_constructor, is_unsafe);
 
     statements -> scope = func_scope;
     statements -> build_scope();
@@ -40,7 +36,7 @@ Symbol* FunctionDeclarationNode::getDefinedSymbol() const
 
 AST* FunctionDeclarationNode::copyTree() const
 {
-    return new FunctionDeclarationNode(name, params, return_type_info, statements -> copyTree(), traits);
+    return new FunctionDeclarationNode(name, info, statements -> copyTree(), traits);
 }
 
 std::vector<AST*> FunctionDeclarationNode::getChildren() const
@@ -50,10 +46,12 @@ std::vector<AST*> FunctionDeclarationNode::getChildren() const
 
 std::string FunctionDeclarationNode::toString() const
 {
-    std::string res = return_type_info.toString() + " " + name + "(";
+    std::string res = info.returnTypeInfo().toString() + " " + name + "(";
 
-    if ( !params.empty() )
+    if ( !info.formalParams().empty() )
     {
+        const auto& params = info.formalParams();
+
         auto it = std::begin(params);
 
         res += it -> second.toString() + " " + it -> first;

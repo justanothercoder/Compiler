@@ -5,7 +5,7 @@ ConversionInfo::ConversionInfo(FunctionSymbol *conversion) : conversion(conversi
 {
 
 }
-
+/*
 bool ConversionInfo::operator<(const ConversionInfo& info) const
 {
     if ( conversion == info.conversion )
@@ -13,3 +13,4 @@ bool ConversionInfo::operator<(const ConversionInfo& info) const
     
     return conversion < info.conversion;
 }
+*/

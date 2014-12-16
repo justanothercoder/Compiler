@@ -12,9 +12,6 @@
 #include "arraytype.hpp"
 #include "labelcommand.hpp"
 
-#include <sstream>
-#include "logger.hpp"
-
 Block::Block(Scope& scope, GlobalTable& table, std::string block_name) : scope(scope), block_name(block_name), table(table)
 { 
     if ( dynamic_cast<FunctionScope*>(&scope) )
