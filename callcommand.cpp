@@ -14,7 +14,7 @@ CallCommand::CallCommand(const FunctionSymbol* function, int params_size) : func
 
 void CallCommand::gen(const Block& block, CodeObject& code_obj) const
 {
-    if ( is_inline_call && !function -> isConstructor() )
+    if ( false && is_inline_call && !function -> isConstructor() )
     {
         block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
         block.scope.tempAlloc().claim(function -> type().returnType().sizeOf());

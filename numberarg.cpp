@@ -11,7 +11,7 @@ NumberArg::NumberArg(int _value) : _value(_value)
 
 void NumberArg::gen(const Block& block, CodeObject& code_obj) const
 {
-    int num_id = block.table.const_num_id[_value];
+    int num_id = block.table.const_num_id.at(_value);
     code_obj.emit("lea rax, [iconst" + std::to_string(num_id) + "]");
 }
 

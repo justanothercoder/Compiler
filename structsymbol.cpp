@@ -140,39 +140,18 @@ bool StructSymbol::isUnsafeBlock() const
     
 void StructSymbol::defineBuiltInMethod(std::string name, FunctionType type)
 {
-    define(new FunctionSymbol(name
-                            , type
-                            , new FunctionScope(getScopeName() + "_" + name
-                                              , this
-                                              , false
-                                              , false)
-                            , FunctionTraits::method()
-                            )
-            );
+    std::string scope_name = getScopeName() + "_" + name;
+    define(new FunctionSymbol(name, type , new FunctionScope(scope_name, this, false, false) , FunctionTraits::method()));
 }
 
 void StructSymbol::defineBuiltInOperator(std::string name, FunctionType type)
 {
-    define(new FunctionSymbol(name
-                            , type
-                            , new FunctionScope(getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name)
-                                              , this
-                                              , false
-                                              , false)
-                            , FunctionTraits::methodOper()
-                            )
-            );
+    std::string scope_name = getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name);
+    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false, false), FunctionTraits::methodOper()));
 }
 
 void StructSymbol::defineBuiltInConstructor(FunctionType type)
 {
-    define(new FunctionSymbol(name
-                            , type
-                            , new FunctionScope(getScopeName() + "_" + name
-                                              , this
-                                              , true
-                                              , false)
-                            , FunctionTraits::constructor()
-                            )
-            );
+    std::string scope_name = getScopeName() + "_" + name;
+    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, true, false), FunctionTraits::constructor()));
 }

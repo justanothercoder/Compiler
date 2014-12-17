@@ -10,8 +10,6 @@ struct ConversionInfo
 {
     ConversionInfo(FunctionSymbol *conversion);
 
-//    bool operator<(const ConversionInfo& info) const;
-
     FunctionSymbol *conversion;
     const Type *desired_type;
 };

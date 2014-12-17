@@ -106,11 +106,7 @@ void CheckVisitor::visit(BinaryOperatorNode *node)
         auto lhs_unqualified = lhs_type.unqualified();
 
         if ( lhs_unqualified -> getTypeKind() == TypeKind::STRUCT )
-        {       
-            node -> call_info = CallHelper::callCheck(node -> getOperatorName()
-                                                    , static_cast<const StructSymbol*>(lhs_unqualified)
-                                                    , {node -> rhs});
-        }
+            node -> call_info = CallHelper::callCheck(node -> getOperatorName(), static_cast<const StructSymbol*>(lhs_unqualified), {node -> rhs});
         else
             throw SemanticError("");
     }
@@ -157,15 +153,14 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 
     if ( !node -> is_field )
     {
-        if ( !node -> type_info.is_ref )
+        if ( node -> type_info.is_ref || node -> type_info.pointer_depth > 0 )
+        {
+            for ( auto param : node -> constructor_call_params )
+                param -> accept(*this);
+        }
+        else
         {
             auto var_type = fromTypeInfo(node -> type_info, node -> scope);
-
-            if ( var_type == BuiltIns::int_type && node -> constructor_call_params.empty() )
-            {
-                node -> scope -> tempAlloc().add(GlobalConfig::int_size);
-                return;
-            }
 
             if ( var_type.base() -> getTypeKind() != TypeKind::POINTER )
             {
@@ -176,16 +171,6 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 
                 node -> call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, node -> constructor_call_params);
             }
-            else
-            {
-                for ( auto param : node -> constructor_call_params )
-                    param -> accept(*this);
-            }
-        }
-        else
-        {
-            for ( auto param : node -> constructor_call_params )
-                param -> accept(*this);
         }
     }
 }
@@ -198,8 +183,6 @@ void CheckVisitor::visit(AddrNode *node)
     {
         if ( !node -> expr -> isLeftValue() )
             throw SemanticError("expression is not an lvalue");
-
-        node -> scope -> tempAlloc().add(GlobalConfig::int_size);
     }
     else
     {
@@ -207,14 +190,9 @@ void CheckVisitor::visit(AddrNode *node)
 
         if ( type -> getTypeKind() != TypeKind::POINTER )
             throw SemanticError("expression is not a pointer");
-        
-        node -> scope -> tempAlloc().add(GlobalConfig::int_size);
     }
-}
 
-void CheckVisitor::visit(NullNode *node)
-{
-    node -> scope -> tempAlloc().add(node -> getType().sizeOf());
+    node -> scope -> tempAlloc().add(GlobalConfig::int_size);
 }
 
 void CheckVisitor::visit(DotNode *node)
@@ -273,13 +251,10 @@ void CheckVisitor::visit(TypeNode* node)
     if ( sym == nullptr )
         throw SemanticError("No such symbol '" + node -> name + "'");
 
-    if ( sym -> getSymbolType() != SymbolType::STRUCT || sym -> getSymbolType() != SymbolType::BUILTINTYPE )
+    if ( sym -> getSymbolType() != SymbolType::STRUCT )
         throw SemanticError("'" + node -> name + "' is not a type.");
 
-    if ( sym -> getSymbolType() == SymbolType::STRUCT )
-        node -> type_symbol = static_cast<StructSymbol*>(sym);
-    else
-        node -> type_symbol = static_cast<BuiltInTypeSymbol*>(sym);
+    node -> type_symbol = static_cast<StructSymbol*>(sym);
 }
 
 void CheckVisitor::visit(FunctionNode* node) 
@@ -404,6 +379,7 @@ void CheckVisitor::visit(TemplateStructDeclarationNode* node)
         instance -> accept(*this);
 }
 
+void CheckVisitor::visit(NullNode*) { } 
 void CheckVisitor::visit(BreakNode* ) { }
 void CheckVisitor::visit(NumberNode *) { }
 void CheckVisitor::visit(StringNode *) { }

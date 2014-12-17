@@ -235,7 +235,7 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
         auto lhs = getArg(node -> lhs);
 
         if ( node -> op_type == BinaryOp::ASSIGN )
-            code.add(new AssignCommand(lhs, rhs, lhs_type.unqualified() != BuiltIns::int_type));
+            code.add(new AssignCommand(lhs, rhs, lhs_type.unqualified() == BuiltIns::char_type));
         else
             _arg = code.add(new BinaryOpCommand(node -> op_type, lhs, rhs));
     }
@@ -303,10 +303,9 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
         }
         else
         {
-            if ( var_type.unqualified() == BuiltIns::int_type
-              || var_type.unqualified() == BuiltIns::char_type )
+            if ( var_type.unqualified() == BuiltIns::int_type || var_type.unqualified() == BuiltIns::char_type )
             {
-                bool is_char_assign = (var_type.unqualified() != BuiltIns::int_type);
+                bool is_char_assign = (var_type.unqualified() == BuiltIns::char_type);
                 if ( node -> constructor_call_params.empty() )
                 {
                     code.addConst(0);
@@ -348,6 +347,7 @@ void GenSSAVisitor::visit(AddrNode *node)
 
 void GenSSAVisitor::visit(NullNode *)
 {
+    code.addConst(0);
     _arg = new NumberArg(0);
 }
 
