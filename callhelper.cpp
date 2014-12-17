@@ -116,12 +116,8 @@ ConversionInfo CallHelper::getConversionInfo(const Type *lhs, const Type *rhs)
 
     auto conv = (_lhs == _rhs) ? nullptr : _lhs -> getConversionTo(_rhs);
 
-    ConversionInfo conv_info(conv);
-
-    conv_info.desired_type = rhs;
-    
     if ( conv != nullptr )
         conv -> is_used = true;
 
-    return conv_info;
+    return ConversionInfo(conv, rhs);
 }

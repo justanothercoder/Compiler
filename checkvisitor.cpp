@@ -155,15 +155,12 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
         {
             auto var_type = fromTypeInfo(node -> type_info, node -> scope);
 
-            if ( var_type.base() -> getTypeKind() != TypeKind::POINTER )
-            {
-                auto struct_symbol = static_cast<const StructSymbol*>(var_type.unqualified());
+            auto struct_symbol = static_cast<const StructSymbol*>(var_type.unqualified());
 
-                for ( auto param : node -> constructor_call_params )
-                    param -> accept(*this);
+            for ( auto param : node -> constructor_call_params )
+                param -> accept(*this);
 
-                node -> call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, node -> constructor_call_params);
-            }
+            node -> call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, node -> constructor_call_params);
         }
     }
 }

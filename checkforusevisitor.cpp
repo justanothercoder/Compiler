@@ -15,15 +15,9 @@
 
 #include "temporaryarg.hpp"
 
-CheckForUseVisitor::CheckForUseVisitor()
-{
-    
-}
+CheckForUseVisitor::CheckForUseVisitor() { }
 
-bool CheckForUseVisitor::isUsed(Command* command) const
-{
-    return used_commands.count(command);
-}
+bool CheckForUseVisitor::isUsed(Command* command) const { return used_commands.count(command); }
 
 void CheckForUseVisitor::visit(IfFalseCommand* command) 
 {
@@ -90,22 +84,7 @@ void CheckForUseVisitor::visit(ReturnCommand* command)
         used_commands.insert(temp -> command);
 }
 
-void CheckForUseVisitor::visit(CallCommand* command) 
-{
-    used_commands.insert(command);
-}
-
-void CheckForUseVisitor::visit(GotoCommand* command) 
-{
-    used_commands.insert(command);
-}
-
-void CheckForUseVisitor::visit(LabelCommand* command) 
-{
-    used_commands.insert(command);
-}
-
-void CheckForUseVisitor::visit(NewCommand* command) 
-{
-    used_commands.insert(command);
-}
+void CheckForUseVisitor::visit(CallCommand* command)  { used_commands.insert(command); }
+void CheckForUseVisitor::visit(GotoCommand* command)  { used_commands.insert(command); }
+void CheckForUseVisitor::visit(LabelCommand* command) { used_commands.insert(command); }
+void CheckForUseVisitor::visit(NewCommand* command)   { used_commands.insert(command); }

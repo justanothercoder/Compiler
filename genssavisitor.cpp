@@ -162,10 +162,7 @@ void GenSSAVisitor::visit(BracketNode *node)
     }
 
     genParam(node -> expr, node -> call_info.conversions.front());
-
-    auto base_info = ConversionInfo(nullptr);
-    base_info.desired_type = TypeFactory::getReference(node -> base -> getType().base());
-    genParam(node -> base, base_info);
+    genParam(node -> base, ConversionInfo(nullptr, TypeFactory::getReference(node -> base -> getType().base())));
 
     genCall(node -> call_info.callee, node -> expr -> getType().sizeOf() + GlobalConfig::int_size);
 }
@@ -209,9 +206,7 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
         params_size += info.desired_type -> sizeOf();
     }
 
-    auto info = ConversionInfo(nullptr);
-    info.desired_type = TypeFactory::getReference(expr_type);
-    code.add(new ParamCommand(tmp_obj, info));
+    code.add(new ParamCommand(tmp_obj, ConversionInfo(nullptr, TypeFactory::getReference(expr_type))));
 
     params_size += GlobalConfig::int_size;
 
@@ -336,9 +331,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                 params_size += info.desired_type -> sizeOf();
             }
 
-            auto info = ConversionInfo(nullptr); 
-            info.desired_type = TypeFactory::getReference(node -> definedSymbol -> getType().base());
-            code.add(new ParamCommand(var_arg, info));
+            code.add(new ParamCommand(var_arg, ConversionInfo(nullptr, TypeFactory::getReference(node -> definedSymbol -> getType().base()))));
 
             params_size += GlobalConfig::int_size;
             genCall(node -> call_info.callee, params_size);

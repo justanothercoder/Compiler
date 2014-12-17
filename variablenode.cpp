@@ -5,10 +5,7 @@
 #include "builtins.hpp"
 #include "globaltable.hpp"
 
-VariableNode::VariableNode(std::string name) : name(name), variable(nullptr), template_num(nullptr)
-{
-
-}
+VariableNode::VariableNode(std::string name) : name(name), variable(nullptr), template_num(nullptr) { }
 
 bool VariableNode::isTemplateParam() const
 {
@@ -16,10 +13,7 @@ bool VariableNode::isTemplateParam() const
     return template_info.sym != nullptr && template_info.sym -> isIn(name);
 }
 
-AST* VariableNode::copyTree() const
-{
-    return new VariableNode(name);
-}
+AST* VariableNode::copyTree() const { return new VariableNode(name); }
 
 VariableType VariableNode::getType() const
 {
@@ -34,10 +28,7 @@ VariableType VariableNode::getType() const
     return variable -> getType();
 }
 
-bool VariableNode::isLeftValue() const
-{
-    return true;
-}
+bool VariableNode::isLeftValue() const { return true; }
 
 bool VariableNode::isCompileTimeExpr() const
 {
@@ -55,12 +46,6 @@ boost::optional<int> VariableNode::getCompileTimeValue() const
         return boost::none;
 }
 
-std::string VariableNode::toString() const
-{
-    return name;
-}
+std::string VariableNode::toString() const { return name; }
 
-void VariableNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void VariableNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
