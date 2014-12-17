@@ -34,8 +34,16 @@ std::string ThreeAddressCode::toString()
     return res;
 }
 
+void ThreeAddressCode::computeMemoryDisposition() const
+{
+    for ( auto block : blocks )
+        block -> computeMemoryDisposition();
+}
+
 void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 {
+    computeMemoryDisposition();
+
     for ( auto p : globaltable.has_definition )
     {
         if ( !p.second && p.first -> is_used )
@@ -151,22 +159,13 @@ void ThreeAddressCode::addString(const std::string& str)
     }
 }
 
-int ThreeAddressCode::getConstId(int c)
-{
-    return globaltable.const_num_id.at(c);
-}
-
-int ThreeAddressCode::getStrId(const std::string& str)
-{
-    return globaltable.id_by_string.at(str);
-}
-
-int ThreeAddressCode::getConstFromId(int id)
-{
-    return globaltable.id_to_num[id];
-}
-
 void ThreeAddressCode::addExternalFunction(const FunctionSymbol* function)
 {
     globaltable.has_definition[function] = false;
 }    
+    
+void ThreeAddressCode::rememberVar(VariableSymbol* var) 
+{
+    Block* current_block = blocks[blockStack.top()];
+    current_block -> alloc.remember(var);
+}

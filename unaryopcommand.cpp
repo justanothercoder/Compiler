@@ -10,15 +10,8 @@
 #include "typefactory.hpp"
 #include "commandvisitor.hpp"
     
-UnaryOpCommand::UnaryOpCommand(AddrOp op, Arg* expr) : op(op), expr(expr)
-{
-
-}
-
-UnaryOpCommand::UnaryOpCommand(UnaryOp op, Arg* expr) : op(op), expr(expr)
-{
-
-}
+UnaryOpCommand::UnaryOpCommand(AddrOp op, Arg* expr) : op(op), expr(expr) { } 
+UnaryOpCommand::UnaryOpCommand(UnaryOp op, Arg* expr) : op(op), expr(expr) { }
 
 void UnaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
 {
@@ -31,18 +24,14 @@ void UnaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
             //if ( expr -> getType() -> isReference() )
             //  code_obj.emit("mov rax, [rax]");
             
-            block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
-            block.scope.tempAlloc().claim(GlobalConfig::int_size);
-
             auto addr = "[rbp - " + std::to_string(block.alloc.addressOf(this)) + "]";
+            
             code_obj.emit("mov " + addr + ", rax");
             code_obj.emit("lea rax, " + addr);
         }
         else
         {
-            block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
-            block.scope.tempAlloc().claim(GlobalConfig::int_size);
-            
+            block.alloc.remember(this, GlobalConfig::int_size);
             auto addr = "[rbp - " + std::to_string(block.alloc.addressOf(this)) + "]";
 
             expr -> gen(block, code_obj);

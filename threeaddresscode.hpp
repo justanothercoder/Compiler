@@ -63,8 +63,11 @@ public:
     Arg* add(Command* command);
     Arg* newLabel(std::string label = "");
 
+    void rememberVar(VariableSymbol* var);
+
     std::string toString();
 
+    void computeMemoryDisposition() const;
     void genAsm(CodeObject& code_obj) const;
 
     void newBlock(Scope& scope, std::string block_name = "");
@@ -74,11 +77,6 @@ public:
     void addString(const std::string& str);
 
     void addExternalFunction(const FunctionSymbol* sym);
-
-    int getConstId(int c);
-    int getStrId(const std::string& str);
-
-    int getConstFromId(int id);
 
 //private:
 

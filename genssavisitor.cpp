@@ -276,6 +276,9 @@ void GenSSAVisitor::visit(FunctionDeclarationNode *node)
     code.newBlock(*node -> definedSymbol -> getScope(), scope_name);
     code.add(new LabelCommand(code.newLabel(scope_name)));
 
+    for ( auto param : node -> params_symbols )
+        code.rememberVar(param);
+
     node -> statements -> accept(*this);
 
     code.popBlock();
@@ -283,6 +286,8 @@ void GenSSAVisitor::visit(FunctionDeclarationNode *node)
 
 void GenSSAVisitor::visit(VariableDeclarationNode *node)
 {
+    code.rememberVar(node -> definedSymbol);
+
     if ( !node -> is_field )
     {
         auto var_type = node -> definedSymbol -> getType();
@@ -436,6 +441,8 @@ void GenSSAVisitor::visit(UnsafeBlockNode *node)
 
 void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
 {
+    code.rememberVar(node -> definedSymbol);
+
     auto expr_type = node -> expr -> getType().unqualified();
 
     auto var = new VariableArg(node -> definedSymbol);

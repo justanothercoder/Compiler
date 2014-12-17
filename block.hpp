@@ -21,6 +21,7 @@ struct Block
 {
     Block(Scope& scope, GlobalTable& table, std::string block_name = "");
 
+    void computeMemoryDisposition() const;
     void genAsm(CodeObject& code_obj) const;
 
     std::string toString();

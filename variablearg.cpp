@@ -5,38 +5,30 @@
 #include "scope.hpp"
 #include "structsymbol.hpp"
     
-VariableArg::VariableArg(VariableSymbol* var) : var(var)
-{
-
-}
+VariableArg::VariableArg(VariableSymbol* var) : var(var) { }
 
 void VariableArg::gen(const Block& block, CodeObject& code_obj) const
 {
     if ( var -> isField() )
     {
         auto sym = static_cast<VariableSymbol*>(block.scope.resolve("this"));
-        auto struc_scope = static_cast<const StructSymbol*>(sym -> getType().unqualified());
+        auto struc_sym = static_cast<const StructSymbol*>(sym -> getType().unqualified());
 
-        code_obj.emit("mov rax, [rbp - " + std::to_string(block.scope.varAlloc().getAddress(sym)) + "]");
-        if ( struc_scope -> varAlloc().getAddress(var) != 0 )
-            code_obj.emit("lea rax, [rax + " + std::to_string(struc_scope -> varAlloc().getAddress(var)) + "]");
+        block.alloc.remember(sym);
+
+        code_obj.emit("mov rax, [rbp - " + std::to_string(block.alloc.addressOf(sym)) + "]");
+        if ( int addr = struc_sym -> offsetOf(var) )
+            code_obj.emit("lea rax, [rax + " + std::to_string(addr) + "]");
     }
     else if ( var-> getType().isReference() )
     {
-        code_obj.emit("mov rax, [rbp - " + std::to_string(block.scope.varAlloc().getAddress(var)) + "]");
+        code_obj.emit("mov rax, [rbp - " + std::to_string(block.alloc.addressOf(var)) + "]");
     }
     else
     {
-        code_obj.emit("lea rax, [rbp - " + std::to_string(block.scope.varAlloc().getAddress(var)) + "]");
+        code_obj.emit("lea rax, [rbp - " + std::to_string(block.alloc.addressOf(var)) + "]");
     }
 }
 
-std::string VariableArg::toString() const
-{
-    return var -> getName();
-}
-
-const Type* VariableArg::type() const
-{
-    return var -> getType().base();
-}
+std::string VariableArg::toString() const { return var -> getName(); }
+const Type* VariableArg::type() const     { return var -> getType().base(); }

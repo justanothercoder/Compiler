@@ -12,7 +12,12 @@
 #include "arraytype.hpp"
 #include "labelcommand.hpp"
 
-Block::Block(Scope& scope, GlobalTable& table, std::string block_name) : scope(scope), block_name(block_name), table(table)
+#include "disposememoryvisitor.hpp"
+
+Block::Block(Scope& scope, GlobalTable& table, std::string block_name) : scope     (scope)
+                                                                       , block_name(block_name)
+                                                                       , table     (table)
+                                                                       , alloc     ((1 + (dynamic_cast<FunctionScope*>(&scope) ? !dynamic_cast<FunctionScope*>(&scope) -> func -> isConstructor() : 0)) * GlobalConfig::int_size)
 { 
     if ( dynamic_cast<FunctionScope*>(&scope) )
         table.function_blocks[static_cast<FunctionScope&>(scope).func] = this;
@@ -26,6 +31,16 @@ std::string Block::toString()
         res += commands[command] -> toString() + "\n";
 
     return res;
+}
+
+void Block::computeMemoryDisposition() const
+{
+    DisposeMemoryVisitor disposer(alloc);
+    for ( auto command_id : code )
+    {
+        auto command = commands[command_id];
+        command -> accept(&disposer);
+    }
 }
 
 void Block::genAsm(CodeObject& code_obj) const
@@ -47,11 +62,8 @@ void Block::genAsm(CodeObject& code_obj) const
     code_obj.emit("push rbp");
     code_obj.emit("mov rbp, rsp");
 
-    if ( int var_space = scope.varAlloc().getSpace() )
-        code_obj.emit("sub rsp, " + std::to_string(var_space));
-
-    if ( int temp_space = scope.tempAlloc().getSpaceNeeded() )
-        code_obj.emit("sub rsp, " + std::to_string(temp_space));
+    if ( int total_space = alloc.totalSpaceUsed() )
+        code_obj.emit("sub rsp, " + std::to_string(total_space));
 
     for ( ; it != std::end(code); ++it )
         commands[*it] -> gen(*this, code_obj);

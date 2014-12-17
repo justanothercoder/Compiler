@@ -16,9 +16,6 @@ void CallCommand::gen(const Block& block, CodeObject& code_obj) const
 {
     if ( false && is_inline_call && !function -> isConstructor() )
     {
-        block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
-        block.scope.tempAlloc().claim(function -> type().returnType().sizeOf());
-
         auto& function_block = block.table.function_blocks.at(function);
 
         code_obj.emit("lea rax, [rbp - " + std::to_string(block.alloc.addressOf(this)) + "]");
@@ -28,11 +25,8 @@ void CallCommand::gen(const Block& block, CodeObject& code_obj) const
         code_obj.emit("push rbp");
         code_obj.emit("mov rbp, rsp");
 
-        if ( int var_space = function_block -> scope.varAlloc().getSpace() )
-            code_obj.emit("sub rsp, " + std::to_string(var_space));
-
-        if ( int temp_space = function_block -> scope.tempAlloc().getSpaceNeeded() )
-            code_obj.emit("sub rsp, " + std::to_string(temp_space));
+        if ( int total_space = function_block -> alloc.totalSpaceUsed() )
+            code_obj.emit("sub rsp, " + std::to_string(total_space));
 
         for ( auto it = std::next(std::begin(function_block -> code)); it != std::end(function_block -> code); ++it )
             function_block -> commands[*it] -> gen(*function_block, code_obj);
@@ -52,9 +46,6 @@ void CallCommand::gen(const Block& block, CodeObject& code_obj) const
     }
     else
     {       
-        block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
-        block.scope.tempAlloc().claim(function -> type().returnType().sizeOf());
-
         code_obj.emit("lea rax, [rbp - " + std::to_string(block.alloc.addressOf(this)) + "]");
         code_obj.emit("push rax");
 

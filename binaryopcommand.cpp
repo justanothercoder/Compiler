@@ -12,9 +12,6 @@ BinaryOpCommand::BinaryOpCommand(BinaryOp op, Arg* lhs, Arg* rhs) : op(op), lhs(
 
 void BinaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
 {
-    block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
-    block.scope.tempAlloc().claim(GlobalConfig::int_size);
-
     rhs -> gen(block, code_obj);
 
     if ( rhs -> type() -> isReference() )

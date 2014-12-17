@@ -19,9 +19,6 @@ void ElemCommand::gen(const Block& block, CodeObject& code_obj) const
 {
     if ( is_string )
     {
-        block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
-        block.scope.tempAlloc().claim(GlobalConfig::int_size);
-
         expr -> gen(block, code_obj);
         code_obj.emit("push qword [rax]");
 
@@ -34,9 +31,6 @@ void ElemCommand::gen(const Block& block, CodeObject& code_obj) const
     }
     else
     {
-        block.alloc.remember(this, GlobalTable::transformAddress(&block.scope, block.scope.tempAlloc().getOffset()));
-        block.scope.tempAlloc().claim(GlobalConfig::int_size);
-
         expr -> gen(block, code_obj);
         code_obj.emit("push qword [rax]");
 
