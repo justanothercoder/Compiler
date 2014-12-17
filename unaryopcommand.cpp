@@ -3,7 +3,6 @@
 #include "block.hpp"
 #include "globaltable.hpp"
 #include "scope.hpp"
-#include "tempallocator.hpp"
 #include "globalconfig.hpp"
 #include "builtins.hpp"
 #include "pointertype.hpp"

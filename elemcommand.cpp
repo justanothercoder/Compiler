@@ -4,16 +4,12 @@
 #include "globaltable.hpp"
 #include "scope.hpp"
 #include "arraytype.hpp"
-#include "tempallocator.hpp"
 #include "globalconfig.hpp"
 #include "builtins.hpp"
 #include "typefactory.hpp"
 #include "commandvisitor.hpp"
 
-ElemCommand::ElemCommand(Arg* base, Arg* expr, bool is_string) : base(base), expr(expr), is_string(is_string)
-{
-
-}
+ElemCommand::ElemCommand(Arg* base, Arg* expr, bool is_string) : base(base), expr(expr), is_string(is_string) { }
 
 void ElemCommand::gen(const Block& block, CodeObject& code_obj) const
 {
@@ -44,15 +40,9 @@ void ElemCommand::gen(const Block& block, CodeObject& code_obj) const
     }
 }
 
-std::string ElemCommand::toString() const
-{
-    return base -> toString() + "[" + expr -> toString() + "]";
-}
+std::string ElemCommand::toString() const { return base -> toString() + "[" + expr -> toString() + "]"; }
 
-bool ElemCommand::isExpr() const
-{
-    return true;
-}
+bool ElemCommand::isExpr() const { return true; }
     
 const Type* ElemCommand::type() const 
 {
@@ -62,7 +52,4 @@ const Type* ElemCommand::type() const
     return TypeFactory::getReference(static_cast<const ArrayType*>(base -> type()) -> type);
 }
 
-void ElemCommand::accept(CommandVisitor* visitor)
-{
-    visitor -> visit(this);
-}
+void ElemCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }

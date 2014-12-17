@@ -48,7 +48,7 @@ void DefineVisitor::visit(ExternNode *node)
     auto type = FunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
 
     node -> definedSymbol = new FunctionSymbol(node -> name, type
-                                             , new FunctionScope("_" + node -> name, node -> scope, false, false)
+                                             , new FunctionScope("_" + node -> name, node -> scope, false)
                                              , FunctionTraits::simple());
     
     node -> definedSymbol -> is_unsafe = node -> is_unsafe;

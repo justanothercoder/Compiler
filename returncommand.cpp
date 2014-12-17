@@ -5,6 +5,7 @@
 #include "referencetype.hpp"
 #include "functionsymbol.hpp"
 #include "commandvisitor.hpp"
+#include "globalconfig.hpp"
 
 ReturnCommand::ReturnCommand(Arg* expr, bool is_return_ref) : expr(expr), is_return_ref(is_return_ref)
 {

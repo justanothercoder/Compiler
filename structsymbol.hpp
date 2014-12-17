@@ -8,7 +8,6 @@
 #include "type.hpp"
 #include "variablesymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
-#include "fieldvarallocator.hpp"
 #include "structscope.hpp"
 #include "globaltable.hpp"
 

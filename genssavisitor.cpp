@@ -27,6 +27,7 @@
 #include "externnode.hpp"
 #include "typefactory.hpp"
 #include "localscope.hpp"
+#include "globalconfig.hpp"
 
 #include "iffalsecommand.hpp"
 #include "gotocommand.hpp"

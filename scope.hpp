@@ -29,9 +29,6 @@ public:
     virtual Symbol* resolve(std::string name) const = 0;
     virtual Symbol* resolveHere(std::string name) const = 0;
 
-    virtual VarAllocator& varAlloc() const = 0;
-    virtual TempAllocator& tempAlloc() const = 0;
-
     virtual std::string getScopeName() const = 0;
 
     virtual void accept(ScopeVisitor& visitor) = 0;

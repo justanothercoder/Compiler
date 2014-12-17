@@ -4,7 +4,7 @@
 #include "functionsymbol.hpp"
 #include "globalscope.hpp"
 #include "typefactory.hpp"
-#include "logger.hpp"
+#include "globalconfig.hpp"
 
 Scope *BuiltIns::global_scope;
 Type *BuiltIns::void_type;

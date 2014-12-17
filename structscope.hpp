@@ -2,8 +2,6 @@
 #define _STRUCTSCOPE_HPP_
 
 #include "basescope.hpp"
-#include "tempallocator.hpp"
-#include "fieldvarallocator.hpp"
 #include "templateinfo.hpp"
 
 class StructScope : public BaseScope
@@ -13,9 +11,6 @@ class StructScope : public BaseScope
 public:
 
     StructScope(std::string scope_name, Scope *enclosing_scope, const TemplateInfo& template_info);
-
-    VarAllocator& varAlloc() const override;
-    TempAllocator& tempAlloc() const override;
 
     Scope* enclosingScope() const override;
 
@@ -31,9 +26,7 @@ public:
     int offsetOf(VariableSymbol* member) const;
 
 private:
-    mutable FieldVarAllocator var_alloc;
-    mutable TempAllocator temp_alloc;
-
+    
     std::string scope_name;
     Scope *enclosing_scope;
 

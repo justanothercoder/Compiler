@@ -4,7 +4,6 @@
 #include "block.hpp"
 #include "codeobject.hpp"
 #include "temporaryarg.hpp"
-#include "tempallocator.hpp"
 #include "commandvisitor.hpp"
 
 DotCommand::DotCommand(Arg* expr, int offset, VariableSymbol* member) : expr(expr), offset(offset), member(member)
@@ -16,7 +15,6 @@ void DotCommand::gen(const Block& block, CodeObject& code_obj) const
 {
     auto base_type = expr -> type();
 
-    int arg_addr;
     if ( dynamic_cast<VariableArg*>(expr) )
     {
         if ( base_type -> isReference() )

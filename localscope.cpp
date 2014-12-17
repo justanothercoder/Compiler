@@ -21,16 +21,6 @@ void LocalScope::accept(ScopeVisitor& visitor)
     visitor.visit(this);
 }
 
-VarAllocator& LocalScope::varAlloc() const
-{
-    return enclosingScope() -> varAlloc();
-}
-
-TempAllocator& LocalScope::tempAlloc() const
-{
-    return enclosingScope() -> tempAlloc();
-}
-
 const TemplateInfo& LocalScope::templateInfo() const
 {
     return enclosingScope() -> templateInfo();

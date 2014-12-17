@@ -6,11 +6,9 @@
 #include "builtins.hpp"
 #include "functionsymbol.hpp"
 #include "commandvisitor.hpp"
+#include "globalconfig.hpp"
 
-ParamCommand::ParamCommand(Arg* expr, ConversionInfo conversion_info) : expr(expr), conversion_info(conversion_info)
-{
-
-}
+ParamCommand::ParamCommand(Arg* expr, ConversionInfo conversion_info) : expr(expr), conversion_info(conversion_info) { }
 
 void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
 {
@@ -72,22 +70,10 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
     }
 }
 
-std::string ParamCommand::toString() const
-{
-    return "param " + expr -> toString();
-}
+std::string ParamCommand::toString() const { return "param " + expr -> toString(); }
 
-bool ParamCommand::isExpr() const
-{
-    return false;
-}
+bool ParamCommand::isExpr() const { return false; }
     
-const Type* ParamCommand::type() const 
-{
-    return nullptr;
-}
+const Type* ParamCommand::type() const { return nullptr; }
 
-void ParamCommand::accept(CommandVisitor* visitor)
-{
-    visitor -> visit(this);
-}
+void ParamCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }

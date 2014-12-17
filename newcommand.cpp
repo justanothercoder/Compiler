@@ -3,7 +3,6 @@
 #include "codeobject.hpp"
 #include "globaltable.hpp"
 #include "scope.hpp"
-#include "tempallocator.hpp"
 #include "type.hpp"
 #include "commandvisitor.hpp"
     

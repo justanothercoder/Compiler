@@ -14,9 +14,6 @@ public:
     Scope* enclosingScope() const override;
     std::string getScopeName() const override;
 
-    VarAllocator& varAlloc() const override;
-    TempAllocator& tempAlloc() const override;
-
     const TemplateInfo& templateInfo() const override;
     bool isUnsafeBlock() const override;
 

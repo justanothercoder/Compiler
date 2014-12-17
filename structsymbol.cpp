@@ -3,6 +3,7 @@
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
 #include "typefactory.hpp"
+#include "globalconfig.hpp"
 
 StructSymbol::StructSymbol(std::string name
                            , Scope *enclosing_scope
@@ -96,19 +97,19 @@ FunctionSymbol* StructSymbol::methodWith(std::string name, FunctionTypeInfo ft) 
 void StructSymbol::defineBuiltInMethod(std::string name, FunctionType type)
 {
     std::string scope_name = getScopeName() + "_" + name;
-    define(new FunctionSymbol(name, type , new FunctionScope(scope_name, this, false, false) , FunctionTraits::method()));
+    define(new FunctionSymbol(name, type , new FunctionScope(scope_name, this, false) , FunctionTraits::method()));
 }
 
 void StructSymbol::defineBuiltInOperator(std::string name, FunctionType type)
 {
     std::string scope_name = getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name);
-    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false, false), FunctionTraits::methodOper()));
+    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::methodOper()));
 }
 
 void StructSymbol::defineBuiltInConstructor(FunctionType type)
 {
     std::string scope_name = getScopeName() + "_" + name;
-    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, true, false), FunctionTraits::constructor()));
+    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::constructor()));
 }
 
 SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }

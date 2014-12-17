@@ -12,16 +12,6 @@ StructScope::StructScope(std::string name
     type_size = 0;
 }
 
-TempAllocator& StructScope::tempAlloc() const
-{
-    return temp_alloc;
-}
-
-VarAllocator& StructScope::varAlloc() const
-{
-    return var_alloc;
-}
-
 Scope* StructScope::enclosingScope() const
 {
     return enclosing_scope;

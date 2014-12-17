@@ -3,6 +3,7 @@
 #include "typefactory.hpp"
 #include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
+#include "globalconfig.hpp"
 
 FunctionDeclarationNode::FunctionDeclarationNode(std::string name
                                                , FunctionDeclarationInfo info
@@ -22,27 +23,19 @@ FunctionDeclarationNode::FunctionDeclarationNode(std::string name
 void FunctionDeclarationNode::build_scope()
 {
     std::string function_name = (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name);
+    std::string scope_name = scope -> getScopeName() + "_" + function_name;
 
-    func_scope = new FunctionScope(scope -> getScopeName() + "_" + function_name, scope, traits.is_constructor, is_unsafe);
+    func_scope = new FunctionScope(scope_name, scope, is_unsafe);
 
     statements -> scope = func_scope;
     statements -> build_scope();
 }
 
-Symbol* FunctionDeclarationNode::getDefinedSymbol() const
-{
-    return definedSymbol;
-}
+Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 
-AST* FunctionDeclarationNode::copyTree() const
-{
-    return new FunctionDeclarationNode(name, info, statements -> copyTree(), traits);
-}
+AST* FunctionDeclarationNode::copyTree() const { return new FunctionDeclarationNode(name, info, statements -> copyTree(), traits); }
 
-std::vector<AST*> FunctionDeclarationNode::getChildren() const
-{
-    return {statements};
-}
+std::vector<AST*> FunctionDeclarationNode::getChildren() const { return {statements}; }
 
 std::string FunctionDeclarationNode::toString() const
 {
@@ -66,7 +59,4 @@ std::string FunctionDeclarationNode::toString() const
     return res;
 }
 
-void FunctionDeclarationNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void FunctionDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

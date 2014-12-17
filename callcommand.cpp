@@ -2,12 +2,13 @@
 #include "functionsymbol.hpp"
 #include "codeobject.hpp"
 #include "block.hpp"
-#include "tempallocator.hpp"
 #include "scope.hpp"
 #include "commandvisitor.hpp"
 #include "globalconfig.hpp"
 
-CallCommand::CallCommand(const FunctionSymbol* function, int params_size) : function(function), params_size(params_size), is_inline_call(false)
+CallCommand::CallCommand(const FunctionSymbol* function, int params_size) : function(function)
+                                                                          , params_size(params_size)
+                                                                          , is_inline_call(false)
 {
 
 }

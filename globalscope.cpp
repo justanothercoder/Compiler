@@ -25,16 +25,6 @@ void GlobalScope::accept(ScopeVisitor& visitor)
     visitor.visit(this);
 }
 
-VarAllocator& GlobalScope::varAlloc() const
-{
-    return var_alloc;
-}
-
-TempAllocator& GlobalScope::tempAlloc() const
-{
-    return temp_alloc;
-}
-
 const TemplateInfo& GlobalScope::templateInfo() const
 {
     return template_info;
@@ -47,14 +37,12 @@ bool GlobalScope::isUnsafeBlock() const
     
 void GlobalScope::defineBuiltInFunction(std::string name, FunctionType type)
 {
-    define(new FunctionSymbol(name, type
-                            , new FunctionScope(getScopeName() + "_" + name, this, false, false)
-                            , FunctionTraits::simple())); 
+    std::string scope_name = getScopeName() + "_" + name;
+    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::simple())); 
 }
 
 void GlobalScope::defineBuiltInOperator(std::string name, FunctionType type)
 {
-    define(new FunctionSymbol(name, type
-                            , new FunctionScope(getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name), this, false, false)
-                            , FunctionTraits::oper())); 
+    std::string scope_name = getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name);
+    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::oper())); 
 }

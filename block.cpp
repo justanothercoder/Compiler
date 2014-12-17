@@ -1,8 +1,6 @@
 #include "block.hpp"
 #include "scope.hpp"
 #include "codeobject.hpp"
-#include "tempallocator.hpp"
-#include "varallocator.hpp"
 #include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
 #include "structsymbol.hpp"
@@ -11,7 +9,7 @@
 #include "referencetype.hpp"
 #include "arraytype.hpp"
 #include "labelcommand.hpp"
-
+#include "globalconfig.hpp"
 #include "disposememoryvisitor.hpp"
 
 Block::Block(Scope& scope, GlobalTable& table, std::string block_name) : scope     (scope)

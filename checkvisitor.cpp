@@ -36,7 +36,6 @@
 
 void CheckVisitor::visit(IfNode *node)
 {
-    node -> scope -> tempAlloc().add(2 * GlobalConfig::int_size);
     for ( auto child : node -> getChildren() )
         child -> accept(*this);
 }
@@ -66,8 +65,6 @@ void CheckVisitor::visit(BracketNode *node)
         auto base_type = static_cast<const StructSymbol*>(node -> base -> getType().unqualified());
         node -> call_info = CallHelper::callCheck("operator[]", base_type, {node -> expr});
     }
-
-    node -> scope -> tempAlloc().add(node -> getType().sizeOf());
 }
 
 void CheckVisitor::visit(UnaryNode *node)
@@ -76,7 +73,6 @@ void CheckVisitor::visit(UnaryNode *node)
 
     auto type = static_cast<const StructSymbol*>(node -> exp -> getType().unqualified());
     node -> call_info = CallHelper::callCheck(node -> getOperatorName(), type, { });
-    node -> scope -> tempAlloc().add(node -> getType().sizeOf());
 }
 
 void CheckVisitor::visit(NewExpressionNode *node)
@@ -93,7 +89,6 @@ void CheckVisitor::visit(NewExpressionNode *node)
         param -> accept(*this);        
 
     node -> call_info = CallHelper::callCheck(type -> getName(), type, node -> params);
-    node -> scope -> tempAlloc().add(type -> sizeOf());
 }
 
 void CheckVisitor::visit(BinaryOperatorNode *node)
@@ -114,8 +109,6 @@ void CheckVisitor::visit(BinaryOperatorNode *node)
     {
         node -> call_info = CallHelper::callCheck(node -> getOperatorName(), node -> scope, {node -> lhs, node -> rhs});
     }
-
-    node -> scope -> tempAlloc().add(node -> getType().sizeOf());
 }
 
 void CheckVisitor::visit(StructDeclarationNode *node)
@@ -191,8 +184,6 @@ void CheckVisitor::visit(AddrNode *node)
         if ( type -> getTypeKind() != TypeKind::POINTER )
             throw SemanticError("expression is not a pointer");
     }
-
-    node -> scope -> tempAlloc().add(GlobalConfig::int_size);
 }
 
 void CheckVisitor::visit(DotNode *node)
@@ -200,9 +191,6 @@ void CheckVisitor::visit(DotNode *node)
     node -> base -> accept(*this);
 
     auto _base_type = node -> base -> getType();
-
-    if ( _base_type.isReference() )
-        node -> scope -> tempAlloc().add(GlobalConfig::int_size);
 
     assert(_base_type.unqualified() -> getTypeKind() == TypeKind::STRUCT);
     node -> base_type = static_cast<const StructSymbol*>(_base_type.unqualified());
@@ -336,8 +324,6 @@ void CheckVisitor::visit(CallNode *node)
 
         node -> call_info = CallHelper::getCallInfo(func, node -> params);
     }
-
-    node -> scope -> tempAlloc().add(node -> getType().sizeOf());
 }
 
 void CheckVisitor::visit(ReturnNode *node)
@@ -365,8 +351,6 @@ void CheckVisitor::visit(UnsafeBlockNode* node)
 
 void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
 {
-    node -> scope -> tempAlloc().add(node -> expr -> getType().sizeOf());
-
     auto type = node -> expr -> getType().unqualified();
 
     if ( type -> getTypeKind() == TypeKind::STRUCT )

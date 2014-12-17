@@ -4,6 +4,7 @@
 #include "codeobject.hpp"
 #include "builtins.hpp"
 #include "commandvisitor.hpp"
+#include "globalconfig.hpp"
 
 BinaryOpCommand::BinaryOpCommand(BinaryOp op, Arg* lhs, Arg* rhs) : op(op), lhs(lhs), rhs(rhs)
 {
