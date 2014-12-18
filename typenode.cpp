@@ -1,6 +1,6 @@
 #include "typenode.hpp"
 
-TypeNode::TypeNode(std::string name) : name(name)
+TypeNode::TypeNode(std::string name) : name(name), type_symbol(nullptr)
 {
 
 }
@@ -10,7 +10,7 @@ AST* TypeNode::copyTree() const
     return new TypeNode(name);
 }
 
-const Type* TypeNode::getType() const 
+VariableType TypeNode::getType() const 
 {
     return nullptr;
 }

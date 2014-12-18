@@ -9,6 +9,7 @@
 #include "compilableunit.hpp"
 #include "modulesymbol.hpp"
 #include "optimizer.hpp"
+#include "logger.hpp"
 
 std::vector<CompilableUnit> Comp::units;
 ThreeAddressCode Comp::code;

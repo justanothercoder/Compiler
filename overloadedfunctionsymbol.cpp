@@ -2,10 +2,10 @@
 #include "globalconfig.hpp"
 
 OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name
-        , OverloadedFunctionTypeInfo type_info
-        , FunctionTraits traits) : name(name)
-    , type_info(type_info)
-    , traits(traits)
+                                                 , OverloadedFunctionTypeInfo type_info
+                                                 , FunctionTraits traits) : name     (name)
+                                                                          , type_info(type_info)
+                                                                          , traits   (traits)
 {
 
 }
@@ -15,7 +15,7 @@ std::string OverloadedFunctionSymbol::getName() const
     return name;
 }
 
-size_t OverloadedFunctionSymbol::getSize() const
+size_t OverloadedFunctionSymbol::sizeOf() const
 {
     return GlobalConfig::int_size;
 }
@@ -44,7 +44,7 @@ bool OverloadedFunctionSymbol::isOperator() const
     return traits.is_operator;
 }
 
-const Type* OverloadedFunctionSymbol::getBaseType() const
+VariableType OverloadedFunctionSymbol::getBaseType() const
 {
     if ( !isMethod() )
         throw;
@@ -80,9 +80,4 @@ boost::optional<int> OverloadedFunctionSymbol::rankOfConversion(const Type *) co
 FunctionSymbol* OverloadedFunctionSymbol::getConversionTo(const Type *) const
 {
     return nullptr;
-}
-
-const Symbol* OverloadedFunctionSymbol::getSymbol() const
-{
-    return this;
 }

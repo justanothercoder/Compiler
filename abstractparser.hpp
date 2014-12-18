@@ -12,7 +12,6 @@ class AbstractParser
 public:
 
     AbstractParser(AbstractLexer *input);
-
     virtual ~AbstractParser();
 
     virtual AST* parse() = 0;

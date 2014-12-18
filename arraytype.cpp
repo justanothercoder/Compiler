@@ -10,13 +10,12 @@ ArrayType::ArrayType(const Type *type, int size) : type(type), size(size)
 
 std::string ArrayType::getName() const
 {
-// return type -> getName() + "*";
     return type -> getName() + "~arr" + std::to_string(size);
 }
 
-size_t ArrayType::getSize() const
+size_t ArrayType::sizeOf() const
 {
-    return type -> getSize() * size;
+    return type -> sizeOf() * size;
 }
 
 TypeKind ArrayType::getTypeKind() const
@@ -26,7 +25,7 @@ TypeKind ArrayType::getTypeKind() const
 
 bool ArrayType::isConvertableTo(const Type *t) const
 {
-    return (this == t -> getUnqualifiedType());
+    return (this == t -> removeRef());
 }
 
 boost::optional<int> ArrayType::rankOfConversion(const Type *t) const
@@ -50,11 +49,6 @@ bool ArrayType::isConst() const
 FunctionSymbol* ArrayType::getConversionTo(const Type *) const
 {
     return nullptr;
-}
-
-const Symbol* ArrayType::getSymbol() const
-{
-    return type -> getSymbol();
 }
 
 const Type* ArrayType::getPointedType() const

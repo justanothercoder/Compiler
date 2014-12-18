@@ -16,30 +16,11 @@ FunctionSymbolDefine::FunctionSymbolDefine(FunctionSymbol* sym) : sym(sym)
 
 }
 
-void FunctionSymbolDefine::visit(ModuleSymbol* sc)
-{
-    visit(static_cast<BaseScope*>(sc));
-}
-
-void FunctionSymbolDefine::visit(GlobalScope* sc)
-{
-    visit(static_cast<BaseScope*>(sc));
-}
-
-void FunctionSymbolDefine::visit(LocalScope* sc)
-{
-    visit(static_cast<BaseScope*>(sc));
-}
-
-void FunctionSymbolDefine::visit(StructScope* sc)
-{
-    visit(static_cast<BaseScope*>(sc));
-}
-
-void FunctionSymbolDefine::visit(FunctionScope* sc)
-{
-    visit(static_cast<BaseScope*>(sc));
-}
+void FunctionSymbolDefine::visit(ModuleSymbol* sc)  { visit(static_cast<BaseScope*>(sc)); }
+void FunctionSymbolDefine::visit(GlobalScope* sc)   { visit(static_cast<BaseScope*>(sc)); }
+void FunctionSymbolDefine::visit(LocalScope* sc)    { visit(static_cast<BaseScope*>(sc)); }
+void FunctionSymbolDefine::visit(StructScope* sc)   { visit(static_cast<BaseScope*>(sc)); }
+void FunctionSymbolDefine::visit(FunctionScope* sc) { visit(static_cast<BaseScope*>(sc)); }
 
 void FunctionSymbolDefine::visit(BaseScope* sc)
 {
@@ -55,8 +36,6 @@ void FunctionSymbolDefine::visit(BaseScope* sc)
     if ( _sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
         throw SemanticError(sym_name + " is already defined.");
 
-    auto func_type_info = sym -> getType() -> getTypeInfo();
-
     auto ofs = static_cast<const OverloadedFunctionSymbol*>(_sym);
-    ofs -> addOverload(func_type_info, sym);
+    ofs -> addOverload(sym -> type().typeInfo(), sym);
 }

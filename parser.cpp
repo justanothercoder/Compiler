@@ -349,8 +349,7 @@ DeclarationNode* Parser::functionDecl(boost::optional<std::string> struct_name)
     popScope();
 
     return new FunctionDeclarationNode(std::move(function_name)
-                                     , std::move(params)
-                                     , std::move(return_type)
+                                     , std::move(FunctionDeclarationInfo(return_type, params))
                                      , statements
                                      , {bool(struct_name), is_constructor, is_operator}
                                      , is_unsafe
@@ -483,7 +482,7 @@ ExprNode* Parser::unary_right()
         else if ( getTokenType(1) == TokenType::DOT )
         {
             match(TokenType::DOT);
-            string member_name = id();
+            std::string member_name = id();
 
             res = new DotNode(res, member_name);
         }
@@ -972,7 +971,7 @@ bool Parser::tryModuleName()
     return success;
 }
 
-DeclarationNode* Parser::varInferDecl(boost::optional<string>)
+DeclarationNode* Parser::varInferDecl(boost::optional<std::string>)
 {
     match(TokenType::VAR);
 
@@ -1047,7 +1046,7 @@ AST* Parser::extern_stat()
 
     rememberSymbol(function_name, SymbolType::FUNCTION);
 
-    return new ExternNode(std::move(function_name), std::move(params), std::move(return_type_info), is_unsafe);
+    return new ExternNode(std::move(function_name), std::move(FunctionDeclarationInfo(return_type_info, params)), is_unsafe);
 }
     
 AST* Parser::from_import_stat()

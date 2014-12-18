@@ -2,9 +2,7 @@
 #include "exprnode.hpp"
 #include "localscope.hpp"
 
-WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond)
-                                                 , stats(stats)
-                                                 , while_scope(nullptr)
+WhileNode::WhileNode(ExprNode *cond, AST *stats) : cond(cond), stats(stats)
 {
 
 }
@@ -22,8 +20,7 @@ void WhileNode::build_scope()
 
 AST* WhileNode::copyTree() const
 {
-    return new WhileNode(static_cast<ExprNode*>(cond -> copyTree()),
-                         stats -> copyTree());
+    return new WhileNode(static_cast<ExprNode*>(cond -> copyTree()), stats -> copyTree());
 }
 
 std::vector<AST*> WhileNode::getChildren() const

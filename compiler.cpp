@@ -9,7 +9,7 @@
 #include "compilableunit.hpp"
 #include "comp.hpp"
 
-const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
+VariableType Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
 {
     auto type_name = type_info.type_name;
 
@@ -19,7 +19,6 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
         type = scope -> resolveType(type_name);
     else
     {
-//        auto module = scope -> resolve(type_info.module_name);
         auto module = Comp::getUnit(type_info.module_name) -> module_symbol;
         assert(module -> getSymbolType() == SymbolType::MODULE);
         type = static_cast<ModuleSymbol*>(module) -> resolveType(type_name);
@@ -47,11 +46,8 @@ const Type* Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
     if ( type_info.is_ref )
         type = TypeFactory::getReference(type);
 
-    if ( type_info.is_const )
-        type = TypeFactory::getConst(type);
-
-    return type;
-
+    assert(type != nullptr);
+    return VariableType(type, type_info.is_const);
 }
 
 DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vector<TemplateParam> template_params)
@@ -96,14 +92,7 @@ DeclarationNode* Compiler::getSpecDecl(const TemplateStructSymbol *sym, std::vec
             templates_name += std::to_string(boost::get<int>(param));
     }
 
-//    auto decl = new StructDeclarationNode(sym -> getName() + "~hash" + std::to_string(hash_), 
-    auto decl = new StructDeclarationNode(templates_name, 
-                                          vec, 
-                                          *(new TemplateInfo(const_cast<TemplateStructSymbol*>(sym), 
-                                                             template_params)
-                                           )
-    );
-
+    auto decl = new StructDeclarationNode(templates_name, vec, *(new TemplateInfo(sym, template_params)));
 
 	decl -> scope = sym -> holder -> scope;
     decl -> build_scope();

@@ -4,10 +4,7 @@
 #include "structsymbol.hpp"
 #include "globaltable.hpp"
 
-NewExpressionNode::NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params) : type_info(type_info), params(params)
-{
-
-}
+NewExpressionNode::NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params) : type_info(type_info), params(params) { }
 
 void NewExpressionNode::build_scope()
 {
@@ -24,38 +21,20 @@ void NewExpressionNode::build_scope()
 
 AST* NewExpressionNode::copyTree() const
 {
-    std::vector<ExprNode*> vec(params.size());
-    std::transform(std::begin(params), std::end(params), std::begin(vec), [](ExprNode *e)
-    {
-        return static_cast<ExprNode*>(e -> copyTree());
-    });
+    std::vector<ExprNode*> vec;
+    for ( auto param : params )
+        vec.push_back(static_cast<ExprNode*>(param -> copyTree()));
 
     return new NewExpressionNode(type_info, vec);
 }
 
-std::vector<AST*> NewExpressionNode::getChildren() const
-{
-    return std::vector<AST*>(std::begin(params), std::end(params));
-}
+std::vector<AST*> NewExpressionNode::getChildren() const { return std::vector<AST*>(std::begin(params), std::end(params)); }
 
-const Type* NewExpressionNode::getType() const
-{
-    return call_info.callee -> getType() -> getReturnType() -> getUnqualifiedType();
-}
+VariableType NewExpressionNode::getType() const { return VariableType(call_info.callee -> type().returnType().unqualified(), false); }
 
-bool NewExpressionNode::isLeftValue() const
-{
-    return false;
-}
-
-bool NewExpressionNode::isCompileTimeExpr() const
-{
-    return false;
-}
-
-boost::optional<int> NewExpressionNode::getCompileTimeValue() const
-{
-    return boost::none;
+bool NewExpressionNode::isLeftValue() const       { return false; } 
+bool NewExpressionNode::isCompileTimeExpr() const { return false; }
+boost::optional<int> NewExpressionNode::getCompileTimeValue() const { return boost::none;
 }
 
 std::string NewExpressionNode::toString() const
@@ -78,7 +57,4 @@ std::string NewExpressionNode::toString() const
     return res;
 }
 
-void NewExpressionNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void NewExpressionNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

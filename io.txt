@@ -1,7 +1,7 @@
 extern __fopen(const string& filename, int mode, int flags) : int;
 extern __fclose(int fd) : void;
-extern __fread(int fd, string& str, int len) : int;
-extern __fwrite(int fd, const string& str, int len) : int;
+extern __fread(int fd, void* str, int len) : int;
+extern __fwrite(int fd, void* buf, int len) : int;
 
 struct InputStream
 {
@@ -15,8 +15,8 @@ struct InputStream
 		fd = __fopen(filename, 438, 0);
 	}
 
-	def read(string& s, int len)  {
-		__fread(fd, s, len)
+	def read(string& s, int len) : int {
+		return __fread(fd, &s, len)
 	}
 
 	def close() {
@@ -37,8 +37,12 @@ struct OutputStream
 	}
 
 	def write(const string& text) {
-		__fwrite(fd, text, text.length())
+		__fwrite(fd, &text, text.length())
 	}
+
+    def put(char c) {
+        __fwrite(fd, &c, 1)
+    }
 
 	def close() {
 		__fclose(fd);
@@ -70,8 +74,13 @@ struct BufferedInputStream
         while ( 1 )
         {
             if ( pos == read ) {
-                read = __fread(istream.fd, buffer, 255)
+                read = istream.read(buffer, 250)
                 pos = 0
+
+                if ( read == 0 ) {
+                    res[i] = 0
+                    return res   
+                }
             }
 
             res[i] = buffer[pos]

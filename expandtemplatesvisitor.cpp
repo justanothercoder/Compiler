@@ -18,6 +18,10 @@
 #include "modulesymbol.hpp"
 #include "compilableunit.hpp"
 #include "comp.hpp"
+#include "definevisitor.hpp"
+#include "checkvisitor.hpp"
+#include "genssavisitor.hpp"
+#include "logger.hpp"
 
 void ExpandTemplatesVisitor::visit(IfNode *node)
 {
@@ -45,14 +49,14 @@ void ExpandTemplatesVisitor::visit(StructDeclarationNode *node)
 
 void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
 {
-    const auto& template_info = node -> scope -> getTemplateInfo();
+    const auto& template_info = node -> scope -> templateInfo();
 
-    if ( template_info.sym && node -> return_type_info.type_name == template_info.sym -> getName() )
-        node -> return_type_info.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
+    if ( template_info.sym && node -> info.returnTypeInfo().type_name == template_info.sym -> getName() )
+        node -> info.returnTypeInfo().type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
 
-    node -> return_type_info = preprocessTypeInfo(node -> return_type_info, node -> scope);
+    node -> info.returnTypeInfo() = preprocessTypeInfo(node -> info.returnTypeInfo(), node -> scope);
 
-    for ( auto& param : node -> params )
+    for ( auto& param : node -> info.formalParams() )
     {
         if ( template_info.sym && param.second.type_name == template_info.sym -> getName() )
             param.second.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
@@ -97,6 +101,9 @@ void ExpandTemplatesVisitor::visit(VariableDeclarationNode *node)
 
 void ExpandTemplatesVisitor::visit(NewExpressionNode *node)
 {
+    for ( auto& dim : node -> type_info.array_dimensions )
+        dim -> scope = node -> scope;
+
     node -> type_info = preprocessTypeInfo(node -> type_info, node -> scope);
 }
     
@@ -110,7 +117,7 @@ TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
 
 TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *scope)
 {
-    const auto& template_info = scope -> getTemplateInfo();
+    const auto& template_info = scope -> templateInfo();
 
     if ( template_info.sym && template_info.sym -> isIn(type_info.type_name) )
     {
@@ -163,8 +170,20 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
            tmpl_params.push_back(getTemplateParam(param_info)); 
 
         auto decl = getSpecDecl(tmpl, tmpl_params);
+
         static_cast<TemplateStructDeclarationNode*>(tmpl -> holder) -> instances.insert(decl);
         type_info.type_name = static_cast<StructDeclarationNode*>(decl) -> name;
+
+        if ( type_info.module_name != "" )
+        {
+            decl -> accept(*this);
+            DefineVisitor define_visitor;
+            decl -> accept(define_visitor);
+            CheckVisitor check_visitor;
+            decl -> accept(check_visitor);
+            GenSSAVisitor gen_visitor(Comp::code);
+            decl -> accept(gen_visitor);            
+        }
 
         decl -> accept(*this);
     }

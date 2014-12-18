@@ -25,18 +25,15 @@ public:
 
     virtual ~Scope();
 
-    virtual Scope* getEnclosingScope() const = 0;
+    virtual Scope* enclosingScope() const = 0;
     virtual Symbol* resolve(std::string name) const = 0;
     virtual Symbol* resolveHere(std::string name) const = 0;
-
-    virtual VarAllocator& getVarAlloc() const = 0;
-    virtual TempAllocator& getTempAlloc() const = 0;
 
     virtual std::string getScopeName() const = 0;
 
     virtual void accept(ScopeVisitor& visitor) = 0;
 
-    virtual const TemplateInfo& getTemplateInfo() const = 0;
+    virtual const TemplateInfo& templateInfo() const = 0;
     virtual bool isUnsafeBlock() const;
 
     void define(Symbol *sym);

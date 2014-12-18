@@ -35,26 +35,21 @@
 
 void DefineVisitor::visit(ExternNode *node) 
 {
-    auto return_type = fromTypeInfo(node -> return_type_info, node -> scope);
+    auto return_type = fromTypeInfo(node -> info.returnTypeInfo(), node -> scope);
 
-    std::vector<const Type*> params_types;
+    std::vector<VariableType> params_types;
 
-    for ( auto i : node -> params )
+    for ( auto i : node -> info.formalParams() )
     {
         auto param_type = fromTypeInfo(i.second, node -> scope);
         params_types.push_back(param_type);
     }
 
-    auto type = TypeFactory::getFunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
+    auto type = FunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
 
-    node -> definedSymbol = new FunctionSymbol(node -> name
-                                             , type
-                                             , new FunctionScope("_" + node -> name
-                                                               , node -> scope
-                                                               , false
-                                                               , false)
-                                             , {false, false, false}
-                                             );
+    node -> definedSymbol = new FunctionSymbol(node -> name, type
+                                             , new FunctionScope("_" + node -> name, node -> scope, false)
+                                             , FunctionTraits::simple());
     
     node -> definedSymbol -> is_unsafe = node -> is_unsafe;
     node -> scope -> define(node -> definedSymbol);
@@ -86,7 +81,7 @@ void DefineVisitor::visit(StructDeclarationNode *node)
 
 void DefineVisitor::visit(FunctionDeclarationNode *node)
 {
-    auto fromTypeInfo = [&] (TypeInfo type_info) -> const Type*
+    auto fromTypeInfo = [&] (TypeInfo type_info) -> VariableType
     {
         if ( node -> traits.is_constructor && type_info.type_name == static_cast<StructSymbol*>(node -> scope) -> getName() )
         {
@@ -95,17 +90,14 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
             if ( type_info.is_ref )
                 type = TypeFactory::getReference(type);
 
-            if ( type_info.is_const )
-                type = TypeFactory::getConst(type);
-
-            return type;
+            return VariableType(type, type_info.is_const);
         }
         return DefineVisitor::fromTypeInfo(type_info, node -> func_scope);
     };
 
-    auto return_type = fromTypeInfo(node -> return_type_info);
+    auto return_type = fromTypeInfo(node -> info.returnTypeInfo());
 
-    std::vector<const Type*> params_types;
+    std::vector<VariableType> params_types;
 
     if ( node -> traits.is_method )
     {
@@ -118,7 +110,7 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
         node -> func_scope -> define(_this_sym);
     }
 
-    for ( auto i : node -> params )
+    for ( auto i : node -> info.formalParams() )
     {
         auto param_type = fromTypeInfo(i.second);
 
@@ -130,14 +122,12 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
         node -> func_scope -> define(param_sym);
     }
 
-    auto type = TypeFactory::getFunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
+    auto type = FunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
 
-    node -> definedSymbol = new FunctionSymbol(
-                                           node -> traits.is_constructor ? static_cast<StructSymbol*>(node -> scope) -> getName() : node -> name
-                                         , type
-                                         , node -> func_scope
-                                         , node -> traits
-    );
+    auto function_name = node -> traits.is_constructor ? static_cast<StructSymbol*>(node -> scope) -> getName() : node -> name;
+
+    node -> definedSymbol = new FunctionSymbol(function_name, type, node -> func_scope, node -> traits);
+    node -> definedSymbol -> function_decl = node;
     
     node -> func_scope -> func = node -> definedSymbol;
     node -> definedSymbol -> is_unsafe = node -> is_unsafe;
@@ -153,10 +143,8 @@ void DefineVisitor::visit(VariableDeclarationNode *node)
     if ( var_type == BuiltIns::void_type )
         throw SemanticError("can't declare a variable of 'void' type.");
 
-    node -> definedSymbol = new VariableSymbol(node -> name, 
-                                               var_type, 
-                                               (node -> is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE)
-    );
+    auto var_symbol_type = (node -> is_field ? VariableSymbolType::FIELD : VariableSymbolType::SIMPLE);
+    node -> definedSymbol = new VariableSymbol(node -> name, var_type, var_symbol_type);
 
     node -> scope -> define(node -> definedSymbol);
 }
@@ -189,7 +177,6 @@ void DefineVisitor::visit(VarInferTypeDeclarationNode *node)
         throw SemanticError("can't define variable of 'void' type");
 
     node -> definedSymbol = new VariableSymbol(node -> name, node -> expr -> getType());
-
     node -> scope -> define(node -> definedSymbol);
 }
 

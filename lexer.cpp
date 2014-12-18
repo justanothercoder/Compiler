@@ -1,6 +1,6 @@
 #include "lexer.hpp"
 
-Lexer::Lexer(string input) : AbstractLexer(input) 
+Lexer::Lexer(std::string input) : AbstractLexer(input) 
 {
 
 }
@@ -50,7 +50,7 @@ Token Lexer::getToken()
         {
             consume();
 
-            string buf = "";
+            std::string buf = "";
 
             while ( cur != '"' )
             {
@@ -97,7 +97,7 @@ Token Lexer::getToken()
         }
         else if ( std::isalpha(cur) || cur == '_' )
         {
-            string buf = "";
+            std::string buf = "";
             while ( std::isalpha(cur) || std::isdigit(cur) || cur == '_' )
             {
                 buf += cur;

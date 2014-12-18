@@ -44,11 +44,11 @@ int main()
 
         GenSSAVisitor visitor(Comp::code);
         root -> accept(visitor);
-//		std::cerr << "code:\n" << visitor.getString() << '\n';
 
-//        visitor.optimize();
-//        Optimizer optimizer(Comp::code);
-//        optimizer.optimize();
+//		std::cerr << "code:\n" << (Comp::code).toString() << '\n';
+
+        Optimizer optimizer(Comp::code);
+        optimizer.optimize();
 
 //		std::cerr << "optimized code:\n" << (Comp::code).toString() << '\n';
 

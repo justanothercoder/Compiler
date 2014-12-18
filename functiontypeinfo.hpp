@@ -4,15 +4,14 @@
 #include <initializer_list>
 #include <vector>
 #include <string>
-
-class Type;
+#include "variabletype.hpp"
 
 struct FunctionTypeInfo
 {
 public:
 
-    FunctionTypeInfo(std::vector<const Type*> params_types);
-    FunctionTypeInfo(std::initializer_list<const Type*> init_list);
+    FunctionTypeInfo(std::vector<VariableType> params_types);
+    FunctionTypeInfo(std::initializer_list<VariableType> init_list);
 
     std::string toString() const;
 
@@ -22,7 +21,7 @@ public:
 
     int rankOfConversion(const FunctionTypeInfo& info) const;
 
-    std::vector<const Type*> params_types;
+    std::vector<VariableType> params_types;
 };
 
 bool operator==(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs);

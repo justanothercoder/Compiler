@@ -4,7 +4,10 @@
 #include "functionsymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 
-ModuleMemberAccessNode::ModuleMemberAccessNode(std::string name, std::string member) : name(name), member(member) 
+ModuleMemberAccessNode::ModuleMemberAccessNode(std::string name
+                                             , std::string member) : name      (name)
+                                                                   , member    (member)
+                                                                   , member_sym(nullptr)
 {
 
 }
@@ -24,7 +27,7 @@ void ModuleMemberAccessNode::accept(ASTVisitor& visitor)
     visitor.visit(this);
 }
     
-const Type* ModuleMemberAccessNode::getType() const
+VariableType ModuleMemberAccessNode::getType() const
 {    
     if ( member_sym -> getSymbolType() == SymbolType::VARIABLE ) 
         return static_cast<VariableSymbol*>(member_sym) -> getType();

@@ -7,10 +7,7 @@
 class Symbol;
 class FunctionSymbol;
 
-enum class TypeKind
-{
-    BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE, POINTER, CONSTTYPE, ARRAY
-};
+enum class TypeKind { BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE, POINTER, ARRAY };
 
 class Type
 {
@@ -19,7 +16,7 @@ public:
     virtual ~Type();
 
     virtual std::string getName() const = 0;
-    virtual size_t getSize() const = 0;
+    virtual size_t sizeOf() const = 0;
 
     virtual TypeKind getTypeKind() const = 0;
 
@@ -31,9 +28,7 @@ public:
 
     virtual FunctionSymbol* getConversionTo(const Type *type) const = 0;
 
-    virtual const Symbol* getSymbol() const;
-
-    virtual const Type* getUnqualifiedType() const;
+    virtual const Type* removeRef() const;
 };
 
 #endif

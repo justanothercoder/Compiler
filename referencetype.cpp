@@ -9,11 +9,10 @@ ReferenceType::ReferenceType(const Type *type) : type(type)
 
 std::string ReferenceType::getName() const
 {
-//	return type -> getName() + "&";
     return type -> getName() + "~ref";
 }
 
-size_t ReferenceType::getSize() const
+size_t ReferenceType::sizeOf() const
 {
     return GlobalConfig::int_size;
 }
@@ -51,12 +50,7 @@ FunctionSymbol* ReferenceType::getConversionTo(const Type *) const
     return nullptr;
 }
 
-const Type* ReferenceType::getUnqualifiedType() const
+const Type* ReferenceType::removeRef() const
 {
-    return type -> getUnqualifiedType();
-}
-
-const Symbol* ReferenceType::getSymbol() const
-{
-    return type -> getSymbol();
+    return type;
 }

@@ -18,7 +18,7 @@ public:
     std::string toString() const override;
     void accept(ASTVisitor& visitor) override;
     
-    const Type* getType() const override;
+    VariableType getType() const override;
     bool isLeftValue() const override;
 
     bool isCompileTimeExpr() const override;

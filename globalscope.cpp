@@ -10,7 +10,7 @@ GlobalScope::GlobalScope() : BaseScope(), template_info(TemplateInfo())
 
 }
 
-Scope* GlobalScope::getEnclosingScope() const
+Scope* GlobalScope::enclosingScope() const
 {
     return nullptr;
 }
@@ -25,17 +25,7 @@ void GlobalScope::accept(ScopeVisitor& visitor)
     visitor.visit(this);
 }
 
-VarAllocator& GlobalScope::getVarAlloc() const
-{
-    return var_alloc;
-}
-
-TempAllocator& GlobalScope::getTempAlloc() const
-{
-    return temp_alloc;
-}
-
-const TemplateInfo& GlobalScope::getTemplateInfo() const
+const TemplateInfo& GlobalScope::templateInfo() const
 {
     return template_info;
 }
@@ -45,28 +35,14 @@ bool GlobalScope::isUnsafeBlock() const
     return false;
 }
     
-void GlobalScope::defineBuiltInFunction(std::string name, const FunctionType *type)
+void GlobalScope::defineBuiltInFunction(std::string name, FunctionType type)
 {
-    define(new FunctionSymbol(name
-                            , type
-                            , new FunctionScope(getScopeName() + "_" + name
-                                              , this
-                                              , false
-                                              , false)
-                            , {false, false, false}
-                            )
-            ); 
+    std::string scope_name = getScopeName() + "_" + name;
+    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::simple())); 
 }
 
-void GlobalScope::defineBuiltInOperator(std::string name, const FunctionType *type)
+void GlobalScope::defineBuiltInOperator(std::string name, FunctionType type)
 {
-    define(new FunctionSymbol(name
-                            , type
-                            , new FunctionScope(getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name)
-                                              , this
-                                              , false
-                                              , false)
-                            , {false, false, true}
-                            )
-            ); 
+    std::string scope_name = getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name);
+    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::oper())); 
 }

@@ -8,7 +8,6 @@
 #include "type.hpp"
 #include "variablesymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
-#include "fieldvarallocator.hpp"
 #include "structscope.hpp"
 #include "globaltable.hpp"
 
@@ -23,7 +22,7 @@ public:
     SymbolType getSymbolType() const override;
     std::string getName() const override;
 
-    size_t getSize() const override;
+    size_t sizeOf() const override;
     TypeKind getTypeKind() const override;
 
     FunctionSymbol* getConversionTo(const Type *type) const;
@@ -45,13 +44,11 @@ public:
 
     FunctionSymbol* methodWith(std::string name, FunctionTypeInfo ft) const;
 
-    const Symbol* getSymbol() const override;
-
     bool isUnsafeBlock() const override;
 
-    void defineBuiltInMethod(std::string name, const FunctionType *type);
-    void defineBuiltInOperator(std::string name, const FunctionType *type);
-    void defineBuiltInConstructor(const FunctionType *type);
+    void defineBuiltInMethod(std::string name, FunctionType type);
+    void defineBuiltInOperator(std::string name, FunctionType type);
+    void defineBuiltInConstructor(FunctionType type);
 
 private:
 

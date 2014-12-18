@@ -1,11 +1,10 @@
 #include "fornode.hpp"
 #include "localscope.hpp"
 
-ForNode::ForNode(AST *init, ExprNode *cond, AST *step, AST *stats) : init(init)
-                                                                   , cond(cond)
-                                                                   , step(step)
+ForNode::ForNode(AST *init, ExprNode *cond, AST *step, AST *stats) : init (init)
+                                                                   , cond (cond)
+                                                                   , step (step)
                                                                    , stats(stats)
-                                                                   , for_scope(nullptr)
 {
 
 }

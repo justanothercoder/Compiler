@@ -60,39 +60,27 @@ class ThreeAddressCode
 
 public:
 
-    Arg add(Command command);
-    Arg newLabel(std::string label = "");
+    Arg* add(Command* command);
+    Arg* newLabel(std::string label = "");
+
+    void rememberVar(VariableSymbol* var);
 
     std::string toString();
 
+    void computeMemoryDisposition() const;
     void genAsm(CodeObject& code_obj) const;
 
     void newBlock(Scope& scope, std::string block_name = "");
     void popBlock();
 
     void addConst(int c);
-    void addFunction(const FunctionSymbol *sym);
-    void addVariable(VariableSymbol *sym);
     void addString(const std::string& str);
 
-    int getConstId(int c);
-    int getFuncId(const FunctionSymbol *sym);
-    int getVarId(VariableSymbol *sym);
-    int getStrId(const std::string& str);
-
-    int getConstFromId(int id);
-
-    void addParamInfo(ConversionInfo info);
-    int getInfoId(ConversionInfo info);
-    ConversionInfo getInfoFromId(int id);
-
-    void addType(const Type *t);
-    int getTypeId(const Type *t);
-    const Type* getTypeFromId(int id);
+    void addExternalFunction(const FunctionSymbol* sym);
 
 //private:
 
-    std::vector<Block> blocks;
+    std::vector<Block*> blocks;
     std::stack<int> blockStack;
 
     GlobalTable globaltable;

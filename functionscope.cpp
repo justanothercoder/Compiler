@@ -5,17 +5,16 @@
 
 FunctionScope::FunctionScope(std::string scope_name
                            , Scope *enclosing_scope
-                           , bool is_constr
-                           , bool is_unsafe) : scope_name(scope_name)
+                           , bool is_unsafe) : func           (nullptr)                                             
+                                             , scope_name     (scope_name)
                                              , enclosing_scope(enclosing_scope)
-                                             , var_alloc(GlobalConfig::int_size * (is_constr ? 1 : 2))
-                                             , template_info(enclosing_scope -> getTemplateInfo())
-                                             , is_unsafe(is_unsafe)
+                                             , template_info  (enclosing_scope -> templateInfo())
+                                             , is_unsafe      (is_unsafe)
 {
 
 }
 
-Scope* FunctionScope::getEnclosingScope() const
+Scope* FunctionScope::enclosingScope() const
 {
     return enclosing_scope;
 }
@@ -30,17 +29,7 @@ void FunctionScope::accept(ScopeVisitor& visitor)
     visitor.visit(this);
 }
 
-VarAllocator& FunctionScope::getVarAlloc() const
-{
-    return var_alloc;
-}
-
-TempAllocator& FunctionScope::getTempAlloc() const
-{
-    return temp_alloc;
-}
-
-const TemplateInfo& FunctionScope::getTemplateInfo() const
+const TemplateInfo& FunctionScope::templateInfo() const
 {
     return template_info;
 }

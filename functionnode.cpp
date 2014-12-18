@@ -1,6 +1,6 @@
 #include "functionnode.hpp"
 
-FunctionNode::FunctionNode(std::string name) : name(name)
+FunctionNode::FunctionNode(std::string name) : name(name), function(nullptr)
 {
 
 }    
@@ -10,7 +10,7 @@ AST* FunctionNode::copyTree() const
     return new FunctionNode(name);
 }
 
-const Type* FunctionNode::getType() const 
+VariableType FunctionNode::getType() const 
 {
     return function;   
 }

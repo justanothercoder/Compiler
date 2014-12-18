@@ -1,6 +1,4 @@
 #include "modulesymbol.hpp"
-#include "varallocator.hpp"
-#include "tempallocator.hpp"
 #include "scopevisitor.hpp"
 #include "templateinfo.hpp"
 
@@ -19,19 +17,9 @@ SymbolType ModuleSymbol::getSymbolType() const
     return SymbolType::MODULE;
 }
     
-Scope* ModuleSymbol::getEnclosingScope() const 
+Scope* ModuleSymbol::enclosingScope() const 
 {
     return enclosing_scope;
-}
-
-VarAllocator& ModuleSymbol::getVarAlloc() const 
-{
-    return *(new VarAllocator());
-}
-
-TempAllocator& ModuleSymbol::getTempAlloc() const 
-{
-    return *(new TempAllocator());
 }
 
 std::string ModuleSymbol::getScopeName() const
@@ -44,7 +32,7 @@ void ModuleSymbol::accept(ScopeVisitor& visitor)
     visitor.visit(this);
 }
 
-const TemplateInfo& ModuleSymbol::getTemplateInfo() const 
+const TemplateInfo& ModuleSymbol::templateInfo() const 
 {
     return *(new TemplateInfo());
 }

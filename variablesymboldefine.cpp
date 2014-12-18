@@ -16,30 +16,25 @@ VariableSymbolDefine::VariableSymbolDefine(VariableSymbol* sym) : sym(sym)
 void VariableSymbolDefine::visit(GlobalScope* sc)
 {
     sc -> table[sym -> getName()] = sym;
-    sc -> getVarAlloc().addVariable(sym);
 }
 
 void VariableSymbolDefine::visit(LocalScope* sc)
 {
     sc -> table[sym -> getName()] = sym;
-    sc -> getVarAlloc().addVariable(sym);
 }
 
 void VariableSymbolDefine::visit(StructScope* sc)
 {
     sc -> table[sym -> getName()] = sym;
-    sc -> getVarAlloc().addVariable(sym);
-    sc -> type_size += sym -> getType() -> getSize();
+    sc -> type_size += sym -> getType().sizeOf();
 }
 
 void VariableSymbolDefine::visit(FunctionScope* sc)
 {
     sc -> table[sym -> getName()] = sym;
-    sc -> getVarAlloc().addVariable(sym);
 }
 
 void VariableSymbolDefine::visit(ModuleSymbol* sc)
 {
     sc -> table[sym -> getName()] = sym;
-    sc -> getVarAlloc().addVariable(sym);
 }

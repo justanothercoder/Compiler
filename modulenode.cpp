@@ -1,6 +1,6 @@
 #include "modulenode.hpp"
 
-ModuleNode::ModuleNode(std::string name) : name(name)
+ModuleNode::ModuleNode(std::string name) : name(name), module(nullptr)
 {
 
 }
@@ -10,7 +10,7 @@ AST* ModuleNode::copyTree() const
     return new ModuleNode(name);
 }
 
-const Type* ModuleNode::getType() const 
+VariableType ModuleNode::getType() const 
 {
     return nullptr;
 }

@@ -4,10 +4,7 @@
 #include "exprnode.hpp"
 #include "callinfo.hpp"
 
-enum class BinaryOp
-{
-    ASSIGN, PLUS, MINUS, MUL, EQUALS, NEQUALS, AND, OR, DIV, MOD
-};
+enum class BinaryOp { ASSIGN, PLUS, MINUS, MUL, EQUALS, NEQUALS, AND, OR, DIV, MOD };
 
 class BinaryOperatorNode : public ExprNode
 {
@@ -24,7 +21,7 @@ public:
     std::vector<AST*> getChildren() const override;
     AST* copyTree() const override;
 
-    const Type* getType() const override;
+    VariableType getType() const override;
     bool isLeftValue() const override;
 
     bool isCompileTimeExpr() const override;

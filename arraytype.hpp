@@ -10,7 +10,7 @@ public:
     ArrayType(const Type *type, int size);
 
     std::string getName() const override;
-    size_t getSize() const override;
+    size_t sizeOf() const override;
     TypeKind getTypeKind() const override;
 
     bool isConvertableTo(const Type *type) const override;
@@ -20,8 +20,6 @@ public:
     bool isConst() const override;
 
     FunctionSymbol* getConversionTo(const Type *t) const override;
-
-    const Symbol* getSymbol() const override;
 
     const Type* getPointedType() const;
 

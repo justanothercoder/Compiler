@@ -19,11 +19,7 @@ Symbol* StructDeclarationNode::getDefinedSymbol() const
 
 void StructDeclarationNode::build_scope()
 {
-    if ( !template_info )
-        definedSymbol = new StructSymbol(name, scope, scope -> getTemplateInfo());
-    else
-        definedSymbol = new StructSymbol(name, scope, *template_info);
-
+    definedSymbol = new StructSymbol(name, scope, (!template_info ? scope -> templateInfo() : *template_info));
     scope -> define(definedSymbol);
 
     for ( auto i : inner )

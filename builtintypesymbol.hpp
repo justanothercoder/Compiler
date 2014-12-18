@@ -11,7 +11,7 @@ public:
     BuiltInTypeSymbol(std::string name, int size);
 
     std::string getName() const override;
-    size_t getSize() const override;
+    size_t sizeOf() const override;
 
     SymbolType getSymbolType() const override;
 
@@ -21,8 +21,6 @@ public:
     boost::optional<int> rankOfConversion(const Type *type) const override;
 
     FunctionSymbol* getConversionTo(const Type *type) const override;
-
-    const Symbol* getSymbol() const override;
 
 private:
 

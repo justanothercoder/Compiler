@@ -9,7 +9,6 @@ ImportNode::ImportNode(std::string lib, AST* root, std::vector<Symbol*> imports)
 void ImportNode::build_scope()
 {
     root -> scope = scope;
-//    root -> build_scope();
 
     for ( auto import : imports )
         scope -> define(import);

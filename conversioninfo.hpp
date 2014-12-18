@@ -8,12 +8,10 @@ class FunctionSymbol;
 
 struct ConversionInfo
 {
-    ConversionInfo(FunctionSymbol *conversion);
+    ConversionInfo(FunctionSymbol *conversion, const Type* desired_type = nullptr);
 
-    bool operator<(const ConversionInfo& info) const;
-
-    FunctionSymbol *conversion;
-    const Type *desired_type;
+    FunctionSymbol* conversion;
+    const Type* desired_type;
 };
 
 #endif

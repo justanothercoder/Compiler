@@ -6,7 +6,7 @@ TemplateInfo::TemplateInfo() : TemplateInfo(nullptr, { })
 
 }
 
-TemplateInfo::TemplateInfo(TemplateStructSymbol *sym, std::vector<TemplateParam> expr) : sym(sym), expr(expr)
+TemplateInfo::TemplateInfo(const TemplateStructSymbol *sym, std::vector<TemplateParam> expr) : sym(sym), expr(expr)
 {
 
 }

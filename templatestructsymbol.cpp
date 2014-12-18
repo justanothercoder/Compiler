@@ -4,10 +4,8 @@
 
 #include "variablenode.hpp"
 
-TemplateStructSymbol::TemplateStructSymbol(std::string name
-        , Scope *enclosing_scope
-        , std::vector< std::pair<std::string, TypeInfo> > template_symbols
-        , AST *holder) : StructSymbol(name, enclosing_scope, (*new TemplateInfo()))
+TemplateStructSymbol::TemplateStructSymbol(std::string name, Scope *enclosing_scope, TemplateParamsList template_symbols, AST *holder) 
+    : StructSymbol(name, enclosing_scope, (*new TemplateInfo()))
     , template_symbols(template_symbols)
     , holder(holder)
 {

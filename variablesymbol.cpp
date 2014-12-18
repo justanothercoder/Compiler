@@ -2,14 +2,14 @@
 #include "variablesymboldefine.hpp"
 #include "type.hpp"
 
-VariableSymbol::VariableSymbol(std::string name, const Type *type, VariableSymbolType sym_type) : name(name)
-    , type(type)
-    , sym_type(sym_type)
+VariableSymbol::VariableSymbol(std::string name, VariableType type, VariableSymbolType sym_type) : name(name)
+                                                                                                 , type(type)
+                                                                                                 , sym_type(sym_type)
 {
 
 }
 
-const Type* VariableSymbol::getType() const
+VariableType VariableSymbol::getType() const
 {
     return type;
 }
@@ -17,16 +17,6 @@ const Type* VariableSymbol::getType() const
 std::string VariableSymbol::getName() const
 {
     return name;
-}
-
-bool VariableSymbol::isParam() const
-{
-    return sym_type == VariableSymbolType::PARAM;
-}
-
-bool VariableSymbol::isField() const
-{
-    return sym_type == VariableSymbolType::FIELD;
 }
 
 SymbolType VariableSymbol::getSymbolType() const
@@ -38,3 +28,6 @@ ScopeVisitor& VariableSymbol::getScopeVisitor()
 {
     return *(new VariableSymbolDefine(this));
 }
+
+bool VariableSymbol::isParam() const { return sym_type == VariableSymbolType::PARAM; }
+bool VariableSymbol::isField() const { return sym_type == VariableSymbolType::FIELD; }

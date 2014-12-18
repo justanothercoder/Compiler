@@ -3,6 +3,7 @@
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
 #include "typefactory.hpp"
+#include "globalconfig.hpp"
 
 StructSymbol::StructSymbol(std::string name
                            , Scope *enclosing_scope
@@ -11,29 +12,9 @@ StructSymbol::StructSymbol(std::string name
 
 }
 
-size_t StructSymbol::getSize() const
-{
-    return type_size;
-}
-
-std::string StructSymbol::getName() const
-{
-    return name;
-}
-
-SymbolType StructSymbol::getSymbolType() const
-{
-    return SymbolType::STRUCT;
-}
-
-TypeKind StructSymbol::getTypeKind() const
-{
-    return TypeKind::STRUCT;
-}
-
 bool StructSymbol::isConvertableTo(const Type *type) const
 {
-    type = type -> getUnqualifiedType();
+    type = type -> removeRef();
 
     if ( type -> getTypeKind() != this -> getTypeKind() )
         return false;
@@ -43,21 +24,11 @@ bool StructSymbol::isConvertableTo(const Type *type) const
     return this == st || this -> hasConversionOperator(st) || st -> hasConversionConstructor(this);
 }
 
-bool StructSymbol::hasConversionConstructor(const StructSymbol *st) const
-{
-    return getConversionConstructor(st) != nullptr;
-}
-
-bool StructSymbol::hasConversionOperator(const StructSymbol *st) const
-{
-    return getConversionOperator(st) != nullptr;
-}
-
 FunctionSymbol* StructSymbol::getConversionConstructor(const StructSymbol *st) const
 {
-    auto ref_this     = TypeFactory::getReference(this);
-    auto ref_st       = TypeFactory::getReference(st);
-    auto const_ref_st = TypeFactory::getConst(ref_st);
+    auto ref_this     = VariableType(TypeFactory::getReference(this), false);
+    auto ref_st       = VariableType(TypeFactory::getReference(st), false);
+    auto const_ref_st = VariableType(TypeFactory::getReference(st), true);
 
     auto constr_const_ref = constructorWith({ref_this, const_ref_st});
 
@@ -76,10 +47,7 @@ FunctionSymbol* StructSymbol::getConversionOperator(const StructSymbol *st) cons
 
 FunctionSymbol* StructSymbol::getConversionTo(const Type *type) const
 {
-//	if ( type -> getTypeKind() != TypeKind::STRUCT )
-//		return nullptr;
-
-    type = type -> getUnqualifiedType();
+    type = type -> removeRef();
 
     auto st = static_cast<const StructSymbol*>(type);
 
@@ -95,20 +63,10 @@ FunctionSymbol* StructSymbol::getConversionTo(const Type *type) const
 
 FunctionSymbol* StructSymbol::getCopyConstructor() const
 {
-    auto ref_this       = TypeFactory::getReference(this);
-    auto const_ref_this = TypeFactory::getConst(ref_this);
+    auto ref_this       = VariableType(TypeFactory::getReference(this), false);
+    auto const_ref_this = VariableType(TypeFactory::getReference(this), true);
 
     return constructorWith({ref_this, const_ref_this});
-}
-
-FunctionSymbol* StructSymbol::getDefaultConstructor() const
-{
-    return constructorWith({TypeFactory::getReference(this)});
-}
-
-FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft) const
-{
-    return methodWith(getName(), ft);
 }
 
 boost::optional<int> StructSymbol::rankOfConversion(const Type *type) const
@@ -116,7 +74,7 @@ boost::optional<int> StructSymbol::rankOfConversion(const Type *type) const
     if ( !isConvertableTo(type) )
         return boost::none;
 
-    type = type -> getUnqualifiedType();
+    type = type -> removeRef();
 
     auto st = static_cast<const StructSymbol*>(type);
 
@@ -136,51 +94,34 @@ FunctionSymbol* StructSymbol::methodWith(std::string name, FunctionTypeInfo ft) 
     return it == std::end(info.symbols) ? nullptr : it -> second;
 }
 
-const Symbol* StructSymbol::getSymbol() const
+void StructSymbol::defineBuiltInMethod(std::string name, FunctionType type)
 {
-    return this;
+    std::string scope_name = getScopeName() + "_" + name;
+    define(new FunctionSymbol(name, type , new FunctionScope(scope_name, this, false) , FunctionTraits::method()));
 }
 
-bool StructSymbol::isUnsafeBlock() const
+void StructSymbol::defineBuiltInOperator(std::string name, FunctionType type)
 {
-    return is_unsafe;
+    std::string scope_name = getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name);
+    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::methodOper()));
 }
+
+void StructSymbol::defineBuiltInConstructor(FunctionType type)
+{
+    std::string scope_name = getScopeName() + "_" + name;
+    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::constructor()));
+}
+
+SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }
+TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }
+
+size_t StructSymbol::sizeOf() const { return type_size; } 
+std::string StructSymbol::getName() const { return name; }
+
+bool StructSymbol::isUnsafeBlock() const { return is_unsafe; }
     
-void StructSymbol::defineBuiltInMethod(std::string name, const FunctionType *type)
-{
-    define(new FunctionSymbol(name
-                            , type
-                            , new FunctionScope(getScopeName() + "_" + name
-                                              , this
-                                              , false
-                                              , false)
-                            , {true, false, false}
-                            )
-            );
-}
+bool StructSymbol::hasConversionConstructor(const StructSymbol *st) const { return getConversionConstructor(st) != nullptr; }
+bool StructSymbol::hasConversionOperator(const StructSymbol *st) const { return getConversionOperator(st) != nullptr; }
 
-void StructSymbol::defineBuiltInOperator(std::string name, const FunctionType *type)
-{
-    define(new FunctionSymbol(name
-                            , type
-                            , new FunctionScope(getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name)
-                                              , this
-                                              , false
-                                              , false)
-                            , {true, false, true}
-                            )
-            );
-}
-
-void StructSymbol::defineBuiltInConstructor(const FunctionType *type)
-{
-    define(new FunctionSymbol(name
-                            , type
-                            , new FunctionScope(getScopeName() + "_" + name
-                                              , this
-                                              , true
-                                              , false)
-                            , {true, true, false}
-                            )
-            );
-}
+FunctionSymbol* StructSymbol::getDefaultConstructor() const { return constructorWith({TypeFactory::getReference(this)}); }
+FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft) const { return methodWith(getName(), ft); }

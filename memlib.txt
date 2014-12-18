@@ -1,13 +1,13 @@
-extern unsafe __brk(void* break) : void*;
-extern unsafe __mmap(int a, int size, int b, int c, int d, int e) : void*;
+extern unsafe __brk(void* brk) : void*;
+extern unsafe __mmap(int addr, int len, int prot, int flags, int fd, int off) : void*;
 
 def unsafe sbrk(int size) : void*
 {
-	void* break = __brk(null)
+	void* brk = __brk(null)
 	
-	__brk(break + size);
+	__brk(brk + size);
 
-	return break;
+	return brk;
 }
 
 def unsafe mmap(int size) : void* {

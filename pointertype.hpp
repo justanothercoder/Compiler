@@ -10,7 +10,7 @@ public:
     PointerType(const Type *type);
 
     std::string getName() const override;
-    size_t getSize() const override;
+    size_t sizeOf() const override;
     TypeKind getTypeKind() const override;
 
     bool isConvertableTo(const Type *type) const override;
@@ -21,9 +21,7 @@ public:
 
     FunctionSymbol* getConversionTo(const Type *t) const override;
 
-    const Symbol* getSymbol() const override;
-
-    const Type* getPointedType() const;
+    const Type* pointedType() const;
 
 private:
 

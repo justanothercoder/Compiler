@@ -31,7 +31,7 @@ const Type* Scope::resolveType(std::string name)
     while ( true )
     {
         while ( scope != nullptr && scope -> resolve(name) == sym )
-            scope = scope -> getEnclosingScope();
+            scope = scope -> enclosingScope();
 
         if ( scope == nullptr )
             return nullptr;

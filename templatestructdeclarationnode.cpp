@@ -4,8 +4,8 @@
 #include "templatestructsymbol.hpp"
 
 TemplateStructDeclarationNode::TemplateStructDeclarationNode(std::string name
-        , std::vector<AST*> inner
-        , std::vector< std::pair<std::string, TypeInfo> > template_params)
+                                                           , std::vector<AST*> inner
+                                                           , std::vector< std::pair<std::string, TypeInfo> > template_params)
     : StructDeclarationNode(name, inner)
     , template_params(template_params)
 {

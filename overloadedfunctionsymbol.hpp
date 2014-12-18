@@ -13,7 +13,7 @@ public:
     OverloadedFunctionSymbol(std::string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits);
 
     std::string getName() const override;
-    size_t getSize() const override;
+    size_t sizeOf() const override;
 
     OverloadedFunctionTypeInfo getTypeInfo() const;
 
@@ -23,7 +23,7 @@ public:
     bool isConstructor() const;
     bool isOperator() const;
 
-    const Type* getBaseType() const;
+    VariableType getBaseType() const;
 
     SymbolType getSymbolType() const override;
     TypeKind getTypeKind() const override;
@@ -34,8 +34,6 @@ public:
     boost::optional<int> rankOfConversion(const Type *type) const override;
 
     FunctionSymbol* getConversionTo(const Type *type) const override;
-
-    const Symbol* getSymbol() const override;
 
 private:
 

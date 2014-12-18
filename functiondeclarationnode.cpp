@@ -3,56 +3,48 @@
 #include "typefactory.hpp"
 #include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
+#include "globalconfig.hpp"
 
 FunctionDeclarationNode::FunctionDeclarationNode(std::string name
-                                               , std::vector< pair<std::string, TypeInfo> > params
-                                               , TypeInfo return_type_info
+                                               , FunctionDeclarationInfo info
                                                , AST *statements
                                                , FunctionTraits traits
-                                               , bool is_unsafe) : name(name)
-                                                                 , params(params)
-                                                                 , return_type_info(return_type_info)
-                                                                 , statements(statements)
-                                                                 , traits(traits)
+                                               , bool is_unsafe) : name         (name)
+                                                                 , info         (info)
+                                                                 , statements   (statements)
+                                                                 , traits       (traits)
                                                                  , definedSymbol(nullptr)
-                                                                 , is_unsafe(is_unsafe)
+                                                                 , func_scope   (nullptr)
+                                                                 , is_unsafe    (is_unsafe)
 {
 
 }
 
 void FunctionDeclarationNode::build_scope()
 {
-    func_scope = new FunctionScope(scope -> getScopeName() + "_" + (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name)
-                                 , scope
-                                 , traits.is_constructor
-                                 , is_unsafe
-    );
+    std::string function_name = (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name);
+    std::string scope_name = scope -> getScopeName() + "_" + function_name;
+
+    func_scope = new FunctionScope(scope_name, scope, is_unsafe);
 
     statements -> scope = func_scope;
     statements -> build_scope();
 }
 
-Symbol* FunctionDeclarationNode::getDefinedSymbol() const
-{
-    return definedSymbol;
-}
+Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 
-AST* FunctionDeclarationNode::copyTree() const
-{
-    return new FunctionDeclarationNode(name, params, return_type_info, statements -> copyTree(), traits);
-}
+AST* FunctionDeclarationNode::copyTree() const { return new FunctionDeclarationNode(name, info, statements -> copyTree(), traits); }
 
-std::vector<AST*> FunctionDeclarationNode::getChildren() const
-{
-    return {statements};
-}
+std::vector<AST*> FunctionDeclarationNode::getChildren() const { return {statements}; }
 
 std::string FunctionDeclarationNode::toString() const
 {
-    std::string res = return_type_info.toString() + " " + name + "(";
+    std::string res = info.returnTypeInfo().toString() + " " + name + "(";
 
-    if ( !params.empty() )
+    if ( !info.formalParams().empty() )
     {
+        const auto& params = info.formalParams();
+
         auto it = std::begin(params);
 
         res += it -> second.toString() + " " + it -> first;
@@ -67,7 +59,4 @@ std::string FunctionDeclarationNode::toString() const
     return res;
 }
 
-void FunctionDeclarationNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void FunctionDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

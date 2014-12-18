@@ -10,7 +10,7 @@ std::string BuiltInTypeSymbol::getName() const
     return name;
 }
 
-size_t BuiltInTypeSymbol::getSize() const
+size_t BuiltInTypeSymbol::sizeOf() const
 {
     return size;
 }
@@ -39,9 +39,3 @@ FunctionSymbol* BuiltInTypeSymbol::getConversionTo(const Type *) const
 {
     return nullptr;
 }
-
-const Symbol* BuiltInTypeSymbol::getSymbol() const
-{
-    return this;
-}
-

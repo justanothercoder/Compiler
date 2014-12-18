@@ -4,8 +4,6 @@
 #include <map>
 
 #include "basescope.hpp"
-#include "varallocator.hpp"
-#include "tempallocator.hpp"
 #include "templateinfo.hpp"
 #include "globaltable.hpp"
 
@@ -19,22 +17,16 @@ public:
 
     void accept(ScopeVisitor& visitor) override;
 
-    Scope* getEnclosingScope() const override;
+    Scope* enclosingScope() const override;
     std::string getScopeName() const override;
 
-    VarAllocator& getVarAlloc() const override;
-    TempAllocator& getTempAlloc() const override;
-
-    const TemplateInfo& getTemplateInfo() const override;
+    const TemplateInfo& templateInfo() const override;
     bool isUnsafeBlock() const override;
 
-    void defineBuiltInFunction(std::string name, const FunctionType *type);
-    void defineBuiltInOperator(std::string name, const FunctionType *type);
+    void defineBuiltInFunction(std::string name, FunctionType type);
+    void defineBuiltInOperator(std::string name, FunctionType type);
 
 private:
-
-    mutable VarAllocator var_alloc;
-    mutable TempAllocator temp_alloc;
 
     TemplateInfo template_info;
 };

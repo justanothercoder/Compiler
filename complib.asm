@@ -3,8 +3,8 @@
 	
 	global ___fopen_const~string~ref_int_int:function
 	global ___fclose_int:function
-	global ___fwrite_int_const~string~ref_int:function
-	global ___fread_int_string~ref_int:function
+	global ___fwrite_int_void~ptr_int:function
+	global ___fread_int_void~ptr_int:function
 
 	global _string_string_string~ref_const~string~ref:function
 	global _string_operatorelem_string~ref_int:function
@@ -65,30 +65,8 @@ ___fopen_const~string~ref_int_int:
 	push rbp
 	mov rbp, rsp
 
-	sub rsp, 256
-
-	mov rdi, [rbp + 24]
-	lea rsi, [rbp - 256]
-
-.reverse.loop:
-
-	cmp byte [rdi], 0
-	jz .end
-
-	mov bl, byte [rdi]	
-	mov byte [rsi], bl
-
-	dec rdi
-	inc rsi
-
-	jmp .reverse.loop
-	
-.end:
-	
-	mov byte [rsi], 0
-
 	mov rax, 2
-	lea rdi, [rbp - 256]
+	mov rdi, [rbp + 24]
 	mov rsi, [rbp + 32]
 	mov rdx, [rbp + 40]
 	syscall
@@ -113,85 +91,35 @@ ___fclose_int:
 	pop rbp
 	ret
 
-___fwrite_int_const~string~ref_int:
+___fwrite_int_void~ptr_int:
 	push rbp 
 	mov rbp, rsp	
 
-	sub rsp, 256
-
-	mov rsi, [rbp + 32]
-	lea rdi, [rbp - 256]
-
-.reverse.loop:
-
-	cmp byte [rsi], 0
-	jz .end
-
-	mov bl, byte [rsi]
-	mov byte [rdi], bl
-
-	dec rsi
-	inc rdi
-
-	jmp .reverse.loop
-
-.end:
-	
-	mov byte [rdi], 0
-
-	mov rax, qword 1
-	mov rdi, [rbp + 24]
-	lea rsi, [rbp - 256]
-	mov rdx, [rbp + 16]
-	syscall
+    mov rax, 1
+    mov rdi, [rbp + 24]
+    mov rsi, [rbp + 32]
+    mov rdx, [rbp + 40]
+    syscall
 
 	mov rsp, rbp
 	pop rbp
 	ret
 
-___fread_int_string~ref_int:
+___fread_int_void~ptr_int:
 	push rbp
 	mov rbp, rsp
 	
-	sub rsp, 264
-
-    mov qword [rbp - 8], 0
-	mov qword [rbp - 264], 0
-
 	mov rax, qword 0
 	mov rdi, [rbp + 24]
-	lea rsi, [rbp - 264]
+	mov rsi, [rbp + 32]
 	mov rdx, [rbp + 40]
 	syscall
-
-    mov byte [rsi + rax], 0
 
 	mov rbx, rax
 	mov rax, [rbp + 16]
 	mov [rax], rbx
 
-	lea rsi, [rbp - 264]
-	mov rdi, [rbp + 32]
-
-    mov rcx, 0
-
-.loop:
-	
-	cmp byte [rsi], 0
-	jz .end
-
-	mov bl, byte [rsi]
-	mov byte [rdi], bl
-
-	inc rsi
-	dec rdi
-
-    inc ecx
-	jmp .loop
-
-.end:
-
-	mov byte [rdi], 0
+    mov byte [rsi + rbx], 0
 
 	mov rsp, rbp
 	pop rbp
@@ -212,8 +140,8 @@ _string_string_string~ref_const~string~ref:
 	mov bl, byte [rdi]
 	mov byte [rsi], bl
 	
-	dec rsi 
-	dec rdi
+	inc rsi 
+	inc rdi
 
 	jmp .loop
 
@@ -255,7 +183,7 @@ _string_length_string~ref:
 	jz .end
 
 	inc rax
-	dec rdi
+	inc rdi
 
 	jmp .loop
 
@@ -273,24 +201,24 @@ _print_const~string~ref:
 	push rbp
 	mov rbp, rsp
 
-	mov r10, [rbp + 24]
+    mov rdx, 0
+    mov rdi, [rbp + 24]
 
 .loop:
 
-	cmp byte [r10], 0
-	jz .end
+    cmp byte [rdi], 0
+    jz .end
 
-	mov rax, 1
-	mov rdi, 1
-	lea rsi, [r10]
-	mov rdx, 1
-	syscall
-
-	dec r10
-
-	jmp .loop
+    inc rdx
+    inc rdi
+    jmp .loop
 
 .end:
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, [rbp + 24]
+    syscall
 
 	mov rsp, rbp
 	pop rbp
@@ -313,8 +241,8 @@ _string_operatorplus_string~ref_const~string~ref:
 	mov bl, byte [rsi]
 	mov byte [rdi], bl
 
-	dec rsi
-	dec rdi
+	inc rsi
+	inc rdi
 
 	jmp .floop
 
@@ -330,8 +258,8 @@ _string_operatorplus_string~ref_const~string~ref:
 	mov bl, byte [rsi]
 	mov byte [rdi], bl
 
-	dec rsi
-	dec rdi
+	inc rsi
+	inc rdi
 
 	jmp .sloop
 
@@ -358,8 +286,8 @@ _string_operatorassign_string~ref_const~string~ref:
 	mov bl, byte [rsi]
 	mov byte [rdi], bl
 
-	dec rsi
-	dec rdi
+	inc rsi
+	inc rdi
 
 	jmp .loop
 

@@ -14,11 +14,11 @@ class TemplateStructSymbol;
 struct TemplateInfo
 {
     TemplateInfo();
-    TemplateInfo(TemplateStructSymbol *sym, std::vector<TemplateParam> expr);
+    TemplateInfo(const TemplateStructSymbol *sym, std::vector<TemplateParam> expr);
 
     boost::optional<TemplateParam> getReplacement(std::string name) const;
 
-    TemplateStructSymbol *sym;
+    const TemplateStructSymbol *sym;
     std::vector<TemplateParam> expr;
 };
 

@@ -14,17 +14,17 @@ CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector
     if ( function_sym == nullptr )
         throw NoViableOverloadError(name, params_types);
 
-    auto function_info = function_sym -> getType() -> getTypeInfo();
+    auto function_info = function_sym -> type().typeInfo();
 
     int is_meth = (function_sym -> isMethod() ? 1 : 0);
 
     for ( int i = function_info.params_types.size() - 1; i >= is_meth; --i )
     {
         auto t = function_info.params_types.at(i);
-        if ( t -> isReference() 
+        if ( t.isReference() 
          && (!params.at(i - is_meth) -> isLeftValue() 
-         && !params.at(i - is_meth) -> getType() -> isReference()) 
-         && !t -> isConst() )
+         && !params.at(i - is_meth) -> getType().isReference()) 
+         && !t.isConst() )
             throw SemanticError("parameter is not an lvalue.");
     }
 
@@ -36,7 +36,7 @@ CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector
     assert(function_sym != nullptr);
     function_sym -> is_used = true;
 
-    auto function_info = function_sym -> getType() -> getTypeInfo();
+    auto function_info = function_sym -> type().typeInfo();
 
     auto params_types = CallHelper::extractTypes(params);
 
@@ -49,10 +49,10 @@ CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector
         auto actual_type = params_types.at(i - is_meth);
         auto desired_type = function_info.params_types.at(i);
 
-        conversions.push_back(CallHelper::getConversionInfo(actual_type, desired_type));
+        conversions.push_back(CallHelper::getConversionInfo(actual_type.base(), desired_type.base()));
 
-        if ( !(desired_type -> isReference() || desired_type -> getTypeKind() == TypeKind::POINTER) )
-            static_cast<const StructSymbol*>(desired_type -> getSymbol()) -> getCopyConstructor() -> is_used = true;
+        if ( !desired_type.isReference() && desired_type.unqualified() -> getTypeKind() == TypeKind::STRUCT )
+            static_cast<const StructSymbol*>(desired_type.unqualified()) -> getCopyConstructor() -> is_used = true;
     }
 
     return CallInfo(function_sym, conversions);
@@ -62,9 +62,6 @@ const OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(std::string name, 
 {
     auto sym = scope -> resolve(name);
 
-//    if ( sym == nullptr || sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
-//        throw SemanticError("No such function " + name + ".");
-
     assert(sym != nullptr);
     if ( sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
         return nullptr;
@@ -72,21 +69,11 @@ const OverloadedFunctionSymbol* CallHelper::getOverloadedFunc(std::string name, 
     return static_cast<const OverloadedFunctionSymbol*>(sym);
 }
 
-const OverloadedFunctionSymbol* CallHelper::getOverloadedMethod(std::string name, const StructSymbol *scope)
-{
-    auto sym = scope -> resolveMember(name);
-
-    if ( sym == nullptr || sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
-        throw SemanticError("No such method " + name + ".");
-
-    return static_cast<const OverloadedFunctionSymbol*>(sym);
-}
-
-const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope *scope, std::vector<const Type*> params_types)
+const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope *scope, std::vector<VariableType> params_types)
 {
     while ( scope != nullptr )
     {
-        const OverloadedFunctionSymbol *ov_func = CallHelper::getOverloadedFunc(name, scope);
+        const OverloadedFunctionSymbol *ov_func = getOverloadedFunc(name, scope);
 
         if ( ov_func == nullptr )
             return nullptr;
@@ -100,16 +87,9 @@ const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope 
 
         if ( func_sym == nullptr )
         {
-            try
-            {
-                while ( scope != nullptr && CallHelper::getOverloadedFunc(name, scope) == ov_func )
-                    scope = scope -> getEnclosingScope();
-                continue;
-            }
-            catch ( SemanticError& e )
-            {
-                return nullptr;
-            }
+            while ( scope != nullptr && getOverloadedFunc(name, scope) == ov_func )
+                scope = scope -> enclosingScope();
+            continue;
         }
 
         return func_sym;
@@ -117,33 +97,27 @@ const FunctionSymbol* CallHelper::resolveOverload(std::string name, const Scope 
     return nullptr;
 }
 
-std::vector<const Type*> CallHelper::extractTypes(std::vector<ExprNode*> params)
+std::vector<VariableType> CallHelper::extractTypes(std::vector<ExprNode*> params)
 {
-    std::vector<const Type*> params_types(params.size());
-    std::transform(std::begin(params), std::end(params), std::begin(params_types), [](ExprNode *t)
-    {
-        return t -> getType();
-    });
+    std::vector<VariableType> params_types;
+    for ( const auto& param : params )
+        params_types.push_back(param -> getType());
 
     return params_types;
 }
 
 ConversionInfo CallHelper::getConversionInfo(const Type *lhs, const Type *rhs)
 {
-    auto _lhs = lhs -> getUnqualifiedType();
-    auto _rhs = rhs -> getUnqualifiedType();
+    if ( !lhs -> isConvertableTo(rhs) )
+        throw SemanticError("Invalid initialization of '" + rhs -> getName() + "' with type '" + lhs -> getName() + "'.");
+
+    auto _lhs = lhs -> removeRef();
+    auto _rhs = rhs -> removeRef();
 
     auto conv = (_lhs == _rhs) ? nullptr : _lhs -> getConversionTo(_rhs);
 
-    if ( _lhs != _rhs && conv == nullptr )
-        throw SemanticError("Invalid initialization of '" + rhs -> getName() + "' with type '" + lhs -> getName() + "'.");
-
-    ConversionInfo conv_info(conv);
-
-    conv_info.desired_type = rhs;
-    
     if ( conv != nullptr )
         conv -> is_used = true;
 
-    return conv_info;
+    return ConversionInfo(conv, rhs);
 }
