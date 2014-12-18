@@ -19,7 +19,6 @@ void Optimizer::optimize()
 {
     constantPropagation();
     eliminateUnusedTemporaries();
-    callInlining();
 }
 
 void Optimizer::constantPropagation()
@@ -104,22 +103,4 @@ void Optimizer::eliminateUnusedTemporaries()
         }
     }
     
-}
-
-void Optimizer::callInlining()
-{
-    for ( auto& block : code.blocks )
-    {
-        for ( auto it = std::begin(block -> code); it != std::end(block -> code); ++it )
-        {
-            int  command_id = *it;
-            auto command    = block -> commands[command_id];
-            
-            if ( auto call_command = dynamic_cast<CallCommand*>(command) )
-            {
-                if ( block -> table.function_blocks.count(call_command -> function) )
-                    call_command -> setInlineCall();
-            }
-        }
-    }
 }

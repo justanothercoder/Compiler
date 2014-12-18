@@ -13,7 +13,6 @@ public:
 
     void constantPropagation();
     void eliminateUnusedTemporaries();
-    void callInlining();
 
     ThreeAddressCode& code;
 };

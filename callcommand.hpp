@@ -18,15 +18,11 @@ public:
     const Type* type() const override;
     void accept(CommandVisitor* visitor) override;
 
-    void setInlineCall();
-
     const FunctionSymbol* function;
 
 private:
 
     int params_size;
-
-    bool is_inline_call;
 };
 
 #endif

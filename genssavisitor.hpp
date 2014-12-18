@@ -53,9 +53,6 @@ private:
     void genParam(ExprNode* node, ConversionInfo conversion_info);
     void genCall(const FunctionSymbol* func, int params_size);
 
-    bool shouldBeInlined(CallInfo call_info);
-    void genInlineCall(CallNode* node);
-
     std::stack< std::pair<Arg*, Arg*> > loop_label;
 
     Arg* _arg;    
