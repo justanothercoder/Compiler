@@ -22,6 +22,8 @@ public:
 
     int totalSpaceUsed() const;
 
+    std::string dumpDisposition() const;
+
 private:
 
     std::map<const Command*, int> offsets;

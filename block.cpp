@@ -12,6 +12,8 @@
 #include "globalconfig.hpp"
 #include "disposememoryvisitor.hpp"
 
+#include "logger.hpp"
+
 Block::Block(Scope& scope, GlobalTable& table, std::string block_name) : scope     (scope)
                                                                        , block_name(block_name)
                                                                        , table     (table)
@@ -39,6 +41,10 @@ void Block::computeMemoryDisposition() const
         auto command = commands[command_id];
         command -> accept(&disposer);
     }
+
+    Logger::log(scope.getScopeName() + ":\n");
+    Logger::log(alloc.dumpDisposition());
+    Logger::log("\n");
 }
 
 void Block::genAsm(CodeObject& code_obj) const

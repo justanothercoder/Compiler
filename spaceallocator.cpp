@@ -42,3 +42,18 @@ int SpaceAllocator::addressOf(const Command* command) { return offsets.at(comman
 int SpaceAllocator::addressOf(VariableSymbol* sym)    { return var_offsets.at(sym); }
 
 int SpaceAllocator::totalSpaceUsed() const { return space_used; }
+
+#include "command.hpp"
+
+std::string SpaceAllocator::dumpDisposition() const
+{
+    std::string dump = "";
+
+    for ( auto var : var_offsets )
+        dump += std::to_string(var.second) + ": " + var.first -> getName() + '\n';
+
+    for ( auto temp : offsets )
+        dump += std::to_string(temp.second) + ": " + temp.first -> toString() + '\n';
+
+    return dump;
+}
