@@ -30,7 +30,6 @@ void UnaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
         }
         else
         {
-            block.alloc.remember(this, GlobalConfig::int_size);
             auto addr = "[rbp - " + std::to_string(block.alloc.addressOf(this)) + "]";
 
             expr -> gen(block, code_obj);
@@ -43,8 +42,13 @@ void UnaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
 
 std::string UnaryOpCommand::toString() const
 {
-    if ( op.which() == 0 ) return "*" + expr -> toString();
-    else                   return "&" + expr -> toString();
+    if ( op.which() == 0 ) 
+    {
+        if ( boost::get<AddrOp>(op) == AddrOp::REF )
+            return "&" + expr -> toString();
+        else
+            return "*" + expr -> toString();
+    }
 }
 
 bool UnaryOpCommand::isExpr() const

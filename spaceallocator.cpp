@@ -4,7 +4,7 @@
 
 SpaceAllocator::SpaceAllocator(int params_offset) : space_used (0)
                                                   , param_space(0)
-                                                  , space_offset(GlobalConfig::int_size)
+                                                  , space_offset(0)
                                                   , params_offset(params_offset) 
 {
 
@@ -12,8 +12,8 @@ SpaceAllocator::SpaceAllocator(int params_offset) : space_used (0)
 
 void SpaceAllocator::remember(const Command* command, int size) 
 {   
-    offsets[command] = space_offset + space_used;
     space_used += size;    
+    offsets[command] = space_offset + space_used;
 }
     
 void SpaceAllocator::rememberAt(const Command* command, int address)
@@ -33,8 +33,8 @@ void SpaceAllocator::remember(VariableSymbol* sym)
     }
     else
     {
-        var_offsets[sym] = space_offset + space_used;
         space_used += sym -> getType().sizeOf();
+        var_offsets[sym] = space_offset + space_used;
     }
 }
 

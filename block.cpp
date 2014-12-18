@@ -41,10 +41,6 @@ void Block::computeMemoryDisposition() const
         auto command = commands[command_id];
         command -> accept(&disposer);
     }
-
-    Logger::log(scope.getScopeName() + ":\n");
-    Logger::log(alloc.dumpDisposition());
-    Logger::log("\n");
 }
 
 void Block::genAsm(CodeObject& code_obj) const
