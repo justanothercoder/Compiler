@@ -1,6 +1,7 @@
 #include "spaceallocator.hpp"
 #include "globalconfig.hpp"
 #include "variablesymbol.hpp"
+#include "command.hpp"
 
 SpaceAllocator::SpaceAllocator(int params_offset) : space_used (0)
                                                   , param_space(0)
@@ -42,8 +43,6 @@ int SpaceAllocator::addressOf(const Command* command) { return offsets.at(comman
 int SpaceAllocator::addressOf(VariableSymbol* sym)    { return var_offsets.at(sym); }
 
 int SpaceAllocator::totalSpaceUsed() const { return space_used; }
-
-#include "command.hpp"
 
 std::string SpaceAllocator::dumpDisposition() const
 {

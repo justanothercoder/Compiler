@@ -27,10 +27,7 @@ VariableType BracketNode::getType() const
     return call_info.callee -> type().returnType();
 }
 
-bool BracketNode::isLeftValue() const
-{
-    return false;
-}
+bool BracketNode::isLeftValue() const { return false; }
 
 bool BracketNode::isCompileTimeExpr() const
 {

@@ -37,12 +37,10 @@ Symbol* VariableDeclarationNode::getDefinedSymbol() const
 
 AST* VariableDeclarationNode::copyTree() const
 {
-    std::vector<ExprNode*> params(constructor_call_params.size());
+    std::vector<ExprNode*> params;
 
-    std::transform(std::begin(constructor_call_params), std::end(constructor_call_params), std::begin(params), [&] (ExprNode *expr)
-    {
-        return static_cast<ExprNode*>(expr -> copyTree());
-    });
+    for ( auto param : constructor_call_params )
+        params.push_back(static_cast<ExprNode*>(param -> copyTree()));
 
     return new VariableDeclarationNode(name, type_info, is_field, params);
 }

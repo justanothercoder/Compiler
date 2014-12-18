@@ -13,7 +13,7 @@ const Type* TypeFactory::getPointer(const Type *type)
 {
     static std::map<const Type*, const Type*> pointers;
 
-    if ( type -> getTypeKind() == TypeKind::REFERENCE )
+    if ( type -> isReference() )
         return nullptr;
 
     auto it = pointers.find(type);
@@ -40,7 +40,7 @@ const Type* TypeFactory::getReference(const Type *type)
 {
     static std::map<const Type*, const Type*> references;
 
-    if ( type -> getTypeKind() == TypeKind::REFERENCE )
+    if ( type -> isReference() )
         return nullptr;
 
     auto it = references.find(type);
@@ -55,7 +55,7 @@ const Type* TypeFactory::getArray(const Type *type, int size)
 {
     static std::map<const Type*, std::map<int, const Type*> > arrays;
 
-    if ( type -> getTypeKind() == TypeKind::REFERENCE )
+    if ( type -> isReference() )
         return nullptr;
 
     auto it = arrays.find(type);    

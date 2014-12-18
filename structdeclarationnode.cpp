@@ -31,11 +31,11 @@ void StructDeclarationNode::build_scope()
 
 AST* StructDeclarationNode::copyTree() const
 {
-    std::vector<AST*> in(inner.size());
-    std::transform(std::begin(inner), std::end(inner), std::begin(in), [&](AST *t)
-    {
-        return t -> copyTree();
-    });
+    std::vector<AST*> in;
+    
+    for ( auto t : inner )
+        in.push_back(t -> copyTree());
+    
     return new StructDeclarationNode(name, in, template_info);
 }
 
