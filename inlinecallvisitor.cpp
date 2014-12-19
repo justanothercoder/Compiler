@@ -16,10 +16,56 @@
 #include "variabledeclarationnode.hpp"
 #include "varinfertypedeclarationnode.hpp"
 #include "templatestructdeclarationnode.hpp"
+#include "functionsymbol.hpp"
+#include "variablesymbol.hpp"
+#include "localscope.hpp"
 
-void InlineCallVisitor::visit(CallNode* ) 
+#include "expandtemplatesvisitor.hpp"
+#include "definevisitor.hpp"
+#include "checkvisitor.hpp"
+#include "builtins.hpp"
+
+void InlineCallVisitor::visit(CallNode* node)
 {
-    //TODO
+    for ( auto param : node -> params )
+        param -> accept(*this);
+
+    auto shouldBeInlined = [](const FunctionSymbol* function)
+    {
+        auto& params = function -> type().typeInfo().params_types; 
+        return std::all_of(std::begin(params), std::end(params), [](VariableType t)
+        {
+            return t.isReference()
+                || t.base() -> getTypeKind() == TypeKind::POINTER
+                || t.base() == BuiltIns::int_type
+                || t.base() == BuiltIns::char_type;
+        });
+    };
+
+    auto function = node -> call_info.callee;
+    
+    if ( !shouldBeInlined(function) )
+        return;
+
+    auto function_decl = function -> function_decl;
+    
+    auto function_body = function_decl -> getChildren()[0] -> copyTree();
+    auto local_scope = new LocalScope(node -> scope);
+
+    for ( auto param : function_decl -> params_symbols )
+        local_scope -> define(new VariableSymbol(param -> getName(), param -> getType()));
+
+    function_body -> scope = local_scope;
+    function_body -> build_scope();
+
+    ExpandTemplatesVisitor expand;
+    DefineVisitor define;
+    CheckVisitor check;
+
+    for ( auto visitor : std::vector<ASTVisitor*>{&expand, &define, &check} )
+        function_body -> accept(*visitor);
+
+    node -> inline_call_body = function_body;
 }
 
 void InlineCallVisitor::visit(IfNode* node) 

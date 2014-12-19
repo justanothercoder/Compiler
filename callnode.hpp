@@ -10,6 +10,7 @@
 class CallNode : public ExprNode
 {
 
+    friend class InlineCallVisitor;
     friend class GenSSAVisitor;
     friend class CheckVisitor;
     friend class ExpandTemplatesVisitor;
@@ -37,6 +38,8 @@ private:
     std::vector<ExprNode*> params;
 
     CallInfo call_info;
+
+    AST* inline_call_body;
 };
 
 #endif
