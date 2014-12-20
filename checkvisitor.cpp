@@ -327,6 +327,9 @@ void CheckVisitor::visit(CallNode *node)
 
 void CheckVisitor::visit(ReturnNode *node)
 {
+    if ( node -> is_in_inline_call )
+        return;
+
     auto scope = node -> scope;
     while ( scope != nullptr && dynamic_cast<FunctionScope*>(scope) == nullptr )
         scope = scope -> enclosingScope();

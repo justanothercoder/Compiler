@@ -399,6 +399,10 @@ void GenSSAVisitor::visit(CallNode *node)
 {
     if ( node -> inline_call_body )
     {
+        auto exit_from_function_label = code.newLabel();
+
+        loop_label.push({nullptr, exit_from_function_label});
+
         auto param_it = std::begin(node -> params);
 
         for ( auto var : node -> inline_locals )
@@ -426,6 +430,9 @@ void GenSSAVisitor::visit(CallNode *node)
             ++param_it;
         }
         node -> inline_call_body -> accept(*this);
+        code.add(new LabelCommand(exit_from_function_label));
+
+        loop_label.pop();        
         return;
     }
 
@@ -451,6 +458,12 @@ void GenSSAVisitor::visit(CallNode *node)
 
 void GenSSAVisitor::visit(ReturnNode *node)
 {
+    if ( node -> is_in_inline_call )
+    {
+        code.add(new GotoCommand(loop_label.top().second));
+        return;
+    }
+
     code.add(new ReturnCommand(getArg(node -> expr), node -> enclosing_func -> type().returnType().isReference()));
 }
 

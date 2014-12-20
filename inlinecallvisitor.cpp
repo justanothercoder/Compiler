@@ -68,13 +68,13 @@ void InlineCallVisitor::visit(CallNode* node)
         local_scope -> define(new_var);
     }
 
-//    MarkReturnAsInlineVisitor mark;
+    MarkReturnAsInlineVisitor mark;
 
     ExpandTemplatesVisitor expand;
     DefineVisitor define;
     CheckVisitor check;
 
-    for ( auto visitor : std::vector<ASTVisitor*>{/*&mark, */&expand, &define, &check} )
+    for ( auto visitor : std::vector<ASTVisitor*>{&mark, &expand, &define, &check} )
         function_body -> accept(*visitor);
 
     node -> inline_call_body = function_body;

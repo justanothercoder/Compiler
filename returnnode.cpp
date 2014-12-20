@@ -4,7 +4,7 @@
 #include "exprnode.hpp"
 #include "globalconfig.hpp"
 
-ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), enclosing_func(nullptr) { }
+ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), enclosing_func(nullptr), is_in_inline_call(false) { }
 
 AST* ReturnNode::copyTree() const { return new ReturnNode(static_cast<ExprNode*>(expr -> copyTree())); } 
 
