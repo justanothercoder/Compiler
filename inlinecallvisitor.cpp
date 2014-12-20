@@ -61,17 +61,10 @@ void InlineCallVisitor::visit(CallNode* node)
     function_body -> scope = local_scope;
     function_body -> build_scope();
     
-    Logger::log("Inlining function " + function -> getName() + " {");
-    Logger::log(function_body -> toString());
-    Logger::log("}");
-
     for ( auto param : function_decl -> params_symbols ) 
     {
-        Logger::log("Defining in local scope variable " + param -> getName());
         auto new_var = new VariableSymbol(param -> getName(), param -> getType());
-        Logger::log("Defining in local scope variable " + param -> getName());
         node -> inline_locals.push_back(new_var);
-        Logger::log("Defining in local scope variable " + param -> getName());
         local_scope -> define(new_var);
     }
 
