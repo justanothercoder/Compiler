@@ -24,6 +24,9 @@
 #include "definevisitor.hpp"
 #include "checkvisitor.hpp"
 #include "builtins.hpp"
+#include "markreturnasinlinevisitor.hpp"
+
+#include "logger.hpp"
 
 void InlineCallVisitor::visit(CallNode* node)
 {
@@ -32,7 +35,10 @@ void InlineCallVisitor::visit(CallNode* node)
 
     auto shouldBeInlined = [](const FunctionSymbol* function)
     {
-        auto& params = function -> type().typeInfo().params_types; 
+        if ( function -> function_decl == nullptr )
+            return false;
+
+        auto params = function -> type().typeInfo().params_types; 
         return std::all_of(std::begin(params), std::end(params), [](VariableType t)
         {
             return t.isReference()
@@ -46,23 +52,36 @@ void InlineCallVisitor::visit(CallNode* node)
     
     if ( !shouldBeInlined(function) )
         return;
-
+    
     auto function_decl = function -> function_decl;
     
     auto function_body = function_decl -> getChildren()[0] -> copyTree();
     auto local_scope = new LocalScope(node -> scope);
 
-    for ( auto param : function_decl -> params_symbols )
-        local_scope -> define(new VariableSymbol(param -> getName(), param -> getType()));
-
     function_body -> scope = local_scope;
     function_body -> build_scope();
+    
+    Logger::log("Inlining function " + function -> getName() + " {");
+    Logger::log(function_body -> toString());
+    Logger::log("}");
+
+    for ( auto param : function_decl -> params_symbols ) 
+    {
+        Logger::log("Defining in local scope variable " + param -> getName());
+        auto new_var = new VariableSymbol(param -> getName(), param -> getType());
+        Logger::log("Defining in local scope variable " + param -> getName());
+        node -> inline_locals.push_back(new_var);
+        Logger::log("Defining in local scope variable " + param -> getName());
+        local_scope -> define(new_var);
+    }
+
+//    MarkReturnAsInlineVisitor mark;
 
     ExpandTemplatesVisitor expand;
     DefineVisitor define;
     CheckVisitor check;
 
-    for ( auto visitor : std::vector<ASTVisitor*>{&expand, &define, &check} )
+    for ( auto visitor : std::vector<ASTVisitor*>{/*&mark, */&expand, &define, &check} )
         function_body -> accept(*visitor);
 
     node -> inline_call_body = function_body;

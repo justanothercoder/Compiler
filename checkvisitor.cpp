@@ -34,6 +34,8 @@
 #include "compilableunit.hpp"
 #include "comp.hpp"
 
+#include "logger.hpp"
+
 void CheckVisitor::visit(IfNode *node)
 {
     for ( auto child : node -> getChildren() )
@@ -272,6 +274,23 @@ void CheckVisitor::visit(VariableNode *node)
 
         node -> template_num -> accept(*this);
         return;
+    }
+    
+    {        
+        Logger::log("Variable name: " + node -> name);
+        
+        auto sc = node -> scope;
+        int i = 0;
+        Logger::log("Scopes:");
+        while ( sc != nullptr )
+        {
+            Logger::log("Scope name " + std::to_string(i) + ": " + sc -> getScopeName());
+            Logger::log("Scope contents:");
+            for ( auto entry : ((BaseScope*)sc) -> table )
+                Logger::log(entry.second -> getName());
+            sc = sc -> enclosingScope();
+            ++i;
+        }
     }
 
     auto sym = node -> scope -> resolve(node -> name);

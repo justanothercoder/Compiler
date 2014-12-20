@@ -15,6 +15,7 @@
 #include "expandtemplatesvisitor.hpp"
 #include "comp.hpp"
 #include "optimizer.hpp"
+#include "inlinecallvisitor.hpp"
 
 #include "statementnode.hpp"
 
@@ -41,6 +42,9 @@ int main()
 
         CheckVisitor check_visitor;
         root -> accept(check_visitor);
+
+        InlineCallVisitor inline_call_visitor;
+        root -> accept(inline_call_visitor);
 
         GenSSAVisitor visitor(Comp::code);
         root -> accept(visitor);

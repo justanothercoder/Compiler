@@ -397,6 +397,14 @@ void GenSSAVisitor::visit(NumberNode *node)
 
 void GenSSAVisitor::visit(CallNode *node)
 {
+    if ( node -> inline_call_body )
+    {
+        for ( auto var : node -> inline_locals )
+            code.rememberVar(var);
+        node -> inline_call_body -> accept(*this);
+        return;
+    }
+
     int params_size = 0;
     
     for ( auto param = node -> params.rbegin(); param != node -> params.rend(); ++param )
