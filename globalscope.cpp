@@ -4,37 +4,18 @@
 #include "functionsymbol.hpp"
 #include "globalconfig.hpp"
 #include "logger.hpp"
+#include "comp.hpp"
 
-GlobalScope::GlobalScope() : BaseScope(), template_info(TemplateInfo())
-{
+GlobalScope::GlobalScope() : BaseScope(), template_info(TemplateInfo()) { } 
 
-}
+Scope* GlobalScope::enclosingScope() const { return nullptr; }
+std::string GlobalScope::getScopeName() const { return ""; }
 
-Scope* GlobalScope::enclosingScope() const
-{
-    return nullptr;
-}
+bool GlobalScope::isUnsafeBlock() const { return false; }
+const TemplateInfo& GlobalScope::templateInfo() const { return template_info; }
 
-std::string GlobalScope::getScopeName() const
-{
-    return "";
-}
+void GlobalScope::accept(ScopeVisitor& visitor) { visitor.visit(this); }
 
-void GlobalScope::accept(ScopeVisitor& visitor)
-{
-    visitor.visit(this);
-}
-
-const TemplateInfo& GlobalScope::templateInfo() const
-{
-    return template_info;
-}
-
-bool GlobalScope::isUnsafeBlock() const
-{
-    return false;
-}
-    
 void GlobalScope::defineBuiltInFunction(std::string name, FunctionType type)
 {
     std::string scope_name = getScopeName() + "_" + name;
@@ -43,6 +24,6 @@ void GlobalScope::defineBuiltInFunction(std::string name, FunctionType type)
 
 void GlobalScope::defineBuiltInOperator(std::string name, FunctionType type)
 {
-    std::string scope_name = getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name);
+    std::string scope_name = getScopeName() + "_" + Comp::config().getCodeOperatorName(name);
     define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::oper())); 
 }

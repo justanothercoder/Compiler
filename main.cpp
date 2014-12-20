@@ -17,13 +17,31 @@
 #include "optimizer.hpp"
 #include "inlinecallvisitor.hpp"
 
+#include "globalconfig.hpp"
 #include "statementnode.hpp"
 
 using std::shared_ptr;
 
-int main()
+int main(int argc, char** argv)
 {
     std::string filename = "input.txt";
+
+    for ( int i = 1; i < argc; ++i )
+    {
+        if ( argv[i][0] == '-' )
+        {
+            std::string flag = argv[i] + 1;
+
+            boost::optional<bool> opt_flag = Comp::config().flagValue(flag);
+
+            if ( opt_flag == boost::none )
+               throw std::logic_error("Unknown option '" + flag + "'"); 
+
+            Comp::config().setFlag(flag);
+        }
+        else
+            filename = argv[i];
+    }
 
     try
     {

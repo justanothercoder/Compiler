@@ -4,6 +4,7 @@
 #include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
 #include "globalconfig.hpp"
+#include "comp.hpp"
 
 FunctionDeclarationNode::FunctionDeclarationNode(std::string name
                                                , FunctionDeclarationInfo info
@@ -22,7 +23,7 @@ FunctionDeclarationNode::FunctionDeclarationNode(std::string name
 
 void FunctionDeclarationNode::build_scope()
 {
-    std::string function_name = (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name);
+    std::string function_name = (traits.is_operator ? Comp::config().getCodeOperatorName(name) : name);
     std::string scope_name = scope -> getScopeName() + "_" + function_name;
 
     func_scope = new FunctionScope(scope_name, scope, is_unsafe);

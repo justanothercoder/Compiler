@@ -2,6 +2,7 @@
 #include "scopevisitor.hpp"
 #include "functionsymboldefine.hpp"
 #include "globalconfig.hpp"
+#include "comp.hpp"
 
 FunctionSymbol::FunctionSymbol(std::string name, FunctionType _type, FunctionScope *scope, FunctionTraits traits) : is_constexpr(false)
                                                                                                                   , is_used     (false)
@@ -15,7 +16,7 @@ FunctionSymbol::FunctionSymbol(std::string name, FunctionType _type, FunctionSco
 
 std::string FunctionSymbol::getTypedName() const
 {
-    auto res = (traits.is_operator ? GlobalConfig::getCodeOperatorName(name) : name);
+    auto res = (traits.is_operator ? Comp::config().getCodeOperatorName(name) : name);
 
     for ( auto param_type : _type.typeInfo().params_types )
         res += "_" + param_type.getName();

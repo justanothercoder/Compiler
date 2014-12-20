@@ -3,6 +3,7 @@
 #include "callhelper.hpp"
 #include "functionsymbol.hpp"
 #include "typefactory.hpp"
+#include "comp.hpp"
 #include "globalconfig.hpp"
 
 StructSymbol::StructSymbol(std::string name
@@ -102,7 +103,7 @@ void StructSymbol::defineBuiltInMethod(std::string name, FunctionType type)
 
 void StructSymbol::defineBuiltInOperator(std::string name, FunctionType type)
 {
-    std::string scope_name = getScopeName() + "_" + GlobalConfig::getCodeOperatorName(name);
+    std::string scope_name = getScopeName() + "_" + Comp::config().getCodeOperatorName(name);
     define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::methodOper()));
 }
 
