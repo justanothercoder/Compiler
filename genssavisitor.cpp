@@ -399,8 +399,32 @@ void GenSSAVisitor::visit(CallNode *node)
 {
     if ( node -> inline_call_body )
     {
+        auto param_it = std::begin(node -> params);
+
         for ( auto var : node -> inline_locals )
+        {
             code.rememberVar(var);
+                
+            auto var_type = var -> getType();
+            auto var_arg = new VariableArg(var);
+
+            if ( var_type.isReference() 
+              || var_type.base() -> getTypeKind() == TypeKind::POINTER 
+              || var_type.base() == BuiltIns::int_type
+              || var_type.base() == BuiltIns::char_type )
+            {
+                auto arg = getArg(*param_it);
+                code.add(new AssignCommand(var_arg, arg, var_type.base() == BuiltIns::char_type));
+            }
+            else
+            {
+                code.add(new ParamCommand(getArg(*param_it), ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
+                code.add(new ParamCommand(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
+                genCall(static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor(), 2 * GlobalConfig::int_size);
+            }
+
+            ++param_it;
+        }
         node -> inline_call_body -> accept(*this);
         return;
     }
