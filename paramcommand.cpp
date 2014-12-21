@@ -9,10 +9,14 @@
 #include "globalconfig.hpp"
 #include "comp.hpp"
 
+#include "logger.hpp"
+
 ParamCommand::ParamCommand(Arg* expr, ConversionInfo conversion_info) : expr(expr), conversion_info(conversion_info) { }
 
 void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
 {
+    Logger::log(expr -> toString());
+
     expr -> gen(block, code_obj);
 
     const Type *param_type = expr -> type();

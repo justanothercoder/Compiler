@@ -52,9 +52,10 @@ void DisposeMemoryVisitor::visit(DotCommand* command)
     alloc.rememberAt(command, arg_addr - command -> offset);
 }
 
-void DisposeMemoryVisitor::visit(IfFalseCommand* ) { }
-void DisposeMemoryVisitor::visit(GotoCommand* )    { }
-void DisposeMemoryVisitor::visit(LabelCommand* )   { }
-void DisposeMemoryVisitor::visit(AssignCommand* )  { }
-void DisposeMemoryVisitor::visit(ParamCommand* )   { }
-void DisposeMemoryVisitor::visit(ReturnCommand* )  { }
+void DisposeMemoryVisitor::visit(IfFalseCommand* )   { }
+void DisposeMemoryVisitor::visit(GotoCommand* )      { }
+void DisposeMemoryVisitor::visit(LabelCommand* )     { }
+void DisposeMemoryVisitor::visit(AssignCommand* )    { }
+void DisposeMemoryVisitor::visit(ParamCommand* )     { }
+void DisposeMemoryVisitor::visit(ReturnCommand* )    { }
+void DisposeMemoryVisitor::visit(AssignRefCommand* ) { }

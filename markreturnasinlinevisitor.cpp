@@ -48,11 +48,6 @@ void MarkReturnAsInlineVisitor::visit(UnsafeBlockNode* node)
         child -> accept(*this);
 }
 
-void MarkReturnAsInlineVisitor::visit(FunctionNode* node) 
-{
-    node -> scope -> define(new FunctionSymbol(node -> name, FunctionType(nullptr, { }), nullptr, FunctionTraits::simple()));
-}
-
 void MarkReturnAsInlineVisitor::visit(CallNode* node)
 {
     for ( auto child : node -> getChildren() )
@@ -72,6 +67,7 @@ void MarkReturnAsInlineVisitor::visit(ExternNode* ) { }
 void MarkReturnAsInlineVisitor::visit(ModuleNode* ) { }
 void MarkReturnAsInlineVisitor::visit(BracketNode* ) { }
 void MarkReturnAsInlineVisitor::visit(VariableNode* ) { }
+void MarkReturnAsInlineVisitor::visit(FunctionNode* ) { } 
 void MarkReturnAsInlineVisitor::visit(NewExpressionNode* ) { }
 void MarkReturnAsInlineVisitor::visit(BinaryOperatorNode* ) { }
 void MarkReturnAsInlineVisitor::visit(StructDeclarationNode* ) { }

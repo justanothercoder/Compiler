@@ -12,6 +12,7 @@
 #include "dotcommand.hpp"
 #include "returncommand.hpp"
 #include "callcommand.hpp"
+#include "assignrefcommand.hpp"
 
 SubstituteArgVisitor::SubstituteArgVisitor(std::function<Arg*(Arg*)> substitutor) : substitutor(substitutor)
 {
@@ -30,6 +31,12 @@ void SubstituteArgVisitor::visit(ElemCommand* command)
 }
 
 void SubstituteArgVisitor::visit(AssignCommand* command) 
+{
+    command -> lhs = substitutor(command -> lhs);
+    command -> rhs = substitutor(command -> rhs);
+}
+    
+void SubstituteArgVisitor::visit(AssignRefCommand* command) 
 {
     command -> lhs = substitutor(command -> lhs);
     command -> rhs = substitutor(command -> rhs);

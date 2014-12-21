@@ -23,6 +23,7 @@ public:
     void visit(DotCommand* command) override;
     void visit(ReturnCommand* command) override;
     void visit(CallCommand* command) override;    
+    void visit(AssignRefCommand* command) override;    
 
 private:
 

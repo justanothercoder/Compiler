@@ -41,6 +41,9 @@ void Block::computeMemoryDisposition() const
         auto command = commands[command_id];
         command -> accept(&disposer);
     }
+
+    if ( *Comp::config().flagValue("fdumpmemory") )
+        Logger::log(alloc.dumpDisposition());
 }
 
 void Block::genAsm(CodeObject& code_obj) const

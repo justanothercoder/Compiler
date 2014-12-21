@@ -13,6 +13,7 @@ class UnaryOpCommand;
 class DotCommand;
 class ReturnCommand;
 class CallCommand;
+class AssignRefCommand;
 
 class CommandVisitor
 {
@@ -30,6 +31,7 @@ public:
     virtual void visit(DotCommand* command) = 0;
     virtual void visit(ReturnCommand* command) = 0;
     virtual void visit(CallCommand* command) = 0;
+    virtual void visit(AssignRefCommand* command) = 0;
 
 };
 

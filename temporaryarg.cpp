@@ -17,7 +17,7 @@ void TemporaryArg::gen(const Block& block, CodeObject& code_obj) const
 std::string TemporaryArg::toString() const
 {
 //    return "temp_" + std::to_string(temp_id);
-    return "temp_" + command -> toString();
+    return "temp(" + command -> toString() + ")";
 }
 
 const Type* TemporaryArg::type() const

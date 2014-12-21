@@ -42,6 +42,7 @@
 #include "dotcommand.hpp"
 #include "returncommand.hpp"
 #include "callcommand.hpp"
+#include "assignrefcommand.hpp"
 
 #include "numberarg.hpp"
 #include "variablearg.hpp"
@@ -378,8 +379,17 @@ void GenSSAVisitor::visit(VariableNode *node)
         node -> template_num -> accept(*this);
         return;
     }
-    
-    _arg = new VariableArg(node -> variable);
+
+    if ( node -> variable -> isField() )
+    {
+        auto this_var = static_cast<VariableSymbol*>(node -> scope -> resolve("this"));
+        int offset = static_cast<const StructSymbol*>(this_var -> getType().unqualified()) -> offsetOf(node -> variable);
+        _arg = code.add(new DotCommand(new VariableArg(this_var), offset, node -> variable));
+    }
+    else
+    {
+        _arg = new VariableArg(node -> variable);
+    }
 }
 
 void GenSSAVisitor::visit(StringNode *node)
@@ -404,7 +414,11 @@ void GenSSAVisitor::visit(CallNode *node)
 
         loop_label.push({nullptr, exit_from_function_label});
 
-        auto param_it = std::begin(node -> params);
+        auto params = node -> params;
+        if ( node -> call_info.callee -> isMethod() )
+            params.insert(std::begin(params), node -> caller);
+
+        auto param_it = std::begin(params);
 
         auto return_var = static_cast<VariableSymbol*>(node -> inline_call_body -> scope -> resolve("$"));
         code.rememberVar(return_var);
@@ -416,13 +430,15 @@ void GenSSAVisitor::visit(CallNode *node)
             auto var_type = var -> getType();
             auto var_arg = new VariableArg(var);
 
-            if ( var_type.isReference() 
-              || var_type.base() -> getTypeKind() == TypeKind::POINTER 
-              || var_type.base() == BuiltIns::int_type
-              || var_type.base() == BuiltIns::char_type )
+            if ( var_type.isReference() )
             {
-                auto arg = getArg(*param_it);
-                code.add(new AssignCommand(var_arg, arg, var_type.base() == BuiltIns::char_type));
+                code.add(new AssignRefCommand(var_arg, getArg(*param_it)));
+            }
+            else if ( var_type.base() -> getTypeKind() == TypeKind::POINTER 
+                   || var_type.base() == BuiltIns::int_type
+                   || var_type.base() == BuiltIns::char_type )
+            {
+                code.add(new AssignCommand(var_arg, getArg(*param_it), var_type.base() == BuiltIns::char_type));
             }
             else
             {

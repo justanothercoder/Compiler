@@ -12,6 +12,7 @@
 #include "dotcommand.hpp"
 #include "returncommand.hpp"
 #include "callcommand.hpp"
+#include "assignrefcommand.hpp"
 
 #include "temporaryarg.hpp"
 
@@ -37,6 +38,17 @@ void CheckForUseVisitor::visit(ElemCommand* command)
 }
 
 void CheckForUseVisitor::visit(AssignCommand* command) 
+{
+    used_commands.insert(command);
+
+    if ( auto temp = dynamic_cast<TemporaryArg*>(command -> lhs) )
+        used_commands.insert(temp -> command);
+    
+    if ( auto temp = dynamic_cast<TemporaryArg*>(command -> rhs) )
+        used_commands.insert(temp -> command);
+}
+
+void CheckForUseVisitor::visit(AssignRefCommand* command)
 {
     used_commands.insert(command);
 

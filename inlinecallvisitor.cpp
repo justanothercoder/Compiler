@@ -56,7 +56,7 @@ void InlineCallVisitor::visit(CallNode* node)
     auto function_decl = function -> function_decl;
     
     auto function_body = function_decl -> getChildren()[0] -> copyTree();
-    auto local_scope = new LocalScope(node -> scope);
+    auto local_scope = new LocalScope(function_decl -> scope);
 
     function_body -> scope = local_scope;
     function_body -> build_scope();
