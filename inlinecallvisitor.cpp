@@ -67,6 +67,7 @@ void InlineCallVisitor::visit(CallNode* node)
         node -> inline_locals.push_back(new_var);
         local_scope -> define(new_var);
     }
+    local_scope -> define(new VariableSymbol("$", function -> type().returnType()));
 
     MarkReturnAsInlineVisitor mark;
 

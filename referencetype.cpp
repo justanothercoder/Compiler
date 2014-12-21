@@ -1,5 +1,5 @@
 #include "referencetype.hpp"
-
+#include "comp.hpp"
 #include "globalconfig.hpp"
 
 ReferenceType::ReferenceType(const Type *type) : type(type)
@@ -14,7 +14,7 @@ std::string ReferenceType::getName() const
 
 size_t ReferenceType::sizeOf() const
 {
-    return GlobalConfig::int_size;
+    return Comp::config().int_size;
 }
 
 TypeKind ReferenceType::getTypeKind() const

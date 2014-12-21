@@ -11,13 +11,13 @@
 #include "labelcommand.hpp"
 #include "globalconfig.hpp"
 #include "disposememoryvisitor.hpp"
-
+#include "comp.hpp"
 #include "logger.hpp"
 
 Block::Block(Scope& scope, GlobalTable& table, std::string block_name) : scope     (scope)
                                                                        , block_name(block_name)
                                                                        , table     (table)
-                                                                       , alloc     ((1 + (dynamic_cast<FunctionScope*>(&scope) ? !dynamic_cast<FunctionScope*>(&scope) -> func -> isConstructor() : 0)) * GlobalConfig::int_size)
+                                                                       , alloc     ((1 + (dynamic_cast<FunctionScope*>(&scope) ? !dynamic_cast<FunctionScope*>(&scope) -> func -> isConstructor() : 0)) * Comp::config().int_size)
 { 
     if ( dynamic_cast<FunctionScope*>(&scope) )
         table.function_blocks[static_cast<FunctionScope&>(scope).func] = this;

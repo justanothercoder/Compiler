@@ -36,48 +36,17 @@ std::string FunctionSymbol::getScopedTypedName() const
     return res;
 }
 
-bool FunctionSymbol::isOperator() const
-{
-    return traits.is_operator;
-}
+bool FunctionSymbol::isOperator() const { return traits.is_operator; }
+bool FunctionSymbol::isMethod() const { return traits.is_method; }
+bool FunctionSymbol::isConstructor() const { return traits.is_constructor; }
 
-bool FunctionSymbol::isMethod() const
-{
-    return traits.is_method;
-}
+FunctionTraits FunctionSymbol::getTraits() const { return traits; } 
+SymbolType FunctionSymbol::getSymbolType() const { return SymbolType::FUNCTION; }
 
-bool FunctionSymbol::isConstructor() const
-{
-    return traits.is_constructor;
-}
+std::string FunctionSymbol::getName() const { return name; }
+FunctionType FunctionSymbol::type() const { return _type; } 
+Scope* FunctionSymbol::getScope() const { return scope; }
 
-std::string FunctionSymbol::getName() const
-{
-    return name;
-}
-
-FunctionTraits FunctionSymbol::getTraits() const
-{
-    return traits;
-}
-
-SymbolType FunctionSymbol::getSymbolType() const
-{
-    return SymbolType::FUNCTION;
-}
-
-ScopeVisitor& FunctionSymbol::getScopeVisitor()
-{
-    return *(new FunctionSymbolDefine(this));
-}
+ScopeVisitor& FunctionSymbol::getScopeVisitor() { return *(new FunctionSymbolDefine(this)); }
 
   
-FunctionType FunctionSymbol::type() const
-{
-    return _type;
-}
-
-Scope* FunctionSymbol::getScope() const
-{
-    return scope;
-}

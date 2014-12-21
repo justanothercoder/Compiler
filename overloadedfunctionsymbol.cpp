@@ -1,5 +1,6 @@
 #include "overloadedfunctionsymbol.hpp"
 #include "globalconfig.hpp"
+#include "comp.hpp"
 
 OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name
                                                  , OverloadedFunctionTypeInfo type_info
@@ -17,7 +18,7 @@ std::string OverloadedFunctionSymbol::getName() const
 
 size_t OverloadedFunctionSymbol::sizeOf() const
 {
-    return GlobalConfig::int_size;
+    return Comp::config().int_size;
 }
 
 OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo() const

@@ -5,6 +5,7 @@
 #include "variablearg.hpp"
 #include "temporaryarg.hpp"
 #include "globalconfig.hpp"
+#include "comp.hpp"
 #include "type.hpp"
 
 #include "dotcommand.hpp"
@@ -17,9 +18,9 @@
 DisposeMemoryVisitor::DisposeMemoryVisitor(SpaceAllocator& alloc) : alloc(alloc) { }
 
 void DisposeMemoryVisitor::visit(NewCommand* command)      { alloc.remember(command, command -> type() -> sizeOf()); }
-void DisposeMemoryVisitor::visit(ElemCommand* command)     { alloc.remember(command, GlobalConfig::int_size); }
-void DisposeMemoryVisitor::visit(BinaryOpCommand* command) { alloc.remember(command, GlobalConfig::int_size); }
-void DisposeMemoryVisitor::visit(UnaryOpCommand* command)  { alloc.remember(command, GlobalConfig::int_size); }
+void DisposeMemoryVisitor::visit(ElemCommand* command)     { alloc.remember(command, Comp::config().int_size); }
+void DisposeMemoryVisitor::visit(BinaryOpCommand* command) { alloc.remember(command, Comp::config().int_size); }
+void DisposeMemoryVisitor::visit(UnaryOpCommand* command)  { alloc.remember(command, Comp::config().int_size); }
 void DisposeMemoryVisitor::visit(CallCommand* command)     { alloc.remember(command, command -> function -> type().returnType().sizeOf()); }
 
 void DisposeMemoryVisitor::visit(DotCommand* command) 
@@ -30,14 +31,14 @@ void DisposeMemoryVisitor::visit(DotCommand* command)
         auto base_type = command -> expr -> type();
         if ( base_type -> isReference() ) 
         {
-            alloc.remember(command, GlobalConfig::int_size);
+            alloc.remember(command, Comp::config().int_size);
             return;
         }
 
         auto base_var = static_cast<VariableArg*>(command -> expr) -> var;
         if ( base_var -> isField() )
         {
-            alloc.remember(command, GlobalConfig::int_size);
+            alloc.remember(command, Comp::config().int_size);
             return;
         }
 

@@ -49,6 +49,8 @@ std::string UnaryOpCommand::toString() const
         else
             return "*" + expr -> toString();
     }
+    else
+        return expr -> toString();
 }
 
 bool UnaryOpCommand::isExpr() const
