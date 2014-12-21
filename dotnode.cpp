@@ -7,43 +7,21 @@ DotNode::DotNode(ExprNode *base, std::string member_name) : base(base), member_n
 
 }
 
-std::vector<AST*> DotNode::getChildren() const
-{
-    return {base};
-}
-
-AST* DotNode::copyTree() const
-{
-    return new DotNode(static_cast<ExprNode*>(base -> copyTree()), member_name);
-}
-
 VariableType DotNode::getType() const
 {
     return member -> getSymbolType() == SymbolType::VARIABLE ? static_cast<VariableSymbol*>(member) -> getType() 
                                                              : VariableType(static_cast<OverloadedFunctionSymbol*>(member), true);
 }
 
-bool DotNode::isLeftValue() const
-{
-    return true;
-}
+bool DotNode::isLeftValue() const { return true; }
 
-bool DotNode::isCompileTimeExpr() const
-{
-    return false;
-}
+std::vector<AST*> DotNode::getChildren() const { return {base}; }
 
-boost::optional<int> DotNode::getCompileTimeValue() const
-{
-    return boost::none;
-}
+AST* DotNode::copyTree() const { return new DotNode(static_cast<ExprNode*>(base -> copyTree()), member_name); }
 
-std::string DotNode::toString() const
-{
-    return base -> toString() + "." + member_name;
-}
+bool DotNode::isCompileTimeExpr() const { return false; }
+boost::optional<int> DotNode::getCompileTimeValue() const { return boost::none; }
 
-void DotNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+std::string DotNode::toString() const { return base -> toString() + "." + member_name; }
+
+void DotNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

@@ -17,16 +17,9 @@ AST* BracketNode::copyTree() const
            );
 }
 
-std::vector<AST*> BracketNode::getChildren() const
-{
-    return {base, expr};
-}
+std::vector<AST*> BracketNode::getChildren() const { return {base, expr}; }
 
-VariableType BracketNode::getType() const
-{
-    return call_info.callee -> type().returnType();
-}
-
+VariableType BracketNode::getType() const { return call_info.callee -> type().returnType(); } 
 bool BracketNode::isLeftValue() const { return false; }
 
 bool BracketNode::isCompileTimeExpr() const
@@ -34,17 +27,8 @@ bool BracketNode::isCompileTimeExpr() const
     return base -> isCompileTimeExpr() && expr -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
 }
 
-boost::optional<int> BracketNode::getCompileTimeValue() const
-{
-    return boost::none;
-}
+boost::optional<int> BracketNode::getCompileTimeValue() const { return boost::none; }
 
-std::string BracketNode::toString() const
-{
-    return base -> toString() + "[" + expr -> toString() + "]";
-}
+std::string BracketNode::toString() const { return base -> toString() + "[" + expr -> toString() + "]"; }
 
-void BracketNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void BracketNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
