@@ -12,16 +12,8 @@ VariableType::VariableType(const Type* type, bool is_const) : type(type), is_con
 
 }
 
-const Type* VariableType::base() const
-{
-    return type;
-}
+const Type* VariableType::base() const { return type; }
 
-bool VariableType::isConst() const
-{
-    return is_const;
-}
-    
 const Type* VariableType::unqualified() const
 {
     if ( type -> isReference() )
@@ -30,15 +22,10 @@ const Type* VariableType::unqualified() const
         return type;
 }
     
-int VariableType::sizeOf() const
-{
-    return type -> sizeOf();
-}
-    
-bool VariableType::isReference() const
-{
-    return type -> isReference();
-}
+int VariableType::sizeOf() const { return type -> sizeOf(); } 
+
+bool VariableType::isReference() const { return type -> isReference(); }
+bool VariableType::isConst() const { return is_const; }
     
 std::string VariableType::getName() const
 {
@@ -48,12 +35,5 @@ std::string VariableType::getName() const
     return res;
 }
     
-bool VariableType::operator==(const VariableType& vt) const
-{
-    return type == vt.type && is_const == vt.is_const;
-}
-
-bool VariableType::operator!=(const VariableType& vt) const
-{
-    return !(*this == vt);
-}
+bool VariableType::operator==(const VariableType& vt) const { return type == vt.type && is_const == vt.is_const; } 
+bool VariableType::operator!=(const VariableType& vt) const { return !(*this == vt); }
