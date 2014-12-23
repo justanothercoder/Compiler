@@ -8,7 +8,6 @@
 #include "comp.hpp"
 #include "type.hpp"
 
-#include "dotcommand.hpp"
 #include "newcommand.hpp"
 #include "elemcommand.hpp"
 #include "callcommand.hpp"
@@ -22,24 +21,6 @@ void DisposeMemoryVisitor::visit(ElemCommand* command)     { alloc.remember(comm
 void DisposeMemoryVisitor::visit(BinaryOpCommand* command) { alloc.remember(command, Comp::config().int_size); }
 void DisposeMemoryVisitor::visit(UnaryOpCommand* command)  { alloc.remember(command, Comp::config().int_size); }
 void DisposeMemoryVisitor::visit(CallCommand* command)     { alloc.remember(command, command -> function -> type().returnType().sizeOf()); }
-
-void DisposeMemoryVisitor::visit(DotCommand* command) 
-{
-    if ( auto var = dynamic_cast<VariableArg*>(command -> expr) ) {
-        if ( command -> expr -> type() -> isReference() ) {
-            alloc.remember(command, Comp::config().int_size);
-        }
-        else {
-            alloc.rememberAt(command, alloc.addressOf(var -> var) - command -> offset);
-        }
-    }
-    else if ( auto temp = dynamic_cast<TemporaryArg*>(command -> expr) ) {
-        alloc.rememberAt(command, alloc.addressOf(temp -> command) - command -> offset);
-    }        
-    else {
-        throw "";
-    }
-}
 
 void DisposeMemoryVisitor::visit(IfFalseCommand* )   { }
 void DisposeMemoryVisitor::visit(GotoCommand* )      { }

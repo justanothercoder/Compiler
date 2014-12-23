@@ -39,7 +39,6 @@
 #include "paramcommand.hpp"
 #include "binaryopcommand.hpp"
 #include "unaryopcommand.hpp"
-#include "dotcommand.hpp"
 #include "returncommand.hpp"
 #include "callcommand.hpp"
 #include "assignrefcommand.hpp"

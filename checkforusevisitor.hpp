@@ -4,6 +4,7 @@
 #include <set>
 #include "commandvisitor.hpp"
 
+class Arg;
 class Command;
 
 class CheckForUseVisitor : public CommandVisitor
@@ -23,12 +24,13 @@ public:
     void visit(ParamCommand* command) override;
     void visit(BinaryOpCommand* command) override;
     void visit(UnaryOpCommand* command) override;
-    void visit(DotCommand* command) override;
     void visit(ReturnCommand* command) override;
     void visit(CallCommand* command) override;    
     void visit(AssignRefCommand* command) override;    
 
 private:
+
+    void checkAndMark(Arg* arg);
 
     std::set<Command*> used_commands;
 };

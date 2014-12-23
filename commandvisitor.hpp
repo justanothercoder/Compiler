@@ -10,7 +10,6 @@ class AssignCommand;
 class ParamCommand;
 class BinaryOpCommand;
 class UnaryOpCommand;
-class DotCommand;
 class ReturnCommand;
 class CallCommand;
 class AssignRefCommand;
@@ -28,7 +27,6 @@ public:
     virtual void visit(ParamCommand* command) = 0;
     virtual void visit(BinaryOpCommand* command) = 0;
     virtual void visit(UnaryOpCommand* command) = 0;
-    virtual void visit(DotCommand* command) = 0;
     virtual void visit(ReturnCommand* command) = 0;
     virtual void visit(CallCommand* command) = 0;
     virtual void visit(AssignRefCommand* command) = 0;
