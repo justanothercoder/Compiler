@@ -47,6 +47,7 @@
 #include "numberarg.hpp"
 #include "variablearg.hpp"
 #include "stringarg.hpp"
+#include "dotarg.hpp"
 
 #include "logger.hpp"
 
@@ -362,7 +363,7 @@ void GenSSAVisitor::visit(DotNode *node)
     {
         auto var = static_cast<VariableSymbol*>(node -> member);
         auto base_type = static_cast<const StructSymbol*>(node -> base -> getType().unqualified());
-        _arg = code.add(new DotCommand(getArg(node -> base), base_type -> offsetOf(var), var));
+        _arg = new DotArg(getArg(node -> base), base_type -> offsetOf(var), var);
     }
 }
 
@@ -384,7 +385,7 @@ void GenSSAVisitor::visit(VariableNode *node)
     {
         auto this_var = static_cast<VariableSymbol*>(node -> scope -> resolve("this"));
         int offset = static_cast<const StructSymbol*>(this_var -> getType().unqualified()) -> offsetOf(node -> variable);
-        _arg = code.add(new DotCommand(new VariableArg(this_var), offset, node -> variable));
+        _arg = new DotArg(new VariableArg(this_var), offset, node -> variable);
     }
     else
     {

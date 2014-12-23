@@ -25,31 +25,20 @@ void DisposeMemoryVisitor::visit(CallCommand* command)     { alloc.remember(comm
 
 void DisposeMemoryVisitor::visit(DotCommand* command) 
 {
-    int arg_addr;
-    if ( dynamic_cast<VariableArg*>(command -> expr) )
-    {
-        auto base_type = command -> expr -> type();
-        if ( base_type -> isReference() ) 
-        {
+    if ( auto var = dynamic_cast<VariableArg*>(command -> expr) ) {
+        if ( command -> expr -> type() -> isReference() ) {
             alloc.remember(command, Comp::config().int_size);
-            return;
         }
-
-        auto base_var = static_cast<VariableArg*>(command -> expr) -> var;
-        if ( base_var -> isField() )
-        {
-            alloc.remember(command, Comp::config().int_size);
-            return;
+        else {
+            alloc.rememberAt(command, alloc.addressOf(var -> var) - command -> offset);
         }
-
-        arg_addr = alloc.addressOf(base_var);
     }
-    else if ( dynamic_cast<TemporaryArg*>(command -> expr) )
-        arg_addr = alloc.addressOf(static_cast<TemporaryArg*>(command -> expr) -> command);
-    else
-        arg_addr = 0;
-
-    alloc.rememberAt(command, arg_addr - command -> offset);
+    else if ( auto temp = dynamic_cast<TemporaryArg*>(command -> expr) ) {
+        alloc.rememberAt(command, alloc.addressOf(temp -> command) - command -> offset);
+    }        
+    else {
+        throw "";
+    }
 }
 
 void DisposeMemoryVisitor::visit(IfFalseCommand* )   { }

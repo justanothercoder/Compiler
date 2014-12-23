@@ -42,10 +42,8 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
         code_obj.emit("mov bl, byte [rax]");
         code_obj.emit("push rbx");
     }
-    else if ( conversion_info.conversion )
+    else if ( auto conv = conversion_info.conversion )
     {
-        auto conv = conversion_info.conversion;
-
         code_obj.emit("lea rbx, [rsp - " + std::to_string(Comp::config().int_size) + "]");
         code_obj.emit("sub rsp, " + std::to_string(param_type -> sizeOf()));
 
