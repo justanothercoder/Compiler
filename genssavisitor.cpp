@@ -321,6 +321,17 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                 return;
             }
 
+            if ( node -> inline_call_body )
+            {
+                std::vector<Arg*> args;
+                for ( auto param : node -> constructor_params ) {
+                    args.push_back(getArg(param));
+                }
+
+                genInlineCall(node -> call_info.callee, node -> inline_call_body, node -> inline_locals, args, var_arg);
+                return;
+            }
+
             const auto& params = node -> constructor_params;
 
             int params_size = 0;
@@ -410,7 +421,14 @@ void GenSSAVisitor::visit(CallNode *node)
 {
     if ( node -> inline_call_body )
     {
-        genInlineCall(node -> call_info.callee, node -> inline_call_body, node -> inline_locals, node -> params, node -> caller);
+        std::vector<Arg*> args;
+        for ( auto param : node -> params ) {
+            args.push_back(getArg(param));
+        }
+    
+        Arg* this_arg = node -> call_info.callee -> isMethod() ? getArg(node -> caller) : nullptr;
+
+        genInlineCall(node -> call_info.callee, node -> inline_call_body, node -> inline_locals, args, this_arg);
         return;
     }
 
@@ -517,7 +535,7 @@ void GenSSAVisitor::genCall(const FunctionSymbol* func, int params_size)
     _arg = code.add(new CallCommand(func, params_size));
 }
 
-void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_call_body, const std::vector<VariableSymbol*>& inline_locals, std::vector<ExprNode*> params, ExprNode* this_expr)
+void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_call_body, const std::vector<VariableSymbol*>& inline_locals, std::vector<Arg*> params, Arg* this_expr)
 {
     if ( inline_call_body )
     {
@@ -525,8 +543,9 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_ca
 
         loop_label.push({nullptr, exit_from_function_label});
 
-        if ( function -> isMethod() )
+        if ( function -> isMethod() ) {
             params.insert(std::begin(params), this_expr);
+        }
 
         auto param_it = std::begin(params);
 
@@ -542,18 +561,18 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_ca
 
             if ( var_type.isReference() )
             {
-                code.add(new AssignRefCommand(var_arg, getArg(*param_it)));
+                code.add(new AssignRefCommand(var_arg, *param_it));
             }
             else if ( var_type.base() -> getTypeKind() == TypeKind::POINTER 
                    || var_type.base() == BuiltIns::int_type
                    || var_type.base() == BuiltIns::char_type )
             {
-                code.add(new AssignCommand(var_arg, getArg(*param_it), var_type.base() == BuiltIns::char_type));
+                code.add(new AssignCommand(var_arg, *param_it, var_type.base() == BuiltIns::char_type));
             }
             else
             {
-                code.add(new ParamCommand(getArg(*param_it), ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
-                code.add(new ParamCommand(var_arg          , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
+                code.add(new ParamCommand(*param_it, ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
+                code.add(new ParamCommand(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
                 genCall(static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor(), 2 * Comp::config().int_size);
             }
 
