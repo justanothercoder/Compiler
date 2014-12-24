@@ -170,6 +170,16 @@ void InlineCallVisitor::visit(VariableDeclarationNode* node)
 {
     for ( auto child : node -> getChildren() )
         child -> accept(*this);
+
+    if ( !node -> is_field )
+    {
+        auto function = node -> call_info.callee;
+
+        if ( !function || !shouldBeInlined(function) )
+            return;
+
+        node -> inline_call_body = inlineCall(function, node -> inline_locals);
+    }
 }
 
 void InlineCallVisitor::visit(VarInferTypeDeclarationNode* node) 

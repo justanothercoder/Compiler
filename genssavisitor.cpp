@@ -293,14 +293,14 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
 
         if ( node -> type_info.is_ref )
         {
-            auto arg = getArg(node -> constructor_call_params.front());
+            auto arg = getArg(node -> constructor_params.front());
             code.add(new AssignCommand(var_arg, arg, false));
         }
         else if ( node -> type_info.pointer_depth > 0 )
         {
-            if ( !node -> constructor_call_params.empty() )
+            if ( !node -> constructor_params.empty() )
             {
-                auto arg = getArg(node -> constructor_call_params.front());
+                auto arg = getArg(node -> constructor_params.front());
                 code.add(new AssignCommand(var_arg, arg, false));
             }
         }
@@ -309,19 +309,19 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
             if ( var_type.unqualified() == BuiltIns::int_type || var_type.unqualified() == BuiltIns::char_type )
             {
                 bool is_char_assign = (var_type.unqualified() == BuiltIns::char_type);
-                if ( node -> constructor_call_params.empty() )
+                if ( node -> constructor_params.empty() )
                 {
                     code.addConst(0);
                     code.add(new AssignCommand(var_arg, new NumberArg(0), is_char_assign));
                 }
                 else
                 {
-                    code.add(new AssignCommand(var_arg, getArg(node -> constructor_call_params.front()), is_char_assign));
+                    code.add(new AssignCommand(var_arg, getArg(node -> constructor_params.front()), is_char_assign));
                 }
                 return;
             }
 
-            const auto& params = node -> constructor_call_params;
+            const auto& params = node -> constructor_params;
 
             int params_size = 0;
 
@@ -410,52 +410,7 @@ void GenSSAVisitor::visit(CallNode *node)
 {
     if ( node -> inline_call_body )
     {
-        auto exit_from_function_label = code.newLabel();
-
-        loop_label.push({nullptr, exit_from_function_label});
-
-        auto params = node -> params;
-        if ( node -> call_info.callee -> isMethod() )
-            params.insert(std::begin(params), node -> caller);
-
-        auto param_it = std::begin(params);
-
-        auto return_var = static_cast<VariableSymbol*>(node -> inline_call_body -> scope -> resolve("$"));
-        code.rememberVar(return_var);
-
-        for ( auto var : node -> inline_locals )
-        {
-            code.rememberVar(var);
-                
-            auto var_type = var -> getType();
-            auto var_arg = new VariableArg(var);
-
-            if ( var_type.isReference() )
-            {
-                code.add(new AssignRefCommand(var_arg, getArg(*param_it)));
-            }
-            else if ( var_type.base() -> getTypeKind() == TypeKind::POINTER 
-                   || var_type.base() == BuiltIns::int_type
-                   || var_type.base() == BuiltIns::char_type )
-            {
-                code.add(new AssignCommand(var_arg, getArg(*param_it), var_type.base() == BuiltIns::char_type));
-            }
-            else
-            {
-                code.add(new ParamCommand(getArg(*param_it), ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
-                code.add(new ParamCommand(var_arg          , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
-                genCall(static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor(), 2 * Comp::config().int_size);
-            }
-
-            ++param_it;
-        }
-
-        node -> inline_call_body -> accept(*this);
-        code.add(new LabelCommand(exit_from_function_label));
-
-        _arg = new VariableArg(return_var);
-
-        loop_label.pop();
+        genInlineCall(node -> call_info.callee, node -> inline_call_body, node -> inline_locals, node -> params, node -> caller);
         return;
     }
 
@@ -560,4 +515,57 @@ void GenSSAVisitor::genParam(ExprNode* node, ConversionInfo conversion_info)
 void GenSSAVisitor::genCall(const FunctionSymbol* func, int params_size)
 {
     _arg = code.add(new CallCommand(func, params_size));
+}
+
+void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_call_body, const std::vector<VariableSymbol*>& inline_locals, std::vector<ExprNode*> params, ExprNode* this_expr)
+{
+    if ( inline_call_body )
+    {
+        auto exit_from_function_label = code.newLabel();
+
+        loop_label.push({nullptr, exit_from_function_label});
+
+        if ( function -> isMethod() )
+            params.insert(std::begin(params), this_expr);
+
+        auto param_it = std::begin(params);
+
+        auto return_var = static_cast<VariableSymbol*>(inline_call_body -> scope -> resolve("$"));
+        code.rememberVar(return_var);
+
+        for ( auto var : inline_locals )
+        {
+            code.rememberVar(var);
+                
+            auto var_type = var -> getType();
+            auto var_arg = new VariableArg(var);
+
+            if ( var_type.isReference() )
+            {
+                code.add(new AssignRefCommand(var_arg, getArg(*param_it)));
+            }
+            else if ( var_type.base() -> getTypeKind() == TypeKind::POINTER 
+                   || var_type.base() == BuiltIns::int_type
+                   || var_type.base() == BuiltIns::char_type )
+            {
+                code.add(new AssignCommand(var_arg, getArg(*param_it), var_type.base() == BuiltIns::char_type));
+            }
+            else
+            {
+                code.add(new ParamCommand(getArg(*param_it), ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
+                code.add(new ParamCommand(var_arg          , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
+                genCall(static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor(), 2 * Comp::config().int_size);
+            }
+
+            ++param_it;
+        }
+
+        inline_call_body -> accept(*this);
+        code.add(new LabelCommand(exit_from_function_label));
+
+        _arg = new VariableArg(return_var);
+
+        loop_label.pop();
+        return;
+    }
 }
