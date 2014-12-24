@@ -10,6 +10,7 @@ FunctionSymbol::FunctionSymbol(std::string name, FunctionType _type, FunctionSco
                                                                                                                   , traits      (traits)
                                                                                                                   , _type       (_type)
                                                                                                                   , scope       (scope)
+                                                                                                                  , function_decl(nullptr)
 {
 
 }

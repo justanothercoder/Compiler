@@ -4,6 +4,9 @@
 #include "compiler.hpp"
 #include "astvisitor.hpp"
 
+class AST;
+class VariableSymbol;
+
 class InlineCallVisitor : public ASTVisitor, public Compiler
 {
 public:
@@ -37,6 +40,11 @@ public:
     void visit(VariableDeclarationNode* node) override;
     void visit(VarInferTypeDeclarationNode* node) override;
     void visit(TemplateStructDeclarationNode* node) override;
+
+private:
+
+    bool shouldBeInlined(const FunctionSymbol* function);
+    AST* inlineCall(const FunctionSymbol* function, std::vector<VariableSymbol*>& locals);
 };
 
 #endif

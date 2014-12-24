@@ -48,9 +48,10 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
         code_obj.emit("push rax");
         code_obj.emit("push rbx");
 
-        code_obj.emit("sub rsp, " + std::to_string(Comp::config().int_size));
+//        code_obj.emit("sub rsp, " + std::to_string(Comp::config().int_size));
         code_obj.emit("call " + conv -> getScopedTypedName());
-        code_obj.emit("add rsp, " + std::to_string((2 + 1) * Comp::config().int_size));
+//        code_obj.emit("add rsp, " + std::to_string((2 + 1) * Comp::config().int_size));
+        code_obj.emit("add rsp, " + std::to_string(2 * Comp::config().int_size));
     }
     else
     {

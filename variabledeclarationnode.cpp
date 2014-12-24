@@ -8,11 +8,12 @@
 VariableDeclarationNode::VariableDeclarationNode(std::string name
                                                , TypeInfo type_info
                                                , bool is_field
-                                               , std::vector<ExprNode*> constructor_call_params) : name                   (name)
-                                                                                                 , type_info              (type_info)
-                                                                                                 , is_field               (is_field)
-                                                                                                 , definedSymbol          (nullptr)
-                                                                                                 , constructor_call_params(constructor_call_params)
+                                               , std::vector<ExprNode*> constructor_params) : name              (name)
+                                                                                            , type_info         (type_info)
+                                                                                            , is_field          (is_field)
+                                                                                            , definedSymbol     (nullptr)
+                                                                                            , constructor_params(constructor_params)
+                                                                                            , inline_call_body  (nullptr)                                                                                              
 {
 
 }
@@ -39,7 +40,7 @@ AST* VariableDeclarationNode::copyTree() const
 {
     std::vector<ExprNode*> params;
 
-    for ( auto param : constructor_call_params )
+    for ( auto param : constructor_params )
         params.push_back(static_cast<ExprNode*>(param -> copyTree()));
 
     return new VariableDeclarationNode(name, type_info, is_field, params);
@@ -47,7 +48,7 @@ AST* VariableDeclarationNode::copyTree() const
 
 std::vector<AST*> VariableDeclarationNode::getChildren() const
 {
-    return std::vector<AST*>(std::begin(constructor_call_params), std::end(constructor_call_params));
+    return std::vector<AST*>(std::begin(constructor_params), std::end(constructor_params));
 }
 
 std::string VariableDeclarationNode::toString() const

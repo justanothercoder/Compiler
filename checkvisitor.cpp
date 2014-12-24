@@ -150,7 +150,7 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
     {
         if ( node -> type_info.is_ref || node -> type_info.pointer_depth > 0 )
         {
-            for ( auto param : node -> constructor_call_params )
+            for ( auto param : node -> constructor_params )
                 param -> accept(*this);
         }
         else
@@ -159,10 +159,10 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
 
             auto struct_symbol = static_cast<const StructSymbol*>(var_type.unqualified());
 
-            for ( auto param : node -> constructor_call_params )
+            for ( auto param : node -> constructor_params )
                 param -> accept(*this);
 
-            node -> call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, node -> constructor_call_params);
+            node -> call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, node -> constructor_params);
         }
     }
 }

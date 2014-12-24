@@ -34,9 +34,12 @@ public:
 
     VariableSymbol *definedSymbol;
 
-    std::vector<ExprNode*> constructor_call_params;
+    std::vector<ExprNode*> constructor_params;
 
     CallInfo call_info;
+
+    AST* inline_call_body;
+    std::vector<VariableSymbol*> inline_locals;
 };
 
 #endif

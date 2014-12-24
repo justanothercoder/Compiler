@@ -27,32 +27,24 @@
 #include "markreturnasinlinevisitor.hpp"
 
 #include "logger.hpp"
-
-void InlineCallVisitor::visit(CallNode* node)
+    
+bool InlineCallVisitor::shouldBeInlined(const FunctionSymbol* function)
 {
-    for ( auto param : node -> params )
-        param -> accept(*this);
+    if ( function -> function_decl == nullptr )
+        return false;
 
-    auto shouldBeInlined = [](const FunctionSymbol* function)
+    auto params = function -> type().typeInfo().params_types; 
+    return std::all_of(std::begin(params), std::end(params), [](VariableType t)
     {
-        if ( function -> function_decl == nullptr )
-            return false;
+        return t.isReference()
+            || t.base() -> getTypeKind() == TypeKind::POINTER
+            || t.base() == BuiltIns::int_type
+            || t.base() == BuiltIns::char_type;
+    });
+};
 
-        auto params = function -> type().typeInfo().params_types; 
-        return std::all_of(std::begin(params), std::end(params), [](VariableType t)
-        {
-            return t.isReference()
-                || t.base() -> getTypeKind() == TypeKind::POINTER
-                || t.base() == BuiltIns::int_type
-                || t.base() == BuiltIns::char_type;
-        });
-    };
-
-    auto function = node -> call_info.callee;
-    
-    if ( !shouldBeInlined(function) )
-        return;
-    
+AST* InlineCallVisitor::inlineCall(const FunctionSymbol* function, std::vector<VariableSymbol*>& locals)
+{
     auto function_decl = function -> function_decl;
     
     auto function_body = function_decl -> getChildren()[0] -> copyTree();
@@ -64,7 +56,7 @@ void InlineCallVisitor::visit(CallNode* node)
     for ( auto param : function_decl -> params_symbols ) 
     {
         auto new_var = new VariableSymbol(param -> getName(), param -> getType());
-        node -> inline_locals.push_back(new_var);
+        locals.push_back(new_var);
         local_scope -> define(new_var);
     }
     local_scope -> define(new VariableSymbol("$", function -> type().returnType()));
@@ -75,10 +67,25 @@ void InlineCallVisitor::visit(CallNode* node)
     DefineVisitor define;
     CheckVisitor check;
 
-    for ( auto visitor : std::vector<ASTVisitor*>{&mark, &expand, &define, &check} )
+    InlineCallVisitor inline_call;
+
+    for ( auto visitor : std::vector<ASTVisitor*>{&mark, &expand, &define, &check, &inline_call} )
         function_body -> accept(*visitor);
 
-    node -> inline_call_body = function_body;
+    return function_body;
+}
+
+void InlineCallVisitor::visit(CallNode* node)
+{
+    for ( auto param : node -> params )
+        param -> accept(*this);
+
+    auto function = node -> call_info.callee;
+    
+    if ( !shouldBeInlined(function) )
+        return;
+    
+    node -> inline_call_body = inlineCall(function, node -> inline_locals);
 }
 
 void InlineCallVisitor::visit(IfNode* node) 
@@ -163,6 +170,16 @@ void InlineCallVisitor::visit(VariableDeclarationNode* node)
 {
     for ( auto child : node -> getChildren() )
         child -> accept(*this);
+
+    if ( !node -> is_field )
+    {
+        auto function = node -> call_info.callee;
+
+        if ( !function || !shouldBeInlined(function) )
+            return;
+
+        node -> inline_call_body = inlineCall(function, node -> inline_locals);
+    }
 }
 
 void InlineCallVisitor::visit(VarInferTypeDeclarationNode* node) 
