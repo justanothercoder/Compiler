@@ -29,23 +29,10 @@ void CallCommand::gen(const Block& block, CodeObject& code_obj) const
     }
 }
 
-std::string CallCommand::toString() const
-{
-    return "call " + function -> getScopedTypedName() + ' ' + std::to_string(params_size);
-}
+std::string CallCommand::toString() const { return "call " + function -> getScopedTypedName() + ' ' + std::to_string(params_size); }
 
-bool CallCommand::isExpr() const
-{
-    return true;
-}
+bool CallCommand::isExpr() const { return true; }
+const Type* CallCommand::type() const { return function -> type().returnType().base(); }
 
-const Type* CallCommand::type() const
-{
-    return function -> type().returnType().base();
-}
-
-void CallCommand::accept(CommandVisitor* visitor)
-{
-    visitor -> visit(this);
-}
+void CallCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }
 

@@ -114,7 +114,4 @@ std::string BinaryOperatorNode::toString() const
     return lhs -> toString() + " " + oper + " " + rhs -> toString();
 }
 
-void BinaryOperatorNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void BinaryOperatorNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

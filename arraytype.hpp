@@ -17,7 +17,6 @@ public:
     boost::optional<int> rankOfConversion(const Type *t) const override;
 
     bool isReference() const override;
-    bool isConst() const override;
 
     FunctionSymbol* getConversionTo(const Type *t) const override;
 

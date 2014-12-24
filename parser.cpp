@@ -14,15 +14,8 @@ Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer)
 
 }
     
-void Parser::pushScope()
-{
-    symbol_table_stack.emplace_back();
-}
-
-void Parser::popScope()
-{
-    symbol_table_stack.pop_back();
-}
+void Parser::pushScope() { symbol_table_stack.emplace_back(); }
+void Parser::popScope() { symbol_table_stack.pop_back(); }
     
 void Parser::rememberSymbol(std::string name, SymbolType type)
 {

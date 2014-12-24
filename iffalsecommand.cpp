@@ -14,22 +14,9 @@ void IfFalseCommand::gen(const Block& block, CodeObject& code_obj) const
     code_obj.emit("jz " + label_false -> toString());
 }
 
-std::string IfFalseCommand::toString() const
-{
-    return "ifFalse " + expr -> toString() + " goto " + label_false -> toString();
-}
+std::string IfFalseCommand::toString() const { return "ifFalse " + expr -> toString() + " goto " + label_false -> toString(); }
 
-bool IfFalseCommand::isExpr() const 
-{
-    return false;
-}
+bool IfFalseCommand::isExpr() const { return false; }
+const Type* IfFalseCommand::type() const { return nullptr; }
 
-const Type* IfFalseCommand::type() const
-{
-    return nullptr;
-}
-
-void IfFalseCommand::accept(CommandVisitor* visitor)
-{
-    visitor -> visit(this);
-}
+void IfFalseCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }

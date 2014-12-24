@@ -14,17 +14,8 @@ void ImportNode::build_scope()
         scope -> define(import);
 }
 
-AST* ImportNode::copyTree() const
-{
-    return new ImportNode(lib, root -> copyTree(), imports);
-}
+AST* ImportNode::copyTree() const { return new ImportNode(lib, root -> copyTree(), imports); }
 
-std::string ImportNode::toString() const
-{
-    return "import " + lib + ";";
-}
+std::string ImportNode::toString() const { return "import " + lib + ";"; }
 
-void ImportNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void ImportNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

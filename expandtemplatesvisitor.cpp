@@ -23,30 +23,6 @@
 #include "genssavisitor.hpp"
 #include "logger.hpp"
 
-void ExpandTemplatesVisitor::visit(IfNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(ForNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(WhileNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(StructDeclarationNode *node)
-{
-    for ( auto decl : node -> getChildren() )
-        decl -> accept(*this);
-}
-
 void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
 {
     const auto& template_info = node -> scope -> templateInfo();
@@ -64,31 +40,14 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
         param.second = preprocessTypeInfo(param.second, node -> scope);
     }
 
-    for ( auto i : node -> getChildren() )
-        i -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(StatementNode *node)
-{
-    for ( auto i : node -> getChildren() )
-        i -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(ReturnNode *node)
-{
-    for ( auto i : node -> getChildren() )
-        i -> accept(*this);
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
 }
 
 void ExpandTemplatesVisitor::visit(UnsafeBlockNode *node)
 {
-    for ( auto i : node -> getChildren() )
-        i -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode *node)
-{
-    node -> scope -> define(node -> definedSymbol);
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
 }
 
 void ExpandTemplatesVisitor::visit(VariableDeclarationNode *node) 
@@ -191,11 +150,6 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
     return type_info;
 }
 
-void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode *node)
-{
-    node -> expr -> accept(*this);
-}
-
 void ExpandTemplatesVisitor::visit(CallNode *node) 
 {
     node -> caller -> accept(*this);
@@ -203,10 +157,46 @@ void ExpandTemplatesVisitor::visit(CallNode *node)
         param -> accept(*this);
 }
 
-void ExpandTemplatesVisitor::visit(DotNode *node) 
+void ExpandTemplatesVisitor::visit(StatementNode *node)
 {
-    node -> base -> accept(*this);
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
 }
+
+void ExpandTemplatesVisitor::visit(ReturnNode *node)
+{
+    for ( auto child : node -> getChildren() ) 
+        child -> accept(*this);
+}
+
+void ExpandTemplatesVisitor::visit(IfNode *node)
+{
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
+}
+
+void ExpandTemplatesVisitor::visit(ForNode *node)
+{
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
+}
+
+void ExpandTemplatesVisitor::visit(WhileNode *node)
+{
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
+}
+
+void ExpandTemplatesVisitor::visit(StructDeclarationNode *node)
+{
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
+}
+
+void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode *node) { node -> scope -> define(node -> definedSymbol); }
+
+void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode *node) { node -> expr -> accept(*this); }
+void ExpandTemplatesVisitor::visit(DotNode *node) { node -> base -> accept(*this); }
 
 void ExpandTemplatesVisitor::visit(BracketNode* ) { }
 void ExpandTemplatesVisitor::visit(UnaryNode* ) { }

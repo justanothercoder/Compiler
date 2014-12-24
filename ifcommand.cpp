@@ -7,7 +7,4 @@ void IfCommand::gen(const Block& block, CodeObject& code_obj)
     code_obj.emit("jnz " + label -> toString());
 }
 
-std::string IfCommand::toString() const
-{
-    return "if " + expr -> toString() + " goto " + label -> toString();
-}
+std::string IfCommand::toString() const { return "if " + expr -> toString() + " goto " + label -> toString(); }

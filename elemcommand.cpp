@@ -13,31 +13,18 @@ ElemCommand::ElemCommand(Arg* base, Arg* expr, bool is_string) : base(base), exp
 
 void ElemCommand::gen(const Block& block, CodeObject& code_obj) const
 {
-    if ( is_string )
-    {
-        expr -> gen(block, code_obj);
-        code_obj.emit("push qword [rax]");
+    expr -> gen(block, code_obj);
+    code_obj.emit("push qword [rax]");
 
-        base -> gen(block, code_obj);
-        code_obj.emit("pop rbx");
-        code_obj.emit("add rax, rbx");
-
-        code_obj.emit("mov [rbp - " + std::to_string(block.alloc.addressOf(this)) + "], rax");
-        return;
-    }
-    else
-    {
-        expr -> gen(block, code_obj);
-        code_obj.emit("push qword [rax]");
-
-        base -> gen(block, code_obj);
-        code_obj.emit("pop rbx");
+    base -> gen(block, code_obj);
+    code_obj.emit("pop rbx");
+    
+    if ( !is_string )
         code_obj.emit("imul rbx, " + std::to_string(static_cast<const ArrayType*>(base -> type()) -> type -> sizeOf()));
-        code_obj.emit("add rax, rbx");
+    
+    code_obj.emit("add rax, rbx");
 
-        code_obj.emit("mov [rbp - " + std::to_string(block.alloc.addressOf(this)) + "], rax");
-        return;
-    }
+    code_obj.emit("mov [rbp - " + std::to_string(block.alloc.addressOf(this)) + "], rax");
 }
 
 std::string ElemCommand::toString() const { return base -> toString() + "[" + expr -> toString() + "]"; }

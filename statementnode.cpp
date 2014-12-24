@@ -15,10 +15,7 @@ AST* StatementNode::copyTree() const
     return new StatementNode(stats);
 }
 
-std::vector<AST*> StatementNode::getChildren() const
-{
-    return statements;
-}
+std::vector<AST*> StatementNode::getChildren() const { return statements; }
 
 std::string StatementNode::toString() const
 {
@@ -32,7 +29,4 @@ std::string StatementNode::toString() const
     return res;
 }
 
-void StatementNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void StatementNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

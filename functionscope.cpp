@@ -14,27 +14,11 @@ FunctionScope::FunctionScope(std::string scope_name
 
 }
 
-Scope* FunctionScope::enclosingScope() const
-{
-    return enclosing_scope;
-}
+Scope* FunctionScope::enclosingScope() const { return enclosing_scope; }
+std::string FunctionScope::getScopeName() const { return scope_name; }
 
-std::string FunctionScope::getScopeName() const
-{
-    return scope_name;
-}
+void FunctionScope::accept(ScopeVisitor& visitor) { visitor.visit(this); }
 
-void FunctionScope::accept(ScopeVisitor& visitor)
-{
-    visitor.visit(this);
-}
+const TemplateInfo& FunctionScope::templateInfo() const { return template_info; }
 
-const TemplateInfo& FunctionScope::templateInfo() const
-{
-    return template_info;
-}
-
-bool FunctionScope::isUnsafeBlock() const
-{
-    return is_unsafe;
-}
+bool FunctionScope::isUnsafeBlock() const { return is_unsafe; }

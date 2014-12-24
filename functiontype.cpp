@@ -25,12 +25,5 @@ std::string FunctionType::getName() const
     return res;
 }
     
-VariableType FunctionType::returnType() const
-{
-    return return_type;
-}
-
-const FunctionTypeInfo& FunctionType::typeInfo() const
-{
-    return type_info;
-}
+VariableType FunctionType::returnType() const { return return_type; } 
+const FunctionTypeInfo& FunctionType::typeInfo() const { return type_info; }

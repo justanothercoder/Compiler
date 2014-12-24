@@ -7,32 +7,13 @@ ModuleSymbol::ModuleSymbol(std::string name, Scope* enclosing_scope) : name(name
 
 }
 
-std::string ModuleSymbol::getName() const
-{
-    return name;
-}
+std::string ModuleSymbol::getName() const { return name; }
 
-SymbolType ModuleSymbol::getSymbolType() const
-{
-    return SymbolType::MODULE;
-}
+SymbolType ModuleSymbol::getSymbolType() const { return SymbolType::MODULE; }
     
-Scope* ModuleSymbol::enclosingScope() const 
-{
-    return enclosing_scope;
-}
+Scope* ModuleSymbol::enclosingScope() const { return enclosing_scope; }
+std::string ModuleSymbol::getScopeName() const { return getName(); }
 
-std::string ModuleSymbol::getScopeName() const
-{
-    return getName();
-}
+void ModuleSymbol::accept(ScopeVisitor& visitor) { visitor.visit(this); }
 
-void ModuleSymbol::accept(ScopeVisitor& visitor) 
-{
-    visitor.visit(this);
-}
-
-const TemplateInfo& ModuleSymbol::templateInfo() const 
-{
-    return *(new TemplateInfo());
-}
+const TemplateInfo& ModuleSymbol::templateInfo() const { return *(new TemplateInfo()); }

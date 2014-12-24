@@ -14,8 +14,3 @@ bool Type::isReference() const
 {
     return false;
 }
-
-bool Type::isConst() const
-{
-    return false;
-}

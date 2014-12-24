@@ -24,7 +24,6 @@ public:
     virtual boost::optional<int> rankOfConversion(const Type *type) const = 0;
 
     virtual bool isReference() const;
-    virtual bool isConst() const;
 
     virtual FunctionSymbol* getConversionTo(const Type *type) const = 0;
 

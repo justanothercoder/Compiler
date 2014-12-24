@@ -12,22 +12,9 @@ void GotoCommand::gen(const Block&, CodeObject& code_obj) const
     code_obj.emit("jmp " + label -> toString());
 }
 
-std::string GotoCommand::toString() const
-{
-    return "goto " + label -> toString();
-}
+std::string GotoCommand::toString() const { return "goto " + label -> toString(); }
 
-bool GotoCommand::isExpr() const
-{
-    return false;
-}
+bool GotoCommand::isExpr() const { return false; }
+const Type* GotoCommand::type() const { return nullptr; }
 
-const Type* GotoCommand::type() const
-{
-    return nullptr;
-}
-
-void GotoCommand::accept(CommandVisitor* visitor)
-{
-    visitor -> visit(this);
-}
+void GotoCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }

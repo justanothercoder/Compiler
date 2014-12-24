@@ -11,20 +11,10 @@ OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name
 
 }
 
-std::string OverloadedFunctionSymbol::getName() const
-{
-    return name;
-}
+std::string OverloadedFunctionSymbol::getName() const { return name; }
+size_t OverloadedFunctionSymbol::sizeOf() const { return Comp::config().int_size; }
 
-size_t OverloadedFunctionSymbol::sizeOf() const
-{
-    return Comp::config().int_size;
-}
-
-OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo() const
-{
-    return type_info;
-}
+OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo() const { return type_info; }
 
 void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, FunctionSymbol *sym) const
 {
@@ -32,18 +22,9 @@ void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, Func
     type_info.symbols[func_type_info] = sym;
 }
 
-bool OverloadedFunctionSymbol::isMethod() const
-{
-    return traits.is_method;
-}
-bool OverloadedFunctionSymbol::isConstructor() const
-{
-    return traits.is_constructor;
-}
-bool OverloadedFunctionSymbol::isOperator() const
-{
-    return traits.is_operator;
-}
+bool OverloadedFunctionSymbol::isMethod() const { return traits.is_method; }
+bool OverloadedFunctionSymbol::isConstructor() const { return traits.is_constructor; }
+bool OverloadedFunctionSymbol::isOperator() const { return traits.is_operator; }
 
 VariableType OverloadedFunctionSymbol::getBaseType() const
 {
@@ -52,15 +33,8 @@ VariableType OverloadedFunctionSymbol::getBaseType() const
     return std::begin(type_info.overloads) -> params_types[0];
 }
 
-SymbolType OverloadedFunctionSymbol::getSymbolType() const
-{
-    return SymbolType::OVERLOADED_FUNCTION;
-}
-
-TypeKind OverloadedFunctionSymbol::getTypeKind() const
-{
-    return TypeKind::OVERLOADEDFUNCTION;
-}
+SymbolType OverloadedFunctionSymbol::getSymbolType() const { return SymbolType::OVERLOADED_FUNCTION; }
+TypeKind OverloadedFunctionSymbol::getTypeKind() const { return TypeKind::OVERLOADEDFUNCTION; }
 
 FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeInfo params_type) const
 {
@@ -68,17 +42,6 @@ FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeInfo par
     return overloads.empty() ? nullptr : getTypeInfo().symbols.at(*std::begin(overloads));
 }
 
-bool OverloadedFunctionSymbol::isConvertableTo(const Type *) const
-{
-    return false;
-}
-
-boost::optional<int> OverloadedFunctionSymbol::rankOfConversion(const Type *) const
-{
-    return boost::none;
-}
-
-FunctionSymbol* OverloadedFunctionSymbol::getConversionTo(const Type *) const
-{
-    return nullptr;
-}
+bool OverloadedFunctionSymbol::isConvertableTo(const Type *) const { return false; } 
+boost::optional<int> OverloadedFunctionSymbol::rankOfConversion(const Type *) const { return boost::none; } 
+FunctionSymbol* OverloadedFunctionSymbol::getConversionTo(const Type *) const { return nullptr; }
