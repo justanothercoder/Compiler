@@ -7,11 +7,16 @@
 #include "functionsymbol.hpp"
 #include "commandvisitor.hpp"
 #include "globalconfig.hpp"
+#include "comp.hpp"
+
+#include "logger.hpp"
 
 ParamCommand::ParamCommand(Arg* expr, ConversionInfo conversion_info) : expr(expr), conversion_info(conversion_info) { }
 
 void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
 {
+    Logger::log(expr -> toString());
+
     expr -> gen(block, code_obj);
 
     const Type *param_type = expr -> type();
@@ -37,23 +42,21 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
         code_obj.emit("mov bl, byte [rax]");
         code_obj.emit("push rbx");
     }
-    else if ( conversion_info.conversion )
+    else if ( auto conv = conversion_info.conversion )
     {
-        auto conv = conversion_info.conversion;
-
-        code_obj.emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
+        code_obj.emit("lea rbx, [rsp - " + std::to_string(Comp::config().int_size) + "]");
         code_obj.emit("sub rsp, " + std::to_string(param_type -> sizeOf()));
 
         code_obj.emit("push rax");
         code_obj.emit("push rbx");
 
-        code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+        code_obj.emit("sub rsp, " + std::to_string(Comp::config().int_size));
         code_obj.emit("call " + conv -> getScopedTypedName());
-        code_obj.emit("add rsp, " + std::to_string((2 + 1) * GlobalConfig::int_size));
+        code_obj.emit("add rsp, " + std::to_string((2 + 1) * Comp::config().int_size));
     }
     else
     {
-        code_obj.emit("lea rbx, [rsp - " + std::to_string(GlobalConfig::int_size) + "]");
+        code_obj.emit("lea rbx, [rsp - " + std::to_string(Comp::config().int_size) + "]");
         code_obj.emit("sub rsp, " + std::to_string(param_type -> sizeOf()));
 
         if ( param_type -> isReference() )
@@ -66,7 +69,7 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
         code_obj.emit("push rbx");
 
         code_obj.emit("call " + static_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
-        code_obj.emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
+        code_obj.emit("add rsp, " + std::to_string(2 * Comp::config().int_size));
     }
 }
 

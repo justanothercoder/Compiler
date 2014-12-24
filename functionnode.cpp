@@ -5,38 +5,15 @@ FunctionNode::FunctionNode(std::string name) : name(name), function(nullptr)
 
 }    
 
-AST* FunctionNode::copyTree() const 
-{
-    return new FunctionNode(name);
-}
+AST* FunctionNode::copyTree() const { return new FunctionNode(name); }
 
-VariableType FunctionNode::getType() const 
-{
-    return function;   
-}
+VariableType FunctionNode::getType() const { return function;   } 
+bool FunctionNode::isLeftValue() const { return false; }
 
-bool FunctionNode::isLeftValue() const 
-{
-    return false;
-}
+bool FunctionNode::isCompileTimeExpr() const { return false; } 
+boost::optional<int> FunctionNode::getCompileTimeValue() const { return boost::none; }
 
-bool FunctionNode::isCompileTimeExpr() const 
-{
-    return false;
-}
+std::string FunctionNode::toString() const { return name; }
 
-boost::optional<int> FunctionNode::getCompileTimeValue() const 
-{
-    return boost::none;
-}
-
-std::string FunctionNode::toString() const 
-{
-    return name;
-}
-
-void FunctionNode::accept(ASTVisitor& visitor) 
-{
-    visitor.visit(this);
-}
+void FunctionNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 

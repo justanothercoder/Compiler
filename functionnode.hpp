@@ -10,9 +10,9 @@ class FunctionNode : public ExprNode
     friend class TemplateStructSymbol;
     friend class Scope;
 
+    friend class MarkReturnAsInlineVisitor;
     friend class GenSSAVisitor;
     friend class CheckVisitor;
-    friend class IsDefinedVisitor;
 
 public:
 

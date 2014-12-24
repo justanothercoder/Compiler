@@ -9,25 +9,12 @@ VariableSymbol::VariableSymbol(std::string name, VariableType type, VariableSymb
 
 }
 
-VariableType VariableSymbol::getType() const
-{
-    return type;
-}
+VariableType VariableSymbol::getType() const { return type; }
+std::string VariableSymbol::getName()  const { return name; }
 
-std::string VariableSymbol::getName() const
-{
-    return name;
-}
+SymbolType VariableSymbol::getSymbolType() const { return SymbolType::VARIABLE; }
 
-SymbolType VariableSymbol::getSymbolType() const
-{
-    return SymbolType::VARIABLE;
-}
-
-ScopeVisitor& VariableSymbol::getScopeVisitor()
-{
-    return *(new VariableSymbolDefine(this));
-}
+ScopeVisitor& VariableSymbol::getScopeVisitor() { return *(new VariableSymbolDefine(this)); }
 
 bool VariableSymbol::isParam() const { return sym_type == VariableSymbolType::PARAM; }
 bool VariableSymbol::isField() const { return sym_type == VariableSymbolType::FIELD; }

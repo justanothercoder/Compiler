@@ -5,6 +5,7 @@
 #include "globalscope.hpp"
 #include "typefactory.hpp"
 #include "globalconfig.hpp"
+#include "comp.hpp"
 
 Scope *BuiltIns::global_scope;
 Type *BuiltIns::void_type;
@@ -43,10 +44,10 @@ void BuiltIns::defineBuiltIns()
     global_scope -> define(ASCII_string);
     global_scope -> define(char_struct);
 
-    auto int_builtin = VariableType(new BuiltInTypeSymbol("~~int", GlobalConfig::int_size), false);
+    auto int_builtin = VariableType(new BuiltInTypeSymbol("~~int", Comp::config().int_size), false);
     int_struct  -> define(new VariableSymbol("~~impl", int_builtin, VariableSymbolType::FIELD));
 
-    auto char_builtin = VariableType(new BuiltInTypeSymbol("~~char", GlobalConfig::int_size), false);
+    auto char_builtin = VariableType(new BuiltInTypeSymbol("~~char", Comp::config().int_size), false);
     char_struct -> define(new VariableSymbol("~~impl", char_builtin, VariableSymbolType::FIELD));
 
     int_struct -> defineBuiltInConstructor(FunctionType(ref_int, {ref_int}));

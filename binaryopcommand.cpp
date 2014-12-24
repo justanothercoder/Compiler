@@ -5,6 +5,7 @@
 #include "builtins.hpp"
 #include "commandvisitor.hpp"
 #include "globalconfig.hpp"
+#include "comp.hpp"
 
 BinaryOpCommand::BinaryOpCommand(BinaryOp op, Arg* lhs, Arg* rhs) : op(op), lhs(lhs), rhs(rhs)
 {
@@ -22,7 +23,7 @@ void BinaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
     {
         code_obj.emit("mov qword [rsp], 0");
         code_obj.emit("mov bl, byte [rax]");
-        code_obj.emit("sub rsp, " + std::to_string(GlobalConfig::int_size));
+        code_obj.emit("sub rsp, " + std::to_string(Comp::config().int_size));
         code_obj.emit("mov byte [rsp], bl");
     }
     else

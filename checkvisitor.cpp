@@ -34,6 +34,8 @@
 #include "compilableunit.hpp"
 #include "comp.hpp"
 
+#include "logger.hpp"
+
 void CheckVisitor::visit(IfNode *node)
 {
     for ( auto child : node -> getChildren() )
@@ -273,7 +275,7 @@ void CheckVisitor::visit(VariableNode *node)
         node -> template_num -> accept(*this);
         return;
     }
-
+    
     auto sym = node -> scope -> resolve(node -> name);
 
     if ( sym == nullptr )
@@ -325,6 +327,12 @@ void CheckVisitor::visit(CallNode *node)
 
 void CheckVisitor::visit(ReturnNode *node)
 {
+    if ( node -> is_in_inline_call )
+    {
+        node -> expr -> accept(*this);
+        return;
+    }
+
     auto scope = node -> scope;
     while ( scope != nullptr && dynamic_cast<FunctionScope*>(scope) == nullptr )
         scope = scope -> enclosingScope();

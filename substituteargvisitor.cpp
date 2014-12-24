@@ -9,9 +9,9 @@
 #include "paramcommand.hpp"
 #include "binaryopcommand.hpp"
 #include "unaryopcommand.hpp"
-#include "dotcommand.hpp"
 #include "returncommand.hpp"
 #include "callcommand.hpp"
+#include "assignrefcommand.hpp"
 
 SubstituteArgVisitor::SubstituteArgVisitor(std::function<Arg*(Arg*)> substitutor) : substitutor(substitutor)
 {
@@ -34,6 +34,12 @@ void SubstituteArgVisitor::visit(AssignCommand* command)
     command -> lhs = substitutor(command -> lhs);
     command -> rhs = substitutor(command -> rhs);
 }
+    
+void SubstituteArgVisitor::visit(AssignRefCommand* command) 
+{
+    command -> lhs = substitutor(command -> lhs);
+    command -> rhs = substitutor(command -> rhs);
+}
 
 void SubstituteArgVisitor::visit(ParamCommand* command) 
 {
@@ -47,11 +53,6 @@ void SubstituteArgVisitor::visit(BinaryOpCommand* command)
 }
 
 void SubstituteArgVisitor::visit(UnaryOpCommand* command) 
-{
-    command -> expr = substitutor(command -> expr);
-}
-
-void SubstituteArgVisitor::visit(DotCommand* command) 
 {
     command -> expr = substitutor(command -> expr);
 }

@@ -4,7 +4,9 @@
 #include "codeobject.hpp"
 #include "scope.hpp"
 #include "structsymbol.hpp"
-    
+
+#include "logger.hpp"
+
 VariableArg::VariableArg(VariableSymbol* var) : var(var) { }
 
 void VariableArg::gen(const Block& block, CodeObject& code_obj) const
@@ -20,7 +22,7 @@ void VariableArg::gen(const Block& block, CodeObject& code_obj) const
         if ( int addr = struc_sym -> offsetOf(var) )
             code_obj.emit("lea rax, [rax + " + std::to_string(addr) + "]");
     }
-    else if ( var-> getType().isReference() )
+    else if ( var -> getType().isReference() )
     {
         code_obj.emit("mov rax, [rbp - " + std::to_string(block.alloc.addressOf(var)) + "]");
     }

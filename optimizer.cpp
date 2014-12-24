@@ -8,6 +8,7 @@
 #include "binaryopcommand.hpp"
 #include "numberarg.hpp"
 #include "temporaryarg.hpp"
+#include "dotarg.hpp"
 #include "callcommand.hpp"
 
 Optimizer::Optimizer(ThreeAddressCode& code) : code(code)
@@ -19,7 +20,6 @@ void Optimizer::optimize()
 {
     constantPropagation();
     eliminateUnusedTemporaries();
-    callInlining();
 }
 
 void Optimizer::constantPropagation()
@@ -57,11 +57,16 @@ void Optimizer::constantPropagation()
                     
                     auto it2 = it;
     
-                    SubstituteArgVisitor substitutor(std::bind([](Arg* arg1, Command* command, Arg* arg2) { 
-                        if ( dynamic_cast<TemporaryArg*>(arg1) )
+                    SubstituteArgVisitor substitutor(std::bind([](Arg* arg1, Command* command, Arg* arg2) -> Arg* { 
+                        if ( auto temp = dynamic_cast<TemporaryArg*>(arg1) )
                         {
-                            if ( static_cast<TemporaryArg*>(arg1) -> command == command )
+                            if ( temp -> command == command )
                                 return arg2;
+                        }
+                        else if ( auto dot = dynamic_cast<DotArg*>(arg1) )
+                        {
+                            if ( dynamic_cast<TemporaryArg*>(dot -> expr) )
+                                return new DotArg(arg2, dot -> offset, dot -> member);
                         }
                         return arg1;
                     }, std::placeholders::_1, com, new NumberArg(n3)));
@@ -104,22 +109,4 @@ void Optimizer::eliminateUnusedTemporaries()
         }
     }
     
-}
-
-void Optimizer::callInlining()
-{
-    for ( auto& block : code.blocks )
-    {
-        for ( auto it = std::begin(block -> code); it != std::end(block -> code); ++it )
-        {
-            int  command_id = *it;
-            auto command    = block -> commands[command_id];
-            
-            if ( auto call_command = dynamic_cast<CallCommand*>(command) )
-            {
-                if ( block -> table.function_blocks.count(call_command -> function) )
-                    call_command -> setInlineCall();
-            }
-        }
-    }
 }

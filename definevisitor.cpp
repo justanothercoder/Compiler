@@ -136,7 +136,7 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
     node -> statements -> accept(*this);
 }
 
-void DefineVisitor::visit(VariableDeclarationNode *node)
+void DefineVisitor::visit(VariableDeclarationNode* node)
 {
     auto var_type = fromTypeInfo(node -> type_info, node -> scope);
 
@@ -149,23 +149,23 @@ void DefineVisitor::visit(VariableDeclarationNode *node)
     node -> scope -> define(node -> definedSymbol);
 }
 
-void DefineVisitor::visit(StatementNode *node)
+void DefineVisitor::visit(StatementNode* node)
 {
     for ( auto i : node -> statements )
         i -> accept(*this);
 }
 
-void DefineVisitor::visit(ReturnNode *node)
+void DefineVisitor::visit(ReturnNode* node)
 {
     node -> expr -> accept(*this);
 }
 
-void DefineVisitor::visit(UnsafeBlockNode *node)
+void DefineVisitor::visit(UnsafeBlockNode* node)
 {
     node -> block -> accept(*this);
 }
 
-void DefineVisitor::visit(VarInferTypeDeclarationNode *node)
+void DefineVisitor::visit(VarInferTypeDeclarationNode* node)
 {
     CheckVisitor visitor;
     node -> expr -> accept(visitor);
@@ -180,23 +180,23 @@ void DefineVisitor::visit(VarInferTypeDeclarationNode *node)
     node -> scope -> define(node -> definedSymbol);
 }
 
-void DefineVisitor::visit(TemplateStructDeclarationNode *node)
+void DefineVisitor::visit(TemplateStructDeclarationNode* node)
 {
     for ( auto instance : node -> instances )
         instance -> accept(*this);
 }
 
-void DefineVisitor::visit(BracketNode *) { }
-void DefineVisitor::visit(UnaryNode *) { }
-void DefineVisitor::visit(NewExpressionNode *) { }
-void DefineVisitor::visit(BinaryOperatorNode *) { }
-void DefineVisitor::visit(AddrNode *) { }
-void DefineVisitor::visit(NullNode *) { }
-void DefineVisitor::visit(DotNode *) { }
-void DefineVisitor::visit(VariableNode *) { }
-void DefineVisitor::visit(StringNode *) { }
-void DefineVisitor::visit(NumberNode *) { }
-void DefineVisitor::visit(CallNode *) { }
+void DefineVisitor::visit(CallNode* ) { } 
+void DefineVisitor::visit(BracketNode* ) { }
+void DefineVisitor::visit(UnaryNode* ) { }
+void DefineVisitor::visit(NewExpressionNode* ) { }
+void DefineVisitor::visit(BinaryOperatorNode* ) { }
+void DefineVisitor::visit(AddrNode* ) { }
+void DefineVisitor::visit(NullNode* ) { }
+void DefineVisitor::visit(DotNode* ) { }
+void DefineVisitor::visit(VariableNode* ) { }
+void DefineVisitor::visit(StringNode* ) { }
+void DefineVisitor::visit(NumberNode* ) { }
 void DefineVisitor::visit(ModuleNode* ) { }
 void DefineVisitor::visit(TypeNode* ) { }
 void DefineVisitor::visit(FunctionNode* ) { }

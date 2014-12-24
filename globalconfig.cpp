@@ -1,6 +1,28 @@
 #include "globalconfig.hpp"
 
-std::string GlobalConfig::getCodeOperatorName(std::string op)
+GlobalConfig::GlobalConfig() : int_size(sizeof(int*))
+{
+    flags["fdumpTAC"]    = false;
+    flags["optimize"]    = false;
+    flags["fdumpmemory"] = false;
+}
+
+boost::optional<bool> GlobalConfig::flagValue(std::string flag) const
+{
+    auto it = flags.find(flag);
+
+    if ( it == std::end(flags) )
+        return boost::none;
+
+    return it -> second;
+}
+    
+void GlobalConfig::setFlag(std::string flag, bool value)
+{
+    flags.at(flag) = value;
+}
+
+std::string GlobalConfig::getCodeOperatorName(std::string op) const
 {
     if      ( op == "operator()" ) return "operatorcall";
     else if ( op == "operator[]" ) return "operatorelem";

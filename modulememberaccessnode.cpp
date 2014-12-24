@@ -12,20 +12,11 @@ ModuleMemberAccessNode::ModuleMemberAccessNode(std::string name
 
 }
 
-AST* ModuleMemberAccessNode::copyTree() const 
-{
-    return new ModuleMemberAccessNode(name, member);
-}
+AST* ModuleMemberAccessNode::copyTree() const { return new ModuleMemberAccessNode(name, member); }
 
-std::string ModuleMemberAccessNode::toString() const 
-{
-    return name + "." + member;
-}
+std::string ModuleMemberAccessNode::toString() const { return name + "." + member; }
 
-void ModuleMemberAccessNode::accept(ASTVisitor& visitor) 
-{
-    visitor.visit(this);
-}
+void ModuleMemberAccessNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
     
 VariableType ModuleMemberAccessNode::getType() const
 {    
@@ -34,17 +25,7 @@ VariableType ModuleMemberAccessNode::getType() const
     return static_cast<const OverloadedFunctionSymbol*>(member_sym);
 }
 
-bool ModuleMemberAccessNode::isLeftValue() const
-{
-    return false;
-}
+bool ModuleMemberAccessNode::isLeftValue() const { return false; }
 
-bool ModuleMemberAccessNode::isCompileTimeExpr() const
-{
-    return false;
-}
-
-boost::optional<int> ModuleMemberAccessNode::getCompileTimeValue() const 
-{
-    return boost::none;
-}
+bool ModuleMemberAccessNode::isCompileTimeExpr() const { return false; } 
+boost::optional<int> ModuleMemberAccessNode::getCompileTimeValue() const { return boost::none; }

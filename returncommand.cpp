@@ -6,6 +6,7 @@
 #include "functionsymbol.hpp"
 #include "commandvisitor.hpp"
 #include "globalconfig.hpp"
+#include "comp.hpp"
 
 ReturnCommand::ReturnCommand(Arg* expr, bool is_return_ref) : expr(expr), is_return_ref(is_return_ref)
 {
@@ -19,7 +20,7 @@ void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
         expr -> gen(block, code_obj);
        
         code_obj.emit("mov rbx, [rax]"); 
-        code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
+        code_obj.emit("mov rax, [rbp + " + std::to_string(2 * Comp::config().int_size) + "]");
         code_obj.emit("mov [rax], rbx");
     }
     else
@@ -27,7 +28,7 @@ void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
         expr -> gen(block, code_obj);
        
         code_obj.emit("mov rbx, rax"); 
-        code_obj.emit("mov rax, [rbp + " + std::to_string(2 * GlobalConfig::int_size) + "]");
+        code_obj.emit("mov rax, [rbp + " + std::to_string(2 * Comp::config().int_size) + "]");
 
         const Type *param_type = expr -> type();
            
@@ -62,7 +63,7 @@ void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
             assert(param_type -> getTypeKind() == TypeKind::STRUCT);
 
             code_obj.emit("call " + static_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
-            code_obj.emit("add rsp, " + std::to_string(2 * GlobalConfig::int_size));
+            code_obj.emit("add rsp, " + std::to_string(2 * Comp::config().int_size));
         }
 
         code_obj.emit("mov rsp, rbp");

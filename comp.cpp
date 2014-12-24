@@ -10,6 +10,7 @@
 #include "modulesymbol.hpp"
 #include "optimizer.hpp"
 #include "logger.hpp"
+#include "globalconfig.hpp"
 
 std::vector<CompilableUnit> Comp::units;
 ThreeAddressCode Comp::code;
@@ -55,4 +56,10 @@ boost::optional<CompilableUnit&> Comp::getUnit(std::string module_name)
     }
 
     return boost::none;
+}
+    
+GlobalConfig& Comp::config()
+{
+    static GlobalConfig config;
+    return config;
 }

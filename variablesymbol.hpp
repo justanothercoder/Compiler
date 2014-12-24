@@ -4,10 +4,7 @@
 #include "symbol.hpp"
 #include "variabletype.hpp"
 
-enum class VariableSymbolType
-{
-    SIMPLE, PARAM, FIELD
-};
+enum class VariableSymbolType { SIMPLE, PARAM, FIELD };
 
 class VariableSymbol : public Symbol
 {

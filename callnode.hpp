@@ -7,9 +7,13 @@
 #include "exprnode.hpp"
 #include "callinfo.hpp"
 
+class VariableSymbol;
+
 class CallNode : public ExprNode
 {
 
+    friend class InlineCallVisitor;
+    friend class DefineVisitor;
     friend class GenSSAVisitor;
     friend class CheckVisitor;
     friend class ExpandTemplatesVisitor;
@@ -37,6 +41,9 @@ private:
     std::vector<ExprNode*> params;
 
     CallInfo call_info;
+
+    AST* inline_call_body;
+    std::vector<VariableSymbol*> inline_locals;
 };
 
 #endif

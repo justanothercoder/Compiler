@@ -34,8 +34,7 @@ VariableType NewExpressionNode::getType() const { return VariableType(call_info.
 
 bool NewExpressionNode::isLeftValue() const       { return false; } 
 bool NewExpressionNode::isCompileTimeExpr() const { return false; }
-boost::optional<int> NewExpressionNode::getCompileTimeValue() const { return boost::none;
-}
+boost::optional<int> NewExpressionNode::getCompileTimeValue() const { return boost::none; }
 
 std::string NewExpressionNode::toString() const
 {

@@ -1,6 +1,7 @@
 #include "pointertype.hpp"
 #include "builtins.hpp"
 #include "globalconfig.hpp"
+#include "comp.hpp"
 #include "typefactory.hpp"
 
 PointerType::PointerType(const Type *type) : type(type)
@@ -15,7 +16,7 @@ std::string PointerType::getName() const
 
 size_t PointerType::sizeOf() const
 {
-    return GlobalConfig::int_size;
+    return Comp::config().int_size;
 }
 
 TypeKind PointerType::getTypeKind() const

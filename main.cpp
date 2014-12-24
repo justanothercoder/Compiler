@@ -15,20 +15,39 @@
 #include "expandtemplatesvisitor.hpp"
 #include "comp.hpp"
 #include "optimizer.hpp"
+#include "inlinecallvisitor.hpp"
 
+#include "globalconfig.hpp"
 #include "statementnode.hpp"
 
-using std::shared_ptr;
+#include "logger.hpp"
 
-int main()
+int main(int argc, char** argv)
 {
     std::string filename = "input.txt";
+
+    for ( int i = 1; i < argc; ++i )
+    {
+        if ( argv[i][0] == '-' )
+        {
+            std::string flag = argv[i] + 1;
+
+            boost::optional<bool> opt_flag = Comp::config().flagValue(flag);
+
+            if ( opt_flag == boost::none )
+               throw std::logic_error("Unknown option '" + flag + "'"); 
+
+            Comp::config().setFlag(flag);
+        }
+        else
+            filename = argv[i];
+    }
 
     try
     {
         BuiltIns::defineBuiltIns();
 
-        shared_ptr<AST> root(FileHelper::parse(filename));
+        std::shared_ptr<AST> root(FileHelper::parse(filename));
 
         root -> scope = BuiltIns::global_scope;
         root -> build_scope();
@@ -42,17 +61,23 @@ int main()
         CheckVisitor check_visitor;
         root -> accept(check_visitor);
 
+        InlineCallVisitor inline_call_visitor;
+        root -> accept(inline_call_visitor);
+
         GenSSAVisitor visitor(Comp::code);
         root -> accept(visitor);
 
-//		std::cerr << "code:\n" << (Comp::code).toString() << '\n';
+        if ( *Comp::config().flagValue("fdumpTAC") )
+            Logger::log("TAC: \n" + Comp::code.toString());
 
-        Optimizer optimizer(Comp::code);
-        optimizer.optimize();
-
-//		std::cerr << "optimized code:\n" << (Comp::code).toString() << '\n';
-
-//        std::cerr << "\nasm code:\n";
+        if ( *Comp::config().flagValue("optimize") )
+        {
+            Optimizer optimizer(Comp::code);
+            optimizer.optimize();
+        }
+        
+        if ( *Comp::config().flagValue("fdumpTAC") )
+            Logger::log("Optimized TAC: \n" + Comp::code.toString());
 
         CodeObject code_obj;
         (Comp::code).genAsm(code_obj);
