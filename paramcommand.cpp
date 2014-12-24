@@ -15,8 +15,6 @@ ParamCommand::ParamCommand(Arg* expr, ConversionInfo conversion_info) : expr(exp
 
 void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
 {
-    Logger::log(expr -> toString());
-
     expr -> gen(block, code_obj);
 
     const Type *param_type = expr -> type();
