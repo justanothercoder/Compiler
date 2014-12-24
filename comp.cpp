@@ -11,6 +11,7 @@
 #include "optimizer.hpp"
 #include "logger.hpp"
 #include "globalconfig.hpp"
+#include "inlinecallvisitor.hpp"
 
 std::vector<CompilableUnit> Comp::units;
 ThreeAddressCode Comp::code;
@@ -39,6 +40,9 @@ CompilableUnit& Comp::compile(std::string filename)
 
     CheckVisitor check_visitor;
     root -> accept(check_visitor);
+
+    InlineCallVisitor inline_call_visitor;
+    root -> accept(inline_call_visitor);
 
     GenSSAVisitor visitor(Comp::code);
     root -> accept(visitor);
