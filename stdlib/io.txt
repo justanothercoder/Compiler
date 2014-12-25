@@ -1,0 +1,106 @@
+extern __fopen(const string& filename, int mode, int flags) : int;
+extern __fclose(int fd) : void;
+extern __fread(int fd, void* str, int len) : int;
+extern __fwrite(int fd, void* buf, int len) : int;
+
+struct InputStream
+{
+	int fd;
+
+	def InputStream() {
+		fd = 0;
+	}
+
+	def open(const string& filename) {
+		fd = __fopen(filename, 438, 0);
+	}
+
+	def read(string& s, int len) : int {
+		return __fread(fd, &s, len)
+	}
+
+	def close() {
+		__fclose(fd);
+	}
+}
+
+struct OutputStream
+{
+	int fd;
+
+	def OutputStream() {
+		fd = 1;
+	}
+
+	def open(const string& filename) {
+		fd = __fopen(filename, 438, 1);
+	}
+
+	def write(const string& text) {
+		__fwrite(fd, &text, text.length())
+	}
+
+    def put(char c) {
+        __fwrite(fd, &c, 1)
+    }
+
+	def close() {
+		__fclose(fd);
+	}
+}
+
+struct BufferedInputStream
+{
+	InputStream istream
+	string buffer
+    int pos
+    int read
+
+	def BufferedInputStream() {
+		istream.fd = 0
+        pos = 0
+        read = 0
+	}
+
+	def open(const string& filename) {
+		istream.open(filename)
+	}
+
+	def readLine() : string {
+
+        int i = 0
+        string res = ""
+            
+        while ( 1 )
+        {
+            if ( pos == read ) {
+                read = istream.read(buffer, 250)
+                pos = 0
+
+                if ( read == 0 ) {
+                    res[i] = 0
+                    return res   
+                }
+            }
+
+            res[i] = buffer[pos]
+
+            if ( new int(res[i]) == 10 )
+                break
+
+            pos = pos + 1
+            i = i + 1
+        }
+
+        pos = pos + 1
+        i = i + 1
+        res[i] = 0
+    	
+		return res
+	}
+
+	def close() {
+		istream.close()
+	}
+}
+
