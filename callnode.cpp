@@ -4,7 +4,7 @@
 #include "structsymbol.hpp"
 #include "globaltable.hpp"
 
-CallNode::CallNode(ExprNode *caller, std::vector<ExprNode*> params) : caller(caller), params(params), inline_call_body(nullptr)
+CallNode::CallNode(ExprNode *caller, std::vector<ExprNode*> params) : caller(caller), params(params)
 {
 
 }

@@ -43,7 +43,7 @@ bool InlineCallVisitor::shouldBeInlined(const FunctionSymbol* function)
     });
 };
 
-AST* InlineCallVisitor::inlineCall(const FunctionSymbol* function, std::vector<VariableSymbol*>& locals)
+InlineInfo InlineCallVisitor::inlineCall(const FunctionSymbol* function)
 {
     auto function_decl = function -> function_decl;
     
@@ -52,7 +52,9 @@ AST* InlineCallVisitor::inlineCall(const FunctionSymbol* function, std::vector<V
 
     function_body -> scope = local_scope;
     function_body -> build_scope();
-    
+  
+    std::vector<VariableSymbol*> locals;
+
     for ( auto param : function_decl -> params_symbols ) 
     {
         auto new_var = new VariableSymbol(param -> getName(), param -> getType());
@@ -72,7 +74,7 @@ AST* InlineCallVisitor::inlineCall(const FunctionSymbol* function, std::vector<V
     for ( auto visitor : std::vector<ASTVisitor*>{&mark, &expand, &define, &check, &inline_call} )
         function_body -> accept(*visitor);
 
-    return function_body;
+    return InlineInfo(function_body, locals);
 }
 
 void InlineCallVisitor::visit(CallNode* node)
@@ -85,7 +87,7 @@ void InlineCallVisitor::visit(CallNode* node)
     if ( !shouldBeInlined(function) )
         return;
     
-    node -> inline_call_body = inlineCall(function, node -> inline_locals);
+    node -> inline_info = inlineCall(function);
 }
 
 void InlineCallVisitor::visit(IfNode* node) 
@@ -178,7 +180,7 @@ void InlineCallVisitor::visit(VariableDeclarationNode* node)
         if ( !function || !shouldBeInlined(function) )
             return;
 
-        node -> inline_call_body = inlineCall(function, node -> inline_locals);
+        node -> inline_info = inlineCall(function);
     }
 }
 

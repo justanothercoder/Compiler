@@ -7,6 +7,8 @@
 class AST;
 class VariableSymbol;
 
+struct InlineInfo;
+
 class InlineCallVisitor : public ASTVisitor, public Compiler
 {
 public:
@@ -44,7 +46,7 @@ public:
 private:
 
     bool shouldBeInlined(const FunctionSymbol* function);
-    AST* inlineCall(const FunctionSymbol* function, std::vector<VariableSymbol*>& locals);
+    InlineInfo inlineCall(const FunctionSymbol* function);
 };
 
 #endif

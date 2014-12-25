@@ -13,7 +13,6 @@ VariableDeclarationNode::VariableDeclarationNode(std::string name
                                                                                             , is_field          (is_field)
                                                                                             , definedSymbol     (nullptr)
                                                                                             , constructor_params(constructor_params)
-                                                                                            , inline_call_body  (nullptr)                                                                                              
 {
 
 }
