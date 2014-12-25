@@ -182,14 +182,16 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
     
     if ( isIntType(expr_type) || isCharType(expr_type) )
     {
+        bool is_char_assign = isCharType(expr_type);
+
         if ( node -> params.empty() )
         {
             code.addConst(0);
-            code.add(new AssignCommand(tmp_obj, new NumberArg(0), expr_type != BuiltIns::int_type));
+            code.add(new AssignCommand(tmp_obj, new NumberArg(0), is_char_assign));
         }
         else
         {
-            code.add(new AssignCommand(tmp_obj, getArg(params.front()), expr_type != BuiltIns::int_type));
+            code.add(new AssignCommand(tmp_obj, getArg(params.front()), is_char_assign));
         }
 
         _arg = tmp_obj;
@@ -304,14 +306,14 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                 return;
             }
 
-            if ( node -> inline_call_body )
+            if ( node -> inline_info.function_body )
             {
                 std::vector<Arg*> args;
                 for ( auto param : node -> constructor_params ) {
                     args.push_back(getArg(param));
                 }
 
-                genInlineCall(node -> call_info.callee, node -> inline_call_body, node -> inline_locals, args, var_arg);
+                genInlineCall(node -> call_info.callee, node -> inline_info, args, var_arg);
                 return;
             }
 
@@ -402,7 +404,7 @@ void GenSSAVisitor::visit(NumberNode *node)
 
 void GenSSAVisitor::visit(CallNode *node)
 {
-    if ( node -> inline_call_body )
+    if ( node -> inline_info.function_body )
     {
         std::vector<Arg*> args;
         for ( auto param : node -> params ) {
@@ -411,7 +413,7 @@ void GenSSAVisitor::visit(CallNode *node)
     
         Arg* this_arg = node -> call_info.callee -> isMethod() ? getArg(node -> caller) : nullptr;
 
-        genInlineCall(node -> call_info.callee, node -> inline_call_body, node -> inline_locals, args, this_arg);
+        genInlineCall(node -> call_info.callee, node -> inline_info, args, this_arg);
         return;
     }
 
@@ -510,9 +512,9 @@ void GenSSAVisitor::genCall(const FunctionSymbol* func, int params_size)
     _arg = code.add(new CallCommand(func, params_size));
 }
 
-void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_call_body, const std::vector<VariableSymbol*>& inline_locals, std::vector<Arg*> params, Arg* this_expr)
+void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Arg*> params, Arg* this_expr)
 {
-    if ( inline_call_body )
+    if ( inline_info.function_body )
     {
         auto exit_from_function_label = code.newLabel();
 
@@ -524,10 +526,10 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_ca
 
         auto param_it = std::begin(params);
 
-        auto return_var = static_cast<VariableSymbol*>(inline_call_body -> scope -> resolve("$"));
+        auto return_var = static_cast<VariableSymbol*>(inline_info.function_body -> scope -> resolve("$"));
         code.rememberVar(return_var);
 
-        for ( auto var : inline_locals )
+        for ( auto var : inline_info.locals )
         {
             code.rememberVar(var);
                 
@@ -538,11 +540,9 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_ca
             {
                 code.add(new AssignRefCommand(var_arg, *param_it));
             }
-            else if ( var_type.base() -> getTypeKind() == TypeKind::POINTER 
-                   || var_type.base() == BuiltIns::int_type
-                   || var_type.base() == BuiltIns::char_type )
+            else if ( isSimpleType(var_type.base()) )
             {
-                code.add(new AssignCommand(var_arg, *param_it, var_type.base() == BuiltIns::char_type));
+                code.add(new AssignCommand(var_arg, *param_it, isCharType(var_type.base())));
             }
             else
             {
@@ -554,7 +554,7 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_ca
             ++param_it;
         }
 
-        inline_call_body -> accept(*this);
+        inline_info.function_body -> accept(*this);
         code.add(new LabelCommand(exit_from_function_label));
 
         _arg = new VariableArg(return_var);

@@ -6,6 +6,7 @@
 #include "declarationnode.hpp"
 #include "typeinfo.hpp"
 #include "callinfo.hpp"
+#include "inlineinfo.hpp"
 
 class VariableSymbol;
 
@@ -37,9 +38,7 @@ public:
     std::vector<ExprNode*> constructor_params;
 
     CallInfo call_info;
-
-    AST* inline_call_body;
-    std::vector<VariableSymbol*> inline_locals;
+    InlineInfo inline_info;    
 };
 
 #endif
