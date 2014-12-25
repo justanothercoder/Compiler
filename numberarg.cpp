@@ -15,17 +15,7 @@ void NumberArg::gen(const Block& block, CodeObject& code_obj) const
     code_obj.emit("lea rax, [iconst" + std::to_string(num_id) + "]");
 }
 
-std::string NumberArg::toString() const
-{
-    return std::to_string(_value);
-}
+std::string NumberArg::toString() const { return std::to_string(_value); }
 
-const Type* NumberArg::type() const
-{
-    return BuiltIns::int_type;
-}
-
-int NumberArg::value() const
-{
-    return _value;
-}
+const Type* NumberArg::type() const { return BuiltIns::int_type; } 
+int NumberArg::value() const { return _value; }

@@ -85,17 +85,7 @@ std::string BinaryOpCommand::toString() const
     }
 }
 
-bool BinaryOpCommand::isExpr() const
-{
-    return true;
-}
+bool BinaryOpCommand::isExpr() const { return true; }
+const Type* BinaryOpCommand::type() const { return BuiltIns::int_type; }
 
-const Type* BinaryOpCommand::type() const
-{
-    return BuiltIns::int_type;
-}
-
-void BinaryOpCommand::accept(CommandVisitor* visitor)
-{
-    visitor -> visit(this);
-}
+void BinaryOpCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }

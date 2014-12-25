@@ -55,30 +55,6 @@ void DefineVisitor::visit(ExternNode *node)
     node -> scope -> define(node -> definedSymbol);
 }
 
-void DefineVisitor::visit(IfNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void DefineVisitor::visit(ForNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void DefineVisitor::visit(WhileNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void DefineVisitor::visit(StructDeclarationNode *node)
-{
-    for ( auto decl : node -> inner )
-        decl -> accept(*this);
-}
-
 void DefineVisitor::visit(FunctionDeclarationNode *node)
 {
     auto fromTypeInfo = [&] (TypeInfo type_info) -> VariableType
@@ -149,22 +125,6 @@ void DefineVisitor::visit(VariableDeclarationNode* node)
     node -> scope -> define(node -> definedSymbol);
 }
 
-void DefineVisitor::visit(StatementNode* node)
-{
-    for ( auto i : node -> statements )
-        i -> accept(*this);
-}
-
-void DefineVisitor::visit(ReturnNode* node)
-{
-    node -> expr -> accept(*this);
-}
-
-void DefineVisitor::visit(UnsafeBlockNode* node)
-{
-    node -> block -> accept(*this);
-}
-
 void DefineVisitor::visit(VarInferTypeDeclarationNode* node)
 {
     CheckVisitor visitor;
@@ -180,11 +140,45 @@ void DefineVisitor::visit(VarInferTypeDeclarationNode* node)
     node -> scope -> define(node -> definedSymbol);
 }
 
+void DefineVisitor::visit(StatementNode* node)
+{
+    for ( auto i : node -> statements )
+        i -> accept(*this);
+}
+
 void DefineVisitor::visit(TemplateStructDeclarationNode* node)
 {
     for ( auto instance : node -> instances )
         instance -> accept(*this);
 }
+
+void DefineVisitor::visit(IfNode *node)
+{
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
+}
+
+void DefineVisitor::visit(ForNode *node)
+{
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
+}
+
+void DefineVisitor::visit(WhileNode *node)
+{
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
+}
+
+void DefineVisitor::visit(StructDeclarationNode *node)
+{
+    for ( auto decl : node -> inner )
+        decl -> accept(*this);
+}
+
+
+void DefineVisitor::visit(ReturnNode* node)      { node -> expr -> accept(*this); }
+void DefineVisitor::visit(UnsafeBlockNode* node) { node -> block -> accept(*this); }
 
 void DefineVisitor::visit(CallNode* ) { } 
 void DefineVisitor::visit(BracketNode* ) { }

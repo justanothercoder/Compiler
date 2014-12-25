@@ -6,6 +6,7 @@
 #include "compiler.hpp"
 
 class AST;
+struct InlineInfo;
 
 class GenSSAVisitor : public ASTVisitor, public Compiler
 {
@@ -50,9 +51,15 @@ public:
     
 private:
 
+    bool isIntType(const Type* t);
+    bool isCharType(const Type* t);
+    bool isPointer(const Type* t);
+    bool isReference(const Type* t);
+    bool isSimpleType(const Type* t);
+
     void genParam(ExprNode* node, ConversionInfo conversion_info);
     void genCall(const FunctionSymbol* func, int params_size);
-    void genInlineCall(const FunctionSymbol* function, AST* inline_call_body, const std::vector<VariableSymbol*>& inline_locals, std::vector<Arg*> params, Arg* this_expr);
+    void genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Arg*> params, Arg* this_expr);
 
     std::stack< std::pair<Arg*, Arg*> > loop_label;
 

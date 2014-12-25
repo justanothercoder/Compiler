@@ -44,22 +44,9 @@ void AssignCommand::gen(const Block& block, CodeObject& code_obj) const
     }
 }
 
-std::string AssignCommand::toString() const
-{
-    return lhs -> toString() + " = "  + rhs -> toString();
-}
+std::string AssignCommand::toString() const { return lhs -> toString() + " = "  + rhs -> toString(); }
 
-bool AssignCommand::isExpr() const
-{
-    return false;
-}
-    
-const Type* AssignCommand::type() const 
-{
-    return nullptr;
-}
+bool AssignCommand::isExpr() const { return false; } 
+const Type* AssignCommand::type() const { return nullptr; }
 
-void AssignCommand::accept(CommandVisitor* visitor)
-{
-    visitor -> visit(this);
-}
+void AssignCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }

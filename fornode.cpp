@@ -29,17 +29,11 @@ AST* ForNode::copyTree() const
     );
 }
 
-std::vector<AST*> ForNode::getChildren() const
-{
-    return {init, cond, step, stats};
-}
+std::vector<AST*> ForNode::getChildren() const { return {init, cond, step, stats}; }
 
 std::string ForNode::toString() const
 {
     return "for (" + init -> toString() + "; " + cond -> toString() + "; " + step -> toString() + ")\n" + stats -> toString();
 }
 
-void ForNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void ForNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

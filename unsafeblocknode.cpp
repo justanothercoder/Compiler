@@ -17,17 +17,8 @@ void UnsafeBlockNode::build_scope()
     block -> build_scope();
 }
 
-std::vector<AST*> UnsafeBlockNode::getChildren() const
-{
-    return block -> getChildren();
-}
+std::vector<AST*> UnsafeBlockNode::getChildren() const { return block -> getChildren(); }
 
-std::string UnsafeBlockNode::toString() const
-{
-    return "unsafe\n" + block -> toString();
-}
+std::string UnsafeBlockNode::toString() const { return "unsafe\n" + block -> toString(); }
 
-void UnsafeBlockNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void UnsafeBlockNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

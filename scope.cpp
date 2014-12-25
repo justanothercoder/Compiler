@@ -12,15 +12,9 @@ Scope::~Scope()
 
 }
 
-bool Scope::isUnsafeBlock() const
-{
-    return false;
-}
+bool Scope::isUnsafeBlock() const { return false; }
 
-void Scope::define(Symbol *sym)
-{
-    accept(sym -> getScopeVisitor());
-}
+void Scope::define(Symbol *sym) { accept(sym -> getScopeVisitor()); }
 
 const Type* Scope::resolveType(std::string name)
 {

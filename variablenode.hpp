@@ -14,7 +14,6 @@ class VariableNode : public ExprNode
 
     friend class GenSSAVisitor;
     friend class CheckVisitor;
-    friend class IsDefinedVisitor;
 
 public:
 

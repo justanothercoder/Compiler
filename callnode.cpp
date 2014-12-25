@@ -4,18 +4,16 @@
 #include "structsymbol.hpp"
 #include "globaltable.hpp"
 
-CallNode::CallNode(ExprNode *caller, std::vector<ExprNode*> params) : caller(caller), params(params), inline_call_body(nullptr)
+CallNode::CallNode(ExprNode *caller, std::vector<ExprNode*> params) : caller(caller), params(params)
 {
 
 }
 
 AST* CallNode::copyTree() const
 {
-    std::vector<ExprNode*> expr(params.size());
-    std::transform(std::begin(params), std::end(params), std::begin(expr), [&] (ExprNode *ex)
-    {
-        return static_cast<ExprNode*>(ex -> copyTree());
-    });
+    std::vector<ExprNode*> expr;
+    for ( auto param : params )
+        expr.push_back(static_cast<ExprNode*>(param -> copyTree()));
 
     return new CallNode(static_cast<ExprNode*>(caller -> copyTree()), expr);
 }
@@ -27,15 +25,8 @@ std::vector<AST*> CallNode::getChildren() const
     return vec;
 }
 
-VariableType CallNode::getType() const
-{
-    return call_info.callee -> type().returnType();
-}
-
-bool CallNode::isLeftValue() const
-{
-    return false;
-}
+VariableType CallNode::getType() const { return call_info.callee -> type().returnType(); }
+bool CallNode::isLeftValue() const { return false; }
 
 bool CallNode::isCompileTimeExpr() const
 {
@@ -45,10 +36,7 @@ bool CallNode::isCompileTimeExpr() const
     });
 }
 
-boost::optional<int> CallNode::getCompileTimeValue() const
-{
-    return boost::none;
-}
+boost::optional<int> CallNode::getCompileTimeValue() const { return boost::none; }
 
 std::string CallNode::toString() const
 {
@@ -70,7 +58,4 @@ std::string CallNode::toString() const
     return res;
 }
 
-void CallNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void CallNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

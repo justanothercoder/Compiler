@@ -8,10 +8,7 @@ ExternNode::ExternNode(std::string name, FunctionDeclarationInfo info, bool is_u
 
 }
 
-AST* ExternNode::copyTree() const
-{
-    return new ExternNode(name, info, is_unsafe);
-}
+AST* ExternNode::copyTree() const { return new ExternNode(name, info, is_unsafe); }
 
 std::string ExternNode::toString() const
 {
@@ -37,8 +34,4 @@ std::string ExternNode::toString() const
     return res;
 }
 
-void ExternNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
-
+void ExternNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

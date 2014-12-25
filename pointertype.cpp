@@ -9,20 +9,10 @@ PointerType::PointerType(const Type *type) : type(type)
 
 }
 
-std::string PointerType::getName() const
-{
-    return type -> getName() + "~ptr";
-}
+std::string PointerType::getName() const { return type -> getName() + "~ptr"; }
+size_t PointerType::sizeOf() const { return Comp::config().int_size; }
 
-size_t PointerType::sizeOf() const
-{
-    return Comp::config().int_size;
-}
-
-TypeKind PointerType::getTypeKind() const
-{
-    return TypeKind::POINTER;
-}
+TypeKind PointerType::getTypeKind() const { return TypeKind::POINTER; }
 
 bool PointerType::isConvertableTo(const Type *t) const
 {
@@ -37,22 +27,8 @@ boost::optional<int> PointerType::rankOfConversion(const Type *t) const
     return (this == t ? 0 : 1);
 }
 
-bool PointerType::isReference() const
-{
-    return false;
-}
+bool PointerType::isReference() const { return false; } 
 
-bool PointerType::isConst() const
-{
-    return false;
-}
+FunctionSymbol* PointerType::getConversionTo(const Type *) const { return nullptr; }
 
-FunctionSymbol* PointerType::getConversionTo(const Type *) const
-{
-    return nullptr;
-}
-
-const Type* PointerType::pointedType() const
-{
-    return type;
-}
+const Type* PointerType::pointedType() const { return type; }

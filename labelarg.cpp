@@ -11,12 +11,6 @@ void LabelArg::gen(const Block&, CodeObject& code_obj) const
     code_obj.emit(label + ":");
 }
 
-std::string LabelArg::toString() const
-{
-    return label;
-}
+std::string LabelArg::toString() const { return label; }
 
-const Type* LabelArg::type() const
-{
-    return nullptr;
-}
+const Type* LabelArg::type() const { return nullptr; }

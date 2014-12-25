@@ -12,10 +12,7 @@ FunctionTypeInfo::FunctionTypeInfo(std::initializer_list<VariableType> init_list
 
 }
 
-bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
-{
-    return lhs.hash_func() < rhs.hash_func();
-}
+bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs) { return lhs.hash_func() < rhs.hash_func(); }
 
 bool operator==(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
 {

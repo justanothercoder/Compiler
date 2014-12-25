@@ -13,7 +13,6 @@ class DotNode : public ExprNode
     friend class GenSSAVisitor;
     friend class CheckVisitor;
     friend class ExpandTemplatesVisitor;
-    friend class IsDefinedVisitor;
 
 public:
 

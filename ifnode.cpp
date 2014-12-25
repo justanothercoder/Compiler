@@ -29,10 +29,7 @@ AST* IfNode::copyTree() const
     return new IfNode(static_cast<ExprNode*>(cond -> copyTree()), stats_true -> copyTree(), stats_false -> copyTree());
 }
 
-std::vector<AST*> IfNode::getChildren() const
-{
-    return {cond, stats_true, stats_false};
-}
+std::vector<AST*> IfNode::getChildren() const { return {cond, stats_true, stats_false}; }
 
 std::string IfNode::toString() const
 {
@@ -46,7 +43,4 @@ std::string IfNode::toString() const
     return res;
 }
 
-void IfNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void IfNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

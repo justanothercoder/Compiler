@@ -81,10 +81,7 @@ Arg* GenSSAVisitor::getArg(AST *node)
     return _arg;
 }
 
-void GenSSAVisitor::visit(ExternNode *node)
-{
-    code.addExternalFunction(node -> definedSymbol);
-}
+void GenSSAVisitor::visit(ExternNode *node) { code.addExternalFunction(node -> definedSymbol); }
 
 void GenSSAVisitor::visit(IfNode *node)
 {
@@ -183,16 +180,18 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
 
     auto tmp_obj = code.add(new NewCommand(expr_type));
     
-    if ( expr_type == BuiltIns::int_type || expr_type == BuiltIns::char_type )
+    if ( isIntType(expr_type) || isCharType(expr_type) )
     {
+        bool is_char_assign = isCharType(expr_type);
+
         if ( node -> params.empty() )
         {
             code.addConst(0);
-            code.add(new AssignCommand(tmp_obj, new NumberArg(0), expr_type != BuiltIns::int_type));
+            code.add(new AssignCommand(tmp_obj, new NumberArg(0), is_char_assign));
         }
         else
         {
-            code.add(new AssignCommand(tmp_obj, getArg(params.front()), expr_type != BuiltIns::int_type));
+            code.add(new AssignCommand(tmp_obj, getArg(params.front()), is_char_assign));
         }
 
         _arg = tmp_obj;
@@ -221,13 +220,7 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
     auto lhs_type = node -> lhs -> getType();
     auto rhs_type = node -> rhs -> getType();
 
-    if ( (lhs_type.unqualified() == BuiltIns::int_type 
-       || lhs_type.unqualified() == BuiltIns::char_type
-       || lhs_type.unqualified() -> getTypeKind() == TypeKind::POINTER)
-      && 
-         (rhs_type.unqualified() == BuiltIns::int_type 
-       || rhs_type.unqualified() == BuiltIns::char_type
-       || rhs_type.unqualified() -> getTypeKind() == TypeKind::POINTER) )
+    if ( isSimpleType(lhs_type.unqualified()) && isSimpleType(rhs_type.unqualified()) )
     {
         auto rhs = getArg(node -> rhs);
         auto lhs = getArg(node -> lhs);
@@ -291,24 +284,16 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
         auto var_type = node -> definedSymbol -> getType();
         auto var_arg = new VariableArg(node -> definedSymbol);
 
-        if ( node -> type_info.is_ref )
+        if ( node -> type_info.is_ref || (node -> type_info.pointer_depth > 0 && !node -> constructor_params.empty()) )
         {
             auto arg = getArg(node -> constructor_params.front());
             code.add(new AssignCommand(var_arg, arg, false));
         }
-        else if ( node -> type_info.pointer_depth > 0 )
-        {
-            if ( !node -> constructor_params.empty() )
-            {
-                auto arg = getArg(node -> constructor_params.front());
-                code.add(new AssignCommand(var_arg, arg, false));
-            }
-        }
         else
         {
-            if ( var_type.unqualified() == BuiltIns::int_type || var_type.unqualified() == BuiltIns::char_type )
+            if ( isIntType(var_type.unqualified()) || isCharType(var_type.unqualified()) )
             {
-                bool is_char_assign = (var_type.unqualified() == BuiltIns::char_type);
+                bool is_char_assign = isCharType(var_type.unqualified());
                 if ( node -> constructor_params.empty() )
                 {
                     code.addConst(0);
@@ -321,14 +306,14 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
                 return;
             }
 
-            if ( node -> inline_call_body )
+            if ( node -> inline_info.function_body )
             {
                 std::vector<Arg*> args;
                 for ( auto param : node -> constructor_params ) {
                     args.push_back(getArg(param));
                 }
 
-                genInlineCall(node -> call_info.callee, node -> inline_call_body, node -> inline_locals, args, var_arg);
+                genInlineCall(node -> call_info.callee, node -> inline_info, args, var_arg);
                 return;
             }
 
@@ -419,7 +404,7 @@ void GenSSAVisitor::visit(NumberNode *node)
 
 void GenSSAVisitor::visit(CallNode *node)
 {
-    if ( node -> inline_call_body )
+    if ( node -> inline_info.function_body )
     {
         std::vector<Arg*> args;
         for ( auto param : node -> params ) {
@@ -428,7 +413,7 @@ void GenSSAVisitor::visit(CallNode *node)
     
         Arg* this_arg = node -> call_info.callee -> isMethod() ? getArg(node -> caller) : nullptr;
 
-        genInlineCall(node -> call_info.callee, node -> inline_call_body, node -> inline_locals, args, this_arg);
+        genInlineCall(node -> call_info.callee, node -> inline_info, args, this_arg);
         return;
     }
 
@@ -457,13 +442,10 @@ void GenSSAVisitor::visit(ReturnNode *node)
         auto expr_type = node -> expr -> getType();
         auto var_arg = new VariableArg(static_cast<VariableSymbol*>(node -> scope -> resolve("$")));
 
-        if ( expr_type.isReference() 
-          || expr_type.base() -> getTypeKind() == TypeKind::POINTER 
-          || expr_type.base() == BuiltIns::int_type
-          || expr_type.base() == BuiltIns::char_type )
+        if ( isSimpleType(expr_type.base()) )
         {
             auto arg = getArg(node -> expr);
-            code.add(new AssignCommand(var_arg, arg, expr_type.base() == BuiltIns::char_type));
+            code.add(new AssignCommand(var_arg, arg, isCharType(expr_type.base())));
         }
         else
         {
@@ -492,19 +474,14 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
 
     auto var = new VariableArg(node -> definedSymbol);
 
-    if ( expr_type == BuiltIns::int_type || expr_type == BuiltIns::char_type )
+    if ( isIntType(expr_type) || isCharType(expr_type) )
     {
-        code.add(new AssignCommand(var, getArg(node -> expr), expr_type != BuiltIns::int_type));
+        code.add(new AssignCommand(var, getArg(node -> expr), isCharType(expr_type)));
         return;
     }
     
-    auto info = *std::begin(node -> call_info.conversions);
-    genParam(node -> expr, info);
-
-    info = ConversionInfo(nullptr);
-    info.desired_type = TypeFactory::getReference(expr_type);
-    code.add(new ParamCommand(var, info));
-
+    genParam(node -> expr, node -> call_info.conversions.front());
+    code.add(new ParamCommand(var, ConversionInfo(nullptr, TypeFactory::getReference(expr_type))));
     genCall(node -> call_info.callee, expr_type -> sizeOf() + Comp::config().int_size);
 }
 
@@ -535,9 +512,9 @@ void GenSSAVisitor::genCall(const FunctionSymbol* func, int params_size)
     _arg = code.add(new CallCommand(func, params_size));
 }
 
-void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_call_body, const std::vector<VariableSymbol*>& inline_locals, std::vector<Arg*> params, Arg* this_expr)
+void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Arg*> params, Arg* this_expr)
 {
-    if ( inline_call_body )
+    if ( inline_info.function_body )
     {
         auto exit_from_function_label = code.newLabel();
 
@@ -549,10 +526,10 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_ca
 
         auto param_it = std::begin(params);
 
-        auto return_var = static_cast<VariableSymbol*>(inline_call_body -> scope -> resolve("$"));
+        auto return_var = static_cast<VariableSymbol*>(inline_info.function_body -> scope -> resolve("$"));
         code.rememberVar(return_var);
 
-        for ( auto var : inline_locals )
+        for ( auto var : inline_info.locals )
         {
             code.rememberVar(var);
                 
@@ -563,11 +540,9 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_ca
             {
                 code.add(new AssignRefCommand(var_arg, *param_it));
             }
-            else if ( var_type.base() -> getTypeKind() == TypeKind::POINTER 
-                   || var_type.base() == BuiltIns::int_type
-                   || var_type.base() == BuiltIns::char_type )
+            else if ( isSimpleType(var_type.base()) )
             {
-                code.add(new AssignCommand(var_arg, *param_it, var_type.base() == BuiltIns::char_type));
+                code.add(new AssignCommand(var_arg, *param_it, isCharType(var_type.base())));
             }
             else
             {
@@ -579,7 +554,7 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_ca
             ++param_it;
         }
 
-        inline_call_body -> accept(*this);
+        inline_info.function_body -> accept(*this);
         code.add(new LabelCommand(exit_from_function_label));
 
         _arg = new VariableArg(return_var);
@@ -588,3 +563,9 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, AST* inline_ca
         return;
     }
 }
+
+bool GenSSAVisitor::isIntType(const Type* t)    { return t == BuiltIns::int_type; }
+bool GenSSAVisitor::isCharType(const Type* t)   { return t == BuiltIns::char_type; }
+bool GenSSAVisitor::isPointer(const Type* t)    { return t -> getTypeKind() == TypeKind::POINTER; }
+bool GenSSAVisitor::isReference(const Type* t)  { return t -> isReference(); }
+bool GenSSAVisitor::isSimpleType(const Type* t) { return isIntType(t) || isCharType(t) || isPointer(t) || isReference(t); }

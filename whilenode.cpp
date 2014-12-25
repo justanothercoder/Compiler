@@ -23,17 +23,8 @@ AST* WhileNode::copyTree() const
     return new WhileNode(static_cast<ExprNode*>(cond -> copyTree()), stats -> copyTree());
 }
 
-std::vector<AST*> WhileNode::getChildren() const
-{
-    return {cond, stats};
-}
+std::vector<AST*> WhileNode::getChildren() const { return {cond, stats}; }
 
-std::string WhileNode::toString() const
-{
-    return "while (" + cond -> toString() + ")\n" + stats -> toString();
-}
+std::string WhileNode::toString() const { return "while (" + cond -> toString() + ")\n" + stats -> toString(); }
 
-void WhileNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void WhileNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

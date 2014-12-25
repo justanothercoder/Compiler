@@ -78,17 +78,7 @@ std::string ReturnCommand::toString() const
     else                 return "return "    + expr -> toString();
 }
 
-bool ReturnCommand::isExpr() const
-{
-    return false;
-}
+bool ReturnCommand::isExpr() const { return false; }
+const Type* ReturnCommand::type() const { return nullptr; }
 
-const Type* ReturnCommand::type() const 
-{
-    return nullptr;
-}
-
-void ReturnCommand::accept(CommandVisitor* visitor)
-{
-    visitor -> visit(this);
-}
+void ReturnCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }
