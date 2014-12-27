@@ -43,9 +43,7 @@ void TemplateStructDeclarationNode::addInstance(std::vector<TemplateParam> templ
 
 DeclarationNode* TemplateStructDeclarationNode::getInstance(std::vector<TemplateParam> template_params) const
 {
-	auto hash_ = hashTemplateParams(template_params);
-
-	auto it = instances.find(hash_);
+	auto it = instances.find(hashTemplateParams(template_params));
     return it != std::end(instances) ? it -> second : nullptr;
 }
 
