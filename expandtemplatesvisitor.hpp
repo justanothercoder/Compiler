@@ -6,6 +6,10 @@
 #include "compiler.hpp"
 #include "astvisitor.hpp"
 
+class TemplateSymbol;
+class DeclarationNode;
+class TemplateDeclarationNode;
+
 class ExpandTemplatesVisitor : public ASTVisitor, public Compiler
 {
 public:
@@ -40,13 +44,14 @@ public:
     void visit(VarInferTypeDeclarationNode* node) override;
     void visit(TemplateStructDeclarationNode* node) override;
 
-    TypeInfo preprocessTypeInfo(TypeInfo type_info, Scope *scope);
-
 private:
+    
+    TypeInfo preprocessTypeInfo(TypeInfo type_info, Scope *scope);
+    DeclarationNode* instantiateSpec(const TemplateSymbol* tmpl, std::vector<TemplateParamInfo> template_params);
 
     TemplateParam getTemplateParam(TemplateParamInfo info);
 
-    std::set<TemplateStructSymbol*> template_symbols;
+    std::set<TemplateSymbol*> template_symbols;
 };
 
 #endif

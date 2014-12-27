@@ -10,7 +10,7 @@ VariableNode::VariableNode(std::string name) : name(name), variable(nullptr), te
 bool VariableNode::isTemplateParam() const
 {
     const auto& template_info = scope -> templateInfo();
-    return template_info.sym != nullptr && template_info.sym -> isIn(name);
+    return template_info.sym && template_info.isIn(name);
 }
 
 AST* VariableNode::copyTree() const { return new VariableNode(name); }
@@ -33,7 +33,7 @@ bool VariableNode::isLeftValue() const { return true; }
 bool VariableNode::isCompileTimeExpr() const
 {
     const auto& template_info = scope -> templateInfo();
-    return (template_info.sym != nullptr && template_info.sym -> isIn(name));
+    return (template_info.sym != nullptr && template_info.isIn(name));
 }
 
 boost::optional<int> VariableNode::getCompileTimeValue() const

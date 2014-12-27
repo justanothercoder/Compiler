@@ -261,7 +261,7 @@ void CheckVisitor::visit(VariableNode *node)
 {
     const auto& template_info = node -> scope -> templateInfo();
 
-    if ( template_info.sym && template_info.sym -> isIn(node -> name) )
+    if ( template_info.sym && template_info.isIn(node -> name) )
     {
         auto replace = template_info.getReplacement(node -> name);
 
@@ -364,7 +364,7 @@ void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
 
 void CheckVisitor::visit(TemplateStructDeclarationNode* node)
 {
-    for ( auto instance : node -> instances )
+    for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
 }
 

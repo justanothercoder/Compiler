@@ -487,7 +487,7 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
 
 void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)
 {
-    for ( auto instance : node -> instances )
+    for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
 }
 

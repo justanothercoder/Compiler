@@ -148,7 +148,7 @@ void DefineVisitor::visit(StatementNode* node)
 
 void DefineVisitor::visit(TemplateStructDeclarationNode* node)
 {
-    for ( auto instance : node -> instances )
+    for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
 }
 

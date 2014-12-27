@@ -8,28 +8,30 @@
 #include "structsymbol.hpp"
 #include "templateparam.hpp"
 
-class AST;
+class DeclarationNode;
 class StructSymbol;
 class StructDeclarationNode;
 
-using TemplateParamsList = std::vector< std::pair<std::string, TypeInfo> >;
-
-class TemplateStructSymbol : public StructSymbol, public TemplateSymbol
+class TemplateStructSymbol : public TemplateSymbol
 {
 public:
 
-    TemplateStructSymbol(std::string name, Scope *enclosing_scope, TemplateParamsList template_symbols, AST *holder);
+    TemplateStructSymbol(std::string name, TemplateParamsList template_symbols, TemplateDeclarationNode* _holder);
 
+    std::string getName() const override;
     SymbolType getSymbolType() const override;
 
     bool isIn(std::string name) const;
+    
+    TemplateDeclarationNode* holder() const override;
+    TemplateParamsList templateSymbols() const override;
 
-public:
+private:
 
-    mutable std::map< long long, StructDeclarationNode*> specs;
+    std::string name;
 
-    std::vector< std::pair<std::string, TypeInfo> > template_symbols;
-    AST *holder;
+    TemplateParamsList template_symbols;
+    TemplateDeclarationNode* _holder;
 };
 
 #endif

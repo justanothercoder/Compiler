@@ -7,7 +7,7 @@
 class DeclarationNode;
 class DefineVisitor;
 class Symbol;
-class TemplateStructSymbol;
+class TemplateSymbol;
 
 class Compiler
 {
@@ -15,8 +15,8 @@ public:
 
     VariableType fromTypeInfo(const TypeInfo& type_info, Scope *scope);
 
-    DeclarationNode* getSpecDecl(const TemplateStructSymbol *sym, std::vector<TemplateParam> template_params);
-    const Symbol* getSpec(const TemplateStructSymbol *sym, std::vector<TemplateParam> template_params);
+    DeclarationNode* getSpecDecl(const TemplateSymbol* sym, std::vector<TemplateParam> template_params);
+    const Symbol* getSpec(const TemplateSymbol* sym, std::vector<TemplateParam> template_params);
 
 };
 

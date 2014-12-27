@@ -4,23 +4,16 @@
 
 #include "variablenode.hpp"
 
-TemplateStructSymbol::TemplateStructSymbol(std::string name, Scope *enclosing_scope, TemplateParamsList template_symbols, AST *holder) 
-    : StructSymbol(name, enclosing_scope, (*new TemplateInfo()))
+TemplateStructSymbol::TemplateStructSymbol(std::string name, TemplateParamsList template_symbols, TemplateDeclarationNode* _holder) 
+    : name(name)
     , template_symbols(template_symbols)
-    , holder(holder)
+    , _holder(_holder)
 {
 
 }
 
-SymbolType TemplateStructSymbol::getSymbolType() const
-{
-    return SymbolType::TEMPLATESTRUCT;
-}
+std::string TemplateStructSymbol::getName() const { return name; }
+SymbolType TemplateStructSymbol::getSymbolType() const { return SymbolType::TEMPLATESTRUCT; }
 
-bool TemplateStructSymbol::isIn(std::string name) const
-{
-    return std::find_if(std::begin(template_symbols),
-                        std::end(template_symbols),
-                        [&](std::pair<std::string, TypeInfo> p) { return name == p.first; }
-    ) != std::end(template_symbols);
-}
+TemplateParamsList TemplateStructSymbol::templateSymbols() const { return template_symbols; }
+TemplateDeclarationNode* TemplateStructSymbol::holder() const { return _holder; }
