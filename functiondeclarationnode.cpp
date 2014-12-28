@@ -43,24 +43,14 @@ std::vector<AST*> FunctionDeclarationNode::getChildren() const { return {stateme
 
 std::string FunctionDeclarationNode::toString() const
 {
-    std::string res = info.returnTypeInfo().toString() + " " + name + "(";
-
-    if ( !info.formalParams().empty() )
-    {
-        const auto& params = info.formalParams();
-
-        auto it = std::begin(params);
-
-        res += it -> second.toString() + " " + it -> first;
-
-        for ( ++it; it != std::end(params); ++it )
-            res += ", " + it -> second.toString() + " " + it -> first;
-    }
-
-    res += ")";
+    std::string res = "";
+    
+    res += "def " + name;
+    res += info.toString();
     res += statements -> toString();
 
     return res;
+    return "def " + name + " " + info.toString() + " " + statements -> toString();
 }
 
 void FunctionDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

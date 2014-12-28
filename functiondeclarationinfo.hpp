@@ -24,6 +24,8 @@ public:
     std::vector<ParamInfo>& formalParams();
     const std::vector<ParamInfo>& formalParams() const;
 
+    std::string toString() const;
+
 private:
 
     TypeInfo return_type_info;

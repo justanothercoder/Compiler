@@ -26,3 +26,20 @@ const TypeInfo& FunctionDeclarationInfo::returnTypeInfo() const { return return_
 std::vector<ParamInfo>& FunctionDeclarationInfo::formalParams()             { return formal_parameters; }
 const std::vector<ParamInfo>& FunctionDeclarationInfo::formalParams() const { return formal_parameters; }
 
+std::string FunctionDeclarationInfo::toString() const
+{
+    std::string result = "";
+
+    result += "(";
+    if ( !formal_parameters.empty() )
+    {
+        auto it = std::begin(formal_parameters);
+        result += it -> second.toString() + " " + it -> first;
+        for ( ++it; it != std::end(formal_parameters); ++it )
+            result += ", " + it -> second.toString() + " " + it -> first;
+    }
+    result += ")";
+    result += " " + return_type_info.toString();
+
+    return result;
+}
