@@ -35,22 +35,10 @@ void FunctionDeclarationNode::build_scope()
     statements -> build_scope();
 }
 
-Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
-
+Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return definedSymbol; } 
 AST* FunctionDeclarationNode::copyTree() const { return new FunctionDeclarationNode(name, info, statements -> copyTree(), traits); }
 
-std::vector<AST*> FunctionDeclarationNode::getChildren() const { return {statements}; }
-
-std::string FunctionDeclarationNode::toString() const
-{
-    std::string res = "";
-    
-    res += "def " + name;
-    res += info.toString();
-    res += statements -> toString();
-
-    return res;
-    return "def " + name + " " + info.toString() + " " + statements -> toString();
-}
+std::vector<AST*> FunctionDeclarationNode::getChildren() const { return {statements}; } 
+std::string FunctionDeclarationNode::toString() const { return "def " + name + " " + info.toString() + " " + statements -> toString(); }
 
 void FunctionDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

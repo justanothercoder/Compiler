@@ -11,7 +11,7 @@
 class DeclarationNode;
 class FunctionSymbol;
 
-class TemplateFunctionSymbol : public TemplateSymbol
+class TemplateFunctionSymbol : public TemplateSymbol, public Type
 {
 public:
 
