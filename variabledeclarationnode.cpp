@@ -30,10 +30,7 @@ void VariableDeclarationNode::build_scope()
     }
 }
 
-Symbol* VariableDeclarationNode::getDefinedSymbol() const
-{
-    return definedSymbol;
-}
+Symbol* VariableDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 
 AST* VariableDeclarationNode::copyTree() const
 {
@@ -45,17 +42,8 @@ AST* VariableDeclarationNode::copyTree() const
     return new VariableDeclarationNode(name, type_info, is_field, params);
 }
 
-std::vector<AST*> VariableDeclarationNode::getChildren() const
-{
-    return std::vector<AST*>(std::begin(constructor_params), std::end(constructor_params));
-}
+std::vector<AST*> VariableDeclarationNode::getChildren() const { return std::vector<AST*>(std::begin(constructor_params), std::end(constructor_params)); }
 
-std::string VariableDeclarationNode::toString() const
-{
-    return type_info.toString() + " " + name + ";";
-}
+std::string VariableDeclarationNode::toString() const { return type_info.toString() + " " + name + ";"; }
 
-void VariableDeclarationNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void VariableDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

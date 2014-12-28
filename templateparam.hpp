@@ -5,5 +5,6 @@
 #include "typeinfo.hpp"
 
 using TemplateParam = boost::variant<TypeInfo, int>;
+using TemplateParamsList = std::vector< std::pair<std::string, TypeInfo> >;
 
 #endif

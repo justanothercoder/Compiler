@@ -1,22 +1,21 @@
-#ifndef _TEMPLATESTRUCTSYMBOL_HPP_
-#define _TEMPLATESTRUCTSYMBOL_HPP_
+#ifndef _TEMPLATEFUNCTIONSYMBOL_HPP_
+#define _TEMPLATEFUNCTIONSYMBOL_HPP_
 
 #include <algorithm>
 
 #include "templatesymbol.hpp"
 #include "typeinfo.hpp"
-#include "structsymbol.hpp"
+#include "functionsymbol.hpp"
 #include "templateparam.hpp"
 
 class DeclarationNode;
-class StructSymbol;
-class StructDeclarationNode;
+class FunctionSymbol;
 
-class TemplateStructSymbol : public TemplateSymbol
+class TemplateFunctionSymbol : public TemplateSymbol
 {
 public:
 
-    TemplateStructSymbol(std::string name, TemplateParamsList template_symbols, TemplateDeclarationNode* _holder);
+    TemplateFunctionSymbol(std::string name, TemplateParamsList template_symbols, TemplateDeclarationNode* _holder);
 
     std::string getName() const override;
     SymbolType getSymbolType() const override;

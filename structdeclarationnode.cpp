@@ -12,10 +12,7 @@ StructDeclarationNode::StructDeclarationNode(std::string name, std::vector<AST*>
 
 }
 
-Symbol* StructDeclarationNode::getDefinedSymbol() const
-{
-    return definedSymbol;
-}
+Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
 
 void StructDeclarationNode::build_scope()
 {
@@ -55,7 +52,4 @@ std::string StructDeclarationNode::toString() const
     return res;
 }
 
-void StructDeclarationNode::accept(ASTVisitor& visitor)
-{
-    visitor.visit(this);
-}
+void StructDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }

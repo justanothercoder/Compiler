@@ -3,16 +3,16 @@
 
 #include <vector>
 #include <string>
-
-class Scope;
-class Symbol;
-class ExprNode;
-
 #include "templateparam.hpp"
+#include "symbol.hpp"
 
-class TemplateSymbol
+class TemplateDeclarationNode;
+
+class TemplateSymbol : public Symbol
 {
-//    virtual Symbol* getSpec(std::vector<TemplateParam> symbols, Scope *inst_scope) const = 0;
+public:
+    virtual TemplateDeclarationNode* holder() const = 0;
+    virtual TemplateParamsList templateSymbols() const = 0;
 };
 
 #endif

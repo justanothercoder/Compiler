@@ -6,12 +6,9 @@
 #include "variablenode.hpp"
 #include "typefactory.hpp"
 #include "structdeclarationnode.hpp"
+#include "templatesymbol.hpp"
 
-Scope::~Scope()
-{
-
-}
-
+Scope::~Scope() { }
 bool Scope::isUnsafeBlock() const { return false; }
 
 void Scope::define(Symbol *sym) { accept(sym -> getScopeVisitor()); }

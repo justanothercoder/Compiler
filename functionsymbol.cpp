@@ -6,11 +6,11 @@
 
 FunctionSymbol::FunctionSymbol(std::string name, FunctionType _type, FunctionScope *scope, FunctionTraits traits) : is_constexpr(false)
                                                                                                                   , is_used     (false)
+                                                                                                                  , function_decl(nullptr)
                                                                                                                   , name        (name)
                                                                                                                   , traits      (traits)
                                                                                                                   , _type       (_type)
                                                                                                                   , scope       (scope)
-                                                                                                                  , function_decl(nullptr)
 {
 
 }

@@ -76,3 +76,5 @@ void MarkReturnAsInlineVisitor::visit(FunctionDeclarationNode* ) { }
 void MarkReturnAsInlineVisitor::visit(VariableDeclarationNode* ) { }
 void MarkReturnAsInlineVisitor::visit(VarInferTypeDeclarationNode* ) { }
 void MarkReturnAsInlineVisitor::visit(TemplateStructDeclarationNode* ) { }
+void MarkReturnAsInlineVisitor::visit(TemplateFunctionDeclarationNode* ) { }
+void MarkReturnAsInlineVisitor::visit(TemplateFunctionNode* ) { }

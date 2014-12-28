@@ -30,6 +30,8 @@ class FunctionDeclarationNode;
 class VariableDeclarationNode;
 class VarInferTypeDeclarationNode;
 class TemplateStructDeclarationNode;
+class TemplateFunctionDeclarationNode;
+class TemplateFunctionNode;
 
 class ASTVisitor
 {
@@ -63,6 +65,8 @@ public:
     virtual void visit(VariableDeclarationNode* node) = 0;
     virtual void visit(VarInferTypeDeclarationNode* node) = 0;
     virtual void visit(TemplateStructDeclarationNode* node) = 0;
+    virtual void visit(TemplateFunctionDeclarationNode* node) = 0;
+    virtual void visit(TemplateFunctionNode* node) = 0;
 };
 
 #endif

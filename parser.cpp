@@ -7,7 +7,11 @@
 #include "filehelper.hpp"
 #include "modulememberaccessnode.hpp"
 #include "compilableunit.hpp"
+#include "templatefunctiondeclarationnode.hpp"
+#include "templatefunctionnode.hpp"
 #include "comp.hpp"
+
+#include "logger.hpp"
 
 Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer)
 {
@@ -15,10 +19,13 @@ Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer)
 }
     
 void Parser::pushScope() { symbol_table_stack.emplace_back(); }
-void Parser::popScope() { symbol_table_stack.pop_back(); }
+void Parser::popScope()  { symbol_table_stack.pop_back(); }
     
 void Parser::rememberSymbol(std::string name, SymbolType type)
 {
+    if ( isSpeculating() )
+        return;
+
     auto& table = symbol_table_stack.back();
 
     auto it = table.find(name);
@@ -117,9 +124,9 @@ AST* Parser::block()
 DeclarationNode* Parser::declaration(boost::optional<std::string> struct_name)
 {
     if      ( getTokenType(1) == TokenType::STRUCT )   return structDecl();
-    else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateStructDecl();
     else if ( getTokenType(1) == TokenType::DEF )      return functionDecl(struct_name);
     else if ( getTokenType(1) == TokenType::VAR )      return varInferDecl(struct_name);
+    else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateDecl(struct_name, templateParams()); 
     else if ( tryVarDecl() )                           return variableDecl(struct_name);
     else                                               throw RecognitionError("Declaration expected", getToken(1).line, getToken(1).symbol);
 }
@@ -204,22 +211,25 @@ DeclarationNode* Parser::structDecl()
     return new StructDeclarationNode(std::move(struct_name), std::move(struct_in));
 }
 
-DeclarationNode* Parser::templateStructDecl()
+DeclarationNode* Parser::templateDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params)
+{
+    if ( getTokenType(1) == TokenType::DEF )
+        return templateFunctionDecl(struct_name, template_params);
+    else
+        return templateStructDecl(template_params);
+}
+
+TemplateParamsList Parser::templateParams()
 {
     match(TokenType::TEMPLATE);
     match(TokenType::LESS);
 
-    std::vector< std::pair<std::string, TypeInfo> > template_params;
+    TemplateParamsList template_params;
 
     if ( getTokenType(1) != TokenType::GREATER )
     {
         auto type_info = typeInfo();
         auto name = id();
-
-        if ( type_info.type_name == "class" )
-            rememberSymbol(name, SymbolType::STRUCT);
-        else
-            rememberSymbol(name, SymbolType::VARIABLE);
 
         template_params.push_back({std::move(name), std::move(type_info)});
         while ( getTokenType(1) == TokenType::COMMA )
@@ -229,17 +239,16 @@ DeclarationNode* Parser::templateStructDecl()
             type_info = typeInfo();
             name = id();
 
-            if ( type_info.type_name == "class" )
-                rememberSymbol(name, SymbolType::STRUCT);
-            else
-                rememberSymbol(name, SymbolType::VARIABLE);
-
             template_params.push_back({std::move(name), std::move(type_info)});
         }
     }
 
     match(TokenType::GREATER);
-
+    return template_params;
+}
+    
+DeclarationNode* Parser::templateStructDecl(TemplateParamsList template_params)
+{
     match(TokenType::STRUCT);
 
     std::string struct_name = id();
@@ -257,6 +266,14 @@ DeclarationNode* Parser::templateStructDecl()
     rememberSymbol(struct_name, SymbolType::TEMPLATESTRUCT);
     pushScope();
 
+    for ( auto param_info : template_params )
+    {
+        if ( param_info.second.type_name == "class" )
+            rememberSymbol(param_info.first, SymbolType::STRUCT);
+        else
+            rememberSymbol(param_info.first, SymbolType::VARIABLE);            
+    }
+
     while ( getTokenType(1) != TokenType::RBRACE )
     {
         while ( getTokenType(1) == TokenType::SEMICOLON )
@@ -271,6 +288,93 @@ DeclarationNode* Parser::templateStructDecl()
     popScope();
 
     return new TemplateStructDeclarationNode(std::move(struct_name), std::move(struct_in), std::move(template_params));
+}
+
+DeclarationNode* Parser::templateFunctionDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params)
+{
+    match(TokenType::DEF);
+
+    bool is_unsafe = false;
+
+    if ( getTokenType(1) == TokenType::UNSAFE )
+    {
+        is_unsafe = true;
+        match(TokenType::UNSAFE);
+    }
+
+    bool is_operator = getTokenType(1) == TokenType::OPERATOR;
+
+    std::string function_name = (is_operator ? operator_name() : id());
+    
+    rememberSymbol(function_name, SymbolType::TEMPLATEFUNCTION);
+
+    pushScope();
+    
+    for ( auto param_info : template_params )
+    {
+        if ( param_info.second.type_name == "class" )
+            rememberSymbol(param_info.first, SymbolType::STRUCT);
+        else
+            rememberSymbol(param_info.first, SymbolType::VARIABLE);            
+    }
+
+    std::vector< std::pair<std::string, TypeInfo> > params;
+
+    match(TokenType::LPAREN);
+
+    if ( getTokenType(1) != TokenType::RPAREN )
+    {
+        auto type_info = typeInfo();
+        auto name = id();
+
+        rememberSymbol(name, SymbolType::VARIABLE);
+
+        params.push_back({std::move(name), std::move(type_info)});
+
+        while ( getTokenType(1) != TokenType::RPAREN )
+        {
+            match(TokenType::COMMA);
+
+            type_info = typeInfo();
+            name = id();
+
+            rememberSymbol(name, SymbolType::VARIABLE);
+
+            params.push_back({std::move(name), std::move(type_info)});
+        }
+    }
+
+    match(TokenType::RPAREN);
+
+    TypeInfo return_type;
+
+    bool is_constructor = (bool(struct_name) && function_name == *struct_name);
+
+    if ( !is_constructor )
+    {
+        if ( getTokenType(1) == TokenType::COLON )
+        {
+            match(TokenType::COLON);
+            return_type = typeInfo();
+        }
+        else
+            return_type = TypeInfo("void", false, false);
+    }
+    else
+        return_type = TypeInfo(*struct_name, true, false);
+
+    AST *statements = block();
+
+    popScope();
+
+    return new TemplateFunctionDeclarationNode(std::move(function_name)
+                                             , std::move(FunctionDeclarationInfo(return_type, params))
+                                             , statements
+                                             , {bool(struct_name), is_constructor, is_operator}
+                                             , is_unsafe
+                                             , template_params
+                                            );
+
 }
 
 DeclarationNode* Parser::functionDecl(boost::optional<std::string> struct_name)
@@ -404,9 +508,36 @@ ExprNode* Parser::variable()
     switch ( *sym_type )
     {
     case SymbolType::VARIABLE: return new VariableNode(var_name);
-    case SymbolType::FUNCTION: return new FunctionNode(var_name);
     case SymbolType::MODULE  : return new ModuleNode(var_name);
     case SymbolType::STRUCT  : return new TypeNode(var_name);
+    case SymbolType::FUNCTION: return new FunctionNode(var_name);
+    case SymbolType::TEMPLATEFUNCTION:
+    {
+        match(TokenType::LESS);
+
+        std::vector<TemplateParamInfo> template_params;
+
+        if ( getTokenType(1) != TokenType::GREATER )
+        {
+            if ( tryTypeInfo() )
+                template_params.push_back(typeInfo());
+            else
+                template_params.push_back(expression());
+
+            while ( getTokenType(1) == TokenType::COMMA )
+            {
+                match(TokenType::COMMA);
+                if ( tryTypeInfo() )
+                    template_params.push_back(typeInfo());
+                else
+                    template_params.push_back(expression());
+            }
+        }
+
+        match(TokenType::GREATER);
+
+        return new TemplateFunctionNode(var_name, template_params);
+    }
     default: throw std::logic_error("Internal error");
     }
 }

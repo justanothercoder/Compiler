@@ -1,4 +1,8 @@
 def str(int x) : string {
+
+    if ( x == 0 )
+        return "0"
+
 	string tmp = ""
 
 	int pos = 0
@@ -8,6 +12,7 @@ def str(int x) : string {
 		pos = pos + 1
 		x = x / 10
 	}
+    tmp[pos] = 0
 
 	int p = 0
 
@@ -15,6 +20,7 @@ def str(int x) : string {
 
 	string ans = ""
 	while ( pos + 1 != 0 ) {
+
 		ans[p] = tmp[pos]
 		pos = pos - 1
 		p = p + 1

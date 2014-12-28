@@ -16,6 +16,7 @@
 #include "variabledeclarationnode.hpp"
 #include "varinfertypedeclarationnode.hpp"
 #include "templatestructdeclarationnode.hpp"
+#include "templatefunctiondeclarationnode.hpp"
 #include "functionsymbol.hpp"
 #include "variablesymbol.hpp"
 #include "localscope.hpp"
@@ -192,7 +193,13 @@ void InlineCallVisitor::visit(VarInferTypeDeclarationNode* node)
 
 void InlineCallVisitor::visit(TemplateStructDeclarationNode* node) 
 {
-    for ( auto instance : node -> instances )
+    for ( auto instance : node -> allInstances() )
+        instance -> accept(*this);
+}
+    
+void InlineCallVisitor::visit(TemplateFunctionDeclarationNode* node) 
+{
+    for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
 }
 
@@ -208,3 +215,4 @@ void InlineCallVisitor::visit(FunctionNode* ) { }
 void InlineCallVisitor::visit(ModuleMemberAccessNode* ) { }
 void InlineCallVisitor::visit(NewExpressionNode* ) { }
 void InlineCallVisitor::visit(ExternNode* ) { }
+void InlineCallVisitor::visit(TemplateFunctionNode* ) { }

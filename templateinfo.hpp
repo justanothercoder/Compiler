@@ -9,17 +9,18 @@
 #include "templateparam.hpp"
 
 class ExprNode;
-class TemplateStructSymbol;
+class TemplateSymbol;
 
 struct TemplateInfo
 {
     TemplateInfo();
-    TemplateInfo(const TemplateStructSymbol *sym, std::vector<TemplateParam> expr);
+    TemplateInfo(const TemplateSymbol *sym, std::vector<TemplateParam> template_params);
 
     boost::optional<TemplateParam> getReplacement(std::string name) const;
+    bool isIn(std::string name) const;    
 
-    const TemplateStructSymbol *sym;
-    std::vector<TemplateParam> expr;
+    const TemplateSymbol* sym;
+    std::vector<TemplateParam> template_params;
 };
 
 #endif
