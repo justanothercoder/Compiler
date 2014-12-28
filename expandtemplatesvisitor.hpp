@@ -6,6 +6,7 @@
 #include "compiler.hpp"
 #include "astvisitor.hpp"
 
+class AST;
 class TemplateSymbol;
 class DeclarationNode;
 class TemplateDeclarationNode;
@@ -45,9 +46,11 @@ public:
     void visit(TemplateStructDeclarationNode* node) override;
     void visit(TemplateFunctionDeclarationNode* node) override;
     void visit(TemplateFunctionNode* node) override;
-
+   
 private:
-    
+
+    void visitChildren(AST* t);
+
     TypeInfo preprocessTypeInfo(TypeInfo type_info, Scope *scope);
     DeclarationNode* instantiateSpec(const TemplateSymbol* tmpl, std::vector<TemplateParamInfo> template_params);
 

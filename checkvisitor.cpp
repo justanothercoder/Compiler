@@ -38,19 +38,7 @@
 
 #include "logger.hpp"
 
-void CheckVisitor::visit(IfNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void CheckVisitor::visit(ForNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void CheckVisitor::visit(WhileNode *node)
+void CheckVisitor::visitChildren(AST* node)
 {
     for ( auto child : node -> getChildren() )
         child -> accept(*this);
@@ -58,8 +46,7 @@ void CheckVisitor::visit(WhileNode *node)
 
 void CheckVisitor::visit(BracketNode *node)
 {
-    node -> base -> accept(*this);
-    node -> expr -> accept(*this);
+    visitChildren(node);
 
     if ( node -> base -> getType().base() -> getTypeKind() == TypeKind::ARRAY )
         node -> call_info = CallHelper::callCheck("operator[]", BuiltIns::global_scope, {node -> base, node -> expr});
@@ -97,8 +84,7 @@ void CheckVisitor::visit(NewExpressionNode *node)
 
 void CheckVisitor::visit(BinaryOperatorNode *node)
 {
-    node -> lhs -> accept(*this);
-    node -> rhs -> accept(*this);
+    visitChildren(node);
     try
     {
         auto lhs_type = node -> lhs -> getType();
@@ -131,13 +117,7 @@ void CheckVisitor::visit(StructDeclarationNode *node)
     	}
     */
 
-    for ( auto decl : node -> inner )
-        decl -> accept(*this);
-}
-
-void CheckVisitor::visit(FunctionDeclarationNode *node)
-{
-    node -> statements -> accept(*this);
+    visitChildren(node);
 }
 
 void CheckVisitor::visit(VariableDeclarationNode *node)
@@ -203,12 +183,6 @@ void CheckVisitor::visit(DotNode *node)
 
     if ( node -> member == nullptr )
         throw SemanticError(node -> member_name + " is not member of " + node -> base_type -> getName());
-}
-
-void CheckVisitor::visit(StatementNode *node)
-{
-    for ( auto i : node -> statements )
-        i -> accept(*this);
 }
 
 void CheckVisitor::visit(ModuleMemberAccessNode* node)
@@ -283,10 +257,7 @@ void CheckVisitor::visit(VariableNode *node)
 
 void CheckVisitor::visit(CallNode *node)
 {
-    node -> caller -> accept(*this);
-
-    for ( auto param : node -> params )
-        param -> accept(*this);
+    visitChildren(node);
 
     auto caller_type = node -> caller -> getType();
 
@@ -367,6 +338,12 @@ void CheckVisitor::visit(TemplateFunctionDeclarationNode* node)
     for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
 }
+
+void CheckVisitor::visit(IfNode *node)                  { visitChildren(node); }
+void CheckVisitor::visit(ForNode *node)                 { visitChildren(node); }
+void CheckVisitor::visit(WhileNode *node)               { visitChildren(node); }
+void CheckVisitor::visit(FunctionDeclarationNode *node) { visitChildren(node); }
+void CheckVisitor::visit(StatementNode *node)           { visitChildren(node); }
 
 void CheckVisitor::visit(NullNode*) { } 
 void CheckVisitor::visit(BreakNode* ) { }

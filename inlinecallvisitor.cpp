@@ -28,7 +28,13 @@
 #include "markreturnasinlinevisitor.hpp"
 
 #include "logger.hpp"
-    
+
+void InlineCallVisitor::visitChildren(AST* node)
+{
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
+}
+
 bool InlineCallVisitor::shouldBeInlined(const FunctionSymbol* function)
 {
     if ( function -> function_decl == nullptr )
@@ -91,88 +97,9 @@ void InlineCallVisitor::visit(CallNode* node)
     node -> inline_info = inlineCall(function);
 }
 
-void InlineCallVisitor::visit(IfNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(DotNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(ForNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(AddrNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(WhileNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(UnaryNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(ReturnNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(BracketNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(StatementNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(UnsafeBlockNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(BinaryOperatorNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(StructDeclarationNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void InlineCallVisitor::visit(FunctionDeclarationNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
 void InlineCallVisitor::visit(VariableDeclarationNode* node) 
 {
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
+    visitChildren(node);
 
     if ( !node -> is_field )
     {
@@ -183,12 +110,6 @@ void InlineCallVisitor::visit(VariableDeclarationNode* node)
 
         node -> inline_info = inlineCall(function);
     }
-}
-
-void InlineCallVisitor::visit(VarInferTypeDeclarationNode* node) 
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
 }
 
 void InlineCallVisitor::visit(TemplateStructDeclarationNode* node) 
@@ -202,6 +123,21 @@ void InlineCallVisitor::visit(TemplateFunctionDeclarationNode* node)
     for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
 }
+
+void InlineCallVisitor::visit(IfNode* node)                      { visitChildren(node); }
+void InlineCallVisitor::visit(DotNode* node)                     { visitChildren(node); } 
+void InlineCallVisitor::visit(ForNode* node)                     { visitChildren(node); }
+void InlineCallVisitor::visit(AddrNode* node)                    { visitChildren(node); }
+void InlineCallVisitor::visit(WhileNode* node)                   { visitChildren(node); }
+void InlineCallVisitor::visit(UnaryNode* node)                   { visitChildren(node); }
+void InlineCallVisitor::visit(ReturnNode* node)                  { visitChildren(node); }
+void InlineCallVisitor::visit(BracketNode* node)                 { visitChildren(node); }
+void InlineCallVisitor::visit(StatementNode* node)               { visitChildren(node); }
+void InlineCallVisitor::visit(UnsafeBlockNode* node)             { visitChildren(node); }
+void InlineCallVisitor::visit(BinaryOperatorNode* node)          { visitChildren(node); }
+void InlineCallVisitor::visit(StructDeclarationNode* node)       { visitChildren(node); }
+void InlineCallVisitor::visit(FunctionDeclarationNode* node)     { visitChildren(node); }
+void InlineCallVisitor::visit(VarInferTypeDeclarationNode* node) { visitChildren(node); }
 
 void InlineCallVisitor::visit(NullNode* ) { }
 void InlineCallVisitor::visit(TypeNode* ) { }

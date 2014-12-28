@@ -4,6 +4,8 @@
 #include "compiler.hpp"
 #include "astvisitor.hpp"
 
+class AST;
+
 class CheckVisitor : public ASTVisitor, public Compiler
 {
 public:
@@ -39,6 +41,10 @@ public:
     void visit(TemplateStructDeclarationNode* node) override;
     void visit(TemplateFunctionDeclarationNode* node) override;
     void visit(TemplateFunctionNode* node) override;
+
+private:
+
+    void visitChildren(AST* node);
 };
 
 #endif

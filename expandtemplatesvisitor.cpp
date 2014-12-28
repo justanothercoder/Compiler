@@ -25,6 +25,12 @@
 #include "genssavisitor.hpp"
 #include "templatedeclarationnode.hpp"
 #include "logger.hpp"
+    
+void ExpandTemplatesVisitor::visitChildren(AST* node)
+{
+    for ( auto child : node -> getChildren() )
+        child -> accept(*this);
+}
 
 void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
 {
@@ -33,7 +39,6 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
     if ( template_info.sym && node -> info.returnTypeInfo().type_name == template_info.sym -> getName() )
         node -> info.returnTypeInfo().type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
 
-//    node -> info.returnTypeInfo() = preprocessTypeInfo(node -> info.returnTypeInfo(), node -> scope);
     node -> info.returnTypeInfo() = preprocessTypeInfo(node -> info.returnTypeInfo(), node -> func_scope);
 
     for ( auto& param : node -> info.formalParams() )
@@ -41,18 +46,10 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
         if ( template_info.sym && param.second.type_name == template_info.sym -> getName() )
             param.second.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
 
-//        param.second = preprocessTypeInfo(param.second, node -> scope);
         param.second = preprocessTypeInfo(param.second, node -> func_scope);
     }
 
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(UnsafeBlockNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
+    visitChildren(node);
 }
 
 void ExpandTemplatesVisitor::visit(VariableDeclarationNode *node) 
@@ -107,7 +104,6 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
         sc = Comp::getUnit(type_info.module_name) -> module_symbol;
     assert(sc != nullptr);
 
-//    auto type = sc -> resolveType(type_info.type_name);
     auto type = sc -> resolve(type_info.type_name);
 
     if ( type == nullptr )
@@ -152,55 +148,6 @@ DeclarationNode* ExpandTemplatesVisitor::instantiateSpec(const TemplateSymbol* t
     return decl;
 }
 
-void ExpandTemplatesVisitor::visit(CallNode *node) 
-{
-    node -> caller -> accept(*this);
-    for ( auto param : node -> params )
-        param -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(StatementNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(ReturnNode *node)
-{
-    for ( auto child : node -> getChildren() ) 
-        child -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(IfNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(ForNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(WhileNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(StructDeclarationNode *node)
-{
-    for ( auto child : node -> getChildren() )
-        child -> accept(*this);
-}
-
-void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode *node)   { node -> scope -> define(node -> getDefinedSymbol()); }
-void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) { node -> scope -> define(node -> getDefinedSymbol()); }
-
-void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode *node) { node -> expr -> accept(*this); }
-void ExpandTemplatesVisitor::visit(DotNode *node) { node -> base -> accept(*this); }
-
 void ExpandTemplatesVisitor::visit(TemplateFunctionNode* node) 
 {
     auto sym = node -> scope -> resolve(node -> name);
@@ -211,6 +158,21 @@ void ExpandTemplatesVisitor::visit(TemplateFunctionNode* node)
         node -> name = static_cast<FunctionDeclarationNode*>(decl) -> name;
     }
 }
+
+void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode *node) { node -> expr -> accept(*this); }
+void ExpandTemplatesVisitor::visit(DotNode *node) { node -> base -> accept(*this); }
+
+void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode *node)   { node -> scope -> define(node -> getDefinedSymbol()); }
+void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) { node -> scope -> define(node -> getDefinedSymbol()); }
+
+void ExpandTemplatesVisitor::visit(CallNode *node)              { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(UnsafeBlockNode *node)       { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(StatementNode *node)         { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(ReturnNode *node)            { visitChildren(node); } 
+void ExpandTemplatesVisitor::visit(IfNode *node)                { visitChildren(node); } 
+void ExpandTemplatesVisitor::visit(ForNode *node)               { visitChildren(node); } 
+void ExpandTemplatesVisitor::visit(WhileNode *node)             { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(StructDeclarationNode *node) { visitChildren(node); }
 
 void ExpandTemplatesVisitor::visit(AddrNode* ) { }
 void ExpandTemplatesVisitor::visit(NullNode* ) { }

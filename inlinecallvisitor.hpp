@@ -49,6 +49,8 @@ private:
 
     bool shouldBeInlined(const FunctionSymbol* function);
     InlineInfo inlineCall(const FunctionSymbol* function);
+
+    void visitChildren(AST* node);
 };
 
 #endif
