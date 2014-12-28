@@ -83,8 +83,6 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
 {
     const auto& template_info = scope -> templateInfo();
 
-    Logger::log(type_info.toString() + "; " + std::to_string(reinterpret_cast<long long>(template_info.sym)));
-
     if ( template_info.sym && template_info.isIn(type_info.type_name) )
     {
         auto replace = template_info.getReplacement(type_info.type_name);
