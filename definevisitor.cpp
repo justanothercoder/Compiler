@@ -24,6 +24,7 @@
 #include "importnode.hpp"
 #include "varinfertypedeclarationnode.hpp"
 #include "templatestructdeclarationnode.hpp"
+#include "templatefunctiondeclarationnode.hpp"
 #include "nullnode.hpp"
 #include "filehelper.hpp"
 #include "typefactory.hpp"
@@ -151,6 +152,12 @@ void DefineVisitor::visit(TemplateStructDeclarationNode* node)
     for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
 }
+    
+void DefineVisitor::visit(TemplateFunctionDeclarationNode* node) 
+{
+    for ( auto instance : node -> allInstances() )
+        instance -> accept(*this);
+}
 
 void DefineVisitor::visit(IfNode *node)
 {
@@ -197,3 +204,4 @@ void DefineVisitor::visit(FunctionNode* ) { }
 void DefineVisitor::visit(ModuleMemberAccessNode* ) { }
 void DefineVisitor::visit(ImportNode* ) { }
 void DefineVisitor::visit(BreakNode* ) { } 
+void DefineVisitor::visit(TemplateFunctionNode* ) { }

@@ -34,6 +34,8 @@ class MarkReturnAsInlineVisitor : public ASTVisitor
     void visit(VariableDeclarationNode* node) override;
     void visit(VarInferTypeDeclarationNode* node) override;
     void visit(TemplateStructDeclarationNode* node) override;
+    void visit(TemplateFunctionDeclarationNode* node) override;
+    void visit(TemplateFunctionNode* node) override;
 };
 
 #endif

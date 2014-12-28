@@ -19,7 +19,7 @@ void TemplateStructDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(
 
 Symbol* TemplateStructDeclarationNode::getDefinedSymbol() const { return defined_symbol; }
 
-unsigned long long hashTemplateParams(std::vector<TemplateParam> template_params)
+unsigned long long TemplateStructDeclarationNode::hashTemplateParams(std::vector<TemplateParam> template_params) const
 {
     unsigned long long P = 31, pow = 1, ans = 0;
 

@@ -1,5 +1,6 @@
 #include "expandtemplatesvisitor.hpp"
 #include "templatestructdeclarationnode.hpp"
+#include "templatefunctiondeclarationnode.hpp"
 #include "ifnode.hpp"
 #include "fornode.hpp"
 #include "whilenode.hpp"
@@ -15,6 +16,7 @@
 #include "callnode.hpp"
 #include "dotnode.hpp"
 #include "importnode.hpp"
+#include "templatefunctionnode.hpp"
 #include "modulesymbol.hpp"
 #include "compilableunit.hpp"
 #include "comp.hpp"
@@ -31,14 +33,16 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
     if ( template_info.sym && node -> info.returnTypeInfo().type_name == template_info.sym -> getName() )
         node -> info.returnTypeInfo().type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
 
-    node -> info.returnTypeInfo() = preprocessTypeInfo(node -> info.returnTypeInfo(), node -> scope);
+//    node -> info.returnTypeInfo() = preprocessTypeInfo(node -> info.returnTypeInfo(), node -> scope);
+    node -> info.returnTypeInfo() = preprocessTypeInfo(node -> info.returnTypeInfo(), node -> func_scope);
 
     for ( auto& param : node -> info.formalParams() )
     {
         if ( template_info.sym && param.second.type_name == template_info.sym -> getName() )
             param.second.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
 
-        param.second = preprocessTypeInfo(param.second, node -> scope);
+//        param.second = preprocessTypeInfo(param.second, node -> scope);
+        param.second = preprocessTypeInfo(param.second, node -> func_scope);
     }
 
     for ( auto child : node -> getChildren() )
@@ -78,6 +82,8 @@ TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
 TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *scope)
 {
     const auto& template_info = scope -> templateInfo();
+
+    Logger::log(type_info.toString() + "; " + std::to_string(reinterpret_cast<long long>(template_info.sym)));
 
     if ( template_info.sym && template_info.isIn(type_info.type_name) )
     {
@@ -136,6 +142,9 @@ DeclarationNode* ExpandTemplatesVisitor::instantiateSpec(const TemplateSymbol* t
     std::vector<TemplateParam> tmpl_params;
     for ( auto param_info : template_params )
        tmpl_params.push_back(getTemplateParam(param_info)); 
+    
+    if ( auto inst = tmpl -> holder() -> getInstance(tmpl_params) )
+        return inst;
 
     auto decl = getSpecDecl(tmpl, tmpl_params);
 
@@ -188,10 +197,22 @@ void ExpandTemplatesVisitor::visit(StructDeclarationNode *node)
         child -> accept(*this);
 }
 
-void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode *node) { node -> scope -> define(node -> getDefinedSymbol()); }
+void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode *node)   { node -> scope -> define(node -> getDefinedSymbol()); }
+void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) { node -> scope -> define(node -> getDefinedSymbol()); }
 
 void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode *node) { node -> expr -> accept(*this); }
 void ExpandTemplatesVisitor::visit(DotNode *node) { node -> base -> accept(*this); }
+
+void ExpandTemplatesVisitor::visit(TemplateFunctionNode* node) 
+{
+    auto sym = node -> scope -> resolve(node -> name);
+
+    if ( auto tmpl = dynamic_cast<TemplateSymbol*>(sym) )
+    {
+        auto decl = instantiateSpec(tmpl, node -> template_params);
+        node -> name = static_cast<FunctionDeclarationNode*>(decl) -> name;
+    }
+}
 
 void ExpandTemplatesVisitor::visit(AddrNode* ) { }
 void ExpandTemplatesVisitor::visit(NullNode* ) { }

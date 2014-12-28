@@ -24,7 +24,7 @@ public:
 
     FunctionSymbol *func;
 
-private:
+//private:
 
     std::string scope_name;
     Scope *enclosing_scope;

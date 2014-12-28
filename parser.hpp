@@ -38,6 +38,7 @@
 
 #include "unsafeblocknode.hpp"
 #include "symbol.hpp"
+#include "templateparam.hpp"
 
 class Parser : public AbstractParser
 {
@@ -62,12 +63,17 @@ private:
     TypeInfo typeInfo();
     std::vector<ExprNode*> call_params_list();
 
+    TemplateParamsList templateParams();
+
     DeclarationNode* declaration(boost::optional<std::string> struct_name = boost::none);
-    DeclarationNode* templateStructDecl();
     DeclarationNode* structDecl();
     DeclarationNode* variableDecl(boost::optional<std::string> struct_name = boost::none);
     DeclarationNode* functionDecl(boost::optional<std::string> struct_name = boost::none);
     DeclarationNode* varInferDecl(boost::optional<std::string> struct_name = boost::none);
+
+    DeclarationNode* templateDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params); 
+    DeclarationNode* templateFunctionDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params);
+    DeclarationNode* templateStructDecl(TemplateParamsList template_params);
 
     AST* break_stat();
     AST* from_import_stat();

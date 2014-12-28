@@ -20,7 +20,8 @@ public:
                             , FunctionDeclarationInfo info
                             , AST *statements
                             , FunctionTraits traits
-                            , bool is_unsafe = false);
+                            , bool is_unsafe = false
+                            , boost::optional<TemplateInfo> template_info = boost::none);
 
     AST* copyTree() const override;
 
@@ -46,6 +47,7 @@ public:
     std::vector<VariableSymbol*> params_symbols;
 
     bool is_unsafe;
+    boost::optional<TemplateInfo> template_info;
 };
 
 #endif

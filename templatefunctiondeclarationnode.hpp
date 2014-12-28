@@ -1,17 +1,20 @@
-#ifndef _TEMPLATESTRUCTDECLARATIONNODE_HPP_
-#define _TEMPLATESTRUCTDECLARATIONNODE_HPP_
+#ifndef _TEMPLATEFUNCTIONDECLARATIONNODE_HPP_
+#define _TEMPLATEFUNCTIONDECLARATIONNODE_HPP_
 
 #include <map>
 #include "templatedeclarationnode.hpp"
 #include "typeinfo.hpp"
 #include "templateparam.hpp"
-#include "templatestructsymbol.hpp"
+#include "functiondeclarationinfo.hpp"
+#include "functiontraits.hpp"
 
-class TemplateStructDeclarationNode : public TemplateDeclarationNode
+class TemplateFunctionSymbol;
+
+class TemplateFunctionDeclarationNode : public TemplateDeclarationNode
 {
 public:
 
-    TemplateStructDeclarationNode(std::string name, std::vector<AST*> inner, std::vector< std::pair<std::string, TypeInfo> > template_params);
+    TemplateFunctionDeclarationNode(std::string name, FunctionDeclarationInfo info, AST* statements, FunctionTraits traits, bool is_unsafe, TemplateParamsList template_params);
 
     void build_scope() override;
 
@@ -20,7 +23,7 @@ public:
     AST* copyTree() const override;
     std::string toString() const override;
     Symbol* getDefinedSymbol() const override;
-
+    
     unsigned long long hashTemplateParams(std::vector<TemplateParam> template_params) const;
     
     void addInstance(std::vector<TemplateParam> template_params, DeclarationNode* decl) override;
@@ -31,12 +34,15 @@ public:
 private:
 
     std::string name;
-    std::vector<AST*> inner;
+    FunctionDeclarationInfo info;
+    AST* statements;
+    FunctionTraits traits;
+    bool is_unsafe;
 
     std::map<long long, DeclarationNode*> instances;
     TemplateParamsList template_params;
 
-    TemplateStructSymbol* defined_symbol;
+    TemplateFunctionSymbol* defined_symbol;
 };
 
 #endif

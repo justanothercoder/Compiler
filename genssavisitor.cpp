@@ -22,6 +22,7 @@
 #include "variabledeclarationnode.hpp"
 #include "newexpressionnode.hpp"
 #include "templatestructdeclarationnode.hpp"
+#include "templatefunctiondeclarationnode.hpp"
 #include "importnode.hpp"
 #include "varinfertypedeclarationnode.hpp"
 #include "externnode.hpp"
@@ -490,6 +491,12 @@ void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)
     for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
 }
+    
+void GenSSAVisitor::visit(TemplateFunctionDeclarationNode* node) 
+{
+    for ( auto instance : node -> allInstances() )
+        instance -> accept(*this);
+}
 
 void GenSSAVisitor::visit(BreakNode* )
 {
@@ -501,6 +508,7 @@ void GenSSAVisitor::visit(TypeNode* ) { }
 void GenSSAVisitor::visit(FunctionNode* ) { }
 void GenSSAVisitor::visit(ModuleMemberAccessNode* ) { }
 void GenSSAVisitor::visit(ImportNode *) { }
+void GenSSAVisitor::visit(TemplateFunctionNode* ) { }
 
 void GenSSAVisitor::genParam(ExprNode* node, ConversionInfo conversion_info)
 {
