@@ -99,13 +99,5 @@ void BuiltIns::defineBuiltIns()
     ASCII_string -> defineBuiltInOperator("operator=", str_tp);
 
     global_scope -> defineBuiltInFunction("print" , FunctionType(void_type, {const_ref_ASCII_string}));
-
-    int_struct   -> is_defined = true;
-    ASCII_string -> is_defined = true;
-    char_struct  -> is_defined = true;
-
-    global_scope -> resolve("putchar") -> is_defined = true;
-    global_scope -> resolve("getchar") -> is_defined = true;
-    global_scope -> resolve("print")   -> is_defined = true;
 }
 

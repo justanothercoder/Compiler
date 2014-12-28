@@ -1,4 +1,5 @@
 #include "externnode.hpp"
+#include "functionsymbol.hpp"
 
 ExternNode::ExternNode(std::string name, FunctionDeclarationInfo info, bool is_unsafe) : name         (name)
                                                                                        , info         (info)
@@ -35,3 +36,4 @@ std::string ExternNode::toString() const
 }
 
 void ExternNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
+Symbol* ExternNode::getDefinedSymbol() const { return definedSymbol; }

@@ -7,11 +7,12 @@
 
 #include "ast.hpp"
 #include "typeinfo.hpp"
+#include "declarationnode.hpp"
 #include "functiondeclarationinfo.hpp"
 
 class FunctionSymbol;
 
-class ExternNode : public AST
+class ExternNode : public DeclarationNode
 {
 public:
 
@@ -21,11 +22,13 @@ public:
     std::string toString() const override;
     void accept(ASTVisitor& visitor) override;
 
+    Symbol* getDefinedSymbol() const;
+
     std::string name;
     FunctionDeclarationInfo info;
     bool is_unsafe;
 
-    FunctionSymbol *definedSymbol;
+    FunctionSymbol* definedSymbol;
 };
 
 #endif
