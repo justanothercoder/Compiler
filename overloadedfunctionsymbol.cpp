@@ -7,6 +7,7 @@ OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name
                                                  , FunctionTraits traits) : name     (name)
                                                                           , type_info(type_info)
                                                                           , traits   (traits)
+                                                                          , template_function(nullptr)
 {
 
 }
@@ -38,8 +39,17 @@ TypeKind OverloadedFunctionSymbol::getTypeKind() const { return TypeKind::OVERLO
 
 FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeInfo params_type) const
 {
-    auto overloads = getTypeInfo().getBestOverload(params_type);
-    return overloads.empty() ? nullptr : getTypeInfo().symbols.at(*std::begin(overloads));
+    auto overloads = getTypeInfo().getPossibleOverloads(params_type);
+
+    auto func_better = [&params_type](const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
+    {
+        return lhs.rankOfConversion(params_type) < rhs.rankOfConversion(params_type);
+    };
+
+    std::vector<FunctionTypeInfo> v(std::begin(overloads), std::end(overloads));
+    std::sort(std::begin(v), std::end(v), func_better);
+
+    return overloads.empty() ? nullptr : getTypeInfo().symbols.at(v.front());
 }
 
 bool OverloadedFunctionSymbol::isConvertableTo(const Type *) const { return false; } 

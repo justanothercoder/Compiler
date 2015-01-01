@@ -15,7 +15,7 @@ public:
 
     OverloadedFunctionTypeInfo(std::set<FunctionTypeInfo> overloads);
 
-    std::set<FunctionTypeInfo> getBestOverload(FunctionTypeInfo params_type) const;
+    std::set<FunctionTypeInfo> getPossibleOverloads(FunctionTypeInfo params_type) const;
 
     std::set<FunctionTypeInfo> overloads;
     std::map<FunctionTypeInfo, FunctionSymbol*> symbols;

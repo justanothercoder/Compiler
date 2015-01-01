@@ -6,6 +6,8 @@
 #include "overloadedfunctiontypeinfo.hpp"
 #include "functiontraits.hpp"
 
+class TemplateFunctionSymbol;
+
 class OverloadedFunctionSymbol : public Symbol, public Type
 {
 public:
@@ -41,6 +43,7 @@ private:
     mutable OverloadedFunctionTypeInfo type_info;
 
     FunctionTraits traits;
+    TemplateFunctionSymbol* template_function;
 };
 
 #endif

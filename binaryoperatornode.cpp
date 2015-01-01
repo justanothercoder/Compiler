@@ -51,20 +51,10 @@ AST* BinaryOperatorNode::copyTree() const
     return new BinaryOperatorNode(lhs_copy, rhs_copy, op_type);
 }
 
-std::vector<AST*> BinaryOperatorNode::getChildren() const
-{
-    return {lhs, rhs};
-}
+std::vector<AST*> BinaryOperatorNode::getChildren() const { return {lhs, rhs}; }
 
-VariableType BinaryOperatorNode::getType() const
-{
-    return call_info.callee -> type().returnType();
-}
-
-bool BinaryOperatorNode::isLeftValue() const
-{
-    return false;
-}
+VariableType BinaryOperatorNode::getType() const { return call_info.callee -> type().returnType(); } 
+bool BinaryOperatorNode::isLeftValue() const { return false; }
 
 bool BinaryOperatorNode::isCompileTimeExpr() const
 {
