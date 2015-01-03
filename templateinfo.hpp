@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 #include "templateparam.hpp"
 
@@ -22,5 +23,8 @@ struct TemplateInfo
     const TemplateSymbol* sym;
     std::vector<TemplateParam> template_params;
 };
+
+using TemplateArgument = TemplateParam;
+using TemplateMapping = std::map<std::string, TemplateArgument>;
 
 #endif

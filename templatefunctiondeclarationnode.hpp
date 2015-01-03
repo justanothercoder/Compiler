@@ -31,7 +31,7 @@ public:
     DeclarationNode* instantiateWithTemplateInfo(TemplateInfo info) override;
     std::vector<DeclarationNode*> allInstances() const override;
     
-private:
+//private:
 
     std::string name;
     FunctionDeclarationInfo info;

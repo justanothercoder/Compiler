@@ -281,6 +281,8 @@ void CheckVisitor::visit(CallNode *node)
         for ( auto param : node -> params )
             params.push_back(param -> getType());
 
+        Logger::log("Checking '" + node -> toString() + "'");
+
         auto func = ov_func -> getViableOverload(FunctionTypeInfo(params));
 
         if ( func == nullptr )

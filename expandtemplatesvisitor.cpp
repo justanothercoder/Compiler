@@ -24,6 +24,7 @@
 #include "checkvisitor.hpp"
 #include "genssavisitor.hpp"
 #include "templatedeclarationnode.hpp"
+#include "templatefunctionsymbol.hpp"
 #include "logger.hpp"
     
 void ExpandTemplatesVisitor::visitChildren(AST* node)
@@ -152,10 +153,22 @@ void ExpandTemplatesVisitor::visit(TemplateFunctionNode* node)
 {
     auto sym = node -> scope -> resolve(node -> name);
 
-    if ( auto tmpl = dynamic_cast<TemplateSymbol*>(sym) )
+    Logger::log("Expanding template in '" + node -> toString() + "'");
+
+//    if ( auto tmpl = dynamic_cast<TemplateSymbol*>(sym) )
+    if ( auto tmpl = dynamic_cast<OverloadedFunctionSymbol*>(sym) -> templateFunction() )
     {
-        auto decl = instantiateSpec(tmpl, node -> template_params);
-        node -> name = static_cast<FunctionDeclarationNode*>(decl) -> name;
+        Logger::log("Template function '" + node -> toString() + "'");
+
+        if ( !node -> template_params.empty() )
+        {
+            Logger::log("Nonempty params");
+
+            auto decl = instantiateSpec(tmpl, node -> template_params);
+            node -> name = static_cast<FunctionDeclarationNode*>(decl) -> name;
+
+            Logger::log("New name: '" + node -> name + "'");
+        }
     }
 }
 

@@ -513,28 +513,31 @@ ExprNode* Parser::variable()
     case SymbolType::FUNCTION: return new FunctionNode(var_name);
     case SymbolType::TEMPLATEFUNCTION:
     {
-        match(TokenType::LESS);
-
         std::vector<TemplateParamInfo> template_params;
-
-        if ( getTokenType(1) != TokenType::GREATER )
+        
+        if ( getTokenType(1) == TokenType::LESS )
         {
-            if ( tryTypeInfo() )
-                template_params.push_back(typeInfo());
-            else
-                template_params.push_back(expression());
+            match(TokenType::LESS);
 
-            while ( getTokenType(1) == TokenType::COMMA )
+            if ( getTokenType(1) != TokenType::GREATER )
             {
-                match(TokenType::COMMA);
                 if ( tryTypeInfo() )
                     template_params.push_back(typeInfo());
                 else
                     template_params.push_back(expression());
-            }
-        }
 
-        match(TokenType::GREATER);
+                while ( getTokenType(1) == TokenType::COMMA )
+                {
+                    match(TokenType::COMMA);
+                    if ( tryTypeInfo() )
+                        template_params.push_back(typeInfo());
+                    else
+                        template_params.push_back(expression());
+                }
+            }
+
+            match(TokenType::GREATER);
+        }
 
         return new TemplateFunctionNode(var_name, template_params);
     }

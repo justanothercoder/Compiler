@@ -2,6 +2,8 @@
 #include "functiondeclarationnode.hpp"
 #include "templatefunctionsymbol.hpp"
 
+#include "logger.hpp"
+
 TemplateFunctionDeclarationNode::TemplateFunctionDeclarationNode(std::string name
                                                                , FunctionDeclarationInfo info
                                                                , AST* statements
@@ -72,6 +74,8 @@ DeclarationNode* TemplateFunctionDeclarationNode::instantiateWithTemplateInfo(Te
         else
             templates_name += std::to_string(boost::get<int>(param));
     }
+
+    Logger::log("Templated name = '" + templates_name + "'");
 
     auto decl = new FunctionDeclarationNode(templates_name, info, statements -> copyTree(), traits, is_unsafe);
 

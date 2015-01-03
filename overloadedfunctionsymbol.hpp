@@ -30,12 +30,15 @@ public:
     SymbolType getSymbolType() const override;
     TypeKind getTypeKind() const override;
 
-    FunctionSymbol* getViableOverload(FunctionTypeInfo params_type) const;
+    const FunctionSymbol* getViableOverload(FunctionTypeInfo params_type) const;
 
     bool isConvertableTo(const Type *type) const override;
     boost::optional<int> rankOfConversion(const Type *type) const override;
 
     FunctionSymbol* getConversionTo(const Type *type) const override;
+
+    TemplateFunctionSymbol* templateFunction() const;
+    void setTemplateFunction(TemplateFunctionSymbol* function) const;
 
 private:
 
@@ -43,7 +46,7 @@ private:
     mutable OverloadedFunctionTypeInfo type_info;
 
     FunctionTraits traits;
-    TemplateFunctionSymbol* template_function;
+    mutable TemplateFunctionSymbol* template_function;
 };
 
 #endif

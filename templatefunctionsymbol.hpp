@@ -20,10 +20,10 @@ public:
     std::string getName() const override;
     SymbolType getSymbolType() const override;
 
-    bool isIn(std::string name) const;
-    
     TemplateDeclarationNode* holder() const override;
     TemplateParamsList templateSymbols() const override;
+
+    ScopeVisitor& getScopeVisitor() override;
 
 private:
 
