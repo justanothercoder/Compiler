@@ -198,7 +198,9 @@ bool OverloadedFunctionSymbol::checkValues(std::vector<ValueInfo> arguments, std
 
     for ( size_t i = 0; i < arguments.size(); ++i )
     {
-        if ( params[i].isReference() && !arguments[i].isLeftValue() && !arguments[i].type().isReference() && !arguments[i].type().isConst() )
+        Logger::log("Param type: " + params[i].getName());
+        Logger::log("Arg type  : " + arguments[i].type().getName());
+        if ( params[i].isReference() && !arguments[i].isLeftValue() && !arguments[i].type().isReference() && !params[i].isConst() )
             return false;
     }
 

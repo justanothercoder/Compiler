@@ -51,7 +51,11 @@ void CheckVisitor::visit(BracketNode *node)
     visitChildren(node);
 
     if ( node -> base -> getType().base() -> getTypeKind() == TypeKind::ARRAY )
+    {
+//        auto ov_func = static_cast<FunctionSymbol*>(BuiltIns::global_scope -> resolve("operator[]"));
+//        node -> call_info = ov_func -> resolveCall({node -> getValueInfo(), node 
         node -> call_info = CallHelper::callCheck("operator[]", BuiltIns::global_scope, {node -> base, node -> expr});
+    }
     else
     {
         assert(node -> base -> getType().unqualified() -> getTypeKind() == TypeKind::STRUCT); 
@@ -274,24 +278,7 @@ void CheckVisitor::visit(CallNode *node)
     else
     {
         auto ov_func = static_cast<const OverloadedFunctionSymbol*>(caller_type.unqualified());
-/*
-        std::vector<VariableType> params;
         
-        if ( ov_func -> isMethod() )
-            params.push_back(ov_func -> getBaseType());
-
-        for ( auto param : node -> params )
-            params.push_back(param -> getType());
-
-        Logger::log("Checking '" + node -> toString() + "'");
-
-        auto func = ov_func -> getViableOverload(FunctionTypeInfo(params));
-
-        if ( func == nullptr )
-            throw SemanticError("No viable overload for " + ov_func -> getName() + " with params " + FunctionTypeInfo(params).toString());
-
-        node -> call_info = CallHelper::getCallInfo(func, node -> params);
-*/
         std::vector<VariableType> params;
         
         for ( auto param : node -> params )
