@@ -139,6 +139,9 @@ TemplateFunctionSymbol* OverloadedFunctionSymbol::templateFunction() const { ret
     
 CallInfo OverloadedFunctionSymbol::resolveCall(std::vector<ValueInfo> arguments) const 
 {
+    if ( isMethod() )
+        arguments.insert(std::begin(arguments), ValueInfo(getBaseType(), true));
+
     std::vector<VariableType> types;
     for ( auto arg : arguments )
         types.push_back(arg.type());
@@ -151,6 +154,7 @@ CallInfo OverloadedFunctionSymbol::resolveCall(std::vector<ValueInfo> arguments)
     if ( !checkValues(arguments, function -> type().typeInfo().params()) )
         throw SemanticError("lvalue error");
 
+    function -> is_used = true;
     return CallInfo(function, getConversions(arguments, function -> type().typeInfo().params()));
 }
 
@@ -158,11 +162,9 @@ std::vector<ConversionInfo> OverloadedFunctionSymbol::getConversions(std::vector
 {
     std::vector<ConversionInfo> conversions;
 
-    size_t is_meth = (isMethod() ? 1 : 0);
-
-    for ( size_t i = is_meth; i < params.size(); ++i )
+    for ( size_t i = 0; i < params.size(); ++i )
     {
-        auto actual_type = arguments[i - is_meth].type();
+        auto actual_type = arguments[i].type();
         auto desired_type = params[i];
 
         conversions.push_back(getConversionInfo(actual_type.base(), desired_type.base()));

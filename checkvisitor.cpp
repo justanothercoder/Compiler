@@ -36,6 +36,8 @@
 #include "compilableunit.hpp"
 #include "comp.hpp"
 
+#include "noviableoverloaderror.hpp"
+
 #include "logger.hpp"
 
 void CheckVisitor::visitChildren(AST* node)
@@ -272,7 +274,7 @@ void CheckVisitor::visit(CallNode *node)
     else
     {
         auto ov_func = static_cast<const OverloadedFunctionSymbol*>(caller_type.unqualified());
-
+/*
         std::vector<VariableType> params;
         
         if ( ov_func -> isMethod() )
@@ -289,6 +291,24 @@ void CheckVisitor::visit(CallNode *node)
             throw SemanticError("No viable overload for " + ov_func -> getName() + " with params " + FunctionTypeInfo(params).toString());
 
         node -> call_info = CallHelper::getCallInfo(func, node -> params);
+*/
+        std::vector<VariableType> params;
+        
+        for ( auto param : node -> params )
+            params.push_back(param -> getType());
+
+        Logger::log("Checking '" + node -> toString() + "'");
+        
+        try
+        {
+            std::vector<ValueInfo> arguments;
+            
+            for ( auto param : node -> params )
+                arguments.emplace_back(param -> getType(), param -> isLeftValue());
+
+            node -> call_info = ov_func -> resolveCall(arguments);
+        }
+        catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(ov_func -> getName(), params); }
     }
 }
 
