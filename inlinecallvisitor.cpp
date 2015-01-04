@@ -40,7 +40,7 @@ bool InlineCallVisitor::shouldBeInlined(const FunctionSymbol* function)
     if ( function -> function_decl == nullptr )
         return false;
 
-    auto params = function -> type().typeInfo().params_types; 
+    auto params = function -> type().typeInfo().params(); 
     return std::all_of(std::begin(params), std::end(params), [](VariableType t)
     {
         return t.isReference()

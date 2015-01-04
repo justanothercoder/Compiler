@@ -16,12 +16,12 @@ bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs) { retur
 
 bool operator==(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
 {
-    if ( lhs.params_types.size() != rhs.params_types.size() )
+    if ( lhs.params().size() != rhs.params().size() )
         return false;
 
-    for ( size_t i = 0; i < lhs.params_types.size(); ++i )
+    for ( size_t i = 0; i < lhs.params().size(); ++i )
     {
-        if ( lhs.params_types[i] != rhs.params_types[i] )
+        if ( lhs.paramAt(i) != rhs.paramAt(i) )
             return false;
     }
 
@@ -84,3 +84,6 @@ int FunctionTypeInfo::rankOfConversion(const FunctionTypeInfo& info) const
 
     return rank;
 }
+
+const std::vector<VariableType>& FunctionTypeInfo::params() const { return params_types; }
+VariableType FunctionTypeInfo::paramAt(int k) const { return params_types.at(k); }

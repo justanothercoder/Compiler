@@ -18,9 +18,9 @@ CallInfo CallHelper::callCheck(std::string name, const Scope *scope, std::vector
 
     int is_meth = (function_sym -> isMethod() ? 1 : 0);
 
-    for ( int i = function_info.params_types.size() - 1; i >= is_meth; --i )
+    for ( int i = function_info.params().size() - 1; i >= is_meth; --i )
     {
-        auto t = function_info.params_types.at(i);
+        auto t = function_info.paramAt(i);
         if ( t.isReference() 
          && (!params.at(i - is_meth) -> isLeftValue() 
          && !params.at(i - is_meth) -> getType().isReference()) 
@@ -44,10 +44,10 @@ CallInfo CallHelper::getCallInfo(const FunctionSymbol *function_sym, std::vector
 
     int is_meth = (function_sym -> isMethod() ? 1 : 0);
 
-    for ( size_t i = is_meth; i < function_info.params_types.size(); ++i )
+    for ( size_t i = is_meth; i < function_info.params().size(); ++i )
     {
         auto actual_type = params_types.at(i - is_meth);
-        auto desired_type = function_info.params_types.at(i);
+        auto desired_type = function_info.paramAt(i);
 
         conversions.push_back(CallHelper::getConversionInfo(actual_type.base(), desired_type.base()));
 

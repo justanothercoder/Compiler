@@ -6,24 +6,6 @@ FunctionType::FunctionType(VariableType return_type, FunctionTypeInfo type_info)
 
 }
 
-std::string FunctionType::getName() const
-{
-    std::string res = "";
-
-    res += return_type.getName();
-    res += "(";
-    
-    if ( !type_info.params_types.empty() )
-    {
-        auto it = std::begin(type_info.params_types);
-        res += it -> getName();
-        for ( ++it; it != std::end(type_info.params_types); ++it ) 
-            res += ", " + it -> getName();
-    }
-
-    res += ")";
-    return res;
-}
-    
+std::string FunctionType::getName() const { return return_type.getName() + type_info.toString(); } 
 VariableType FunctionType::returnType() const { return return_type; } 
 const FunctionTypeInfo& FunctionType::typeInfo() const { return type_info; }
