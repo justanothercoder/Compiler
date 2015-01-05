@@ -166,12 +166,30 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
         {
             auto var_type = fromTypeInfo(node -> type_info, node -> scope);
 
+            assert(var_type.unqualified() -> getTypeKind() == TypeKind::STRUCT);
             auto struct_symbol = static_cast<const StructSymbol*>(var_type.unqualified());
 
             for ( auto param : node -> constructor_params )
                 param -> accept(*this);
+            
+            std::vector<VariableType> params;
+            std::vector<ValueInfo> arguments;
 
-            node -> call_info = CallHelper::callCheck(struct_symbol -> getName(), struct_symbol, node -> constructor_params);
+            for ( auto param : node -> constructor_params )
+            {
+                arguments.emplace_back(param -> getType(), param -> isLeftValue());
+                params.push_back(param -> getType());
+            }
+
+            auto ov_func = static_cast<OverloadedFunctionSymbol*>(struct_symbol -> resolve(struct_symbol -> getName()));
+            if ( ov_func == nullptr )
+                throw NoViableOverloadError(struct_symbol -> getName(), params);
+
+            try
+            {
+                node -> call_info = ov_func -> resolveCall(arguments);
+            }
+            catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(struct_symbol -> getName(), params); }
         }
     }
 }
@@ -375,8 +393,10 @@ void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
 {
     auto type = node -> expr -> getType().unqualified();
 
-    if ( type -> getTypeKind() == TypeKind::STRUCT )
-        node -> call_info = CallHelper::callCheck(type -> getName(), static_cast<const StructSymbol*>(type), {node -> expr});
+    assert(type -> getTypeKind() == TypeKind::STRUCT);
+
+    auto ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<const StructSymbol*>(type) -> resolve(type -> getName()));
+    node -> call_info = ov_func -> resolveCall({{node -> expr -> getType(), node -> expr -> isLeftValue()}});
 }
 
 void CheckVisitor::visit(TemplateStructDeclarationNode* node)
