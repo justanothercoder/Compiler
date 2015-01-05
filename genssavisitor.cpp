@@ -161,18 +161,15 @@ void GenSSAVisitor::visit(BracketNode *node)
         return;
     }
 
-//    genParam(node -> expr, node -> call_info.conversions.front());
-//    genParam(node -> base, ConversionInfo(nullptr, TypeFactory::getReference(node -> base -> getType().base())));
-
-    genParam(node -> expr, *(std::next(std::begin(node -> call_info.conversions))));
-    genParam(node -> base, *(std::begin(node -> call_info.conversions)));
+    genParam(node -> expr, node -> call_info.conversions[1]);
+    genParam(node -> base, node -> call_info.conversions[0]);
 
     genCall(node -> call_info.callee, node -> expr -> getType().sizeOf() + Comp::config().int_size);
 }
 
 void GenSSAVisitor::visit(UnaryNode *node)
 {
-    genParam(node -> exp, node -> call_info.conversions.front());
+    genParam(node -> exp, node -> call_info.conversions[0]);
     genCall(node -> call_info.callee, node -> exp -> getType().sizeOf());
 }
 
