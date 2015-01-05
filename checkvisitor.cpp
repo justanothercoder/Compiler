@@ -80,7 +80,6 @@ void CheckVisitor::visit(UnaryNode *node)
     node -> exp -> accept(*this);
 
     auto type = static_cast<const StructSymbol*>(node -> exp -> getType().unqualified());
-//    node -> call_info = CallHelper::callCheck(node -> getOperatorName(), type, { });
     
     auto ov_func = static_cast<OverloadedFunctionSymbol*>(type -> resolve(node -> getOperatorName()));
     if ( ov_func == nullptr )
@@ -102,26 +101,31 @@ void CheckVisitor::visit(NewExpressionNode *node)
     for ( auto param : node -> params )
         param -> accept(*this);        
 
-    node -> call_info = CallHelper::callCheck(type -> getName(), type, node -> params);
+    std::vector<ValueInfo> arguments;
+    for ( auto param : node -> params )
+        arguments.emplace_back(param -> getType(), param -> isLeftValue());
+
+    auto ov_func = static_cast<OverloadedFunctionSymbol*>(type -> resolve(type -> getName()));
+    node -> call_info = ov_func -> resolveCall(arguments);
 }
 
 void CheckVisitor::visit(BinaryOperatorNode *node)
 {
     visitChildren(node);
-    try
-    {
-        auto lhs_type = node -> lhs -> getType();
-        auto lhs_unqualified = lhs_type.unqualified();
+        
+    auto lhs_type = node -> lhs -> getType();
+    auto lhs_unqualified = lhs_type.unqualified();
 
-        if ( lhs_unqualified -> getTypeKind() == TypeKind::STRUCT )
-            node -> call_info = CallHelper::callCheck(node -> getOperatorName(), static_cast<const StructSymbol*>(lhs_unqualified), {node -> rhs});
-        else
-            throw SemanticError("");
-    }
-    catch ( SemanticError& e )
+    if ( lhs_unqualified -> getTypeKind() == TypeKind::STRUCT )
     {
-        node -> call_info = CallHelper::callCheck(node -> getOperatorName(), node -> scope, {node -> lhs, node -> rhs});
+        auto ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<const StructSymbol*>(lhs_unqualified) -> resolve(node -> getOperatorName()));
+        node -> call_info = ov_func -> resolveCall({{node -> rhs -> getType(), node -> rhs -> isLeftValue()}});
     }
+    else
+    {
+        auto ov_func = static_cast<OverloadedFunctionSymbol*>(node -> scope -> resolve(node -> getOperatorName()));
+        node -> call_info = ov_func -> resolveCall({{node -> lhs -> getType(), node -> lhs -> isLeftValue()}, {node -> rhs -> getType(), node -> rhs -> isLeftValue()}});                
+    }        
 }
 
 void CheckVisitor::visit(StructDeclarationNode *node)

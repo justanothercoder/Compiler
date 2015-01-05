@@ -236,22 +236,9 @@ void GenSSAVisitor::visit(BinaryOperatorNode *node)
     }
     else
     {
-        ConversionInfo lhs_info(nullptr);
-        ConversionInfo rhs_info(nullptr);
+        auto lhs_info = node -> call_info.conversions[0];
+        auto rhs_info = node -> call_info.conversions[1];
 
-        if ( node -> call_info.callee -> isMethod() )
-        {
-            rhs_info = node -> call_info.conversions.front();
-
-            lhs_info = ConversionInfo(nullptr);
-            lhs_info.desired_type = TypeFactory::getReference(node -> lhs -> getType().unqualified());
-        }
-        else
-        {   
-            rhs_info = node -> call_info.conversions[1];
-            lhs_info = node -> call_info.conversions[0];
-        }
-        
         genParam(node -> rhs, rhs_info);
         genParam(node -> lhs, lhs_info);
         genCall(node -> call_info.callee, lhs_info.desired_type -> sizeOf() + rhs_info.desired_type -> sizeOf());
