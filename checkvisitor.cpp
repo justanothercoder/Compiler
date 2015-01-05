@@ -288,7 +288,27 @@ void CheckVisitor::visit(CallNode *node)
             throw SemanticError("caller '" + node -> caller -> toString() + "' is not a function.");
 
         auto type = static_cast<const StructSymbol*>(caller_type.unqualified());
-        node -> call_info = CallHelper::callCheck("operator()", type, node -> params);
+//        node -> call_info = CallHelper::callCheck("operator()", type, node -> params);
+        
+        std::vector<VariableType> params;
+
+        for ( auto param : node -> params )
+            params.push_back(param -> getType());
+
+        auto ov_func = static_cast<OverloadedFunctionSymbol*>(type -> resolve("operator()"));
+        if ( ov_func == nullptr )
+            throw NoViableOverloadError("operator()", params);
+
+        try
+        {
+            std::vector<ValueInfo> arguments;
+
+            for ( auto param : node -> params )
+                arguments.emplace_back(param -> getType(), param -> isLeftValue());
+
+            node -> call_info = ov_func -> resolveCall(arguments);
+        }
+        catch ( NoViableOverloadError& e ) { throw NoViableOverloadError("operator()", params); }
     }
     else
     {
