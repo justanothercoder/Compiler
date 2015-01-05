@@ -60,14 +60,11 @@ void CheckVisitor::visit(BracketNode *node)
         auto expr_value = ValueInfo{node -> expr -> getType(), node -> expr -> isLeftValue()};
             
         node -> call_info = ov_func -> resolveCall({base_value, expr_value});
-        Logger::log("Correct call info: " + CallHelper::callCheck("operator[]", BuiltIns::global_scope, {node -> base, node -> expr}).toString());
-        Logger::log("Real call info: " + node -> call_info.toString());
     }
     else
     {
         assert(node -> base -> getType().unqualified() -> getTypeKind() == TypeKind::STRUCT); 
         auto base_type = static_cast<const StructSymbol*>(node -> base -> getType().unqualified());
-        Logger::log("Correct call info: " + CallHelper::callCheck("operator[]", base_type, {node -> expr}).toString());
         
         auto ov_func = static_cast<OverloadedFunctionSymbol*>(base_type -> resolve("operator[]"));
         if ( ov_func == nullptr )
@@ -75,7 +72,6 @@ void CheckVisitor::visit(BracketNode *node)
         
         auto expr_value = ValueInfo{node -> expr -> getType(), node -> expr -> isLeftValue()};
         node -> call_info = ov_func -> resolveCall({expr_value});
-        Logger::log("Real call info: " + node -> call_info.toString());
     }
 }
 
@@ -84,7 +80,13 @@ void CheckVisitor::visit(UnaryNode *node)
     node -> exp -> accept(*this);
 
     auto type = static_cast<const StructSymbol*>(node -> exp -> getType().unqualified());
-    node -> call_info = CallHelper::callCheck(node -> getOperatorName(), type, { });
+//    node -> call_info = CallHelper::callCheck(node -> getOperatorName(), type, { });
+    
+    auto ov_func = static_cast<OverloadedFunctionSymbol*>(type -> resolve(node -> getOperatorName()));
+    if ( ov_func == nullptr )
+        throw NoViableOverloadError(node -> getOperatorName(), { });
+
+    node -> call_info = ov_func -> resolveCall({ });
 }
 
 void CheckVisitor::visit(NewExpressionNode *node)
@@ -288,7 +290,6 @@ void CheckVisitor::visit(CallNode *node)
             throw SemanticError("caller '" + node -> caller -> toString() + "' is not a function.");
 
         auto type = static_cast<const StructSymbol*>(caller_type.unqualified());
-//        node -> call_info = CallHelper::callCheck("operator()", type, node -> params);
         
         std::vector<VariableType> params;
 
@@ -355,7 +356,10 @@ void CheckVisitor::visit(ReturnNode *node)
    
     auto unqualified_type = node -> expr -> getType().unqualified();
     if ( unqualified_type -> getTypeKind() != TypeKind::POINTER )
-        CallHelper::callCheck(unqualified_type -> getName(), static_cast<const StructSymbol*>(unqualified_type), {node -> expr});
+    {
+        auto ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<const StructSymbol*>(unqualified_type) -> resolve(unqualified_type -> getName()));
+        ov_func -> resolveCall({{node -> expr -> getType(), node -> expr -> isLeftValue()}});
+    }
 }
 
 void CheckVisitor::visit(UnsafeBlockNode* node)
