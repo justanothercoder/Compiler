@@ -1,15 +1,11 @@
 #include "overloadedfunctionsymbol.hpp"
-#include "globalconfig.hpp"
-#include "comp.hpp"
 #include "functionsymbol.hpp"
 #include "templatefunctiondeclarationnode.hpp"
 #include "pointertype.hpp"
 #include "templatefunctionsymbol.hpp"
-
 #include "expandtemplatesvisitor.hpp"
 #include "definevisitor.hpp"
 #include "checkvisitor.hpp"
-
 #include "structsymbol.hpp"
 #include "noviableoverloaderror.hpp"
 #include "logger.hpp"

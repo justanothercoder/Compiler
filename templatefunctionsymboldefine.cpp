@@ -1,5 +1,4 @@
 #include "templatefunctionsymboldefine.hpp"
-
 #include "globalscope.hpp"
 #include "localscope.hpp"
 #include "structscope.hpp"
@@ -8,9 +7,6 @@
 #include "modulesymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 #include "templatefunctionsymbol.hpp"
-
-#include "globaltable.hpp"
-#include "logger.hpp"
 
 TemplateFunctionSymbolDefine::TemplateFunctionSymbolDefine(TemplateFunctionSymbol* sym) : sym(sym)
 {

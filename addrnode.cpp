@@ -1,11 +1,8 @@
 #include "addrnode.hpp"
 #include "typefactory.hpp"
 #include "type.hpp"
-#include "globalconfig.hpp"
-#include "semanticerror.hpp"
 #include "scope.hpp"
 #include "pointertype.hpp"
-#include "globaltable.hpp"
 
 AddrNode::AddrNode(ExprNode *expr, AddrOp op) : expr(expr), op(op) { }
 

@@ -1,8 +1,6 @@
 #include "numbernode.hpp"
-#include "globalconfig.hpp"
 #include "typefactory.hpp"
 #include "builtins.hpp"
-#include "globaltable.hpp"
 
 NumberNode::NumberNode(std::string num) : num(num)
 {

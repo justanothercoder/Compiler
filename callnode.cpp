@@ -1,7 +1,6 @@
 #include "callnode.hpp"
 #include "functionsymbol.hpp"
 #include "structsymbol.hpp"
-#include "globaltable.hpp"
 
 CallNode::CallNode(ExprNode *caller, std::vector<ExprNode*> params) : caller(caller), params(params)
 {

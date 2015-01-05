@@ -1,5 +1,4 @@
 #include "functionsymboldefine.hpp"
-
 #include "globalscope.hpp"
 #include "localscope.hpp"
 #include "structscope.hpp"
@@ -7,9 +6,6 @@
 #include "functionsymbol.hpp"
 #include "modulesymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
-
-#include "globaltable.hpp"
-#include "logger.hpp"
 
 FunctionSymbolDefine::FunctionSymbolDefine(FunctionSymbol* sym) : sym(sym)
 {

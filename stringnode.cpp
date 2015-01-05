@@ -1,7 +1,6 @@
 #include "stringnode.hpp"
 #include "typefactory.hpp"
 #include "builtins.hpp"
-#include "globaltable.hpp"
 
 StringNode::StringNode(std::string str) : str(str)
 {

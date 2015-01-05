@@ -3,7 +3,6 @@
 #include "templatestructsymbol.hpp"
 #include "numbernode.hpp"
 #include "builtins.hpp"
-#include "globaltable.hpp"
 
 VariableNode::VariableNode(std::string name) : name(name), variable(nullptr), template_num(nullptr) { }
 
