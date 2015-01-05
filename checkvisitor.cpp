@@ -341,8 +341,6 @@ void CheckVisitor::visit(CallNode *node)
         for ( auto param : node -> params )
             params.push_back(param -> getType());
 
-        Logger::log("Checking '" + node -> toString() + "'");
-        
         try
         {
             std::vector<ValueInfo> arguments;

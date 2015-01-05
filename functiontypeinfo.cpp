@@ -62,8 +62,6 @@ long long FunctionTypeInfo::hash_func() const
 
 bool FunctionTypeInfo::isCompatibleWith(const FunctionTypeInfo& info) const
 {
-    Logger::log("Checking if '" + toString() + "' is compatible with '" + info.toString() + "'"); 
-
     if ( params_types.size() != info.params_types.size() )
         return false;
 

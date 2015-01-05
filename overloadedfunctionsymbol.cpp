@@ -164,8 +164,6 @@ std::vector<ConversionInfo> OverloadedFunctionSymbol::getConversions(std::vector
         auto actual_type = arguments[i].type();
         auto desired_type = params[i];
 
-        Logger::log("Adding conversion from '" + actual_type.getName() + "' to '" + desired_type.getName() + "'");
-
         conversions.push_back(getConversionInfo(actual_type.base(), desired_type.base()));
 
         if ( !desired_type.isReference() && desired_type.unqualified() -> getTypeKind() == TypeKind::STRUCT )
@@ -197,8 +195,6 @@ bool OverloadedFunctionSymbol::checkValues(std::vector<ValueInfo> arguments, std
 
     for ( size_t i = 0; i < arguments.size(); ++i )
     {
-        Logger::log("Param type: " + params[i].getName());
-        Logger::log("Arg type  : " + arguments[i].type().getName());
         if ( params[i].isReference() && !arguments[i].isLeftValue() && !arguments[i].type().isReference() && !params[i].isConst() )
             return false;
     }
