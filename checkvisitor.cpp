@@ -52,15 +52,30 @@ void CheckVisitor::visit(BracketNode *node)
 
     if ( node -> base -> getType().base() -> getTypeKind() == TypeKind::ARRAY )
     {
-//        auto ov_func = static_cast<FunctionSymbol*>(BuiltIns::global_scope -> resolve("operator[]"));
-//        node -> call_info = ov_func -> resolveCall({node -> getValueInfo(), node 
-        node -> call_info = CallHelper::callCheck("operator[]", BuiltIns::global_scope, {node -> base, node -> expr});
+        auto ov_func = static_cast<OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("operator[]"));
+        if ( ov_func == nullptr )
+            throw NoViableOverloadError("operator[]", {node -> base -> getType(), node -> expr -> getType()});
+
+        auto base_value = ValueInfo{node -> base -> getType(), node -> base -> isLeftValue()};
+        auto expr_value = ValueInfo{node -> expr -> getType(), node -> expr -> isLeftValue()};
+            
+        node -> call_info = ov_func -> resolveCall({base_value, expr_value});
+        Logger::log("Correct call info: " + CallHelper::callCheck("operator[]", BuiltIns::global_scope, {node -> base, node -> expr}).toString());
+        Logger::log("Real call info: " + node -> call_info.toString());
     }
     else
     {
         assert(node -> base -> getType().unqualified() -> getTypeKind() == TypeKind::STRUCT); 
         auto base_type = static_cast<const StructSymbol*>(node -> base -> getType().unqualified());
-        node -> call_info = CallHelper::callCheck("operator[]", base_type, {node -> expr});
+        Logger::log("Correct call info: " + CallHelper::callCheck("operator[]", base_type, {node -> expr}).toString());
+        
+        auto ov_func = static_cast<OverloadedFunctionSymbol*>(base_type -> resolve("operator[]"));
+        if ( ov_func == nullptr )
+            throw NoViableOverloadError("operator[]", {node -> expr -> getType()});
+        
+        auto expr_value = ValueInfo{node -> expr -> getType(), node -> expr -> isLeftValue()};
+        node -> call_info = ov_func -> resolveCall({expr_value});
+        Logger::log("Real call info: " + node -> call_info.toString());
     }
 }
 

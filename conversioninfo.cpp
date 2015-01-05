@@ -6,3 +6,11 @@ ConversionInfo::ConversionInfo(FunctionSymbol *conversion, const Type* desired_t
 {
 
 }
+    
+std::string ConversionInfo::toString() const
+{
+    if ( conversion == nullptr )
+        return "No conversion to '" + desired_type -> getName() + "'";
+    else
+        return "Conversion '" + conversion -> getName() + "' to '" + desired_type -> getName() + "'";
+}

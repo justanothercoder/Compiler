@@ -13,6 +13,8 @@ struct CallInfo
     CallInfo();
     CallInfo(const FunctionSymbol *callee, std::vector<ConversionInfo> conversions);
 
+    std::string toString() const;
+
     const FunctionSymbol *callee;
     std::vector<ConversionInfo> conversions;
 };

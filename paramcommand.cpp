@@ -18,7 +18,10 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
     expr -> gen(block, code_obj);
 
     const Type *param_type = expr -> type();
-       
+
+    Logger::log("Expr: '" + expr -> toString() + "'");
+    Logger::log("Desired type: '" + conversion_info.desired_type -> getName() + "'");
+
     if ( conversion_info.desired_type -> isReference() )
     {
         code_obj.emit("push rax");

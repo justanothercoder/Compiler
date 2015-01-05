@@ -19,7 +19,7 @@ std::string FunctionSymbol::getTypedName() const
 {
     auto res = (traits.is_operator ? Comp::config().getCodeOperatorName(name) : name);
 
-    for ( auto param_type : _type.typeInfo().params_types )
+    for ( auto param_type : _type.typeInfo().params() )
         res += "_" + param_type.getName();
 
     return res;
@@ -29,7 +29,7 @@ std::string FunctionSymbol::getScopedTypedName() const
 {
     auto res = scope -> getScopeName(); 
 
-    auto& pt = _type.typeInfo().params_types;
+    auto& pt = _type.typeInfo().params();
 
     for ( auto param_type : pt )
         res += "_" + param_type.getName();

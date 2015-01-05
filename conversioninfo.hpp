@@ -10,6 +10,8 @@ struct ConversionInfo
 {
     ConversionInfo(FunctionSymbol *conversion, const Type* desired_type = nullptr);
 
+    std::string toString() const;
+
     FunctionSymbol* conversion;
     const Type* desired_type;
 };

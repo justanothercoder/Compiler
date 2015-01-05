@@ -115,6 +115,7 @@ const FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeIn
                 template_params.push_back(template_params_map[template_param.first]);
 
             auto new_decl = decl -> instantiateWithTemplateInfo(TemplateInfo(tmpl, template_params));
+            tmpl -> holder() -> addInstance(template_params, new_decl);
 
             ExpandTemplatesVisitor expand;
             DefineVisitor define;
@@ -166,6 +167,8 @@ std::vector<ConversionInfo> OverloadedFunctionSymbol::getConversions(std::vector
     {
         auto actual_type = arguments[i].type();
         auto desired_type = params[i];
+
+        Logger::log("Adding conversion from '" + actual_type.getName() + "' to '" + desired_type.getName() + "'");
 
         conversions.push_back(getConversionInfo(actual_type.base(), desired_type.base()));
 
