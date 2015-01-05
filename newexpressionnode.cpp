@@ -1,8 +1,6 @@
 #include "newexpressionnode.hpp"
 #include "functionsymbol.hpp"
-#include "callhelper.hpp"
 #include "structsymbol.hpp"
-#include "globaltable.hpp"
 
 NewExpressionNode::NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params) : type_info(type_info), params(params) { }
 

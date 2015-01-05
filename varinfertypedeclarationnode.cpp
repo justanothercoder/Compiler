@@ -1,10 +1,7 @@
 #include "varinfertypedeclarationnode.hpp"
 #include "scope.hpp"
-#include "builtins.hpp"
-#include "callhelper.hpp"
-#include "variablesymboldefine.hpp"
-#include "globaltable.hpp"
 #include "exprnode.hpp"
+#include "variablesymbol.hpp"
 
 VarInferTypeDeclarationNode::VarInferTypeDeclarationNode(std::string name
                                                        , ExprNode *expr) : name(name)

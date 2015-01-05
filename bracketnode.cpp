@@ -1,8 +1,6 @@
 #include "bracketnode.hpp"
-#include "callhelper.hpp"
 #include "functionsymbol.hpp"
 #include "structsymbol.hpp"
-#include "globaltable.hpp"
 
 BracketNode::BracketNode(ExprNode *base, ExprNode *expr) : base(base), expr(expr)
 {

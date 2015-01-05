@@ -1,8 +1,6 @@
 #include "binaryoperatornode.hpp"
 #include "functionsymbol.hpp"
-#include "callhelper.hpp"
 #include "structsymbol.hpp"
-#include "globaltable.hpp"
 
 BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type)
 {

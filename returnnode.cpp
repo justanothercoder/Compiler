@@ -1,8 +1,6 @@
 #include "returnnode.hpp"
-#include "callhelper.hpp"
 #include "functionsymbol.hpp"
 #include "exprnode.hpp"
-#include "globalconfig.hpp"
 
 ReturnNode::ReturnNode(ExprNode *expr) : expr(expr), enclosing_func(nullptr), is_in_inline_call(false) { }
 
