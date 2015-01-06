@@ -30,8 +30,7 @@ void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, Func
 
 VariableType OverloadedFunctionSymbol::getBaseType() const
 {
-    if ( !traits.is_method )
-        throw;
+    assert(traits.is_method);
     return std::begin(type_info.overloads) -> paramAt(0);
 }
 
@@ -47,7 +46,6 @@ const FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeIn
     };
 
     std::vector<FunctionTypeInfo> v(std::begin(overloads), std::end(overloads));
-    
     std::sort(std::begin(v), std::end(v), func_better);
 
     if ( template_function && !params_type.params().empty() )
