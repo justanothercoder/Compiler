@@ -28,13 +28,9 @@ void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, Func
     type_info.symbols[func_type_info] = sym;
 }
 
-bool OverloadedFunctionSymbol::isMethod() const { return traits.is_method; }
-bool OverloadedFunctionSymbol::isConstructor() const { return traits.is_constructor; }
-bool OverloadedFunctionSymbol::isOperator() const { return traits.is_operator; }
-
 VariableType OverloadedFunctionSymbol::getBaseType() const
 {
-    if ( !isMethod() )
+    if ( !traits.is_method )
         throw;
     return std::begin(type_info.overloads) -> paramAt(0);
 }
@@ -71,7 +67,7 @@ TemplateFunctionSymbol* OverloadedFunctionSymbol::templateFunction() const { ret
     
 CallInfo OverloadedFunctionSymbol::resolveCall(std::vector<ValueInfo> arguments) const 
 {
-    if ( isMethod() )
+    if ( traits.is_method )
         arguments.insert(std::begin(arguments), ValueInfo(getBaseType(), true));
 
     std::vector<VariableType> types;

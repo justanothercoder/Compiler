@@ -23,15 +23,7 @@ public:
 
     void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym) const;
 
-    bool isMethod() const;
-    bool isConstructor() const;
-    bool isOperator() const;
-
-    VariableType getBaseType() const;
-
     SymbolType getSymbolType() const override;
-
-    const FunctionSymbol* getViableOverload(FunctionTypeInfo params_type) const;
 
     TemplateFunctionSymbol* templateFunction() const;
     void setTemplateFunction(TemplateFunctionSymbol* function) const;
@@ -39,6 +31,10 @@ public:
     CallInfo resolveCall(std::vector<ValueInfo> arguments) const override;
 
 private:
+
+    VariableType getBaseType() const;
+
+    const FunctionSymbol* getViableOverload(FunctionTypeInfo params_type) const;
 
     bool checkValues(std::vector<ValueInfo> arguments, std::vector<VariableType> params) const;
     std::vector<ConversionInfo> getConversions(std::vector<ValueInfo> arguments, std::vector<VariableType> params) const;
