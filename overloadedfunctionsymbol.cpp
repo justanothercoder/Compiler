@@ -30,7 +30,7 @@ void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, Func
 
 VariableType OverloadedFunctionSymbol::getBaseType() const
 {
-    assert(traits.is_method);
+    assert(isMethod());
     return std::begin(type_info.overloads) -> paramAt(0);
 }
 
@@ -65,7 +65,7 @@ TemplateFunctionSymbol* OverloadedFunctionSymbol::templateFunction() const { ret
     
 CallInfo OverloadedFunctionSymbol::resolveCall(std::vector<ValueInfo> arguments) const 
 {
-    if ( traits.is_method )
+    if ( isMethod() )
         arguments.insert(std::begin(arguments), ValueInfo(getBaseType(), true));
 
     std::vector<VariableType> types;
@@ -131,7 +131,7 @@ bool OverloadedFunctionSymbol::checkValues(std::vector<ValueInfo> arguments, std
     return true;
 }
     
-const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(TemplateFunctionSymbol* template_function, FunctionTypeInfo info) const
+const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(TemplateFunctionSymbol* template_function, FunctionTypeInfo info, std::vector<TemplateParam> partial) const
 {
     auto decl = static_cast<TemplateFunctionDeclarationNode*>(template_function -> holder());
     auto tmpl = static_cast<TemplateFunctionSymbol*>(decl -> getDefinedSymbol());
@@ -190,3 +190,5 @@ boost::optional< std::map<std::string, TemplateParam> > OverloadedFunctionSymbol
 
     return std::move(template_params_map);
 }
+    
+bool OverloadedFunctionSymbol::isMethod() const { return traits.is_method; }

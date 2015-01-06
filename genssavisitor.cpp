@@ -24,6 +24,7 @@
 #include "templatestructdeclarationnode.hpp"
 #include "templatefunctiondeclarationnode.hpp"
 #include "importnode.hpp"
+#include "functionnode.hpp"
 #include "varinfertypedeclarationnode.hpp"
 #include "externnode.hpp"
 #include "typefactory.hpp"
@@ -490,9 +491,17 @@ void GenSSAVisitor::visit(BreakNode* )
     code.add(new GotoCommand(loop_label.top().second));
 }
 
+void GenSSAVisitor::visit(FunctionNode* node)
+{
+    if ( node -> function -> isMethod() )
+    {
+        auto _this_var = static_cast<VariableSymbol*>(node -> scope -> resolve("this"));
+        _arg = new VariableArg(_this_var);
+    }
+}
+
 void GenSSAVisitor::visit(ModuleNode* ) { }
 void GenSSAVisitor::visit(TypeNode* ) { }
-void GenSSAVisitor::visit(FunctionNode* ) { }
 void GenSSAVisitor::visit(ModuleMemberAccessNode* ) { }
 void GenSSAVisitor::visit(ImportNode *) { }
 void GenSSAVisitor::visit(TemplateFunctionNode* ) { }

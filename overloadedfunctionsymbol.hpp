@@ -20,9 +20,9 @@ public:
     std::string getName() const override;
 
     OverloadedFunctionTypeInfo getTypeInfo() const;
-
     void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym) const;
 
+    bool isMethod() const;
     SymbolType getSymbolType() const override;
 
     TemplateFunctionSymbol* templateFunction() const;
@@ -40,7 +40,7 @@ private:
     std::vector<ConversionInfo> getConversions(std::vector<ValueInfo> arguments, std::vector<VariableType> params) const;
     ConversionInfo getConversionInfo(const Type *lhs, const Type *rhs) const;
 
-    const FunctionSymbol* overloadOfTemplateFunction(TemplateFunctionSymbol* template_function, FunctionTypeInfo info) const;
+    const FunctionSymbol* overloadOfTemplateFunction(TemplateFunctionSymbol* template_function, FunctionTypeInfo info, std::vector<TemplateParam> partial = { }) const;
     boost::optional< std::map<std::string, TemplateParam> > makeMappingOfParams(TemplateSymbol* tmpl, std::vector<ParamInfo> formal_params, FunctionTypeInfo arguments) const;
 
 private:
