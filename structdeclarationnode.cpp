@@ -19,10 +19,10 @@ void StructDeclarationNode::build_scope()
     definedSymbol = new StructSymbol(name, scope, (!template_info ? scope -> templateInfo() : *template_info));
     scope -> define(definedSymbol);
 
-    for ( auto i : inner )
+    for ( auto decl : inner )
     {
-        i -> scope = definedSymbol;
-        i -> build_scope();
+        decl -> scope = definedSymbol;
+        decl -> build_scope();
     }
 }
 
@@ -30,16 +30,13 @@ AST* StructDeclarationNode::copyTree() const
 {
     std::vector<AST*> in;
     
-    for ( auto t : inner )
-        in.push_back(t -> copyTree());
+    for ( auto decl : inner )
+        in.push_back(decl -> copyTree());
     
     return new StructDeclarationNode(name, in, template_info);
 }
 
-std::vector<AST*> StructDeclarationNode::getChildren() const
-{
-    return inner;
-}
+std::vector<AST*> StructDeclarationNode::getChildren() const { return inner; }
 
 std::string StructDeclarationNode::toString() const
 {

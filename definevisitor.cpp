@@ -51,7 +51,7 @@ void DefineVisitor::visit(ExternNode *node)
         params_types.push_back(std::move(param_type));
     }
 
-    auto type = FunctionType(std:move(return_type), std::move(FunctionTypeInfo(params_types)));
+    auto type = FunctionType(std::move(return_type), std::move(FunctionTypeInfo(params_types)));
 
     node -> definedSymbol = new FunctionSymbol(node -> name, type
                                              , new FunctionScope("_" + node -> name, node -> scope, false)
