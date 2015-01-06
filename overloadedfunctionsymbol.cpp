@@ -143,35 +143,9 @@ const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(Templ
     auto tmpl = static_cast<TemplateFunctionSymbol*>(decl -> getDefinedSymbol());
     const auto& function_info = decl -> info;
 
-    std::map<std::string, TemplateParam> template_params_map;
-
-    auto it = std::begin(info.params());
-
-    bool substitution_failure = false;
-
-    for ( const auto& param : function_info.formalParams() )
+    if ( auto mapping = makeMappingOfParams(tmpl, function_info.formalParams(), info.params()) )
     {
-        if ( TemplateInfo(tmpl, { }).isIn(param.second.type_name) )
-        {
-            if ( template_params_map.count(param.second.type_name) )
-            {
-                if ( boost::get<TypeInfo>(template_params_map[param.second.type_name]) != it -> makeTypeInfo() )
-                {
-                    substitution_failure = true;
-                    break;
-                }
-            }
-            else
-            {
-                template_params_map[param.second.type_name] = it -> makeTypeInfo();
-            }
-        }
-
-        ++it;
-    }
-
-    if ( !substitution_failure )
-    {
+        auto template_params_map = *mapping;
         std::vector<TemplateParam> template_params;
 
         for ( auto template_param : tmpl -> templateSymbols() )
@@ -191,4 +165,34 @@ const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(Templ
     }
 
     return nullptr;
+}
+
+boost::optional< std::map<std::string, TemplateParam> > OverloadedFunctionSymbol::makeMappingOfParams(TemplateSymbol* tmpl, std::vector<ParamInfo> formal_params, FunctionTypeInfo arguments) const
+{
+    std::map<std::string, TemplateParam> template_params_map;
+
+    if ( arguments.params().size() != formal_params.size() )
+        return boost::none;
+
+    auto it = std::begin(arguments.params());
+
+    for ( const auto& param : formal_params )
+    {
+        if ( TemplateInfo(tmpl, { }).isIn(param.second.type_name) )
+        {
+            if ( template_params_map.count(param.second.type_name) )
+            {
+                if ( boost::get<TypeInfo>(template_params_map[param.second.type_name]) != it -> makeTypeInfo() )
+                    return boost::none;
+            }
+            else
+            {
+                template_params_map[param.second.type_name] = it -> makeTypeInfo();
+            }
+        }
+
+        ++it;
+    }
+
+    return std::move(template_params_map);
 }

@@ -5,7 +5,10 @@
 #include "symbol.hpp"
 #include "overloadedfunctiontypeinfo.hpp"
 #include "functiontraits.hpp"
+#include "templateparam.hpp"
+#include "functiondeclarationinfo.hpp"
 
+class TemplateSymbol;
 class TemplateFunctionSymbol;
 
 class OverloadedFunctionSymbol : public Symbol, public FunctionalType
@@ -42,6 +45,7 @@ private:
     ConversionInfo getConversionInfo(const Type *lhs, const Type *rhs) const;
 
     const FunctionSymbol* overloadOfTemplateFunction(TemplateFunctionSymbol* template_function, FunctionTypeInfo info) const;
+    boost::optional< std::map<std::string, TemplateParam> > makeMappingOfParams(TemplateSymbol* tmpl, std::vector<ParamInfo> formal_params, FunctionTypeInfo arguments) const;
 
 private:
 
