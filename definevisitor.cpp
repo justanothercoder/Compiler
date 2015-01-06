@@ -45,13 +45,13 @@ void DefineVisitor::visit(ExternNode *node)
 
     std::vector<VariableType> params_types;
 
-    for ( auto i : node -> info.formalParams() )
+    for ( auto formal_param : node -> info.formalParams() )
     {
-        auto param_type = fromTypeInfo(i.second, node -> scope);
-        params_types.push_back(param_type);
+        auto param_type = fromTypeInfo(formal_param.second, node -> scope);
+        params_types.push_back(std::move(param_type));
     }
 
-    auto type = FunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
+    auto type = FunctionType(std:move(return_type), std::move(FunctionTypeInfo(params_types)));
 
     node -> definedSymbol = new FunctionSymbol(node -> name, type
                                              , new FunctionScope("_" + node -> name, node -> scope, false)
@@ -135,9 +135,6 @@ void DefineVisitor::visit(VarInferTypeDeclarationNode* node)
 {
     CheckVisitor visitor;
     node -> expr -> accept(visitor);
-
-    if ( node -> scope -> resolve(node -> name) != nullptr )
-        throw SemanticError(node -> name + " is already defined");
 
     if ( node -> expr -> getType() == BuiltIns::void_type )
         throw SemanticError("can't define variable of 'void' type");
