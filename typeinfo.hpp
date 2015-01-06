@@ -12,6 +12,9 @@ using TemplateParamInfo = boost::variant<ExprNode*, TypeInfo>;
 
 class TypeInfo
 {
+    friend bool operator==(const TypeInfo& lhs, const TypeInfo& rhs);
+    friend bool operator!=(const TypeInfo& lhs, const TypeInfo& rhs);
+
 public:
     TypeInfo();
     TypeInfo(std::string                    type_name
@@ -37,6 +40,8 @@ public:
     std::vector<ExprNode*> array_dimensions;
     std::string module_name;
 };
+    
+bool operator==(const TypeInfo& lhs, const TypeInfo& rhs);
+bool operator!=(const TypeInfo& lhs, const TypeInfo& rhs);
 
 #endif
-

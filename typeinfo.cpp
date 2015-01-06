@@ -116,3 +116,19 @@ std::string TypeInfo::toString() const
 
     return res;
 }
+
+bool operator==(const TypeInfo& lhs, const TypeInfo& rhs)
+{
+    return lhs.type_name        == rhs.type_name
+        && lhs.is_ref           == rhs.is_ref
+        && lhs.is_const         == rhs.is_const
+        && lhs.template_params  == rhs.template_params
+        && lhs.pointer_depth    == rhs.pointer_depth
+        && lhs.array_dimensions == rhs.array_dimensions
+        && lhs.module_name      == rhs.module_name;
+}
+
+bool operator!=(const TypeInfo& lhs, const TypeInfo& rhs)
+{
+    return !(lhs == rhs);
+}
