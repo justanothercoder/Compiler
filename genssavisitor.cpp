@@ -509,54 +509,51 @@ void GenSSAVisitor::genCall(const FunctionSymbol* func, int params_size)
 
 void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Arg*> params, Arg* this_expr)
 {
-    if ( inline_info.function_body )
+    assert(inline_info.function_body);
+
+    auto exit_from_function_label = code.newLabel();
+
+    loop_label.push({nullptr, exit_from_function_label});
+
+    if ( function -> isMethod() )
+        params.insert(std::begin(params), this_expr);
+
+    auto param_it = std::begin(params);
+
+    auto return_var = static_cast<VariableSymbol*>(inline_info.function_body -> scope -> resolve("$"));
+    code.rememberVar(return_var);
+
+    for ( auto var : inline_info.locals )
     {
-        auto exit_from_function_label = code.newLabel();
+        code.rememberVar(var);
+            
+        auto var_type = var -> getType();
+        auto var_arg = new VariableArg(var);
 
-        loop_label.push({nullptr, exit_from_function_label});
-
-        if ( function -> isMethod() ) {
-            params.insert(std::begin(params), this_expr);
-        }
-
-        auto param_it = std::begin(params);
-
-        auto return_var = static_cast<VariableSymbol*>(inline_info.function_body -> scope -> resolve("$"));
-        code.rememberVar(return_var);
-
-        for ( auto var : inline_info.locals )
+        if ( var_type.isReference() )
         {
-            code.rememberVar(var);
-                
-            auto var_type = var -> getType();
-            auto var_arg = new VariableArg(var);
-
-            if ( var_type.isReference() )
-            {
-                code.add(new AssignRefCommand(var_arg, *param_it));
-            }
-            else if ( isSimpleType(var_type.base()) )
-            {
-                code.add(new AssignCommand(var_arg, *param_it, isCharType(var_type.base())));
-            }
-            else
-            {
-                code.add(new ParamCommand(*param_it, ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
-                code.add(new ParamCommand(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
-                genCall(static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor(), 2 * Comp::config().int_size);
-            }
-
-            ++param_it;
+            code.add(new AssignRefCommand(var_arg, *param_it));
+        }
+        else if ( isSimpleType(var_type.base()) )
+        {
+            code.add(new AssignCommand(var_arg, *param_it, isCharType(var_type.base())));
+        }
+        else
+        {
+            code.add(new ParamCommand(*param_it, ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
+            code.add(new ParamCommand(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
+            genCall(static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor(), 2 * Comp::config().int_size);
         }
 
-        inline_info.function_body -> accept(*this);
-        code.add(new LabelCommand(exit_from_function_label));
-
-        _arg = new VariableArg(return_var);
-
-        loop_label.pop();
-        return;
+        ++param_it;
     }
+
+    inline_info.function_body -> accept(*this);
+    code.add(new LabelCommand(exit_from_function_label));
+
+    _arg = new VariableArg(return_var);
+
+    loop_label.pop();
 }
 
 bool GenSSAVisitor::isIntType(const Type* t)    { return t == BuiltIns::int_type; }
