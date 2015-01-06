@@ -75,8 +75,6 @@ DeclarationNode* TemplateFunctionDeclarationNode::instantiateWithTemplateInfo(Te
             templates_name += std::to_string(boost::get<int>(param));
     }
 
-    Logger::log("Templated name = '" + templates_name + "'");
-
     auto decl = new FunctionDeclarationNode(templates_name, info, statements -> copyTree(), traits, is_unsafe);
 
 	decl -> scope = scope;
