@@ -57,6 +57,12 @@ const FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeIn
 
     if ( template_function && !params_type.params().empty() )
     {
+        if ( auto overload = overloadOfTemplateFunction(template_function, params_type) )
+        {
+            if ( v.empty() || func_better(overload -> type().typeInfo(), v.front()) )
+                return overload;
+        }
+        /*
         auto decl = static_cast<TemplateFunctionDeclarationNode*>(template_function -> holder());
         auto tmpl = static_cast<TemplateFunctionSymbol*>(decl -> getDefinedSymbol());
         const auto& function_info = decl -> info;
@@ -126,6 +132,7 @@ const FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeIn
             if ( v.empty() || func_better(function_info, v.front()) )
                 return function;
         }
+        */
     }
 
     return v.empty() ? nullptr : getTypeInfo().symbols.at(v.front());
@@ -200,4 +207,75 @@ bool OverloadedFunctionSymbol::checkValues(std::vector<ValueInfo> arguments, std
     }
 
     return true;
+}
+    
+const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(TemplateFunctionSymbol* template_function, FunctionTypeInfo info) const
+{
+    auto decl = static_cast<TemplateFunctionDeclarationNode*>(template_function -> holder());
+    auto tmpl = static_cast<TemplateFunctionSymbol*>(decl -> getDefinedSymbol());
+    const auto& function_info = decl -> info;
+
+    std::map<std::string, TemplateParam> template_params_map;
+
+    auto it = std::begin(info.params());
+
+    bool substitution_failure = false;
+
+    for ( const auto& param : function_info.formalParams() )
+    {
+        if ( TemplateInfo(tmpl, { }).isIn(param.second.type_name) )
+        {
+            if ( template_params_map.count(param.second.type_name) )
+            {
+                if ( boost::get<TypeInfo>(template_params_map[param.second.type_name]).type_name != it -> unqualified() -> getName() )
+                {
+                    substitution_failure = true;
+                    break;
+                }
+            }
+            else
+            {
+                int ptr = 0;
+                auto tp = it -> unqualified();
+                while ( tp -> getTypeKind() == TypeKind::POINTER )
+                {
+                    tp = static_cast<const PointerType*>(tp) -> pointedType();
+                    ++ptr;
+                }
+
+                auto type_info = TypeInfo(it -> unqualified() -> getName()
+                                        , it -> isReference()
+                                        , it -> isConst()
+                                        , { }
+                                        , ptr
+                                        , { });
+
+                template_params_map[param.second.type_name] = type_info;
+            }
+        }
+
+        ++it;
+    }
+
+    if ( !substitution_failure )
+    {
+        std::vector<TemplateParam> template_params;
+
+        for ( auto template_param : tmpl -> templateSymbols() )
+            template_params.push_back(template_params_map[template_param.first]);
+
+        auto new_decl = decl -> instantiateWithTemplateInfo(TemplateInfo(tmpl, template_params));
+        tmpl -> holder() -> addInstance(template_params, new_decl);
+
+        ExpandTemplatesVisitor expand;
+        DefineVisitor define;
+        CheckVisitor check;
+
+        for ( auto visitor : std::vector<ASTVisitor*>{&expand, &define, &check} )
+            new_decl -> accept(*visitor);
+
+        return static_cast<const FunctionSymbol*>(new_decl -> getDefinedSymbol());
+    }
+
+    return nullptr;
 }

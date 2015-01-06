@@ -41,6 +41,8 @@ private:
     std::vector<ConversionInfo> getConversions(std::vector<ValueInfo> arguments, std::vector<VariableType> params) const;
     ConversionInfo getConversionInfo(const Type *lhs, const Type *rhs) const;
 
+    const FunctionSymbol* overloadOfTemplateFunction(TemplateFunctionSymbol* template_function, FunctionTypeInfo info) const;
+
 private:
 
     std::string name;
