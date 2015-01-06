@@ -3,8 +3,10 @@
 
 #include "compiler.hpp"
 #include "astvisitor.hpp"
+#include "valueinfo.hpp"
 
 class AST;
+class OverloadedFunctionSymbol;
 
 class CheckVisitor : public ASTVisitor, public Compiler
 {
@@ -45,6 +47,9 @@ public:
 private:
 
     void visitChildren(AST* node);
+
+    OverloadedFunctionSymbol* resolveFunction(const Scope* scope, std::string name);
+    ValueInfo valueOf(ExprNode* expr);
 };
 
 #endif

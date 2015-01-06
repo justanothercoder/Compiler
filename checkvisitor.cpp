@@ -34,16 +34,25 @@
 #include "builtins.hpp"
 #include "compilableunit.hpp"
 #include "comp.hpp"
-
+#include "structsymbol.hpp"
 #include "noviableoverloaderror.hpp"
 
 #include "logger.hpp"
+    
+OverloadedFunctionSymbol* CheckVisitor::resolveFunction(const Scope* scope, std::string name)
+{
+    auto func = scope -> resolve(name);
+    assert(func -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION);
+    return static_cast<OverloadedFunctionSymbol*>(func);
+}
 
 void CheckVisitor::visitChildren(AST* node)
 {
     for ( auto child : node -> getChildren() )
         child -> accept(*this);
 }
+    
+ValueInfo CheckVisitor::valueOf(ExprNode* expr) { return {expr -> getType(), expr -> isLeftValue()}; }
 
 void CheckVisitor::visit(BracketNode *node)
 {
@@ -51,26 +60,22 @@ void CheckVisitor::visit(BracketNode *node)
 
     if ( node -> base -> getType().base() -> getTypeKind() == TypeKind::ARRAY )
     {
-        auto ov_func = static_cast<OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("operator[]"));
+        auto ov_func = resolveFunction(BuiltIns::global_scope, "operator[]");
         if ( ov_func == nullptr )
             throw NoViableOverloadError("operator[]", {node -> base -> getType(), node -> expr -> getType()});
-
-        auto base_value = ValueInfo{node -> base -> getType(), node -> base -> isLeftValue()};
-        auto expr_value = ValueInfo{node -> expr -> getType(), node -> expr -> isLeftValue()};
             
-        node -> call_info = ov_func -> resolveCall({base_value, expr_value});
+        node -> call_info = ov_func -> resolveCall({valueOf(node -> base), valueOf(node -> expr)});
     }
     else
     {
         assert(node -> base -> getType().unqualified() -> getTypeKind() == TypeKind::STRUCT); 
         auto base_type = static_cast<const StructSymbol*>(node -> base -> getType().unqualified());
         
-        auto ov_func = static_cast<OverloadedFunctionSymbol*>(base_type -> resolve("operator[]"));
+        auto ov_func = resolveFunction(base_type, "operator[]");
         if ( ov_func == nullptr )
             throw NoViableOverloadError("operator[]", {node -> expr -> getType()});
         
-        auto expr_value = ValueInfo{node -> expr -> getType(), node -> expr -> isLeftValue()};
-        node -> call_info = ov_func -> resolveCall({expr_value});
+        node -> call_info = ov_func -> resolveCall({valueOf(node -> expr)});
     }
 }
 
@@ -80,7 +85,7 @@ void CheckVisitor::visit(UnaryNode *node)
 
     auto type = static_cast<const StructSymbol*>(node -> exp -> getType().unqualified());
     
-    auto ov_func = static_cast<OverloadedFunctionSymbol*>(type -> resolve(node -> getOperatorName()));
+    auto ov_func = resolveFunction(type, node -> getOperatorName());
     if ( ov_func == nullptr )
         throw NoViableOverloadError(node -> getOperatorName(), { });
 
@@ -104,7 +109,7 @@ void CheckVisitor::visit(NewExpressionNode *node)
     for ( auto param : node -> params )
         arguments.emplace_back(param -> getType(), param -> isLeftValue());
 
-    auto ov_func = static_cast<OverloadedFunctionSymbol*>(type -> resolve(type -> getName()));
+    auto ov_func = resolveFunction(type, type -> getName());
     node -> call_info = ov_func -> resolveCall(arguments);
 }
 
@@ -117,13 +122,13 @@ void CheckVisitor::visit(BinaryOperatorNode *node)
 
     if ( lhs_unqualified -> getTypeKind() == TypeKind::STRUCT )
     {
-        auto ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<const StructSymbol*>(lhs_unqualified) -> resolve(node -> getOperatorName()));
-        node -> call_info = ov_func -> resolveCall({{node -> rhs -> getType(), node -> rhs -> isLeftValue()}});
+        auto ov_func = resolveFunction(static_cast<const StructSymbol*>(lhs_unqualified), node -> getOperatorName());
+        node -> call_info = ov_func -> resolveCall({valueOf(node -> rhs)});
     }
     else
     {
-        auto ov_func = static_cast<OverloadedFunctionSymbol*>(node -> scope -> resolve(node -> getOperatorName()));
-        node -> call_info = ov_func -> resolveCall({{node -> lhs -> getType(), node -> lhs -> isLeftValue()}, {node -> rhs -> getType(), node -> rhs -> isLeftValue()}});                
+        auto ov_func = resolveFunction(node -> scope, node -> getOperatorName());
+        node -> call_info = ov_func -> resolveCall({valueOf(node -> lhs), valueOf(node -> rhs)});                
     }        
 }
 
@@ -180,7 +185,7 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
                 params.push_back(param -> getType());
             }
 
-            auto ov_func = static_cast<OverloadedFunctionSymbol*>(struct_symbol -> resolve(struct_symbol -> getName()));
+            auto ov_func = resolveFunction(struct_symbol, struct_symbol -> getName());
             if ( ov_func == nullptr )
                 throw NoViableOverloadError(struct_symbol -> getName(), params);
 
@@ -313,21 +318,20 @@ void CheckVisitor::visit(CallNode *node)
         auto type = static_cast<const StructSymbol*>(caller_type.unqualified());
         
         std::vector<VariableType> params;
+        std::vector<ValueInfo> arguments;
 
         for ( auto param : node -> params )
+        {
             params.push_back(param -> getType());
+            arguments.emplace_back(param -> getType(), param -> isLeftValue());
+        }
 
-        auto ov_func = static_cast<OverloadedFunctionSymbol*>(type -> resolve("operator()"));
+        auto ov_func = resolveFunction(type, "operator()");
         if ( ov_func == nullptr )
             throw NoViableOverloadError("operator()", params);
 
         try
         {
-            std::vector<ValueInfo> arguments;
-
-            for ( auto param : node -> params )
-                arguments.emplace_back(param -> getType(), param -> isLeftValue());
-
             node -> call_info = ov_func -> resolveCall(arguments);
         }
         catch ( NoViableOverloadError& e ) { throw NoViableOverloadError("operator()", params); }
@@ -356,11 +360,10 @@ void CheckVisitor::visit(CallNode *node)
 
 void CheckVisitor::visit(ReturnNode *node)
 {
+    node -> expr -> accept(*this);
+
     if ( node -> is_in_inline_call )
-    {
-        node -> expr -> accept(*this);
         return;
-    }
 
     auto scope = node -> scope;
     while ( scope != nullptr && dynamic_cast<FunctionScope*>(scope) == nullptr )
@@ -371,13 +374,11 @@ void CheckVisitor::visit(ReturnNode *node)
 
     node -> enclosing_func = static_cast<FunctionScope*>(scope) -> func;
 
-    node -> expr -> accept(*this);
-   
     auto unqualified_type = node -> expr -> getType().unqualified();
     if ( unqualified_type -> getTypeKind() != TypeKind::POINTER )
     {
-        auto ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<const StructSymbol*>(unqualified_type) -> resolve(unqualified_type -> getName()));
-        ov_func -> resolveCall({{node -> expr -> getType(), node -> expr -> isLeftValue()}});
+        auto ov_func = resolveFunction(static_cast<const StructSymbol*>(unqualified_type), unqualified_type -> getName());
+        ov_func -> resolveCall({valueOf(node -> expr)});
     }
 }
 
@@ -389,11 +390,10 @@ void CheckVisitor::visit(UnsafeBlockNode* node)
 void CheckVisitor::visit(VarInferTypeDeclarationNode *node)
 {
     auto type = node -> expr -> getType().unqualified();
-
     assert(type -> getTypeKind() == TypeKind::STRUCT);
 
-    auto ov_func = static_cast<OverloadedFunctionSymbol*>(static_cast<const StructSymbol*>(type) -> resolve(type -> getName()));
-    node -> call_info = ov_func -> resolveCall({{node -> expr -> getType(), node -> expr -> isLeftValue()}});
+    auto ov_func = resolveFunction(static_cast<const StructSymbol*>(type), type -> getName());
+    node -> call_info = ov_func -> resolveCall({valueOf(node -> expr)});
 }
 
 void CheckVisitor::visit(TemplateStructDeclarationNode* node)
