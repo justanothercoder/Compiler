@@ -31,10 +31,10 @@
 #include "functionnode.hpp"
 #include "modulememberaccessnode.hpp"
 #include "modulesymbol.hpp"
-#include "builtins.hpp"
 #include "compilableunit.hpp"
 #include "comp.hpp"
 #include "structsymbol.hpp"
+#include "builtins.hpp"
 #include "noviableoverloaderror.hpp"
 
 #include "logger.hpp"
@@ -365,14 +365,10 @@ void CheckVisitor::visit(ReturnNode *node)
     if ( node -> is_in_inline_call )
         return;
 
-    auto scope = node -> scope;
-    while ( scope != nullptr && dynamic_cast<FunctionScope*>(scope) == nullptr )
-        scope = scope -> enclosingScope();
-
-    if ( scope == nullptr )
+    if ( function_scopes.empty() )
         throw SemanticError("return is not in a function");
 
-    node -> enclosing_func = static_cast<FunctionScope*>(scope) -> func;
+    node -> enclosing_func = function_scopes.top() -> func;
 
     auto unqualified_type = node -> expr -> getType().unqualified();
     if ( unqualified_type -> getTypeKind() != TypeKind::POINTER )
@@ -408,10 +404,16 @@ void CheckVisitor::visit(TemplateFunctionDeclarationNode* node)
         instance -> accept(*this);
 }
 
+void CheckVisitor::visit(FunctionDeclarationNode *node) 
+{ 
+    function_scopes.push(node -> func_scope);
+    visitChildren(node); 
+    function_scopes.pop();
+}
+
 void CheckVisitor::visit(IfNode *node)                  { visitChildren(node); }
 void CheckVisitor::visit(ForNode *node)                 { visitChildren(node); }
 void CheckVisitor::visit(WhileNode *node)               { visitChildren(node); }
-void CheckVisitor::visit(FunctionDeclarationNode *node) { visitChildren(node); }
 void CheckVisitor::visit(StatementNode *node)           { visitChildren(node); }
 
 void CheckVisitor::visit(NullNode*) { } 

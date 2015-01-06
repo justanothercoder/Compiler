@@ -1,11 +1,13 @@
 #ifndef _CHECKVISITOR_HPP_
 #define _CHECKVISITOR_HPP_
 
+#include <stack>
 #include "compiler.hpp"
 #include "astvisitor.hpp"
 #include "valueinfo.hpp"
 
 class AST;
+class FunctionScope;
 class OverloadedFunctionSymbol;
 
 class CheckVisitor : public ASTVisitor, public Compiler
@@ -50,6 +52,10 @@ private:
 
     OverloadedFunctionSymbol* resolveFunction(const Scope* scope, std::string name);
     ValueInfo valueOf(ExprNode* expr);
+
+private:
+
+    std::stack<FunctionScope*> function_scopes;
 };
 
 #endif
