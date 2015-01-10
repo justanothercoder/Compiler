@@ -140,10 +140,13 @@ const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(Templ
     if ( auto mapping = makeMappingOfParams(tmpl, function_info.formalParams(), info.params()) )
     {
         auto template_params_map = *mapping;
-        std::vector<TemplateParam> template_params;
+        std::vector<TemplateParam> template_params(std::begin(partial), std::end(partial));
 
         for ( auto template_param : tmpl -> templateSymbols() )
-            template_params.push_back(template_params_map[template_param.first]);
+        {
+            if ( template_params_map.count(template_param.first) )
+                template_params.push_back(template_params_map[template_param.first]);
+        }
 
         auto new_decl = decl -> instantiateWithTemplateInfo(TemplateInfo(tmpl, template_params));
         tmpl -> holder() -> addInstance(template_params, new_decl);

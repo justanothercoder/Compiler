@@ -2,8 +2,9 @@
 #define _TEMPLATEFUNCTIONNODE_HPP_
 
 #include "exprnode.hpp"
-#include "overloadedfunctionsymbol.hpp"
 #include "typeinfo.hpp"
+
+class FunctionalType;
 
 class TemplateFunctionNode : public ExprNode
 {
@@ -33,7 +34,7 @@ public:
 
 
     std::string name;    
-    OverloadedFunctionSymbol *function;
+    FunctionalType *function;
     std::vector<TemplateParamInfo> template_params;
 };
 

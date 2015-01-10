@@ -36,7 +36,8 @@
 #include "structsymbol.hpp"
 #include "builtins.hpp"
 #include "noviableoverloaderror.hpp"
-
+#include "partiallyinstantiatedfunctionsymbol.hpp"
+#include "templatefunctionsymbol.hpp"
 #include "logger.hpp"
     
 OverloadedFunctionSymbol* CheckVisitor::resolveFunction(const Scope* scope, std::string name)
@@ -271,7 +272,23 @@ void CheckVisitor::visit(TemplateFunctionNode* node)
     auto sym = node -> scope -> resolve(node -> name);
     assert(sym && sym -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION);    
 
-    node -> function = static_cast<OverloadedFunctionSymbol*>(sym);
+    auto ov_func = static_cast<OverloadedFunctionSymbol*>(sym);
+
+    if ( node -> template_params.empty() )
+        node -> function = ov_func;
+    else
+    {
+        std::vector<TemplateParam> template_arguments;
+        for ( auto param : node -> template_params )
+        {
+            if ( param.which() == 0 )
+                template_arguments.emplace_back(*boost::get<ExprNode*>(param) -> getCompileTimeValue());
+            else
+                template_arguments.emplace_back(boost::get<TypeInfo>(param));
+        }
+
+        node -> function = new PartiallyInstantiatedFunctionSymbol(ov_func, template_arguments);
+    }
 }
 
 void CheckVisitor::visit(VariableNode *node)
@@ -331,7 +348,7 @@ void CheckVisitor::visit(CallNode *node)
     }
     else
     {
-        auto ov_func = static_cast<const OverloadedFunctionSymbol*>(caller_type.unqualified());
+        auto ov_func = static_cast<const FunctionalType*>(caller_type.unqualified());
         
         std::vector<VariableType> params;
         

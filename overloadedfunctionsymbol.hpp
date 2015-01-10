@@ -13,6 +13,8 @@ class TemplateFunctionSymbol;
 
 class OverloadedFunctionSymbol : public Symbol, public FunctionalType
 {
+    friend class PartiallyInstantiatedFunctionSymbol;
+
 public:
 
     OverloadedFunctionSymbol(std::string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits);
