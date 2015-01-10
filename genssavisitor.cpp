@@ -346,7 +346,7 @@ void GenSSAVisitor::visit(DotNode *node)
     else
     {
         auto var = static_cast<VariableSymbol*>(node -> member);
-        auto base_type = static_cast<const StructSymbol*>(node -> base -> getType().unqualified());
+        auto base_type = static_cast<const ObjectType*>(node -> base -> getType().unqualified());
         _arg = new DotArg(getArg(node -> base), base_type -> offsetOf(var), var);
     }
 }
@@ -368,7 +368,7 @@ void GenSSAVisitor::visit(VariableNode *node)
     if ( node -> variable -> isField() )
     {
         auto this_var = static_cast<VariableSymbol*>(node -> scope -> resolve("this"));
-        int offset = static_cast<const StructSymbol*>(this_var -> getType().unqualified()) -> offsetOf(node -> variable);
+        int offset = static_cast<const ObjectType*>(this_var -> getType().unqualified()) -> offsetOf(node -> variable);
         _arg = new DotArg(new VariableArg(this_var), offset, node -> variable);
     }
     else

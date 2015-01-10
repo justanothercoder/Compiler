@@ -20,8 +20,6 @@ public:
 
     const TemplateInfo& templateInfo() const override;
 
-    int offsetOf(VariableSymbol* member) const;
-
 private:
     
     std::string scope_name;

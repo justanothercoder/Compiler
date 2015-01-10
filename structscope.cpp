@@ -18,21 +18,3 @@ std::string StructScope::getScopeName() const { return scope_name; }
 const TemplateInfo& StructScope::templateInfo() const { return template_info; }    
 
 void StructScope::accept(ScopeVisitor& visitor) { visitor.visit(this); }
-
-int StructScope::offsetOf(VariableSymbol* member) const
-{
-    int offset = 0;
-
-    for ( auto entry : table )
-    {
-        if ( entry.second -> getSymbolType() == SymbolType::VARIABLE )
-        {
-            if ( entry.second == member )
-                return offset;
-            else
-                offset += static_cast<VariableSymbol*>(entry.second) -> getType().sizeOf();
-        }
-    }
-
-    throw std::logic_error("Not found");
-}

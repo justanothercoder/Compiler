@@ -127,3 +127,21 @@ FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft) const { retur
 
 Symbol* StructSymbol::resolveMember(std::string name) const { return resolveHere(name); }
 FunctionalType* StructSymbol::resolveMethod(std::string name) const { return static_cast<OverloadedFunctionSymbol*>(resolveMember(name)); }
+
+int StructSymbol::offsetOf(VariableSymbol* member) const
+{
+    int offset = 0;
+
+    for ( auto entry : table )
+    {
+        if ( entry.second -> getSymbolType() == SymbolType::VARIABLE )
+        {
+            if ( entry.second == member )
+                return offset;
+            else
+                offset += static_cast<VariableSymbol*>(entry.second) -> getType().sizeOf();
+        }
+    }
+
+    throw std::logic_error("Not found");
+}

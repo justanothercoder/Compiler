@@ -52,6 +52,7 @@ public:
 
     Symbol* resolveMember(std::string name) const override;
     FunctionalType* resolveMethod(std::string name) const override;
+    int offsetOf(VariableSymbol* member) const override;
 
 private:
 
