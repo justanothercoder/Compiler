@@ -41,7 +41,7 @@ bool InlineCallVisitor::shouldBeInlined(const FunctionSymbol* function)
         return false;
 
     auto params = function -> type().typeInfo().params(); 
-    return std::all_of(std::begin(params), std::end(params), [](VariableType t)
+    return std::all_of(std::begin(params), std::end(params), [](auto t)
     {
         return t.isReference()
             || t.base() -> getTypeKind() == TypeKind::POINTER

@@ -28,7 +28,7 @@ bool CallNode::isLeftValue() const { return false; }
 
 bool CallNode::isCompileTimeExpr() const
 {
-    return call_info.callee -> is_constexpr && std::all_of(std::begin(params), std::end(params), [&](ExprNode *expr)
+    return call_info.callee -> is_constexpr && std::all_of(std::begin(params), std::end(params), [](auto expr)
     {
         return expr -> isCompileTimeExpr();
     });

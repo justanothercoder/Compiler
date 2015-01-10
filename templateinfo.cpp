@@ -28,6 +28,6 @@ bool TemplateInfo::isIn(std::string name) const
 
     return std::find_if(std::begin(template_symbols),
                         std::end(template_symbols),
-                        [&](std::pair<std::string, TypeInfo> p) { return name == p.first; }
+                        [&](auto p) { return name == p.first; }
     ) != std::end(template_symbols);
 }

@@ -1188,7 +1188,7 @@ AST* Parser::from_import_stat()
     match(TokenType::IMPORT);
     std::string member_name = id();
 
-    auto it = std::find_if(std::begin(unit.module_globals), std::end(unit.module_globals), [&](Symbol* sym) 
+    auto it = std::find_if(std::begin(unit.module_globals), std::end(unit.module_globals), [&](auto sym) 
     { 
         return sym -> getName() == member_name; 
     });

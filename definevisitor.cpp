@@ -63,7 +63,7 @@ void DefineVisitor::visit(ExternNode *node)
 
 void DefineVisitor::visit(FunctionDeclarationNode *node)
 {
-    auto fromTypeInfo = [&] (TypeInfo type_info) -> VariableType
+    auto fromTypeInfo = [&] (auto type_info) 
     {
         if ( node -> traits.is_constructor && type_info.type_name == static_cast<StructSymbol*>(node -> scope) -> getName() )
         {
