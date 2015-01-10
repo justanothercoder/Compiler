@@ -4,7 +4,7 @@
 #include "exprnode.hpp"
 
 class Symbol;
-class StructSymbol;
+class ObjectType;
 class VariableSymbol;
 
 class DotNode : public ExprNode
@@ -37,8 +37,8 @@ private:
 
     std::string member_name;
 
-    const StructSymbol *base_type;
-    Symbol *member;
+    const ObjectType* base_type;
+    Symbol* member;
 };
 
 #endif

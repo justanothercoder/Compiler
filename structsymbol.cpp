@@ -124,3 +124,6 @@ bool StructSymbol::hasConversionOperator(const StructSymbol *st) const { return 
 
 FunctionSymbol* StructSymbol::getDefaultConstructor() const { return constructorWith({TypeFactory::getReference(this)}); }
 FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft) const { return methodWith(getName(), ft); }
+
+Symbol* StructSymbol::resolveMember(std::string name) const { return resolveHere(name); }
+FunctionalType* StructSymbol::resolveMethod(std::string name) const { return static_cast<OverloadedFunctionSymbol*>(resolveMember(name)); }

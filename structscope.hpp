@@ -14,9 +14,6 @@ public:
 
     Scope* enclosingScope() const override;
 
-    Symbol* resolveMember(std::string name) const;
-    Symbol* resolve(std::string name) const override;
-
     std::string getScopeName() const override;
 
     void accept(ScopeVisitor& visitor) override;

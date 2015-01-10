@@ -5,7 +5,7 @@
 
 #include "symbol.hpp"
 #include "scope.hpp"
-#include "type.hpp"
+#include "objecttype.hpp"
 #include "variablesymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 #include "structscope.hpp"
@@ -13,7 +13,7 @@
 
 class FunctionType;
 
-class StructSymbol : public Symbol, public StructScope, public Type
+class StructSymbol : public Symbol, public StructScope, public ObjectType
 {
 public:
 
@@ -49,6 +49,9 @@ public:
     void defineBuiltInMethod(std::string name, FunctionType type);
     void defineBuiltInOperator(std::string name, FunctionType type);
     void defineBuiltInConstructor(FunctionType type);
+
+    Symbol* resolveMember(std::string name) const override;
+    FunctionalType* resolveMethod(std::string name) const override;
 
 private:
 

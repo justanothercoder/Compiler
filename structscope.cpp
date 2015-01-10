@@ -12,46 +12,13 @@ StructScope::StructScope(std::string name
     type_size = 0;
 }
 
-Scope* StructScope::enclosingScope() const
-{
-    return enclosing_scope;
-}
+Scope* StructScope::enclosingScope() const { return enclosing_scope; }
+std::string StructScope::getScopeName() const { return scope_name; }
 
-Symbol* StructScope::resolve(std::string name) const
-{
-    auto it = table.find(name);
-    if ( it == std::end(table) )
-    {
-        if ( enclosingScope() )
-            return enclosingScope() -> resolve(name);
-        return nullptr;
-    }
-    return it -> second;
-}
+const TemplateInfo& StructScope::templateInfo() const { return template_info; }    
 
-Symbol* StructScope::resolveMember(std::string name) const
-{
-    auto it = table.find(name);
-    if ( it == std::end(table) )
-        return nullptr;
-    return it -> second;
-}
+void StructScope::accept(ScopeVisitor& visitor) { visitor.visit(this); }
 
-void StructScope::accept(ScopeVisitor& visitor)
-{
-    visitor.visit(this);
-}
-
-std::string StructScope::getScopeName() const
-{
-    return scope_name;
-}
-
-const TemplateInfo& StructScope::templateInfo() const
-{
-    return template_info;
-}
-    
 int StructScope::offsetOf(VariableSymbol* member) const
 {
     int offset = 0;

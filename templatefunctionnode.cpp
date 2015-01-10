@@ -2,8 +2,8 @@
 #include "functionaltype.hpp"
 
 TemplateFunctionNode::TemplateFunctionNode(std::string name, std::vector<TemplateParamInfo> template_params) : name(name)
-                                                                                                             , template_params(template_params)
                                                                                                              , function(nullptr)
+                                                                                                             , template_params(template_params)
 {
 
 }

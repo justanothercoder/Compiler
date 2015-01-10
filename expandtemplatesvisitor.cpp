@@ -79,8 +79,6 @@ TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
 
 TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *scope)
 {
-    Logger::log("Expanding '" + type_info.toString() + "' in " + scope -> getScopeName());
-
     const auto& template_info = scope -> templateInfo();
 
     if ( template_info.sym && template_info.isIn(type_info.type_name) )
@@ -99,8 +97,6 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
 
         type_info = temp_info;
     }
-    
-    Logger::log("Partially expanded to '" + type_info.toString() + "'");
    
     Scope* sc;
     if ( type_info.module_name == "" )
@@ -153,22 +149,6 @@ DeclarationNode* ExpandTemplatesVisitor::instantiateSpec(const TemplateSymbol* t
     return decl;
 }
 
-void ExpandTemplatesVisitor::visit(TemplateFunctionNode* node) 
-{
-/*
-    auto sym = node -> scope -> resolve(node -> name);
-
-    if ( auto tmpl = dynamic_cast<OverloadedFunctionSymbol*>(sym) -> templateFunction() )
-    {
-        if ( !node -> template_params.empty() )
-        {
-            auto decl = instantiateSpec(tmpl, node -> template_params);
-            node -> name = static_cast<FunctionDeclarationNode*>(decl) -> name;
-        }
-    }
-*/    
-}
-
 void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode *node) { node -> expr -> accept(*this); }
 void ExpandTemplatesVisitor::visit(DotNode *node) { node -> base -> accept(*this); }
 
@@ -198,4 +178,5 @@ void ExpandTemplatesVisitor::visit(BracketNode* ) { }
 void ExpandTemplatesVisitor::visit(VariableNode* ) { }
 void ExpandTemplatesVisitor::visit(FunctionNode* ) { }
 void ExpandTemplatesVisitor::visit(BinaryOperatorNode* ) { }
+void ExpandTemplatesVisitor::visit(TemplateFunctionNode* ) { } 
 void ExpandTemplatesVisitor::visit(ModuleMemberAccessNode* ) { } 
