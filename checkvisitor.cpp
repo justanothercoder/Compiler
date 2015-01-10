@@ -181,8 +181,8 @@ void CheckVisitor::visit(VariableDeclarationNode *node)
             for ( auto param : node -> constructor_params )
                 param -> accept(*this);
             
-            std::vector<VariableType> params;
-            std::vector<ValueInfo> arguments;
+            auto params    = std::vector<VariableType>{ };
+            auto arguments = std::vector<ValueInfo>{ };
 
             for ( auto param : node -> constructor_params )
             {
@@ -331,8 +331,8 @@ void CheckVisitor::visit(CallNode *node)
 
         auto type = static_cast<const ObjectType*>(caller_type.unqualified());
         
-        std::vector<VariableType> params;
-        std::vector<ValueInfo> arguments;
+        auto params    = std::vector<VariableType>{ };
+        auto arguments = std::vector<ValueInfo>{ };
 
         for ( auto param : node -> params )
         {
@@ -354,18 +354,17 @@ void CheckVisitor::visit(CallNode *node)
     {
         auto ov_func = static_cast<const FunctionalType*>(caller_type.unqualified());
         
-        std::vector<VariableType> params;
+        auto params    = std::vector<VariableType>{ };
+        auto arguments = std::vector<ValueInfo>{ };
         
         for ( auto param : node -> params )
+        {
             params.push_back(param -> getType());
+            arguments.emplace_back(param -> getType(), param -> isLeftValue());
+        }
 
         try
         {
-            std::vector<ValueInfo> arguments;
-            
-            for ( auto param : node -> params )
-                arguments.emplace_back(param -> getType(), param -> isLeftValue());
-
             node -> call_info = ov_func -> resolveCall(arguments);
         }
         catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(ov_func -> getName(), params); }

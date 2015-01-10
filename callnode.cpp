@@ -18,7 +18,7 @@ AST* CallNode::copyTree() const
 
 std::vector<AST*> CallNode::getChildren() const
 {
-    std::vector<AST*> vec { caller };
+    auto vec = std::vector<AST*>{ caller };
     vec.insert(std::begin(vec), std::begin(params), std::end(params));
     return vec;
 }
@@ -38,7 +38,7 @@ boost::optional<int> CallNode::getCompileTimeValue() const { return boost::none;
 
 std::string CallNode::toString() const
 {
-    std::string res = caller -> toString();
+    auto res = caller -> toString();
 
     res += "(";
 

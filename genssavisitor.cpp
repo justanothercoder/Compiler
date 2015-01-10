@@ -200,7 +200,7 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
         return;
     }
     
-    int params_size = 0;
+    auto params_size = 0;
 
     for ( auto param = params.rbegin(); param != params.rend(); ++param )
     {
@@ -297,7 +297,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
 
             if ( node -> inline_info.function_body )
             {
-                std::vector<Arg*> args;
+                auto args = std::vector<Arg*>{ };
                 for ( auto param : node -> constructor_params ) {
                     args.push_back(getArg(param));
                 }
@@ -307,12 +307,11 @@ void GenSSAVisitor::visit(VariableDeclarationNode *node)
             }
 
             const auto& params = node -> constructor_params;
-
-            int params_size = 0;
+            auto params_size = 0;
 
             for ( auto param = params.rbegin(); param != params.rend(); ++param )
             {
-                ConversionInfo info = *(node -> call_info.conversions.rbegin() + (param - params.rbegin()));
+                auto info = *(node -> call_info.conversions.rbegin() + (param - params.rbegin()));
                 genParam(*param, info);
 
                 params_size += info.desired_type -> sizeOf();
@@ -368,7 +367,7 @@ void GenSSAVisitor::visit(VariableNode *node)
     if ( node -> variable -> isField() )
     {
         auto this_var = static_cast<VariableSymbol*>(node -> scope -> resolve("this"));
-        int offset = static_cast<const ObjectType*>(this_var -> getType().unqualified()) -> offsetOf(node -> variable);
+        auto offset = static_cast<const ObjectType*>(this_var -> getType().unqualified()) -> offsetOf(node -> variable);
         _arg = new DotArg(new VariableArg(this_var), offset, node -> variable);
     }
     else
@@ -385,7 +384,7 @@ void GenSSAVisitor::visit(StringNode *node)
 
 void GenSSAVisitor::visit(NumberNode *node)
 {
-    int num = std::stoi(node -> num);
+    auto num = std::stoi(node -> num);
 
     code.addConst(num);
     _arg = new NumberArg(num);
@@ -395,22 +394,22 @@ void GenSSAVisitor::visit(CallNode *node)
 {
     if ( node -> inline_info.function_body )
     {
-        std::vector<Arg*> args;
+        auto args = std::vector<Arg*>{ };
         for ( auto param : node -> params ) {
             args.push_back(getArg(param));
         }
     
-        Arg* this_arg = node -> call_info.callee -> isMethod() ? getArg(node -> caller) : nullptr;
+        auto this_arg = node -> call_info.callee -> isMethod() ? getArg(node -> caller) : nullptr;
 
         genInlineCall(node -> call_info.callee, node -> inline_info, args, this_arg);
         return;
     }
 
-    int params_size = 0;
+    auto params_size = 0;
     
     for ( auto param = node -> params.rbegin(); param != node -> params.rend(); ++param )
     {
-        ConversionInfo info = *(node -> call_info.conversions.rbegin() + (param - node -> params.rbegin()));
+        auto info = *(node -> call_info.conversions.rbegin() + (param - node -> params.rbegin()));
         genParam(*param, info);
         params_size += info.desired_type -> sizeOf();
     }

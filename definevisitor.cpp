@@ -43,7 +43,7 @@ void DefineVisitor::visit(ExternNode *node)
 {
     auto return_type = fromTypeInfo(node -> info.returnTypeInfo(), node -> scope);
 
-    std::vector<VariableType> params_types;
+    auto params_types = std::vector<VariableType>{ };
 
     for ( auto formal_param : node -> info.formalParams() )
     {
@@ -79,7 +79,7 @@ void DefineVisitor::visit(FunctionDeclarationNode *node)
 
     auto return_type = fromTypeInfo(node -> info.returnTypeInfo());
 
-    std::vector<VariableType> params_types;
+    auto params_types = std::vector<VariableType>{ };
 
     if ( node -> traits.is_method )
     {
