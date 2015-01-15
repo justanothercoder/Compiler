@@ -4,21 +4,21 @@
 #include <set>
 #include <map>
 #include <algorithm>
-
+#include <memory>
 #include "functiontypeinfo.hpp"
-
-class FunctionSymbol;
+#include "functionsymbol.hpp"
 
 class OverloadedFunctionTypeInfo
 {
 public:
 
     OverloadedFunctionTypeInfo(std::set<FunctionTypeInfo> overloads);
+    OverloadedFunctionTypeInfo(const OverloadedFunctionTypeInfo&) = delete;
 
     std::set<FunctionTypeInfo> getPossibleOverloads(FunctionTypeInfo params_type) const;
 
     std::set<FunctionTypeInfo> overloads;
-    std::map<FunctionTypeInfo, FunctionSymbol*> symbols;
+    std::map<FunctionTypeInfo, std::shared_ptr<const Symbol> > symbols;
 
 };
 

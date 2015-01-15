@@ -2,7 +2,7 @@
 #define _CALLINFO_HPP_
 
 #include <vector>
-
+#include <memory>
 #include "conversioninfo.hpp"
 
 class Type;
@@ -11,11 +11,11 @@ class FunctionSymbol;
 struct CallInfo
 {
     CallInfo();
-    CallInfo(const FunctionSymbol *callee, std::vector<ConversionInfo> conversions);
+    CallInfo(const FunctionSymbol* callee, std::vector<ConversionInfo> conversions);
 
     std::string toString() const;
 
-    const FunctionSymbol *callee;
+    const FunctionSymbol* callee;
     std::vector<ConversionInfo> conversions;
 };
 

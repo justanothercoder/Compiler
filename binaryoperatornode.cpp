@@ -2,7 +2,9 @@
 #include "functionsymbol.hpp"
 #include "structsymbol.hpp"
 
-BinaryOperatorNode::BinaryOperatorNode(ExprNode *lhs, ExprNode *rhs, BinaryOp op_type) : lhs(lhs), rhs(rhs), op_type(op_type)
+BinaryOperatorNode::BinaryOperatorNode(ASTExprNode lhs, ASTExprNode rhs, BinaryOp op_type) : lhs_(std::move(lhs))
+                                                                                           , rhs_(std::move(rhs))
+                                                                                           , op_type(op_type)
 {
 
 }
@@ -11,16 +13,16 @@ std::string BinaryOperatorNode::getOperatorName()
 {
     switch ( op_type )
     {
-    case BinaryOp::ASSIGN : return "operator=" ;
-    case BinaryOp::PLUS   : return "operator+" ;
-    case BinaryOp::MINUS  : return "operator-" ;
-    case BinaryOp::MUL    : return "operator*" ;
-    case BinaryOp::DIV    : return "operator/" ;
-    case BinaryOp::MOD    : return "operator%" ;
-    case BinaryOp::EQUALS : return "operator==";
-    case BinaryOp::NEQUALS: return "operator!=";
-    case BinaryOp::AND    : return "operator&&";
-    case BinaryOp::OR     : return "operator||";
+        case BinaryOp::ASSIGN : return "operator=" ;
+        case BinaryOp::PLUS   : return "operator+" ;
+        case BinaryOp::MINUS  : return "operator-" ;
+        case BinaryOp::MUL    : return "operator*" ;
+        case BinaryOp::DIV    : return "operator/" ;
+        case BinaryOp::MOD    : return "operator%" ;
+        case BinaryOp::EQUALS : return "operator==";
+        case BinaryOp::NEQUALS: return "operator!=";
+        case BinaryOp::AND    : return "operator&&";
+        case BinaryOp::OR     : return "operator||";
     }
 }
 
@@ -28,35 +30,35 @@ std::string BinaryOperatorNode::getCodeOperatorName()
 {
     switch ( op_type )
     {
-    case BinaryOp::ASSIGN : return "operatorassign";
-    case BinaryOp::PLUS   : return "operatorplus"  ;
-    case BinaryOp::MINUS  : return "operatorminus" ;
-    case BinaryOp::MUL    : return "operatormul"   ;
-    case BinaryOp::DIV    : return "operatordiv"   ;
-    case BinaryOp::MOD    : return "operatormod"   ;
-    case BinaryOp::EQUALS : return "operatoreq"    ;
-    case BinaryOp::NEQUALS: return "operatorneq"   ;
-    case BinaryOp::AND    : return "operatorand"   ;
-    case BinaryOp::OR     : return "operatoror"    ;
+        case BinaryOp::ASSIGN : return "operatorassign";
+        case BinaryOp::PLUS   : return "operatorplus"  ;
+        case BinaryOp::MINUS  : return "operatorminus" ;
+        case BinaryOp::MUL    : return "operatormul"   ;
+        case BinaryOp::DIV    : return "operatordiv"   ;
+        case BinaryOp::MOD    : return "operatormod"   ;
+        case BinaryOp::EQUALS : return "operatoreq"    ;
+        case BinaryOp::NEQUALS: return "operatorneq"   ;
+        case BinaryOp::AND    : return "operatorand"   ;
+        case BinaryOp::OR     : return "operatoror"    ;
     }
 }
 
-AST* BinaryOperatorNode::copyTree() const
+ASTNode BinaryOperatorNode::copyTree() const
 {
-    auto lhs_copy = static_cast<ExprNode*>(lhs -> copyTree()),
-         rhs_copy = static_cast<ExprNode*>(rhs -> copyTree());
+    auto lhs_copy = ASTExprNode(static_cast<ExprNode*>(lhs_ -> copyTree().release())),
+         rhs_copy = ASTExprNode(static_cast<ExprNode*>(rhs_ -> copyTree().release()));
 
-    return new BinaryOperatorNode(lhs_copy, rhs_copy, op_type);
+    return std::make_unique<BinaryOperatorNode>(std::move(lhs_copy), std::move(rhs_copy), op_type);
 }
 
-std::vector<AST*> BinaryOperatorNode::getChildren() const { return {lhs, rhs}; }
+ASTChildren BinaryOperatorNode::getChildren() const { return {lhs_.get(), rhs_.get()}; }
 
 VariableType BinaryOperatorNode::getType() const { return call_info.callee -> type().returnType(); } 
 bool BinaryOperatorNode::isLeftValue() const { return false; }
 
 bool BinaryOperatorNode::isCompileTimeExpr() const
 {
-    return lhs -> isCompileTimeExpr() && rhs -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
+    return lhs_ -> isCompileTimeExpr() && rhs_ -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
 }
 
 boost::optional<int> BinaryOperatorNode::getCompileTimeValue() const
@@ -64,20 +66,19 @@ boost::optional<int> BinaryOperatorNode::getCompileTimeValue() const
     if ( !isCompileTimeExpr() )
         return boost::none;
 
-    int lhs_value = *lhs -> getCompileTimeValue();
-    int rhs_value = *rhs -> getCompileTimeValue();
+    auto lhs_value = *lhs_ -> getCompileTimeValue();
+    auto rhs_value = *rhs_ -> getCompileTimeValue();
 
     switch ( op_type )
     {
-    case BinaryOp::PLUS   : return lhs_value + rhs_value;
-    case BinaryOp::MINUS  : return lhs_value - rhs_value;
-    case BinaryOp::MUL    : return lhs_value * rhs_value;
-    case BinaryOp::DIV    : return lhs_value / rhs_value;
-    case BinaryOp::MOD    : return lhs_value % rhs_value;
-    case BinaryOp::EQUALS : return lhs_value == rhs_value;
-    case BinaryOp::NEQUALS: return lhs_value != rhs_value;
-    default:
-        return boost::none;
+        case BinaryOp::PLUS   : return lhs_value + rhs_value;
+        case BinaryOp::MINUS  : return lhs_value - rhs_value;
+        case BinaryOp::MUL    : return lhs_value * rhs_value;
+        case BinaryOp::DIV    : return lhs_value / rhs_value;
+        case BinaryOp::MOD    : return lhs_value % rhs_value;
+        case BinaryOp::EQUALS : return lhs_value == rhs_value;
+        case BinaryOp::NEQUALS: return lhs_value != rhs_value;
+        default: return boost::none;
     }
 }
 
@@ -87,19 +88,27 @@ std::string BinaryOperatorNode::toString() const
 
     switch ( op_type )
     {
-    case BinaryOp::ASSIGN : oper = "=" ; break;
-    case BinaryOp::PLUS   : oper = "+" ; break;
-    case BinaryOp::MINUS  : oper = "-" ; break;
-    case BinaryOp::MUL    : oper = "*" ; break;
-    case BinaryOp::EQUALS : oper = "=="; break;
-    case BinaryOp::NEQUALS: oper = "!="; break;
-    case BinaryOp::AND    : oper = "&&"; break;
-    case BinaryOp::OR     : oper = "||"; break;
-    case BinaryOp::DIV    : oper = "/" ; break;
-    case BinaryOp::MOD    : oper = "%" ; break;
+        case BinaryOp::ASSIGN : oper = "=" ; break;
+        case BinaryOp::PLUS   : oper = "+" ; break;
+        case BinaryOp::MINUS  : oper = "-" ; break;
+        case BinaryOp::MUL    : oper = "*" ; break;
+        case BinaryOp::EQUALS : oper = "=="; break;
+        case BinaryOp::NEQUALS: oper = "!="; break;
+        case BinaryOp::AND    : oper = "&&"; break;
+        case BinaryOp::OR     : oper = "||"; break;
+        case BinaryOp::DIV    : oper = "/" ; break;
+        case BinaryOp::MOD    : oper = "%" ; break;
     }
 
-    return lhs -> toString() + " " + oper + " " + rhs -> toString();
+    return lhs_ -> toString() + " " + oper + " " + rhs_ -> toString();
 }
 
 void BinaryOperatorNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
+    
+ExprNode* BinaryOperatorNode::lhs() { return lhs_.get(); }
+ExprNode* BinaryOperatorNode::rhs() { return rhs_.get(); }
+BinaryOp BinaryOperatorNode::op() const { return op_type; }
+
+const CallInfo& BinaryOperatorNode::callInfo() const { return call_info; }
+void BinaryOperatorNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
+

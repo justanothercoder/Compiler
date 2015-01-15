@@ -7,7 +7,7 @@ class LocalScope : public BaseScope
 {
 public:
 
-    LocalScope(Scope *enclosing_scope);
+    LocalScope(Scope* enclosing_scope);
 
     void accept(ScopeVisitor& visitor) override;
 
@@ -19,7 +19,7 @@ public:
 
 private:
 
-    Scope *enclosing_scope;
+    Scope* enclosing_scope;
 };
 
 #endif

@@ -6,19 +6,10 @@
 
 class FunctionNode : public ExprNode
 {
-
-    friend class TemplateStructSymbol;
-    friend class Scope;
-
-    friend class MarkReturnAsInlineVisitor;
-    friend class GenSSAVisitor;
-    friend class CheckVisitor;
-
 public:
 
-    FunctionNode(std::string name);
-
-    AST* copyTree() const override;
+    FunctionNode(const std::string& name);
+    ASTNode copyTree() const override;
 
     VariableType getType() const override;
     bool isLeftValue() const override;
@@ -27,13 +18,17 @@ public:
     boost::optional<int> getCompileTimeValue() const override;
 
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
+
+    const std::string& name() const;
+
+    const OverloadedFunctionSymbol* function();    
+    void function(const OverloadedFunctionSymbol* sym);
 
 private:
 
-    std::string name;
-    OverloadedFunctionSymbol *function;
+    std::string name_;
+    const OverloadedFunctionSymbol* function_ = nullptr;
 };
 
 #endif

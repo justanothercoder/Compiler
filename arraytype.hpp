@@ -18,9 +18,12 @@ public:
 
     bool isReference() const override;
 
-    FunctionSymbol* getConversionTo(const Type *t) const override;
+    const FunctionSymbol* getConversionTo(const Type *t) const override;
 
-    const Type* getPointedType() const;
+    const Type* pointedType() const;
+    int sizeOfArray() const;
+
+private:
 
     const Type *type;
     int size;

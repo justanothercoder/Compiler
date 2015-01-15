@@ -2,7 +2,7 @@
 #define _ABSTRACTPARSER_HPP_
 
 #include <vector>
-
+#include <memory>
 #include "abstractlexer.hpp"
 
 class AST;
@@ -11,10 +11,10 @@ class AbstractParser
 {
 public:
 
-    AbstractParser(AbstractLexer *input);
+    AbstractParser(std::unique_ptr<AbstractLexer> input);
     virtual ~AbstractParser();
 
-    virtual AST* parse() = 0;
+    virtual std::unique_ptr<AST> parse() = 0;
 
 protected:
 
@@ -37,7 +37,7 @@ protected:
     std::vector<Token> lookahead;
     std::vector<int> markers;
 
-    AbstractLexer *input;
+    std::unique_ptr<AbstractLexer> input;
     int pos;
 
 };

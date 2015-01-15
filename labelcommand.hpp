@@ -1,13 +1,14 @@
 #ifndef _LABELCOMMAND_HPP_
 #define _LABELCOMMAND_HPP_
 
+#include <memory>
 #include "command.hpp"
 
 class LabelCommand : public Command
 {
 public:
 
-    LabelCommand(Arg* label);
+    LabelCommand(Argument label);
     
     void gen(const Block& block, CodeObject& code_obj) const override;
     std::string toString() const override;
@@ -18,7 +19,7 @@ public:
 
 private:
 
-    Arg* label;
+    Argument label;
 };
 
 #endif

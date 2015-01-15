@@ -7,18 +7,11 @@ class ModuleSymbol;
 
 class ModuleNode : public ExprNode
 {
-
-    friend class TemplateStructSymbol;
-    friend class Scope;
-
-    friend class GenSSAVisitor;
-    friend class CheckVisitor;
-
 public:
 
-    ModuleNode(std::string name);
+    ModuleNode(const std::string& name);
 
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
 
     VariableType getType() const override;
     bool isLeftValue() const override;
@@ -27,13 +20,17 @@ public:
     boost::optional<int> getCompileTimeValue() const override;
 
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
+
+    const std::string& name() const;
+    
+    const ModuleSymbol* module() const;
+    void module(const ModuleSymbol* module);
 
 private:
 
-    std::string name;
-    ModuleSymbol *module;
+    std::string name_;
+    const ModuleSymbol* module_ = nullptr;
 };
 
 #endif

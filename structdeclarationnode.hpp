@@ -12,29 +12,30 @@ class StructSymbol;
 
 class StructDeclarationNode : public DeclarationNode
 {
-
 public:
 
-    StructDeclarationNode(std::string name, std::vector<AST*> inner, boost::optional<TemplateInfo> template_info = boost::none);
-
-    AST* copyTree() const override;
-
+    StructDeclarationNode(const std::string& name, std::vector<ASTNode> inner, boost::optional<TemplateInfo> template_info = boost::none);
+    
     void build_scope();
+    const Symbol* getDefinedSymbol() const override;
 
-    Symbol* getDefinedSymbol() const override;
-
-    std::vector<AST*> getChildren() const override;
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
-
-    std::string name;
-    std::vector<AST*> inner;
 
     boost::optional<TemplateInfo> template_info;
 
-    StructSymbol *definedSymbol;
+    const std::string& name() const;
+    const std::vector<ASTNode>& inner() const;
+
+private:
+
+    std::string name_;
+    std::vector<ASTNode> inner_;
+
+    std::shared_ptr<StructSymbol> defined_symbol;
 };
 
 #endif

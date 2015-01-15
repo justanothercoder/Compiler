@@ -8,16 +8,13 @@
 #include "globalconfig.hpp"
 #include "comp.hpp"
 
-ReturnCommand::ReturnCommand(Arg* expr, bool is_return_ref) : expr(expr), is_return_ref(is_return_ref)
-{
-
-}
+ReturnCommand::ReturnCommand(Argument expr, bool is_return_ref) : expr_(expr), is_return_ref(is_return_ref) { }
 
 void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
 {
     if ( is_return_ref )
     {
-        expr -> gen(block, code_obj);
+        expr_ -> gen(block, code_obj);
        
         code_obj.emit("mov rbx, [rax]"); 
         code_obj.emit("mov rax, [rbp + " + std::to_string(2 * Comp::config().int_size) + "]");
@@ -25,14 +22,14 @@ void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
     }
     else
     {
-        expr -> gen(block, code_obj);
+        expr_ -> gen(block, code_obj);
        
         code_obj.emit("mov rbx, rax"); 
         code_obj.emit("mov rax, [rbp + " + std::to_string(2 * Comp::config().int_size) + "]");
 
-        const Type *param_type = expr -> type();
+        auto param_type = expr_ -> type();
            
-        if ( param_type -> removeRef() == BuiltIns::int_type
+        if ( param_type -> removeRef() == BuiltIns::int_type.get()
           || param_type -> removeRef() -> getTypeKind() == TypeKind::POINTER )
         {
             if ( param_type -> isReference() )
@@ -41,7 +38,7 @@ void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
             code_obj.emit("mov rcx, [rbx]");
             code_obj.emit("mov [rax], rcx");
         }
-        else if ( param_type -> removeRef() == BuiltIns::char_type )
+        else if ( param_type -> removeRef() == BuiltIns::char_type.get() )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rbx, [rbx]");
@@ -54,7 +51,7 @@ void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
             if ( param_type -> isReference() )
             {
                 code_obj.emit("mov rbx, [rbx]");
-                param_type = static_cast<const ReferenceType*>(param_type) -> type;
+                param_type = param_type -> removeRef();
             }
 
             code_obj.emit("push rbx");
@@ -74,11 +71,15 @@ void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
 
 std::string ReturnCommand::toString() const
 {
-    if ( is_return_ref ) return "returnref " + expr -> toString();
-    else                 return "return "    + expr -> toString();
+    if ( is_return_ref ) return "returnref " + expr_ -> toString();
+    else                 return "return "    + expr_ -> toString();
 }
 
 bool ReturnCommand::isExpr() const { return false; }
 const Type* ReturnCommand::type() const { return nullptr; }
 
 void ReturnCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }
+
+Arg* ReturnCommand::expr() { return expr_.get(); }
+bool ReturnCommand::isReturnRef() const { return is_return_ref; }
+

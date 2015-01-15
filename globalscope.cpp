@@ -18,12 +18,14 @@ void GlobalScope::accept(ScopeVisitor& visitor) { visitor.visit(this); }
 
 void GlobalScope::defineBuiltInFunction(std::string name, FunctionType type)
 {
-    std::string scope_name = getScopeName() + "_" + name;
-    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::simple())); 
+    auto scope_name = getScopeName() + "_" + name;
+    auto scope = new FunctionScope(scope_name, this, false);
+    define(std::make_shared<FunctionSymbol>(name, type, scope, FunctionTraits::simple())); 
 }
 
 void GlobalScope::defineBuiltInOperator(std::string name, FunctionType type)
 {
-    std::string scope_name = getScopeName() + "_" + Comp::config().getCodeOperatorName(name);
-    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::oper())); 
+    auto scope_name = getScopeName() + "_" + Comp::config().getCodeOperatorName(name);
+    auto scope = new FunctionScope(scope_name, this, false);
+    define(std::make_shared<FunctionSymbol>(name, type, scope, FunctionTraits::oper())); 
 }

@@ -23,5 +23,5 @@ boost::optional<int> ReferenceType::rankOfConversion(const Type *t) const
 
 bool ReferenceType::isReference() const { return true; }
 
-FunctionSymbol* ReferenceType::getConversionTo(const Type *) const { return nullptr; }
+const FunctionSymbol* ReferenceType::getConversionTo(const Type *) const { return nullptr; }
 const Type* ReferenceType::removeRef() const { return type; }

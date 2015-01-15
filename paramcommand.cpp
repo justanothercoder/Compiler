@@ -11,19 +11,19 @@
 
 #include "logger.hpp"
 
-ParamCommand::ParamCommand(Arg* expr, ConversionInfo conversion_info) : expr(expr), conversion_info(conversion_info) { }
+ParamCommand::ParamCommand(Argument expr, ConversionInfo conversion_info) : expr_(expr), conversion_info(conversion_info) { }
 
 void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
 {
-    expr -> gen(block, code_obj);
+    expr_ -> gen(block, code_obj);
 
-    const Type *param_type = expr -> type();
+    auto param_type = expr_ -> type();
 
     if ( conversion_info.desired_type -> isReference() )
     {
         code_obj.emit("push rax");
     }
-    else if ( param_type -> removeRef() == BuiltIns::int_type
+    else if ( param_type -> removeRef() == BuiltIns::int_type.get()
            || param_type -> removeRef() -> getTypeKind() == TypeKind::POINTER )
     {
         if ( param_type -> isReference() )
@@ -31,7 +31,7 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
 
         code_obj.emit("push qword [rax]");
     }
-    else if ( param_type -> removeRef() == BuiltIns::char_type )
+    else if ( param_type -> removeRef() == BuiltIns::char_type.get() )
     {
         if ( param_type -> isReference() )
             code_obj.emit("mov rax, [rax]");
@@ -48,9 +48,7 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
         code_obj.emit("push rax");
         code_obj.emit("push rbx");
 
-//        code_obj.emit("sub rsp, " + std::to_string(Comp::config().int_size));
         code_obj.emit("call " + conv -> getScopedTypedName());
-//        code_obj.emit("add rsp, " + std::to_string((2 + 1) * Comp::config().int_size));
         code_obj.emit("add rsp, " + std::to_string(2 * Comp::config().int_size));
     }
     else
@@ -61,7 +59,7 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
         if ( param_type -> isReference() )
         {
             code_obj.emit("mov rax, [rax]");
-            param_type = static_cast<const ReferenceType*>(param_type) -> type;
+            param_type = param_type -> removeRef();
         }
 
         code_obj.emit("push rax");
@@ -72,10 +70,13 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
     }
 }
 
-std::string ParamCommand::toString() const { return "param " + expr -> toString(); }
+std::string ParamCommand::toString() const { return "param " + expr_ -> toString(); }
 
 bool ParamCommand::isExpr() const { return false; }
-    
 const Type* ParamCommand::type() const { return nullptr; }
 
 void ParamCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }
+
+Arg* ParamCommand::expr() { return expr_.get(); }
+const ConversionInfo& ParamCommand::conversionInfo() const { return conversion_info; }
+

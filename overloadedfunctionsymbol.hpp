@@ -17,18 +17,18 @@ class OverloadedFunctionSymbol : public Symbol, public FunctionalType
 
 public:
 
-    OverloadedFunctionSymbol(std::string name, OverloadedFunctionTypeInfo type_info, FunctionTraits traits);
+    OverloadedFunctionSymbol(std::string name, FunctionTraits traits);
 
     std::string getName() const override;
 
-    OverloadedFunctionTypeInfo getTypeInfo() const;
-    void addOverload(FunctionTypeInfo type_info, FunctionSymbol *sym) const;
+    const OverloadedFunctionTypeInfo& getTypeInfo() const;
+    void addOverload(FunctionTypeInfo type_info, std::shared_ptr<const Symbol> sym) const;
 
     bool isMethod() const;
     SymbolType getSymbolType() const override;
 
-    TemplateFunctionSymbol* templateFunction() const;
-    void setTemplateFunction(TemplateFunctionSymbol* function) const;
+    const TemplateFunctionSymbol* templateFunction() const;
+    void setTemplateFunction(const TemplateFunctionSymbol* function) const;
     
     CallInfo resolveCall(std::vector<ValueInfo> arguments) const override;
 
@@ -42,8 +42,13 @@ private:
     std::vector<ConversionInfo> getConversions(std::vector<ValueInfo> arguments, std::vector<VariableType> params) const;
     ConversionInfo getConversionInfo(const Type *lhs, const Type *rhs) const;
 
-    const FunctionSymbol* overloadOfTemplateFunction(TemplateFunctionSymbol* template_function, FunctionTypeInfo info, std::vector<TemplateParam> partial = { }) const;
-    boost::optional< std::map<std::string, TemplateParam> > makeMappingOfParams(TemplateSymbol* tmpl, std::vector<ParamInfo> formal_params, FunctionTypeInfo arguments) const;
+    const FunctionSymbol* overloadOfTemplateFunction(const TemplateFunctionSymbol* template_function
+                                                   , FunctionTypeInfo info
+                                                   , std::vector<TemplateParam> partial = { }) const;
+
+    boost::optional< std::map<std::string, TemplateParam> > makeMappingOfParams(const TemplateSymbol* tmpl
+                                                                              , std::vector<ParamInfo> formal_params
+                                                                              , FunctionTypeInfo arguments) const;
 
 private:
 
@@ -51,7 +56,7 @@ private:
     mutable OverloadedFunctionTypeInfo type_info;
 
     FunctionTraits traits;
-    mutable TemplateFunctionSymbol* template_function;
+    mutable const TemplateFunctionSymbol* template_function = nullptr;
 };
 
 #endif

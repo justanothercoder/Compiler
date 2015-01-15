@@ -8,35 +8,35 @@
 #include "variablearg.hpp"
 #include "logger.hpp"
 
-DotArg::DotArg(Arg* expr, int offset, VariableSymbol* member) : expr(expr), offset(offset), member(member) { }
+DotArg::DotArg(Argument expr, int offset, const VariableSymbol* member) : expr_(expr), offset_(offset), member_(member) { }
 
 void DotArg::gen(const Block& block, CodeObject& code_obj) const
 {
-    if ( auto temp = dynamic_cast<TemporaryArg*>(expr) )
+    if ( auto temp = dynamic_cast<TemporaryArg*>(expr_.get()) )
     {
         if ( temp -> type() -> isReference() )
         {            
-            code_obj.emit("mov rax, [rbp - " + std::to_string(block.alloc.addressOf(temp -> command)) + "]");
-            code_obj.emit("lea rax, [rax + " + std::to_string(offset) + "]");
+            code_obj.emit("mov rax, [rbp - " + std::to_string(block.addressOf(temp -> command())) + "]");
+            code_obj.emit("lea rax, [rax + " + std::to_string(offset_) + "]");
         }
         else
         {
-            code_obj.emit("lea rax, [rbp - " + std::to_string(block.alloc.addressOf(temp -> command) - offset) + "]");
+            code_obj.emit("lea rax, [rbp - " + std::to_string(block.addressOf(temp -> command()) - offset_) + "]");
         }
     }    
-    else if ( auto var = dynamic_cast<VariableArg*>(expr) )
+    else if ( auto var = dynamic_cast<VariableArg*>(expr_.get()) )
     {
         if ( var -> type() -> isReference() )
         {            
-            code_obj.emit("mov rax, [rbp - " + std::to_string(block.alloc.addressOf(var -> var)) + "]");
-            code_obj.emit("lea rax, [rax + " + std::to_string(offset) + "]");
+            code_obj.emit("mov rax, [rbp - " + std::to_string(block.addressOf(var -> var())) + "]");
+            code_obj.emit("lea rax, [rax + " + std::to_string(offset_) + "]");
         }
         else
         {
-            code_obj.emit("lea rax, [rbp - " + std::to_string(block.alloc.addressOf(var -> var) - offset) + "]");
+            code_obj.emit("lea rax, [rbp - " + std::to_string(block.addressOf(var -> var()) - offset_) + "]");
         }
     }
-    else if ( auto dot = dynamic_cast<DotArg*>(expr) )
+    else if ( auto dot = dynamic_cast<DotArg*>(expr_.get()) )
     {
         dot -> gen(block, code_obj);
 
@@ -44,10 +44,15 @@ void DotArg::gen(const Block& block, CodeObject& code_obj) const
             code_obj.emit("mov rax, [rax]");
         }
 
-        code_obj.emit("lea rax, [rax + " + std::to_string(offset) + "]");
+        code_obj.emit("lea rax, [rax + " + std::to_string(offset_) + "]");
     }
     else throw "";
 }
 
-std::string DotArg::toString() const { return expr -> toString() + "." + member -> getName(); }
-const Type* DotArg::type() const     { return member -> getType().base(); }
+std::string DotArg::toString() const { return expr_ -> toString() + "." + member_ -> getName(); }
+const Type* DotArg::type() const     { return member_ -> getType().base(); }
+    
+Arg* DotArg::expr() const { return expr_.get(); }
+int DotArg::offset() const { return offset_; }
+const VariableSymbol* DotArg::member() const { return member_; }
+

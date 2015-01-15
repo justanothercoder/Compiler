@@ -19,20 +19,37 @@ class GlobalTable;
 
 struct Block
 {
-    Block(Scope& scope, GlobalTable& table, std::string block_name = "");
+    friend class Optimizer;
+
+public:
+    Block(Scope* scope, GlobalTable& table, std::string block_name = "");
 
     void computeMemoryDisposition() const;
     void genAsm(CodeObject& code_obj) const;
 
-    std::string toString();
+    void addCommand(std::shared_ptr<Command> command);
 
-    std::list<int> code;
-    Scope& scope;
+    int addressOf(const VariableSymbol* var) const;
+    int addressOf(const Command* command) const;
 
-    std::vector<Command*> commands;
+    void allocate(const VariableSymbol* sym) const;
 
+    Command* commandById(int command_id);
+    int numId(int num) const;
+    int stringId(const std::string& str) const;
+
+    std::string toString();    
+
+    Scope* scope() const;
+    std::list<int>& code();
+
+private:
+
+    std::list<int> code_;
+    Scope* scope_;
+
+    std::vector< std::shared_ptr<Command> > commands;
     std::string block_name;
-
     GlobalTable& table;
 
     mutable SpaceAllocator alloc;

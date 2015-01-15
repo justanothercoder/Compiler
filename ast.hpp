@@ -3,10 +3,14 @@
 
 #include <vector>
 #include <string>
-
+#include <memory>
 #include "astvisitor.hpp"
 
 class Scope;
+class AST;
+
+using ASTNode = std::unique_ptr<AST>;
+using ASTChildren = std::vector<AST*>;
 
 class AST
 {
@@ -14,12 +18,12 @@ public:
 
     virtual ~AST();
     virtual void build_scope();
-    virtual std::vector<AST*> getChildren() const;
-    virtual AST* copyTree() const = 0;
+    virtual ASTChildren getChildren() const;
+    virtual ASTNode copyTree() const = 0;
     virtual std::string toString() const = 0;
     virtual void accept(ASTVisitor& visitor) = 0;
 
-    Scope *scope;
+    std::shared_ptr<Scope> scope;
 };
 
 #endif

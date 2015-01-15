@@ -44,9 +44,9 @@ class Parser : public AbstractParser
 {
 public:
 
-    Parser(AbstractLexer *lexer);
+    Parser(std::unique_ptr<AbstractLexer> lexer);
 
-    virtual AST* parse();
+    virtual std::unique_ptr<AST> parse();
 
 private:
     
@@ -61,51 +61,52 @@ private:
     std::string id();
     std::string operator_name();
     TypeInfo typeInfo();
-    std::vector<ExprNode*> call_params_list();
+    
+    std::vector< std::unique_ptr<ExprNode> > call_params_list();
 
     TemplateParamsList templateParams();
 
-    DeclarationNode* declaration(boost::optional<std::string> struct_name = boost::none);
-    DeclarationNode* structDecl();
-    DeclarationNode* variableDecl(boost::optional<std::string> struct_name = boost::none);
-    DeclarationNode* functionDecl(boost::optional<std::string> struct_name = boost::none);
-    DeclarationNode* varInferDecl(boost::optional<std::string> struct_name = boost::none);
+    std::unique_ptr<DeclarationNode> declaration(boost::optional<std::string> struct_name = boost::none);
+    std::unique_ptr<DeclarationNode> structDecl();
+    std::unique_ptr<DeclarationNode> variableDecl(boost::optional<std::string> struct_name = boost::none);
+    std::unique_ptr<DeclarationNode> functionDecl(boost::optional<std::string> struct_name = boost::none);
+    std::unique_ptr<DeclarationNode> varInferDecl(boost::optional<std::string> struct_name = boost::none);
 
-    DeclarationNode* templateDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params); 
-    DeclarationNode* templateFunctionDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params);
-    DeclarationNode* templateStructDecl(TemplateParamsList template_params);
+    std::unique_ptr<DeclarationNode> templateDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params); 
+    std::unique_ptr<DeclarationNode> templateFunctionDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params);
+    std::unique_ptr<DeclarationNode> templateStructDecl(TemplateParamsList template_params);
 
-    AST* break_stat();
-    AST* from_import_stat();
-    AST* import_stat();
-    AST* extern_stat();
+    std::unique_ptr<AST> break_stat();
+    std::unique_ptr<AST> from_import_stat();
+    std::unique_ptr<AST> import_stat();
+    std::unique_ptr<AST> extern_stat();
 
-    AST* for_stat();
-    AST* while_stat();
-    AST* if_stat();
-    AST* return_stat();
-    AST* statement();
-    AST* assignment();
-    AST* block();
+    std::unique_ptr<AST> for_stat();
+    std::unique_ptr<AST> while_stat();
+    std::unique_ptr<AST> if_stat();
+    std::unique_ptr<AST> return_stat();
+    std::unique_ptr<AST> statement();
+    std::unique_ptr<AST> assignment();
+    std::unique_ptr<AST> block();
 
-    AST* unsafe_block();
+    std::unique_ptr<AST> unsafe_block();
 
-    ExprNode* expression();
-    ExprNode* bool_expr();
-    ExprNode* relation();
-    ExprNode* sum_expr();
-    ExprNode* term();
-    ExprNode* factor();
-    ExprNode* unary_left();
-    ExprNode* addr_expr();
-    ExprNode* unary_right();
-    ExprNode* primary();
-    ExprNode* new_expr();
-    ExprNode* variable();
-    ExprNode* literal();
-    ExprNode* number();
-    ExprNode* get_string();
-    ExprNode* null();
+    std::unique_ptr<ExprNode> expression();
+    std::unique_ptr<ExprNode> bool_expr();
+    std::unique_ptr<ExprNode> relation();
+    std::unique_ptr<ExprNode> sum_expr();
+    std::unique_ptr<ExprNode> term();
+    std::unique_ptr<ExprNode> factor();
+    std::unique_ptr<ExprNode> unary_left();
+    std::unique_ptr<ExprNode> addr_expr();
+    std::unique_ptr<ExprNode> unary_right();
+    std::unique_ptr<ExprNode> primary();
+    std::unique_ptr<ExprNode> new_expr();
+    std::unique_ptr<ExprNode> variable();
+    std::unique_ptr<ExprNode> literal();
+    std::unique_ptr<ExprNode> number();
+    std::unique_ptr<ExprNode> get_string();
+    std::unique_ptr<ExprNode> null();
 
     bool tryAssignment();
     bool tryVarDecl();

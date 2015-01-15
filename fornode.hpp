@@ -8,28 +8,29 @@
 
 class ForNode : public AST
 {
-
-    friend class GenSSAVisitor;
-
 public:
 
-    ForNode(AST *init, ExprNode *cond, AST *step, AST *stats);
+    ForNode(ASTNode init, ASTExprNode cond, ASTNode step, ASTNode stats);
 
     void build_scope() override;
+    ASTNode copyTree() const override;
 
-    AST* copyTree() const override;
-
-    std::vector<AST*> getChildren() const override;
+    ASTChildren getChildren() const override;
     std::string toString() const override;
 
     void accept(ASTVisitor& visitor) override;
 
+    AST* initializer();
+    ExprNode* condition();
+    AST* iteration();
+    AST* body();    
+
 private:
 
-    AST *init;
-    ExprNode *cond;
-    AST *step;
-    AST	*stats;
+    ASTNode init;
+    ASTExprNode cond;
+    ASTNode step;
+    ASTNode stats;
 
     std::shared_ptr<Scope> for_scope;
 };

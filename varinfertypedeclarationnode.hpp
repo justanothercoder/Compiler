@@ -3,33 +3,40 @@
 
 #include "declarationnode.hpp"
 #include "callinfo.hpp"
+#include "exprnode.hpp"
 
-class ExprNode;
 class VariableSymbol;
 
 class VarInferTypeDeclarationNode : public DeclarationNode
 {
 public:
 
-    VarInferTypeDeclarationNode(std::string name, ExprNode *expr);
+    VarInferTypeDeclarationNode(const std::string& name, ASTExprNode expr);
 
     void build_scope();
 
-    Symbol* getDefinedSymbol() const override;
+    const Symbol* getDefinedSymbol() const override;
+    void setDefinedSymbol(std::shared_ptr<const VariableSymbol> symbol);
 
-    AST* copyTree() const override;
-
-    std::vector<AST*> getChildren() const override;
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
 
-    std::string name;
-    ExprNode *expr;
+    const std::string& name() const;
+    ExprNode* expr();
+    
+    const CallInfo& callInfo() const;
+    void callInfo(const CallInfo& call_info);
+
+private:
+
+    std::string name_;
+    ASTExprNode expr_;
 
     CallInfo call_info;
-    VariableSymbol *definedSymbol;
+    std::shared_ptr<const VariableSymbol> defined_symbol;
 };
 
 #endif

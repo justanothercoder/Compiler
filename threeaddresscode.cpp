@@ -9,20 +9,21 @@
 #include "labelarg.hpp"
 #include "temporaryarg.hpp"
 
-Arg* ThreeAddressCode::newLabel(std::string label)
+#include "logger.hpp"
+
+Argument ThreeAddressCode::newLabel(const std::string& label)
 {
     static int label_num = 0;
-    return new LabelArg(label != "" ? label : "label_" + std::to_string(++label_num));
+    return std::make_shared<LabelArg>(label != "" ? label : "label_" + std::to_string(++label_num));
 }
 
-Arg* ThreeAddressCode::add(Command* command)
+Argument ThreeAddressCode::add(std::shared_ptr<Command> command)
 {
     Block* current_block = blocks[blockStack.top()];
 
-    current_block -> commands.push_back(command);
-    current_block -> code.push_back(current_block -> commands.size() - 1);
+    current_block -> addCommand(command);
 
-    return new TemporaryArg(command);
+    return std::make_shared<TemporaryArg>(command);
 }
 
 std::string ThreeAddressCode::toString()
@@ -102,13 +103,13 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 
     for ( auto block = blocks.cbegin(); block != blocks.cend(); ++block )
     {
-        if ( !dynamic_cast<FunctionScope*>(&(*block) -> scope) )
+        if ( !dynamic_cast<FunctionScope*>((*block) -> scope()) )
         {
             mainblock = block;
             continue;
         }
 
-        if ( dynamic_cast<FunctionScope*>(&(*block) -> scope) -> func -> is_used )
+        if ( dynamic_cast<FunctionScope*>((*block) -> scope()) -> func -> is_used )
         {
             (*block) -> genAsm(code_obj);
             code_obj.emit("ret");
@@ -125,10 +126,10 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
     code_obj.emit("syscall");
 }
 
-void ThreeAddressCode::newBlock(Scope& scope, std::string block_name)
+void ThreeAddressCode::newBlock(Scope* scope, std::string block_name)
 {
     if ( block_name == "" )
-        block_name = scope.getScopeName();
+        block_name = scope -> getScopeName();
 
     blocks.push_back(new Block(scope, globaltable, block_name));
     blockStack.push(blocks.size() - 1);
@@ -164,8 +165,8 @@ void ThreeAddressCode::addExternalFunction(const FunctionSymbol* function)
     globaltable.has_definition[function] = false;
 }    
     
-void ThreeAddressCode::rememberVar(VariableSymbol* var) 
+void ThreeAddressCode::rememberVar(const VariableSymbol* var) 
 {
     Block* current_block = blocks[blockStack.top()];
-    current_block -> alloc.remember(var);
+    current_block -> allocate(var);
 }

@@ -1,26 +1,17 @@
 #ifndef _VARIABLENODE_HPP_
 #define _VARIABLENODE_HPP_
 
-#include "exprnode.hpp"
+#include "numbernode.hpp"
 
-class NumberNode;
 class VariableSymbol;
 
 class VariableNode : public ExprNode
 {
-
-    friend class TemplateStructSymbol;
-    friend class Scope;
-
-    friend class GenSSAVisitor;
-    friend class CheckVisitor;
-
 public:
 
-    VariableNode(std::string name);
+    VariableNode(const std::string& name);
 
-    AST* copyTree() const override;
-
+    ASTNode copyTree() const override;
     bool isTemplateParam() const;
 
     VariableType getType() const override;
@@ -33,12 +24,19 @@ public:
 
     void accept(ASTVisitor& visitor) override;
 
+    const std::string& name() const;
+
+    std::unique_ptr<NumberNode>& getNum();
+
+    const VariableSymbol* variable() const;
+    void variable(const VariableSymbol* sym);
+
 private:
 
-    std::string name;
+    std::string name_;
 
-    VariableSymbol *variable;
-    NumberNode *template_num;
+    const VariableSymbol* variable_ = nullptr;
+    std::unique_ptr<NumberNode> template_num  = nullptr;
 };
 
 #endif

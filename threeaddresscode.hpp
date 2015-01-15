@@ -60,17 +60,17 @@ class ThreeAddressCode
 
 public:
 
-    Arg* add(Command* command);
-    Arg* newLabel(std::string label = "");
+    Argument add(std::shared_ptr<Command> command);
+    Argument newLabel(const std::string& label = "");
 
-    void rememberVar(VariableSymbol* var);
+    void rememberVar(const VariableSymbol* var);
 
     std::string toString();
 
     void computeMemoryDisposition() const;
     void genAsm(CodeObject& code_obj) const;
 
-    void newBlock(Scope& scope, std::string block_name = "");
+    void newBlock(Scope* scope, std::string block_name = "");
     void popBlock();
 
     void addConst(int c);

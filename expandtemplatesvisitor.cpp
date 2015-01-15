@@ -37,17 +37,17 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
 {
     const auto& template_info = node -> scope -> templateInfo();
 
-    if ( template_info.sym && node -> info.returnTypeInfo().type_name == template_info.sym -> getName() )
-        node -> info.returnTypeInfo().type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
+    if ( template_info.sym && node -> info().returnTypeInfo().name() == template_info.sym -> getName() )
+        node -> info().returnTypeInfo().name(static_cast<StructSymbol*>(node -> scope.get()) -> getName());
 
-    node -> info.returnTypeInfo() = preprocessTypeInfo(node -> info.returnTypeInfo(), node -> func_scope);
+    node -> info().returnTypeInfo() = preprocessTypeInfo(node -> info().returnTypeInfo(), node -> functionScope());
 
-    for ( auto& param : node -> info.formalParams() )
+    for ( auto& param : node -> info().formalParams() )
     {
-        if ( template_info.sym && param.second.type_name == template_info.sym -> getName() )
-            param.second.type_name = static_cast<StructSymbol*>(node -> scope) -> getName();
+        if ( template_info.sym && param.second.name() == template_info.sym -> getName() )
+            param.second.name(static_cast<StructSymbol*>(node -> scope.get()) -> getName());
 
-        param.second = preprocessTypeInfo(param.second, node -> func_scope);
+        param.second = preprocessTypeInfo(param.second, node -> functionScope());
     }
 
     visitChildren(node);
@@ -55,18 +55,30 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
 
 void ExpandTemplatesVisitor::visit(VariableDeclarationNode *node) 
 {
-    for ( auto& dim : node -> type_info.array_dimensions )
-        dim -> scope = node -> scope;
+    for ( const auto& modifier : node -> typeInfo().modifiers() )
+    {
+        if ( modifier.isDimension() )
+        {
+            auto dim = *modifier.dimension();
+            dim -> scope = node -> scope;
+        }
+    }   
 
-    node -> type_info = preprocessTypeInfo(node -> type_info, node -> scope);
+    node -> typeInfo(preprocessTypeInfo(node -> typeInfo(), node -> scope.get()));
 }
 
 void ExpandTemplatesVisitor::visit(NewExpressionNode *node)
 {
-    for ( auto& dim : node -> type_info.array_dimensions )
-        dim -> scope = node -> scope;
+    for ( const auto& modifier : node -> typeInfo().modifiers() )
+    {
+        if ( modifier.isDimension() )
+        {
+            auto dim = *modifier.dimension();
+            dim -> scope = node -> scope;
+        }
+    }   
 
-    node -> type_info = preprocessTypeInfo(node -> type_info, node -> scope);
+    node -> typeInfo(preprocessTypeInfo(node -> typeInfo(), node -> scope.get()));
 }
     
 TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
@@ -81,56 +93,54 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *s
 {
     const auto& template_info = scope -> templateInfo();
 
-    if ( template_info.sym && template_info.isIn(type_info.type_name) )
+    if ( template_info.sym && template_info.isIn(type_info.name()) )
     {
-        auto replace = template_info.getReplacement(type_info.type_name);
-
+        auto replace = template_info.getReplacement(type_info.name());
         auto temp_info = boost::get<TypeInfo>(*replace);
-        temp_info.pointer_depth += type_info.pointer_depth;
-        temp_info.module_name = type_info.module_name;
 
-        temp_info.is_ref = type_info.is_ref;
-        temp_info.is_const = type_info.is_const;
+        auto modifiers = temp_info.modifiers();
+        modifiers.insert(std::end(modifiers), std::begin(type_info.modifiers()), std::end(type_info.modifiers()));
 
-        for ( auto dim : type_info.array_dimensions )
-            temp_info.array_dimensions.push_back(dim);
-
-        type_info = temp_info;
+        type_info = TypeInfo(temp_info.name()
+                           , type_info.isRef()
+                           , type_info.isConst()
+                           , temp_info.templateParams()
+                           , modifiers
+                           , type_info.moduleName());
     }
    
     Scope* sc;
-    if ( type_info.module_name == "" )
+    if ( type_info.moduleName() == "" )
         sc = scope;
     else
-        sc = Comp::getUnit(type_info.module_name) -> module_symbol;
+        sc = Comp::getUnit(type_info.moduleName()) -> module_symbol.get();
     assert(sc != nullptr);
 
-    auto type = sc -> resolve(type_info.type_name);
+    auto type = sc -> resolve(type_info.name());
 
     if ( type == nullptr )
-        throw SemanticError(type_info.type_name + " is not a type");
+        throw SemanticError(type_info.name() + " is not a type");
     
     if ( auto tmpl = dynamic_cast<const TemplateSymbol*>(type) )
     {
-        auto decl = instantiateSpec(tmpl, type_info.template_params);
-        type_info.type_name = decl -> getDefinedSymbol() -> getName();
+        auto decl = instantiateSpec(tmpl, type_info.templateParams());
+        type_info.name(decl -> getDefinedSymbol() -> getName());
     
-        if ( type_info.module_name != "" )
+        if ( type_info.moduleName() != "" )
         {
-            decl -> accept(*this);
             DefineVisitor define_visitor;
-            decl -> accept(define_visitor);
             CheckVisitor check_visitor;
-            decl -> accept(check_visitor);
             GenSSAVisitor gen_visitor(Comp::code);
-            decl -> accept(gen_visitor);            
+
+            for ( auto visitor : std::vector<ASTVisitor*>{this, &define_visitor, &check_visitor, &gen_visitor} )
+                decl -> accept(*visitor);
         }
     }
 
     return type_info;
 }
 
-DeclarationNode* ExpandTemplatesVisitor::instantiateSpec(const TemplateSymbol* tmpl, std::vector<TemplateParamInfo> template_params)
+std::shared_ptr<DeclarationNode> ExpandTemplatesVisitor::instantiateSpec(const TemplateSymbol* tmpl, std::vector<TemplateParamInfo> template_params)
 {   
     assert(template_params.size() == tmpl -> templateSymbols().size());
 
@@ -149,20 +159,27 @@ DeclarationNode* ExpandTemplatesVisitor::instantiateSpec(const TemplateSymbol* t
     return decl;
 }
 
-void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode *node) { node -> expr -> accept(*this); }
-void ExpandTemplatesVisitor::visit(DotNode *node) { node -> base -> accept(*this); }
+void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode* node) { node -> expr() -> accept(*this); }
+void ExpandTemplatesVisitor::visit(DotNode* node) { node -> base() -> accept(*this); }
 
-void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode *node)   { node -> scope -> define(node -> getDefinedSymbol()); }
-void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) { node -> scope -> define(node -> getDefinedSymbol()); }
+void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode* node)
+{ 
+    node -> scope -> define(std::shared_ptr<const Symbol>(node -> getDefinedSymbol())); 
+}
 
-void ExpandTemplatesVisitor::visit(CallNode *node)              { visitChildren(node); }
-void ExpandTemplatesVisitor::visit(UnsafeBlockNode *node)       { visitChildren(node); }
-void ExpandTemplatesVisitor::visit(StatementNode *node)         { visitChildren(node); }
-void ExpandTemplatesVisitor::visit(ReturnNode *node)            { visitChildren(node); } 
-void ExpandTemplatesVisitor::visit(IfNode *node)                { visitChildren(node); } 
-void ExpandTemplatesVisitor::visit(ForNode *node)               { visitChildren(node); } 
-void ExpandTemplatesVisitor::visit(WhileNode *node)             { visitChildren(node); }
-void ExpandTemplatesVisitor::visit(StructDeclarationNode *node) { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) 
+{ 
+    node -> scope -> define(std::shared_ptr<const Symbol>(node -> getDefinedSymbol())); 
+}
+
+void ExpandTemplatesVisitor::visit(CallNode* node)              { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(UnsafeBlockNode* node)       { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(StatementNode* node)         { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(ReturnNode* node)            { visitChildren(node); } 
+void ExpandTemplatesVisitor::visit(IfNode* node)                { visitChildren(node); } 
+void ExpandTemplatesVisitor::visit(ForNode* node)               { visitChildren(node); } 
+void ExpandTemplatesVisitor::visit(WhileNode* node)             { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(StructDeclarationNode* node) { visitChildren(node); }
 
 void ExpandTemplatesVisitor::visit(AddrNode* ) { }
 void ExpandTemplatesVisitor::visit(NullNode* ) { }

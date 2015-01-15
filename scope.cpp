@@ -7,17 +7,23 @@
 #include "typefactory.hpp"
 #include "structdeclarationnode.hpp"
 #include "templatesymbol.hpp"
+#include "definesymbolvisitor.hpp"
 
 Scope::~Scope() { }
 bool Scope::isUnsafeBlock() const { return false; }
 
-void Scope::define(Symbol *sym) { accept(sym -> getScopeVisitor()); }
+void Scope::define(std::shared_ptr<const Symbol> sym) 
+{
+    auto define_symbol = sym -> defineSymbolVisitor();
+    define_symbol -> setSymbol(sym);
+    accept(*define_symbol); 
+}
 
-const Type* Scope::resolveType(std::string name)
+const Type* Scope::resolveType(const std::string& name)
 {
     auto scope = this;
 
-    Symbol *sym = nullptr;
+    const Symbol *sym = nullptr;
 
     while ( true )
     {
@@ -29,8 +35,8 @@ const Type* Scope::resolveType(std::string name)
 
         sym = scope -> resolve(name);
 
-        if ( sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION && dynamic_cast<Type*>(sym) != nullptr )
-            return dynamic_cast<Type*>(sym);
+        if ( sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION && dynamic_cast<const Type*>(sym) != nullptr )
+            return dynamic_cast<const Type*>(sym);
     }
 }
 

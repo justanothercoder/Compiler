@@ -7,14 +7,11 @@ class Symbol;
 
 class ModuleMemberAccessNode : public ExprNode 
 {
-
-    friend class CheckVisitor;
-
 public:
 
-    ModuleMemberAccessNode(std::string name, std::string member);
+    ModuleMemberAccessNode(const std::string& name, const std::string& member);
 
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
     std::string toString() const override;
     void accept(ASTVisitor& visitor) override;
     
@@ -24,12 +21,18 @@ public:
     bool isCompileTimeExpr() const override;
     boost::optional<int> getCompileTimeValue() const override;
 
+    const std::string& name() const;
+    const std::string& member() const;
+
+    const Symbol* memberSymbol() const;
+    void memberSymbol(const Symbol* sym);
+
 private:
 
-    std::string name;
-    std::string member;
+    std::string name_;
+    std::string member_;
 
-    Symbol* member_sym;
+    const Symbol* member_sym;
 };
 
 #endif

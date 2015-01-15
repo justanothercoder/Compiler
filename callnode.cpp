@@ -2,24 +2,26 @@
 #include "functionsymbol.hpp"
 #include "structsymbol.hpp"
 
-CallNode::CallNode(ExprNode *caller, std::vector<ExprNode*> params) : caller(caller), params(params)
-{
+CallNode::CallNode(ASTExprNode caller, std::vector<ASTExprNode> params) : caller_(std::move(caller)), params_(std::move(params)) { }
 
+ASTNode CallNode::copyTree() const
+{
+    auto expr = std::vector<ASTExprNode>{ };
+    for ( const auto& param : params_ )
+    {
+        auto copy = param -> copyTree();
+        expr.push_back(ASTExprNode(static_cast<ExprNode*>(copy.release())));
+    }
+
+    return std::make_unique<CallNode>(ASTExprNode(static_cast<ExprNode*>(caller_ -> copyTree().release())), std::move(expr));
 }
 
-AST* CallNode::copyTree() const
+ASTChildren CallNode::getChildren() const
 {
-    std::vector<ExprNode*> expr;
-    for ( auto param : params )
-        expr.push_back(static_cast<ExprNode*>(param -> copyTree()));
+    auto vec = ASTChildren{ caller_.get() };
+    for ( const auto& param : params_ )
+        vec.push_back(param.get());
 
-    return new CallNode(static_cast<ExprNode*>(caller -> copyTree()), expr);
-}
-
-std::vector<AST*> CallNode::getChildren() const
-{
-    auto vec = std::vector<AST*>{ caller };
-    vec.insert(std::begin(vec), std::begin(params), std::end(params));
     return vec;
 }
 
@@ -28,7 +30,7 @@ bool CallNode::isLeftValue() const { return false; }
 
 bool CallNode::isCompileTimeExpr() const
 {
-    return call_info.callee -> is_constexpr && std::all_of(std::begin(params), std::end(params), [](auto expr)
+    return call_info.callee -> is_constexpr && std::all_of(std::begin(params_), std::end(params_), [](auto&& expr)
     {
         return expr -> isCompileTimeExpr();
     });
@@ -38,16 +40,16 @@ boost::optional<int> CallNode::getCompileTimeValue() const { return boost::none;
 
 std::string CallNode::toString() const
 {
-    auto res = caller -> toString();
+    auto res = caller_ -> toString();
 
     res += "(";
 
-    if ( !params.empty() )
+    if ( !params_.empty() )
     {
-        auto it = std::begin(params);
+        auto it = std::begin(params_);
         res += (*it) -> toString();
 
-        for ( ++it; it != std::end(params); ++it )
+        for ( ++it; it != std::end(params_); ++it )
             res += ", " + (*it) -> toString();
     }
 
@@ -57,3 +59,12 @@ std::string CallNode::toString() const
 }
 
 void CallNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
+
+ExprNode* CallNode::caller() { return caller_.get(); }
+const std::vector<ASTExprNode>& CallNode::params() const { return params_; }
+
+const CallInfo& CallNode::callInfo() const { return call_info; }
+void CallNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
+
+const InlineInfo& CallNode::inlineInfo() const { return inline_info; }
+void CallNode::inlineInfo(InlineInfo inline_info) { this -> inline_info = std::move(inline_info); }

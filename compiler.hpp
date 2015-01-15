@@ -15,7 +15,7 @@ public:
 
     VariableType fromTypeInfo(const TypeInfo& type_info, Scope *scope);
 
-    DeclarationNode* getSpecDecl(const TemplateSymbol* sym, std::vector<TemplateParam> template_params);
+    std::shared_ptr<DeclarationNode> getSpecDecl(const TemplateSymbol* sym, std::vector<TemplateParam> template_params);
     const Symbol* getSpec(const TemplateSymbol* sym, std::vector<TemplateParam> template_params);
 
 };

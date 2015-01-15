@@ -6,9 +6,10 @@
 
 class IfFalseCommand : public Command
 {
+    friend class SubstituteArgVisitor;
 public:
 
-    IfFalseCommand(Arg* expr, Arg* label_false);
+    IfFalseCommand(Argument expr, Argument label_false);
     
     void gen(const Block& block, CodeObject& code_obj) const override;
     std::string toString() const override;
@@ -18,8 +19,13 @@ public:
     
     void accept(CommandVisitor* visitor) override;
 
-    Arg* expr;
-    Arg* label_false;
+    Arg* expr();
+    Arg* branch();
+
+private:
+
+    Argument expr_;
+    Argument label_false;
 };
 
 #endif

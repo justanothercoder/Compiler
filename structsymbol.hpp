@@ -17,7 +17,7 @@ class StructSymbol : public Symbol, public StructScope, public ObjectType
 {
 public:
 
-    StructSymbol(std::string name, Scope *enclosing_scope, const TemplateInfo& template_info);
+    StructSymbol(const std::string& name, Scope* enclosing_scope, const TemplateInfo& template_info);
 
     SymbolType getSymbolType() const override;
     std::string getName() const override;
@@ -25,24 +25,22 @@ public:
     size_t sizeOf() const override;
     TypeKind getTypeKind() const override;
 
-    FunctionSymbol* getConversionTo(const Type *type) const;
-
+    const FunctionSymbol* getConversionTo(const Type *type) const;
     bool isConvertableTo(const Type *type) const override;
 
     boost::optional<int> rankOfConversion(const Type *type) const override;
 
-    FunctionSymbol* getConversionConstructor(const StructSymbol *st) const;
     bool hasConversionConstructor(const StructSymbol *st) const;
-
-    FunctionSymbol* getConversionOperator(const StructSymbol *st) const;
     bool hasConversionOperator(const StructSymbol *st) const;
 
-    FunctionSymbol* getCopyConstructor() const;
-    FunctionSymbol* getDefaultConstructor() const;
+    const FunctionSymbol* getConversionConstructor(const StructSymbol *st) const;
+    const FunctionSymbol* getConversionOperator(const StructSymbol *st) const;
 
-    FunctionSymbol* constructorWith(FunctionTypeInfo ft) const;
+    const FunctionSymbol* getCopyConstructor() const;
+    const FunctionSymbol* getDefaultConstructor() const;
 
-    FunctionSymbol* methodWith(std::string name, FunctionTypeInfo ft) const;
+    const FunctionSymbol* methodWith(const std::string& name, FunctionTypeInfo ft) const;
+    const FunctionSymbol* constructorWith(FunctionTypeInfo ft) const;
 
     bool isUnsafeBlock() const override;
 
@@ -50,9 +48,9 @@ public:
     void defineBuiltInOperator(std::string name, FunctionType type);
     void defineBuiltInConstructor(FunctionType type);
 
-    Symbol* resolveMember(std::string name) const override;
-    FunctionalType* resolveMethod(std::string name) const override;
-    int offsetOf(VariableSymbol* member) const override;
+    const Symbol* resolveMember(const std::string& name) const override;
+    const FunctionalType* resolveMethod(const std::string& name) const override;
+    int offsetOf(const VariableSymbol* member) const override;
 
 private:
 

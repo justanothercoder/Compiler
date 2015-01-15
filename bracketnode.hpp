@@ -1,20 +1,18 @@
 #ifndef _BRACKETNODE_HPP_
 #define _BRACKETNODE_HPP_
 
+#include <memory>
 #include "exprnode.hpp"
 #include "callinfo.hpp"
 
 class BracketNode : public ExprNode
 {
-    friend class GenSSAVisitor;
-    friend class CheckVisitor;
-
 public:
 
-    BracketNode(ExprNode *base, ExprNode *expr);
+    BracketNode(ASTExprNode base, ASTExprNode expr);
 
-    AST* copyTree() const override;
-    std::vector<AST*> getChildren() const override;
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
     VariableType getType() const override;
     bool isLeftValue() const override;
@@ -26,9 +24,16 @@ public:
 
     void accept(ASTVisitor& visitor) override;
 
+    ExprNode* base();
+    ExprNode* expr();
+    
+    const CallInfo& callInfo() const;
+    void callInfo(const CallInfo& call_info);
+
 private:
 
-    ExprNode *base, *expr;
+    ASTExprNode base_;
+    ASTExprNode expr_;
 
     CallInfo call_info;
 };

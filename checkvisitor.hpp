@@ -50,8 +50,8 @@ private:
 
     void visitChildren(AST* node);
 
-    OverloadedFunctionSymbol* resolveFunction(const Scope* scope, std::string name);
-    ValueInfo valueOf(ExprNode* expr);
+    const OverloadedFunctionSymbol* resolveFunction(const Scope* scope, const std::string& name);
+    ValueInfo valueOf(const ExprNode* expr);
 
 private:
 

@@ -2,35 +2,28 @@
 #define _WHILENODE_HPP_
 
 #include <memory>
-
-#include "ast.hpp"
-
-class Scope;
-class ExprNode;
+#include "exprnode.hpp"
 
 class WhileNode : public AST
 {
-
-    friend class GenSSAVisitor;
-
 public:
 
-    WhileNode(ExprNode *cond, AST *stats);
-
-    AST* copyTree() const override;
-
+    WhileNode(ASTExprNode cond, ASTNode stats);
     void build_scope() override;
 
-    std::vector<AST*> getChildren() const override;
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
+
+    ExprNode* condition();
+    AST* body();
 
 private:
 
-    ExprNode *cond;
-    AST *stats;
+    ASTExprNode cond;
+    ASTNode stats;
 
     std::shared_ptr<Scope> while_scope;
 };

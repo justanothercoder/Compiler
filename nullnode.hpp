@@ -7,9 +7,7 @@ class NullNode : public ExprNode
 {
 public:
 
-    NullNode();
-
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
 
     std::string toString() const override;
 

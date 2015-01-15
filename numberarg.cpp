@@ -4,18 +4,11 @@
 #include "globaltable.hpp"
 #include "builtins.hpp"
 
-NumberArg::NumberArg(int _value) : _value(_value)
-{
+NumberArg::NumberArg(int _value) : _value(_value) { }
 
-}
-
-void NumberArg::gen(const Block& block, CodeObject& code_obj) const
-{
-    int num_id = block.table.const_num_id.at(_value);
-    code_obj.emit("lea rax, [iconst" + std::to_string(num_id) + "]");
-}
+void NumberArg::gen(const Block& block, CodeObject& code_obj) const { code_obj.emit("lea rax, [iconst" + std::to_string(block.numId(_value)) + "]"); }
 
 std::string NumberArg::toString() const { return std::to_string(_value); }
 
-const Type* NumberArg::type() const { return BuiltIns::int_type; } 
+const Type* NumberArg::type() const { return BuiltIns::int_type.get(); } 
 int NumberArg::value() const { return _value; }

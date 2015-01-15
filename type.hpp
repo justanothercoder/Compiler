@@ -3,6 +3,7 @@
 
 #include <string>
 #include <boost/optional.hpp>
+#include <memory>
 
 class Symbol;
 class FunctionSymbol;
@@ -26,8 +27,7 @@ public:
     virtual bool isReference() const;
     virtual bool isObjectType() const;
 
-    virtual FunctionSymbol* getConversionTo(const Type *type) const = 0;
-
+    virtual const FunctionSymbol* getConversionTo(const Type *type) const = 0;
     virtual const Type* removeRef() const;
 };
 

@@ -1,16 +1,15 @@
 #include "templatefunctionnode.hpp"
 #include "functionaltype.hpp"
 
-TemplateFunctionNode::TemplateFunctionNode(std::string name, std::vector<TemplateParamInfo> template_params) : name(name)
-                                                                                                             , function(nullptr)
-                                                                                                             , template_params(template_params)
+TemplateFunctionNode::TemplateFunctionNode(const std::string& name, std::vector<TemplateParamInfo> template_params) : name_(name)
+                                                                                                                    , template_params(template_params)
 {
 
 }
 
-AST* TemplateFunctionNode::copyTree() const { return new TemplateFunctionNode(name, template_params); }
+ASTNode TemplateFunctionNode::copyTree() const { return std::make_unique<TemplateFunctionNode>(name_, template_params); }
 
-VariableType TemplateFunctionNode::getType() const { return function; }
+VariableType TemplateFunctionNode::getType() const { return function_; }
 bool TemplateFunctionNode::isLeftValue() const { return false; }
 
 bool TemplateFunctionNode::isCompileTimeExpr() const { return false; }
@@ -18,7 +17,7 @@ boost::optional<int> TemplateFunctionNode::getCompileTimeValue() const { return 
 
 std::string TemplateFunctionNode::toString() const 
 {
-    std::string result = name;
+    auto result = name_;
     if ( !template_params.empty() )
     {
         result += "<";
@@ -43,3 +42,10 @@ std::string TemplateFunctionNode::toString() const
 }
 
 void TemplateFunctionNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
+    
+const std::string& TemplateFunctionNode::name() const { return name_; }
+
+const FunctionalType* TemplateFunctionNode::function() { return function_; }
+void TemplateFunctionNode::function(const FunctionalType* type) { function_ = type; }
+
+const std::vector<TemplateParamInfo>& TemplateFunctionNode::templateParams() const { return template_params; }

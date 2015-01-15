@@ -8,4 +8,4 @@ FunctionType::FunctionType(VariableType return_type, FunctionTypeInfo type_info)
 
 std::string FunctionType::getName() const { return return_type.getName() + type_info.toString(); } 
 VariableType FunctionType::returnType() const { return return_type; } 
-const FunctionTypeInfo& FunctionType::typeInfo() const { return type_info; }
+FunctionTypeInfo FunctionType::typeInfo() const { return type_info; }

@@ -26,15 +26,15 @@ void Optimizer::constantPropagation()
 {
     for ( auto& block : code.blocks )
     {
-        for ( auto it = std::begin(block -> code); it != std::end(block -> code); ++it )
+        for ( auto it = std::begin(block -> code()); it != std::end(block -> code()); ++it )
         {
             int command_id = *it;
-            auto& command = block -> commands[command_id];
+            auto command = block -> commandById(command_id);
     
             if ( auto com = dynamic_cast<BinaryOpCommand*>(command) )
             {
-                auto lhs = dynamic_cast<NumberArg*>(com -> lhs);
-                auto rhs = dynamic_cast<NumberArg*>(com -> rhs);
+                auto lhs = dynamic_cast<NumberArg*>(com -> lhs());
+                auto rhs = dynamic_cast<NumberArg*>(com -> rhs());
 
                 if ( lhs && rhs )
                 {
@@ -43,7 +43,7 @@ void Optimizer::constantPropagation()
 
                     int n3;
 
-                    switch ( com -> op )
+                    switch ( com -> op() )
                     {
                         case BinaryOp::PLUS : n3 = n1 + n2; break;
                         case BinaryOp::MINUS: n3 = n1 - n2; break;
@@ -57,24 +57,26 @@ void Optimizer::constantPropagation()
                     
                     auto it2 = it;
     
-                    SubstituteArgVisitor substitutor(std::bind([](Arg* arg1, Command* command, Arg* arg2) -> Arg* { 
-                        if ( auto temp = dynamic_cast<TemporaryArg*>(arg1) )
+                    auto num_arg = std::make_shared<NumberArg>(n3);
+
+                    SubstituteArgVisitor substitutor(std::bind([](const Argument& arg1, Command* command, const Argument& arg2) -> Argument { 
+                        if ( auto temp = dynamic_cast<const TemporaryArg*>(arg1.get()) )
                         {
-                            if ( temp -> command == command )
+                            if ( temp -> command() == command )
                                 return arg2;
                         }
-                        else if ( auto dot = dynamic_cast<DotArg*>(arg1) )
+                        else if ( auto dot = dynamic_cast<const DotArg*>(arg1.get()) )
                         {
-                            if ( dynamic_cast<TemporaryArg*>(dot -> expr) )
-                                return new DotArg(arg2, dot -> offset, dot -> member);
+                            if ( dynamic_cast<TemporaryArg*>(dot -> expr()) )
+                                return std::make_shared<DotArg>(arg2, dot -> offset(), dot -> member());
                         }
                         return arg1;
-                    }, std::placeholders::_1, com, new NumberArg(n3)));
+                    }, std::placeholders::_1, com, num_arg));
 
-                    for ( ++it2; it2 != std::end(block -> code); ++it2 )
+                    for ( ++it2; it2 != std::end(block -> code()); ++it2 )
                     {
                         int next_command_id = *it2;
-                        auto& next_command = block -> commands[next_command_id];
+                        auto next_command = block -> commandById(next_command_id);
 
                         next_command -> accept(&substitutor);
                     }
@@ -91,22 +93,16 @@ void Optimizer::eliminateUnusedTemporaries()
     {
         CheckForUseVisitor checker;
 
-        for ( auto command_id : block -> code )
+        for ( auto command_id : block -> code() )
         {
-            auto command = block -> commands[command_id];
+            auto command = block -> commandById(command_id);
             command -> accept(&checker);
         }
 
-        for ( auto it = std::begin(block -> code); it != std::end(block -> code); )
+        std::remove_if(std::begin(block -> code()), std::end(block -> code()), [&] (int command_id) 
         {
-            int  command_id = *it;
-            auto command    = block -> commands[command_id];
-
-            if ( !checker.isUsed(command) )
-                it = block -> code.erase(it);
-            else
-                ++it;
-        }
+            return !checker.isUsed(block -> commandById(command_id));
+        });
     }
     
 }

@@ -1,21 +1,19 @@
 #ifndef _ADDRNODE_HPP_
 #define _ADDRNODE_HPP_
 
+#include <memory>
 #include "exprnode.hpp"
 
 enum class AddrOp { REF, DEREF };
 
 class AddrNode : public ExprNode
 {
-
-    friend class GenSSAVisitor;
-    friend class CheckVisitor;
-
 public:
 
-    AddrNode(ExprNode* expr, AddrOp op);
+    AddrNode(ASTExprNode expr, AddrOp op);
 
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
     VariableType getType() const override;
     bool isLeftValue() const override;
@@ -23,16 +21,16 @@ public:
     bool isCompileTimeExpr() const override;
     boost::optional<int> getCompileTimeValue() const override;
 
-    std::vector<AST*> getChildren() const override;
-
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
+
+    ExprNode* expr();
+    AddrOp op() const;
 
 private:
 
-    ExprNode *expr;
-    AddrOp op;
+    ASTExprNode expr_;
+    AddrOp op_;
 };
 
 #endif

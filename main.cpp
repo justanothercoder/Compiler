@@ -47,7 +47,7 @@ int main(int argc, char** argv)
     {
         BuiltIns::defineBuiltIns();
 
-        std::shared_ptr<AST> root(FileHelper::parse(filename));
+        auto root = FileHelper::parse(filename);
 
         root -> scope = BuiltIns::global_scope;
         root -> build_scope();
@@ -57,12 +57,12 @@ int main(int argc, char** argv)
        
         DefineVisitor define_visitor;
         root -> accept(define_visitor);
-
+    
         CheckVisitor check_visitor;
         root -> accept(check_visitor);
 
-//        InlineCallVisitor inline_call_visitor;
-//        root -> accept(inline_call_visitor);
+        InlineCallVisitor inline_call_visitor;
+        root -> accept(inline_call_visitor);
 
         GenSSAVisitor visitor(Comp::code);
         root -> accept(visitor);
@@ -98,8 +98,6 @@ int main(int argc, char** argv)
     {
         return 1;
     }
-
-    delete BuiltIns::global_scope;
 
     return 0;
 }

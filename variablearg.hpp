@@ -9,15 +9,18 @@ class VariableArg : public Arg
 {
 public:
 
-    VariableArg(VariableSymbol* var);
+    VariableArg(const VariableSymbol* var);
     
     std::string toString() const override;
     void gen(const Block& block, CodeObject& code_obj) const override;
 
     const Type* type() const override;
 
-    VariableSymbol* var;
+    const VariableSymbol* var() const;
 
+private:
+
+    const VariableSymbol* var_;
 };
 
 #endif

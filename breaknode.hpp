@@ -7,9 +7,7 @@ class BreakNode : public AST
 {
 public:
 
-    BreakNode();
-    
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
     std::string toString() const override;
     void accept(ASTVisitor& visitor) override;
 };

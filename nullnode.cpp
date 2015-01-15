@@ -3,12 +3,10 @@
 #include "typefactory.hpp"
 #include "builtins.hpp"
 
-NullNode::NullNode() { }
-
-AST* NullNode::copyTree() const { return new NullNode(); }
+ASTNode NullNode::copyTree() const { return std::make_unique<NullNode>(); }
 
 std::string NullNode::toString() const { return "null"; }
-VariableType NullNode::getType() const { return VariableType(TypeFactory::getPointer(BuiltIns::void_type), true); }
+VariableType NullNode::getType() const { return VariableType(TypeFactory::getPointer(BuiltIns::void_type.get()), true); }
 
 bool NullNode::isLeftValue() const       { return false; } 
 bool NullNode::isCompileTimeExpr() const { return false; }

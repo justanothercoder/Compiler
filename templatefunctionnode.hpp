@@ -8,19 +8,11 @@ class FunctionalType;
 
 class TemplateFunctionNode : public ExprNode
 {
-
-    friend class TemplateStructSymbol;
-    friend class Scope;
-
-    friend class MarkReturnAsInlineVisitor;
-    friend class GenSSAVisitor;
-    friend class CheckVisitor;
-
 public:
 
-    TemplateFunctionNode(std::string name, std::vector<TemplateParamInfo> template_params);
+    TemplateFunctionNode(const std::string& name, std::vector<TemplateParamInfo> template_params);
 
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
 
     VariableType getType() const override;
     bool isLeftValue() const override;
@@ -32,9 +24,17 @@ public:
 
     void accept(ASTVisitor& visitor) override;
 
+    const std::string& name() const;
 
-    std::string name;    
-    FunctionalType *function;
+    const FunctionalType* function();
+    void function(const FunctionalType* type);
+
+    const std::vector<TemplateParamInfo>& templateParams() const;
+
+private:
+
+    std::string name_;    
+    const FunctionalType* function_ = nullptr;
     std::vector<TemplateParamInfo> template_params;
 };
 

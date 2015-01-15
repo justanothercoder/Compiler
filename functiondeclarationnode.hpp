@@ -18,36 +18,52 @@ public:
 
     FunctionDeclarationNode(std::string name
                             , FunctionDeclarationInfo info
-                            , AST *statements
+                            , ASTNode statements
                             , FunctionTraits traits
                             , bool is_unsafe = false
                             , boost::optional<TemplateInfo> template_info = boost::none);
 
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
     void build_scope() override;
-
-    Symbol* getDefinedSymbol() const override;
-
-    std::vector<AST*> getChildren() const override;
+    const Symbol* getDefinedSymbol() const override;
 
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
 
-    std::string name;
-    FunctionDeclarationInfo info;
-    AST *statements;
+    AST* body();
+    const std::vector< std::shared_ptr<VariableSymbol> >& paramsSymbols() const;
 
-    FunctionTraits traits;
+    FunctionScope* functionScope() const;
+    const FunctionTraits& traits() const;
 
-    FunctionSymbol *definedSymbol;
-    FunctionScope *func_scope;
+    const std::string& name() const;
 
-    std::vector<VariableSymbol*> params_symbols;
+    FunctionDeclarationInfo& info();
+    const FunctionDeclarationInfo& info() const;
+
+    void addParamSymbol(std::shared_ptr<VariableSymbol> var);
+    void setDefinedSymbol(std::shared_ptr<const FunctionSymbol> symbol);
+
+    bool isUnsafe() const;
+
+    boost::optional<TemplateInfo> template_info;
+
+private:
+
+    std::string name_;
+    FunctionDeclarationInfo info_;
+    ASTNode statements;
+
+    FunctionTraits traits_;
+    
+    std::shared_ptr<const FunctionSymbol> defined_symbol;
+    std::shared_ptr<FunctionScope> func_scope;
+
+    std::vector< std::shared_ptr<VariableSymbol> > params_symbols;
 
     bool is_unsafe;
-    boost::optional<TemplateInfo> template_info;
 };
 
 #endif

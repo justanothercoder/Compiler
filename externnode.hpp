@@ -16,19 +16,26 @@ class ExternNode : public DeclarationNode
 {
 public:
 
-    ExternNode(std::string name, FunctionDeclarationInfo info, bool is_unsafe);
+    ExternNode(const std::string& name, FunctionDeclarationInfo info, bool is_unsafe);
 
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
     std::string toString() const override;
     void accept(ASTVisitor& visitor) override;
 
-    Symbol* getDefinedSymbol() const;
+    const Symbol* getDefinedSymbol() const;
+    void setDefinedSymbol(std::shared_ptr<const FunctionSymbol> symbol);
 
-    std::string name;
-    FunctionDeclarationInfo info;
+    const std::string& name() const;
+    const FunctionDeclarationInfo& info() const;
+    bool isUnsafe() const;
+
+private:
+
+    std::string name_;
+    FunctionDeclarationInfo info_;
     bool is_unsafe;
 
-    FunctionSymbol* definedSymbol;
+    std::shared_ptr<const FunctionSymbol> defined_symbol = nullptr;
 };
 
 #endif

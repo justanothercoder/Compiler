@@ -4,13 +4,15 @@
 #include "globalconfig.hpp"
 #include "comp.hpp"
 
-FunctionSymbol::FunctionSymbol(std::string name, FunctionType _type, FunctionScope *scope, FunctionTraits traits) : is_constexpr(false)
-                                                                                                                  , is_used     (false)
-                                                                                                                  , function_decl(nullptr)
-                                                                                                                  , name        (name)
-                                                                                                                  , traits      (traits)
-                                                                                                                  , _type       (_type)
-                                                                                                                  , scope       (scope)
+#include "logger.hpp"
+
+FunctionSymbol::FunctionSymbol(const std::string& name
+                             , FunctionType _type
+                             , FunctionScope* scope
+                             , FunctionTraits traits) : name        (name)
+                                                      , traits      (traits)
+                                                      , _type       (_type)
+                                                      , scope       (scope)
 {
 
 }
@@ -29,9 +31,9 @@ std::string FunctionSymbol::getScopedTypedName() const
 {
     auto res = scope -> getScopeName(); 
 
-    auto& pt = _type.typeInfo().params();
+    auto pt = _type.typeInfo().params();
 
-    for ( auto param_type : pt )
+    for ( auto param_type : pt ) 
         res += "_" + param_type.getName();
 
     return res;
@@ -48,6 +50,4 @@ std::string FunctionSymbol::getName() const { return name; }
 FunctionType FunctionSymbol::type() const { return _type; } 
 Scope* FunctionSymbol::getScope() const { return scope; }
 
-ScopeVisitor& FunctionSymbol::getScopeVisitor() { return *(new FunctionSymbolDefine(this)); }
-
-  
+std::unique_ptr<DefineSymbolVisitor> FunctionSymbol::defineSymbolVisitor() const { return std::make_unique<FunctionSymbolDefine>(); }

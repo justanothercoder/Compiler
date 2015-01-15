@@ -2,6 +2,7 @@
 #define _ARG_HPP_
 
 #include <string>
+#include <memory>
 
 class Type;
 struct Block;
@@ -15,5 +16,7 @@ public:
 
     virtual const Type* type() const = 0;
 };
+
+using Argument = std::shared_ptr<Arg>;
 
 #endif

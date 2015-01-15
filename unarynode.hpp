@@ -4,23 +4,16 @@
 #include "exprnode.hpp"
 #include "callinfo.hpp"
 
-enum class UnaryOp
-{
-    PLUS, MINUS, NOT
-};
+enum class UnaryOp { PLUS, MINUS, NOT };
 
 class UnaryNode : public ExprNode
 {
-
-    friend class GenSSAVisitor;
-    friend class CheckVisitor;
-
 public:
 
-    UnaryNode(ExprNode *exp, UnaryOp op_type);
+    UnaryNode(ASTExprNode expr, UnaryOp op_type);
 
-    std::vector<AST*> getChildren() const override;
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
     std::string getOperatorName();
     std::string getCodeOperatorName();
@@ -32,12 +25,16 @@ public:
     boost::optional<int> getCompileTimeValue() const override;
 
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
+
+    ExprNode* expr();
+
+    const CallInfo& callInfo() const;
+    void callInfo(const CallInfo& call_info);
 
 private:
 
-    ExprNode *exp;
+    ASTExprNode expr_;
     UnaryOp op_type;
     CallInfo call_info;
 };

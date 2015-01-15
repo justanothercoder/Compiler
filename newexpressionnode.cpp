@@ -2,12 +2,12 @@
 #include "functionsymbol.hpp"
 #include "structsymbol.hpp"
 
-NewExpressionNode::NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params) : type_info(type_info), params(params) { }
+NewExpressionNode::NewExpressionNode(TypeInfo type_info, std::vector<ASTExprNode> params) : type_info(type_info), params_(std::move(params)) { }
 
 void NewExpressionNode::build_scope()
 {
     AST::build_scope();
-    for ( auto param : type_info.template_params )
+    for ( auto param : type_info.templateParams() )
     {
         if ( param.which() == 0 )
         {
@@ -17,16 +17,24 @@ void NewExpressionNode::build_scope()
     }
 }
 
-AST* NewExpressionNode::copyTree() const
+ASTNode NewExpressionNode::copyTree() const
 {
-    std::vector<ExprNode*> vec;
-    for ( auto param : params )
-        vec.push_back(static_cast<ExprNode*>(param -> copyTree()));
+    auto vec = std::vector<ASTExprNode>{ };
+    for ( const auto& param : params_ )
+        vec.push_back(ASTExprNode(static_cast<ExprNode*>(param -> copyTree().release())));
 
-    return new NewExpressionNode(type_info, vec);
+    return std::make_unique<NewExpressionNode>(type_info, std::move(vec));
 }
 
-std::vector<AST*> NewExpressionNode::getChildren() const { return std::vector<AST*>(std::begin(params), std::end(params)); }
+ASTChildren NewExpressionNode::getChildren() const 
+{
+    auto children = ASTChildren{ };
+
+    for ( const auto& param : params_ )
+        children.push_back(param.get());
+
+    return children;
+}
 
 VariableType NewExpressionNode::getType() const { return VariableType(call_info.callee -> type().returnType().unqualified(), false); }
 
@@ -36,16 +44,15 @@ boost::optional<int> NewExpressionNode::getCompileTimeValue() const { return boo
 
 std::string NewExpressionNode::toString() const
 {
-    std::string res = "new " + type_info.toString();
-
+    auto res = "new " + type_info.toString();
     res += "(";
 
-    if ( !params.empty() )
+    if ( !params_.empty() )
     {
-        auto it = std::begin(params);
+        auto it = std::begin(params_);
         res += (*it) -> toString();
 
-        for ( ++it; it != std::end(params); ++it )
+        for ( ++it; it != std::end(params_); ++it )
             res += ", " + (*it) -> toString();
 
     }
@@ -55,3 +62,11 @@ std::string NewExpressionNode::toString() const
 }
 
 void NewExpressionNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
+
+const TypeInfo& NewExpressionNode::typeInfo() const { return type_info; }
+void NewExpressionNode::typeInfo(const TypeInfo& type_info) { this -> type_info = type_info; }
+
+const std::vector<ASTExprNode>& NewExpressionNode::params() const { return params_; }
+
+const CallInfo& NewExpressionNode::callInfo() const { return call_info; }
+void NewExpressionNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }

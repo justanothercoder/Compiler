@@ -1,25 +1,26 @@
 #ifndef _UNSAFEBLOCKNODE_HPP_
 #define _UNSAFEBLOCKNODE_HPP_
 
-#include "statementnode.hpp"
+#include "ast.hpp"
 
 class UnsafeBlockNode : public AST
 {
 public:
 
-    UnsafeBlockNode(StatementNode *block);
-
-    AST* copyTree() const override;
-
+    UnsafeBlockNode(ASTNode block);
+    
+    void accept(ASTVisitor& visitor) override;
     void build_scope() override;
-
-    std::vector<AST*> getChildren() const override;
+    
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
     std::string toString() const override;
 
-    void accept(ASTVisitor& visitor) override;
+    AST* block();
 
-    StatementNode *block;
+private:
+    ASTNode block_;
 };
 
 #endif

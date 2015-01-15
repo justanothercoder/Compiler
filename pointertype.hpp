@@ -18,8 +18,7 @@ public:
 
     bool isReference() const override;
 
-    FunctionSymbol* getConversionTo(const Type *t) const override;
-
+    const FunctionSymbol* getConversionTo(const Type *t) const override;
     const Type* pointedType() const;
 
 private:

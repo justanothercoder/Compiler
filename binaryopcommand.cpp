@@ -7,19 +7,16 @@
 #include "globalconfig.hpp"
 #include "comp.hpp"
 
-BinaryOpCommand::BinaryOpCommand(BinaryOp op, Arg* lhs, Arg* rhs) : op(op), lhs(lhs), rhs(rhs)
-{
-
-}
+BinaryOpCommand::BinaryOpCommand(BinaryOp op, Argument lhs, Argument rhs) : op_(op), lhs_(lhs), rhs_(rhs) { }
 
 void BinaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
 {
-    rhs -> gen(block, code_obj);
+    rhs_ -> gen(block, code_obj);
 
-    if ( rhs -> type() -> isReference() )
+    if ( rhs_ -> type() -> isReference() )
         code_obj.emit("mov rax, [rax]");
 
-    if ( rhs -> type() -> removeRef() == BuiltIns::char_type )
+    if ( rhs_ -> type() -> removeRef() == BuiltIns::char_type.get() )
     {
         code_obj.emit("mov qword [rsp], 0");
         code_obj.emit("mov bl, byte [rax]");
@@ -29,19 +26,19 @@ void BinaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
     else
         code_obj.emit("push qword [rax]");
 
-    lhs -> gen(block, code_obj);
+    lhs_ -> gen(block, code_obj);
     
-    if ( lhs -> type() -> isReference() )
+    if ( lhs_ -> type() -> isReference() )
         code_obj.emit("mov rax, [rax]");
 
     code_obj.emit("pop rbx");
 
-    if ( lhs -> type() -> removeRef() == BuiltIns::char_type )
+    if ( lhs_ -> type() -> removeRef() == BuiltIns::char_type.get() )
         code_obj.emit("mov rax, byte [rax]");
     else
         code_obj.emit("mov rax, [rax]");
     
-    switch ( op )
+    switch ( op_ )
     {
         case BinaryOp::PLUS   : code_obj.emit("add rax, rbx"); break;
         case BinaryOp::MINUS  : code_obj.emit("sub rax, rbx"); break;
@@ -66,26 +63,31 @@ void BinaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
            throw std::logic_error("internal error.");
     }
                             
-    code_obj.emit("mov [rbp - " + std::to_string(block.alloc.addressOf(this)) + "], rax");
+    code_obj.emit("mov [rbp - " + std::to_string(block.addressOf(this)) + "], rax");
 }
 
 std::string BinaryOpCommand::toString() const
 {
-    switch ( op )
+    switch ( op_ )
     {
-        case BinaryOp::PLUS   : return lhs -> toString() + " + "  + rhs -> toString();
-        case BinaryOp::MINUS  : return lhs -> toString() + " - "  + rhs -> toString();
-        case BinaryOp::MUL    : return lhs -> toString() + " * "  + rhs -> toString();
-        case BinaryOp::DIV    : return lhs -> toString() + " / "  + rhs -> toString();
-        case BinaryOp::MOD    : return lhs -> toString() + " % "  + rhs -> toString();
-        case BinaryOp::EQUALS : return lhs -> toString() + " == " + rhs -> toString();
-        case BinaryOp::NEQUALS: return lhs -> toString() + " != " + rhs -> toString();
-        case BinaryOp::AND    : return lhs -> toString() + " && " + rhs -> toString();
+        case BinaryOp::PLUS   : return lhs_ -> toString() + " + "  + rhs_ -> toString();
+        case BinaryOp::MINUS  : return lhs_ -> toString() + " - "  + rhs_ -> toString();
+        case BinaryOp::MUL    : return lhs_ -> toString() + " * "  + rhs_ -> toString();
+        case BinaryOp::DIV    : return lhs_ -> toString() + " / "  + rhs_ -> toString();
+        case BinaryOp::MOD    : return lhs_ -> toString() + " % "  + rhs_ -> toString();
+        case BinaryOp::EQUALS : return lhs_ -> toString() + " == " + rhs_ -> toString();
+        case BinaryOp::NEQUALS: return lhs_ -> toString() + " != " + rhs_ -> toString();
+        case BinaryOp::AND    : return lhs_ -> toString() + " && " + rhs_ -> toString();
         default: throw std::logic_error("internal error.");
     }
 }
 
 bool BinaryOpCommand::isExpr() const { return true; }
-const Type* BinaryOpCommand::type() const { return BuiltIns::int_type; }
+const Type* BinaryOpCommand::type() const { return BuiltIns::int_type.get(); }
 
 void BinaryOpCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }
+    
+Arg* BinaryOpCommand::lhs() { return lhs_.get(); }
+Arg* BinaryOpCommand::rhs() { return rhs_.get(); }
+
+BinaryOp BinaryOpCommand::op() { return op_; }

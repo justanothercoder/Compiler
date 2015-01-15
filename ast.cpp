@@ -1,20 +1,16 @@
 #include "ast.hpp"
 
-AST::~AST()
-{
-    for ( auto child : getChildren() )
-        delete child;
-}
+AST::~AST() { } 
 
 void AST::build_scope()
 {
-    std::vector<AST*> children = getChildren();
+    auto children = getChildren();
 
-    for ( auto child : children )
+    for ( const auto& child : children )
     {
         child -> scope = scope;
         child -> build_scope();
     }
 }
 
-std::vector<AST*> AST::getChildren() const { return { }; }
+ASTChildren AST::getChildren() const { return { }; }

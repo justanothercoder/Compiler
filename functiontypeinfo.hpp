@@ -21,7 +21,7 @@ public:
 
     int rankOfConversion(const FunctionTypeInfo& info) const;
 
-    const std::vector<VariableType>& params() const;
+    std::vector<VariableType> params() const;
     VariableType paramAt(int k) const;
 
 private:

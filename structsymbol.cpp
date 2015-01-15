@@ -4,14 +4,14 @@
 #include "comp.hpp"
 #include "globalconfig.hpp"
 
-StructSymbol::StructSymbol(std::string name
-                           , Scope *enclosing_scope
-                           , const TemplateInfo& template_info) : StructScope(name, enclosing_scope, template_info), name(name)
+StructSymbol::StructSymbol(const std::string& name
+                         , Scope* enclosing_scope
+                         , const TemplateInfo& template_info) : StructScope(name, enclosing_scope, template_info), name(name)
 {
 
 }
 
-bool StructSymbol::isConvertableTo(const Type *type) const
+bool StructSymbol::isConvertableTo(const Type* type) const
 {
     type = type -> removeRef();
 
@@ -23,7 +23,7 @@ bool StructSymbol::isConvertableTo(const Type *type) const
     return this == st || this -> hasConversionOperator(st) || st -> hasConversionConstructor(this);
 }
 
-FunctionSymbol* StructSymbol::getConversionConstructor(const StructSymbol *st) const
+const FunctionSymbol* StructSymbol::getConversionConstructor(const StructSymbol *st) const
 {
     auto ref_this     = VariableType(TypeFactory::getReference(this), false);
     auto ref_st       = VariableType(TypeFactory::getReference(st), false);
@@ -39,12 +39,12 @@ FunctionSymbol* StructSymbol::getConversionConstructor(const StructSymbol *st) c
     return constr_ref ? constr_ref : constructorWith({ref_this, st});
 }
 
-FunctionSymbol* StructSymbol::getConversionOperator(const StructSymbol *st) const
+const FunctionSymbol* StructSymbol::getConversionOperator(const StructSymbol *st) const
 {
     return methodWith("operator " + st -> getName(), {TypeFactory::getReference(this)});
 }
 
-FunctionSymbol* StructSymbol::getConversionTo(const Type *type) const
+const FunctionSymbol* StructSymbol::getConversionTo(const Type* type) const
 {
     type = type -> removeRef();
 
@@ -60,7 +60,7 @@ FunctionSymbol* StructSymbol::getConversionTo(const Type *type) const
     return conv_constr;
 }
 
-FunctionSymbol* StructSymbol::getCopyConstructor() const
+const FunctionSymbol* StructSymbol::getCopyConstructor() const
 {
     auto ref_this       = VariableType(TypeFactory::getReference(this), false);
     auto const_ref_this = VariableType(TypeFactory::getReference(this), true);
@@ -80,35 +80,38 @@ boost::optional<int> StructSymbol::rankOfConversion(const Type *type) const
     return (this == st) ? 0 : 3;
 }
 
-FunctionSymbol* StructSymbol::methodWith(std::string name, FunctionTypeInfo ft) const
+const FunctionSymbol* StructSymbol::methodWith(const std::string& name, FunctionTypeInfo ft) const
 {
     auto member = resolveMember(name);
     if ( member == nullptr || member -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
         return nullptr;
 
     auto func = dynamic_cast<const OverloadedFunctionSymbol*>(member);
-    auto info = func -> getTypeInfo();
+    const auto& info = func -> getTypeInfo();
 
     auto it = info.symbols.find(ft);
-    return it == std::end(info.symbols) ? nullptr : it -> second;
+    return it == std::end(info.symbols) ? nullptr : static_cast<const FunctionSymbol*>(it -> second.get());
 }
 
 void StructSymbol::defineBuiltInMethod(std::string name, FunctionType type)
 {
-    std::string scope_name = getScopeName() + "_" + name;
-    define(new FunctionSymbol(name, type , new FunctionScope(scope_name, this, false) , FunctionTraits::method()));
+    auto scope_name = getScopeName() + "_" + name;
+    auto scope = new FunctionScope(scope_name, this, false);
+    define(std::make_shared<const FunctionSymbol>(name, type, scope, FunctionTraits::method()));
 }
 
 void StructSymbol::defineBuiltInOperator(std::string name, FunctionType type)
 {
-    std::string scope_name = getScopeName() + "_" + Comp::config().getCodeOperatorName(name);
-    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::methodOper()));
+    auto scope_name = getScopeName() + "_" + Comp::config().getCodeOperatorName(name);
+    auto scope = new FunctionScope(scope_name, this, false);
+    define(std::make_shared<const FunctionSymbol>(name, type, scope, FunctionTraits::methodOper()));
 }
 
 void StructSymbol::defineBuiltInConstructor(FunctionType type)
 {
-    std::string scope_name = getScopeName() + "_" + name;
-    define(new FunctionSymbol(name, type, new FunctionScope(scope_name, this, false), FunctionTraits::constructor()));
+    auto scope_name = getScopeName() + "_" + name;
+    auto scope = new FunctionScope(scope_name, this, false);
+    define(std::make_shared<const FunctionSymbol>(name, type, scope, FunctionTraits::constructor()));
 }
 
 SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }
@@ -122,13 +125,13 @@ bool StructSymbol::isUnsafeBlock() const { return is_unsafe; }
 bool StructSymbol::hasConversionConstructor(const StructSymbol *st) const { return getConversionConstructor(st) != nullptr; }
 bool StructSymbol::hasConversionOperator(const StructSymbol *st) const { return getConversionOperator(st) != nullptr; }
 
-FunctionSymbol* StructSymbol::getDefaultConstructor() const { return constructorWith({TypeFactory::getReference(this)}); }
-FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft) const { return methodWith(getName(), ft); }
+const FunctionSymbol* StructSymbol::getDefaultConstructor() const { return constructorWith({TypeFactory::getReference(this)}); }
+const FunctionSymbol* StructSymbol::constructorWith(FunctionTypeInfo ft) const { return methodWith(getName(), ft); }
 
-Symbol* StructSymbol::resolveMember(std::string name) const { return resolveHere(name); }
-FunctionalType* StructSymbol::resolveMethod(std::string name) const { return static_cast<OverloadedFunctionSymbol*>(resolveMember(name)); }
+const Symbol* StructSymbol::resolveMember(const std::string& name) const { return resolveHere(name); }
+const FunctionalType* StructSymbol::resolveMethod(const std::string& name) const { return static_cast<const OverloadedFunctionSymbol*>(resolveMember(name)); }
 
-int StructSymbol::offsetOf(VariableSymbol* member) const
+int StructSymbol::offsetOf(const VariableSymbol* member) const
 {
     int offset = 0;
 
@@ -136,10 +139,10 @@ int StructSymbol::offsetOf(VariableSymbol* member) const
     {
         if ( entry.second -> getSymbolType() == SymbolType::VARIABLE )
         {
-            if ( entry.second == member )
+            if ( entry.second.get() == member )
                 return offset;
             else
-                offset += static_cast<VariableSymbol*>(entry.second) -> getType().sizeOf();
+                offset += static_cast<const VariableSymbol*>(entry.second.get()) -> getType().sizeOf();
         }
     }
 

@@ -7,9 +7,9 @@ class StringNode : public ExprNode
 {
 public:
 
-    StringNode(std::string str);
+    StringNode(const std::string& str);
 
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
 
     std::string getStr() const;
 
@@ -20,8 +20,9 @@ public:
     boost::optional<int> getCompileTimeValue() const override;
 
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
+
+private:
 
     std::string str;
 };

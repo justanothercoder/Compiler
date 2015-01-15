@@ -2,11 +2,11 @@
 #define _SYMBOL_HPP_
 
 #include <string>
-
+#include <memory>
 #include "semanticerror.hpp"
 
 class Scope;
-class ScopeVisitor;
+class DefineSymbolVisitor;
 
 enum class SymbolType { FUNCTION, OVERLOADED_FUNCTION, VARIABLE, STRUCT, BUILTINTYPE, TEMPLATESTRUCT, CLASSVARIABLE, MODULE, TEMPLATEFUNCTION };
 
@@ -18,7 +18,7 @@ public:
     virtual std::string getName() const = 0;
     virtual SymbolType getSymbolType() const = 0;
 
-    virtual ScopeVisitor& getScopeVisitor();
+    virtual std::unique_ptr<DefineSymbolVisitor> defineSymbolVisitor() const;
 
     bool is_unsafe;
 };

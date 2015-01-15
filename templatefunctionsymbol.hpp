@@ -15,7 +15,7 @@ class TemplateFunctionSymbol : public TemplateSymbol
 {
 public:
 
-    TemplateFunctionSymbol(std::string name, TemplateParamsList template_symbols, TemplateDeclarationNode* _holder);
+    TemplateFunctionSymbol(const std::string& name, TemplateParamsList template_symbols, TemplateDeclarationNode* _holder);
 
     std::string getName() const override;
     SymbolType getSymbolType() const override;
@@ -23,7 +23,7 @@ public:
     TemplateDeclarationNode* holder() const override;
     TemplateParamsList templateSymbols() const override;
 
-    ScopeVisitor& getScopeVisitor() override;
+    std::unique_ptr<DefineSymbolVisitor> defineSymbolVisitor() const override;
 
 private:
 

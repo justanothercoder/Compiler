@@ -17,11 +17,11 @@ public:
 
     ~BaseScope() override;
 
-    Symbol* resolve(std::string name) const override;
-    Symbol* resolveHere(std::string name) const override;
+    const Symbol* resolve(std::string name) const override;
+    const Symbol* resolveHere(std::string name) const override;
 
 public:
-    std::map<std::string, Symbol*> table;
+    std::map<std::string, std::shared_ptr<const Symbol> > table;
 };
 
 #endif

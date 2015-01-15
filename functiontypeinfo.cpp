@@ -2,15 +2,8 @@
 #include "structsymbol.hpp"
 #include "logger.hpp"
 
-FunctionTypeInfo::FunctionTypeInfo(std::vector<VariableType> params_types) : params_types(params_types)
-{
-
-}
-
-FunctionTypeInfo::FunctionTypeInfo(std::initializer_list<VariableType> init_list) : params_types(init_list)
-{
-
-}
+FunctionTypeInfo::FunctionTypeInfo(std::vector<VariableType>           params_types) : params_types(params_types) { } 
+FunctionTypeInfo::FunctionTypeInfo(std::initializer_list<VariableType> init_list   ) : params_types(init_list)    { }
 
 bool operator<(const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs) { return lhs.hash_func() < rhs.hash_func(); }
 
@@ -85,5 +78,5 @@ int FunctionTypeInfo::rankOfConversion(const FunctionTypeInfo& info) const
     return rank;
 }
 
-const std::vector<VariableType>& FunctionTypeInfo::params() const { return params_types; }
+std::vector<VariableType> FunctionTypeInfo::params() const { return params_types; }
 VariableType FunctionTypeInfo::paramAt(int k) const { return params_types.at(k); }

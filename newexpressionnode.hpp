@@ -11,18 +11,13 @@
 
 class NewExpressionNode : public ExprNode
 {
-
-    friend class GenSSAVisitor;
-    friend class CheckVisitor;
-    friend class ExpandTemplatesVisitor;
-
 public:
-    NewExpressionNode(TypeInfo type_info, std::vector<ExprNode*> params);
+    NewExpressionNode(TypeInfo type_info, std::vector<ASTExprNode> params);
 
     void build_scope() override;
 
-    std::vector<AST*> getChildren() const override;
-    AST* copyTree() const override;
+    ASTChildren getChildren() const override;
+    ASTNode copyTree() const override;
 
     VariableType getType() const override;
     bool isLeftValue() const override;
@@ -31,13 +26,20 @@ public:
     boost::optional<int> getCompileTimeValue() const override;
 
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
+
+    const TypeInfo& typeInfo() const;
+    void typeInfo(const TypeInfo& type_info);
+
+    const std::vector<ASTExprNode>& params() const;
+
+    const CallInfo& callInfo() const;
+    void callInfo(const CallInfo& call_info);
 
 private:
 
     TypeInfo type_info;
-    std::vector<ExprNode*> params;
+    std::vector<ASTExprNode> params_;
     CallInfo call_info;
 };
 

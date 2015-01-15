@@ -13,7 +13,7 @@ size_t ArrayType::sizeOf() const { return type -> sizeOf() * size; }
 
 TypeKind ArrayType::getTypeKind() const { return TypeKind::ARRAY; }
 
-FunctionSymbol* ArrayType::getConversionTo(const Type *) const { return nullptr; }
+const FunctionSymbol* ArrayType::getConversionTo(const Type *) const { return nullptr; }
 bool ArrayType::isConvertableTo(const Type *t) const { return (this == t -> removeRef()); }
 
 boost::optional<int> ArrayType::rankOfConversion(const Type *t) const
@@ -26,4 +26,5 @@ boost::optional<int> ArrayType::rankOfConversion(const Type *t) const
 
 bool ArrayType::isReference() const { return false; }
 
-const Type* ArrayType::getPointedType() const { return type; }
+const Type* ArrayType::pointedType() const { return type; }
+int ArrayType::sizeOfArray() const { return size; }

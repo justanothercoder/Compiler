@@ -1,16 +1,17 @@
 #ifndef _FUNCTIONSYMBOLDEFINE_HPP_
 #define _FUNCTIONSYMBOLDEFINE_HPP_
 
-#include "scopevisitor.hpp"
+#include <memory>
+#include "definesymbolvisitor.hpp"
 
 class BaseScope;
 class FunctionSymbol;
 
-class FunctionSymbolDefine : public ScopeVisitor
+class FunctionSymbolDefine : public DefineSymbolVisitor
 {
 public:
 
-    FunctionSymbolDefine(FunctionSymbol *sym);
+    void setSymbol(std::shared_ptr<const Symbol> sym) override;
 
     void visit(GlobalScope*   sc) override;
     void visit(LocalScope*    sc) override;
@@ -21,7 +22,7 @@ public:
     void visit(BaseScope* sc);
 
 private:
-    FunctionSymbol* sym;
+    std::shared_ptr<const Symbol> sym;
 };
 
 #endif

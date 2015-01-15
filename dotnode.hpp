@@ -9,17 +9,12 @@ class VariableSymbol;
 
 class DotNode : public ExprNode
 {
-
-    friend class GenSSAVisitor;
-    friend class CheckVisitor;
-    friend class ExpandTemplatesVisitor;
-
 public:
 
-    DotNode(ExprNode *base, std::string member_name);
+    DotNode(ASTExprNode base, const std::string& member_name);
 
-    std::vector<AST*> getChildren() const override;
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
     VariableType getType() const override;
     bool isLeftValue() const override;
@@ -31,14 +26,23 @@ public:
 
     void accept(ASTVisitor& visitor) override;
 
+    ExprNode* base();
+    
+    const Symbol* member() const;
+    void member(const Symbol* sym);
+
+    const std::string& memberName() const;
+
+    const ObjectType* baseType() const;
+    void baseType(const ObjectType* tp);
+
 private:
 
-    ExprNode *base;
-
+    ASTExprNode base_;
     std::string member_name;
 
-    const ObjectType* base_type;
-    Symbol* member;
+    const ObjectType* base_type     = nullptr;
+    const Symbol* member_ = nullptr;
 };
 
 #endif

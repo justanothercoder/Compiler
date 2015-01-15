@@ -9,30 +9,27 @@
 #include "typefactory.hpp"
 #include "commandvisitor.hpp"
     
-UnaryOpCommand::UnaryOpCommand(AddrOp op, Arg* expr) : op(op), expr(expr) { } 
-UnaryOpCommand::UnaryOpCommand(UnaryOp op, Arg* expr) : op(op), expr(expr) { }
+UnaryOpCommand::UnaryOpCommand(AddrOp  op, Argument expr) : op_(op), expr_(expr) { } 
+UnaryOpCommand::UnaryOpCommand(UnaryOp op, Argument expr) : op_(op), expr_(expr) { }
 
 void UnaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
 {
-    if ( op.which() == 0 )
+    if ( op_.which() == 0 )
     {
-        if ( boost::get<AddrOp>(op) == AddrOp::DEREF )
+        if ( boost::get<AddrOp>(op_) == AddrOp::DEREF )
         {
-            expr -> gen(block, code_obj);
+            expr_ -> gen(block, code_obj);
 
-            //if ( expr -> getType() -> isReference() )
-            //  code_obj.emit("mov rax, [rax]");
-            
-            auto addr = "[rbp - " + std::to_string(block.alloc.addressOf(this)) + "]";
+            auto addr = "[rbp - " + std::to_string(block.addressOf(this)) + "]";
             
             code_obj.emit("mov " + addr + ", rax");
             code_obj.emit("lea rax, " + addr);
         }
         else
         {
-            auto addr = "[rbp - " + std::to_string(block.alloc.addressOf(this)) + "]";
+            auto addr = "[rbp - " + std::to_string(block.addressOf(this)) + "]";
 
-            expr -> gen(block, code_obj);
+            expr_ -> gen(block, code_obj);
 
             code_obj.emit("mov " + addr + ", rax");
             code_obj.emit("lea rax, " + addr);
@@ -42,34 +39,32 @@ void UnaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
 
 std::string UnaryOpCommand::toString() const
 {
-    if ( op.which() == 0 ) 
+    if ( op_.which() == 0 ) 
     {
-        if ( boost::get<AddrOp>(op) == AddrOp::REF )
-            return "&" + expr -> toString();
+        if ( boost::get<AddrOp>(op_) == AddrOp::REF )
+            return "&" + expr_ -> toString();
         else
-            return "*" + expr -> toString();
+            return "*" + expr_ -> toString();
     }
     else
-        return expr -> toString();
+        return expr_ -> toString();
 }
 
-bool UnaryOpCommand::isExpr() const
-{
-    return true;
-}
+bool UnaryOpCommand::isExpr() const { return true; }
 
 const Type* UnaryOpCommand::type() const
 {
-    if ( op.which() == 1 )
-        return BuiltIns::int_type;
+    if ( op_.which() == 1 )
+        return BuiltIns::int_type.get();
 
-    if ( boost::get<AddrOp>(op) == AddrOp::DEREF )
-        return TypeFactory::getReference(static_cast<const PointerType*>(expr -> type()) -> pointedType());
+    if ( boost::get<AddrOp>(op_) == AddrOp::DEREF )
+        return TypeFactory::getReference(static_cast<const PointerType*>(expr_ -> type()) -> pointedType());
     else
-        return TypeFactory::getPointer(VariableType(expr -> type()).unqualified());
+        return TypeFactory::getPointer(VariableType(expr_ -> type()).unqualified());
 }
 
-void UnaryOpCommand::accept(CommandVisitor* visitor)
-{
-    visitor -> visit(this);
-}
+void UnaryOpCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }
+
+Arg* UnaryOpCommand::expr() { return expr_.get(); }
+boost::variant<AddrOp, UnaryOp> UnaryOpCommand::op() { return op_; }
+

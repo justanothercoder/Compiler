@@ -11,14 +11,18 @@ class TemporaryArg : public Arg
 
 public:
 
-    TemporaryArg(Command* command);
+    TemporaryArg(std::shared_ptr<Command> command);
     
     std::string toString() const override;
     void gen(const Block& block, CodeObject& code_obj) const override;
     
     const Type* type() const override;
-   
-    Command* command;
+
+    Command* command() const;
+
+private:
+
+    std::shared_ptr<Command> command_;
 };
 
 #endif

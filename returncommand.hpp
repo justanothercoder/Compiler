@@ -5,9 +5,10 @@
 
 class ReturnCommand : public Command
 {
+    friend class SubstituteArgVisitor;
 public:
 
-    ReturnCommand(Arg* expr, bool is_return_ref);
+    ReturnCommand(Argument expr, bool is_return_ref);
     
     void gen(const Block& block, CodeObject& code_obj) const override;
     std::string toString() const override;
@@ -16,7 +17,12 @@ public:
     const Type* type() const override;
     void accept(CommandVisitor* visitor) override;
 
-    Arg* expr;
+    Arg* expr();
+    bool isReturnRef() const;
+
+private:
+
+    Argument expr_;
     bool is_return_ref;
 };
 

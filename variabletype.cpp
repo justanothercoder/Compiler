@@ -2,26 +2,15 @@
 #include "type.hpp"
 #include "referencetype.hpp"
 #include "pointertype.hpp"
+#include "arraytype.hpp"
+#include "typeinfo.hpp"
+#include "numbernode.hpp"
 
-VariableType::VariableType(const Type* type) : type(type), is_const(false)
-{
-
-}
-
-VariableType::VariableType(const Type* type, bool is_const) : type(type), is_const(is_const)
-{
-
-}
+VariableType::VariableType(const Type* type) : type(type), is_const(false) { } 
+VariableType::VariableType(const Type* type, bool is_const) : type(type), is_const(is_const) { } 
 
 const Type* VariableType::base() const { return type; }
-
-const Type* VariableType::unqualified() const
-{
-    if ( type -> isReference() )
-        return static_cast<const ReferenceType*>(type) -> type;
-    else
-        return type;
-}
+const Type* VariableType::unqualified() const { return type -> removeRef(); }
     
 int VariableType::sizeOf() const { return type -> sizeOf(); } 
 
@@ -39,17 +28,32 @@ std::string VariableType::getName() const
 bool VariableType::operator==(const VariableType& vt) const { return type == vt.type && is_const == vt.is_const; } 
 bool VariableType::operator!=(const VariableType& vt) const { return !(*this == vt); }
 
-TypeInfo VariableType::makeTypeInfo() const
+TypeInfo makeTypeInfo(VariableType type) 
 {
-    int ptr = 0;
-    auto tp = unqualified();
-    while ( tp -> getTypeKind() == TypeKind::POINTER )
+    auto tp = type.unqualified();
+
+    auto modifiers = std::vector<TypeModifier>{ };
+
+    while ( tp -> getTypeKind() == TypeKind::POINTER || tp -> getTypeKind() == TypeKind::ARRAY )
     {
-        tp = static_cast<const PointerType*>(tp) -> pointedType();
-        ++ptr;
+        switch ( tp -> getTypeKind() )
+        {
+            case TypeKind::POINTER:
+            {
+                modifiers.emplace_back();
+                tp = static_cast<const PointerType*>(tp) -> pointedType();
+                break;
+            }
+            case TypeKind::ARRAY:
+            {
+                auto arr = static_cast<const ArrayType*>(tp);
+                modifiers.emplace_back(std::make_shared<NumberNode>(std::to_string(arr -> sizeOfArray())));
+                tp = arr -> pointedType();
+                break;
+            }
+            default: throw;
+        }
     }
 
-    //TODO add support for arrays
-
-    return TypeInfo(unqualified() -> getName(), isReference(), isConst(), { }, ptr, { });
+    return TypeInfo(type.unqualified() -> getName(), type.isReference(), type.isConst(), { }, modifiers);
 }

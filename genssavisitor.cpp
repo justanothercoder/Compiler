@@ -54,146 +54,146 @@
 
 GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : _arg(nullptr), code(code)
 {
-    auto str_type = static_cast<StructSymbol*>(BuiltIns::ASCII_string_type);
+    auto str_type = static_cast<StructSymbol*>(BuiltIns::ASCII_string_type.get());
 
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> getTypeInfo().symbols )
-        code.addExternalFunction(func.second);
+    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> getTypeInfo().symbols )
+        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getTypeInfo().symbols )
-        code.addExternalFunction(func.second);
+    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getTypeInfo().symbols )
+        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("length")) -> getTypeInfo().symbols )
-        code.addExternalFunction(func.second);
+    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("length")) -> getTypeInfo().symbols )
+        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator+")) -> getTypeInfo().symbols )
-        code.addExternalFunction(func.second);
+    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator+")) -> getTypeInfo().symbols )
+        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("string")) -> getTypeInfo().symbols )
-        code.addExternalFunction(func.second);
+    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("string")) -> getTypeInfo().symbols )
+        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
     
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator=")) -> getTypeInfo().symbols )
-        code.addExternalFunction(func.second);
+    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator=")) -> getTypeInfo().symbols )
+        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
     
-    code.newBlock(*BuiltIns::global_scope);
+    code.newBlock(BuiltIns::global_scope.get());
 }
 
-Arg* GenSSAVisitor::getArg(AST *node)
+const std::shared_ptr<Arg>& GenSSAVisitor::getArg(AST* node)
 {
     node -> accept(*this);
     return _arg;
 }
 
-void GenSSAVisitor::visit(ExternNode *node) { code.addExternalFunction(node -> definedSymbol); }
+void GenSSAVisitor::visit(ExternNode* node) { code.addExternalFunction(static_cast<const FunctionSymbol*>(node -> getDefinedSymbol())); }
 
-void GenSSAVisitor::visit(IfNode *node)
+void GenSSAVisitor::visit(IfNode* node)
 {
     auto false_label = code.newLabel();
     auto exit_label  = code.newLabel();
 
-    auto expr = getArg(node -> cond);
+    auto expr = getArg(node -> condition());
 
-    code.add(new IfFalseCommand(expr, false_label));
+    code.add(std::make_shared<IfFalseCommand>(expr, false_label));
 
-    node -> stats_true -> accept(*this);
+    node -> trueBranch() -> accept(*this);
 
-    code.add(new GotoCommand(exit_label));
-    code.add(new LabelCommand(false_label));
+    code.add(std::make_shared<GotoCommand>(exit_label));
+    code.add(std::make_shared<LabelCommand>(false_label));
 
-    node -> stats_false -> accept(*this);
+    node -> falseBranch() -> accept(*this);
 
-    code.add(new LabelCommand(exit_label));
+    code.add(std::make_shared<LabelCommand>(exit_label));
 }
 
-void GenSSAVisitor::visit(ForNode *node)
+void GenSSAVisitor::visit(ForNode* node)
 {
     auto cycle_label = code.newLabel();
     auto exit_label  = code.newLabel();
 
-    loop_label.push(std::make_pair(cycle_label, exit_label));
+    loop_label.emplace(cycle_label, exit_label);
 
-    node -> init -> accept(*this);
-    code.add(new LabelCommand(cycle_label));
+    node -> initializer() -> accept(*this);
+    code.add(std::make_shared<LabelCommand>(cycle_label));
 
-    auto cond = getArg(node -> cond);
+    auto cond = getArg(node -> condition());
 
-    code.add(new IfFalseCommand(cond, exit_label));
+    code.add(std::make_shared<IfFalseCommand>(cond, exit_label));
 
-    node -> stats -> accept(*this);
-    node -> step  -> accept(*this);
+    node -> body() -> accept(*this);
+    node -> iteration() -> accept(*this);
 
     loop_label.pop();
 
-    code.add(new GotoCommand(cycle_label));
-    code.add(new LabelCommand(exit_label));
+    code.add(std::make_shared<GotoCommand>(cycle_label));
+    code.add(std::make_shared<LabelCommand>(exit_label));
 }
 
-void GenSSAVisitor::visit(WhileNode *node)
+void GenSSAVisitor::visit(WhileNode* node)
 {
     auto exit_label  = code.newLabel();
     auto cycle_label = code.newLabel();
 
-    loop_label.push(std::make_pair(cycle_label, exit_label));
+    loop_label.emplace(cycle_label, exit_label);
 
-    code.add(new LabelCommand(cycle_label));
+    code.add(std::make_shared<LabelCommand>(cycle_label));
 
-    auto cond = getArg(node -> cond);
+    auto cond = getArg(node -> condition());
 
-    code.add(new IfFalseCommand(cond, exit_label));
+    code.add(std::make_shared<IfFalseCommand>(cond, exit_label));
 
-    node -> stats -> accept(*this);
+    node -> body() -> accept(*this);
 
     loop_label.pop();
 
-    code.add(new GotoCommand(cycle_label));
-    code.add(new LabelCommand(exit_label));
+    code.add(std::make_shared<GotoCommand>(cycle_label));
+    code.add(std::make_shared<LabelCommand>(exit_label));
 }
 
-void GenSSAVisitor::visit(BracketNode *node)
+void GenSSAVisitor::visit(BracketNode* node)
 {
-    if ( node -> base -> getType().base() -> getTypeKind() == TypeKind::ARRAY )
+    if ( node -> base() -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY )
     {
-        _arg = code.add(new ElemCommand(getArg(node -> base), getArg(node -> expr)));
+        _arg = code.add(std::make_shared<ElemCommand>(getArg(node -> base()), getArg(node -> expr())));
         return;
     }
     
-    if ( node -> base -> getType().unqualified() == BuiltIns::ASCII_string_type )
+    if ( node -> base() -> getType().unqualified() == BuiltIns::ASCII_string_type.get() )
     {
-        _arg = code.add(new ElemCommand(getArg(node -> base), getArg(node -> expr), true));
+        _arg = code.add(std::make_shared<ElemCommand>(getArg(node -> base()), getArg(node -> expr()), true));
         return;
     }
 
-    genParam(node -> expr, node -> call_info.conversions[1]);
-    genParam(node -> base, node -> call_info.conversions[0]);
+    genParam(node -> expr(), node -> callInfo().conversions[1]);
+    genParam(node -> base(), node -> callInfo().conversions[0]);
 
-    genCall(node -> call_info.callee, node -> expr -> getType().sizeOf() + Comp::config().int_size);
+    genCall(node -> callInfo().callee, node -> expr() -> getType().sizeOf() + Comp::config().int_size);
 }
 
-void GenSSAVisitor::visit(UnaryNode *node)
+void GenSSAVisitor::visit(UnaryNode* node)
 {
-    genParam(node -> exp, node -> call_info.conversions[0]);
-    genCall(node -> call_info.callee, node -> exp -> getType().sizeOf());
+    genParam(node -> expr(), node -> callInfo().conversions[0]);
+    genCall(node -> callInfo().callee, node -> expr() -> getType().sizeOf());
 }
 
-void GenSSAVisitor::visit(NewExpressionNode *node)
+void GenSSAVisitor::visit(NewExpressionNode* node)
 {
-    const auto& params = node -> params;
+    const auto& params = node -> params();
 
     auto expr_type = node -> getType().unqualified();
 
-    auto tmp_obj = code.add(new NewCommand(expr_type));
+    auto tmp_obj = code.add(std::make_shared<NewCommand>(expr_type));
     
     if ( isIntType(expr_type) || isCharType(expr_type) )
     {
         bool is_char_assign = isCharType(expr_type);
 
-        if ( node -> params.empty() )
+        if ( params.empty() )
         {
             code.addConst(0);
-            code.add(new AssignCommand(tmp_obj, new NumberArg(0), is_char_assign));
+            code.add(std::make_shared<AssignCommand>(tmp_obj, std::make_shared<NumberArg>(0), is_char_assign));
         }
         else
         {
-            code.add(new AssignCommand(tmp_obj, getArg(params.front()), is_char_assign));
+            code.add(std::make_shared<AssignCommand>(tmp_obj, getArg(params[0].get()), is_char_assign));
         }
 
         _arg = tmp_obj;
@@ -204,155 +204,159 @@ void GenSSAVisitor::visit(NewExpressionNode *node)
 
     for ( auto param = params.rbegin(); param != params.rend(); ++param )
     {
-        ConversionInfo info = *(node -> call_info.conversions.rbegin() + (param - params.rbegin()));
-        genParam(*param, info);
+        auto info = *(node -> callInfo().conversions.rbegin() + (param - params.rbegin()));
+        genParam(param -> get(), info);
         params_size += info.desired_type -> sizeOf();
     }
 
-    code.add(new ParamCommand(tmp_obj, ConversionInfo(nullptr, TypeFactory::getReference(expr_type))));
+    code.add(std::make_shared<ParamCommand>(tmp_obj, ConversionInfo(nullptr, TypeFactory::getReference(expr_type))));
 
     params_size += Comp::config().int_size;
 
-    genCall(node -> call_info.callee, params_size);
+    genCall(node -> callInfo().callee, params_size);
     _arg = tmp_obj;
 }
 
-void GenSSAVisitor::visit(BinaryOperatorNode *node)
+void GenSSAVisitor::visit(BinaryOperatorNode* node)
 {
-    auto lhs_type = node -> lhs -> getType();
-    auto rhs_type = node -> rhs -> getType();
+    auto lhs_type = node -> lhs() -> getType();
+    auto rhs_type = node -> rhs() -> getType();
 
     if ( isSimpleType(lhs_type.unqualified()) && isSimpleType(rhs_type.unqualified()) )
     {
-        auto rhs = getArg(node -> rhs);
-        auto lhs = getArg(node -> lhs);
+        auto rhs = getArg(node -> rhs());
+        auto lhs = getArg(node -> lhs());
 
-        if ( node -> op_type == BinaryOp::ASSIGN )
-            code.add(new AssignCommand(lhs, rhs, lhs_type.unqualified() == BuiltIns::char_type));
+        if ( node -> op() == BinaryOp::ASSIGN )
+            code.add(std::make_shared<AssignCommand>(lhs, rhs, lhs_type.unqualified() == BuiltIns::char_type.get()));
         else
-            _arg = code.add(new BinaryOpCommand(node -> op_type, lhs, rhs));
+            _arg = code.add(std::make_shared<BinaryOpCommand>(node -> op(), lhs, rhs));
     }
     else
     {
-        auto lhs_info = node -> call_info.conversions[0];
-        auto rhs_info = node -> call_info.conversions[1];
+        auto lhs_info = node -> callInfo().conversions[0];
+        auto rhs_info = node -> callInfo().conversions[1];
 
-        genParam(node -> rhs, rhs_info);
-        genParam(node -> lhs, lhs_info);
-        genCall(node -> call_info.callee, lhs_info.desired_type -> sizeOf() + rhs_info.desired_type -> sizeOf());
+        genParam(node -> rhs(), rhs_info);
+        genParam(node -> lhs(), lhs_info);
+        genCall(node -> callInfo().callee, lhs_info.desired_type -> sizeOf() + rhs_info.desired_type -> sizeOf());
     }
 }
 
-void GenSSAVisitor::visit(StructDeclarationNode *node)
+void GenSSAVisitor::visit(StructDeclarationNode* node)
 {
-    for ( auto decl : node -> inner )
+    for ( auto decl : node -> getChildren() )
         decl -> accept(*this);
 }
 
-void GenSSAVisitor::visit(FunctionDeclarationNode *node)
+void GenSSAVisitor::visit(FunctionDeclarationNode* node)
 {
-    auto scope_name = node -> definedSymbol -> getScopedTypedName();
+    auto function = static_cast<const FunctionSymbol*>(node -> getDefinedSymbol());
+    auto scope_name = function -> getScopedTypedName();
 
-    code.newBlock(*node -> definedSymbol -> getScope(), scope_name);
-    code.add(new LabelCommand(code.newLabel(scope_name)));
+    code.newBlock(function -> getScope(), scope_name);
+    code.add(std::make_shared<LabelCommand>(code.newLabel(scope_name)));
 
-    for ( auto param : node -> params_symbols )
-        code.rememberVar(param);
+    for ( auto param : node -> paramsSymbols() )
+        code.rememberVar(param.get());
 
-    node -> statements -> accept(*this);
+    node -> body() -> accept(*this);
 
     code.popBlock();
 }
 
-void GenSSAVisitor::visit(VariableDeclarationNode *node)
+void GenSSAVisitor::visit(VariableDeclarationNode* node)
 {
-    code.rememberVar(node -> definedSymbol);
+    auto variable = static_cast<const VariableSymbol*>(node -> getDefinedSymbol());
+    code.rememberVar(variable);
 
-    if ( !node -> is_field )
+    if ( !node -> isField() )
     {
-        auto var_type = node -> definedSymbol -> getType();
-        auto var_arg = new VariableArg(node -> definedSymbol);
+        auto var_type = variable -> getType();
+        auto var_arg = std::make_shared<VariableArg>(variable);
 
-        if ( node -> type_info.is_ref || (node -> type_info.pointer_depth > 0 && !node -> constructor_params.empty()) )
+        if ( node -> typeInfo().isRef() || (node -> typeInfo().modifiers().size() > 0 && !node -> constructorParams().empty()) )
         {
-            auto arg = getArg(node -> constructor_params.front());
-            code.add(new AssignCommand(var_arg, arg, false));
+            auto arg = getArg(node -> constructorParams()[0].get());
+            code.add(std::make_shared<AssignCommand>(var_arg, arg, false));
         }
         else
         {
             if ( isIntType(var_type.unqualified()) || isCharType(var_type.unqualified()) )
             {
                 bool is_char_assign = isCharType(var_type.unqualified());
-                if ( node -> constructor_params.empty() )
+                if ( node -> constructorParams().empty() )
                 {
                     code.addConst(0);
-                    code.add(new AssignCommand(var_arg, new NumberArg(0), is_char_assign));
+                    code.add(std::make_shared<AssignCommand>(var_arg, std::make_shared<NumberArg>(0), is_char_assign));
                 }
                 else
                 {
-                    code.add(new AssignCommand(var_arg, getArg(node -> constructor_params.front()), is_char_assign));
+                    code.add(std::make_shared<AssignCommand>(var_arg, getArg(node -> constructorParams()[0].get()), is_char_assign));
                 }
                 return;
             }
 
-            if ( node -> inline_info.function_body )
+            if ( node -> inlineInfo().function_body )
             {
-                auto args = std::vector<Arg*>{ };
-                for ( auto param : node -> constructor_params ) {
-                    args.push_back(getArg(param));
+                auto args = std::vector<Argument>{ };
+                for ( const auto& param : node -> constructorParams() ) {
+                    args.push_back(getArg(param.get()));
                 }
 
-                genInlineCall(node -> call_info.callee, node -> inline_info, args, var_arg);
+                genInlineCall(node -> callInfo().callee, node -> inlineInfo(), args, var_arg);
                 return;
             }
 
-            const auto& params = node -> constructor_params;
+            const auto& params = node -> constructorParams();
             auto params_size = 0;
 
             for ( auto param = params.rbegin(); param != params.rend(); ++param )
             {
-                auto info = *(node -> call_info.conversions.rbegin() + (param - params.rbegin()));
-                genParam(*param, info);
+                auto info = *(node -> callInfo().conversions.rbegin() + (param - params.rbegin()));
+                genParam(param -> get(), info);
 
                 params_size += info.desired_type -> sizeOf();
             }
 
-            code.add(new ParamCommand(var_arg, ConversionInfo(nullptr, TypeFactory::getReference(node -> definedSymbol -> getType().base()))));
+            auto variable = static_cast<const VariableSymbol*>(node -> getDefinedSymbol());
+            code.add(std::make_shared<ParamCommand>(var_arg, ConversionInfo(nullptr, TypeFactory::getReference(variable -> getType().base()))));
 
             params_size += Comp::config().int_size;
-            genCall(node -> call_info.callee, params_size);
+            genCall(node -> callInfo().callee, params_size);
         }
     }
 }
 
 void GenSSAVisitor::visit(AddrNode *node)
 {
-    _arg = code.add(new UnaryOpCommand(node -> op, getArg(node -> expr)));
+    _arg = code.add(std::make_shared<UnaryOpCommand>(node -> op(), getArg(node -> expr())));
 }
 
 void GenSSAVisitor::visit(NullNode *)
 {
     code.addConst(0);
-    _arg = new NumberArg(0);
+    _arg = std::make_shared<NumberArg>(0);
 }
 
 void GenSSAVisitor::visit(DotNode *node)
 {
-    if ( node -> member -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION )
+    if ( node -> member() -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION )
     {
-        _arg = getArg(node -> base);
+        _arg = getArg(node -> base());
     }
     else
     {
-        auto var = static_cast<VariableSymbol*>(node -> member);
-        auto base_type = static_cast<const ObjectType*>(node -> base -> getType().unqualified());
-        _arg = new DotArg(getArg(node -> base), base_type -> offsetOf(var), var);
+        auto var = static_cast<const VariableSymbol*>(node -> member());
+//        auto base_type = static_cast<const ObjectType*>(node -> base -> getType().unqualified());
+//        _arg = new DotArg(getArg(node -> base), base_type -> offsetOf(var), var);
+        _arg = std::make_shared<DotArg>(getArg(node -> base()), node -> baseType() -> offsetOf(var), var);
     }
 }
 
 void GenSSAVisitor::visit(StatementNode *node)
 {
-    for ( auto stat : node -> statements )
+    for ( const auto& stat : node -> statements() )
         stat -> accept(*this);
 }
 
@@ -360,117 +364,119 @@ void GenSSAVisitor::visit(VariableNode *node)
 {
     if ( node -> isTemplateParam() )
     {
-        node -> template_num -> accept(*this);
+        node -> getNum() -> accept(*this);
         return;
     }
 
-    if ( node -> variable -> isField() )
+    if ( node -> variable() -> isField() )
     {
-        auto this_var = static_cast<VariableSymbol*>(node -> scope -> resolve("this"));
-        auto offset = static_cast<const ObjectType*>(this_var -> getType().unqualified()) -> offsetOf(node -> variable);
-        _arg = new DotArg(new VariableArg(this_var), offset, node -> variable);
+        auto this_var = static_cast<const VariableSymbol*>(node -> scope -> resolve("this"));
+        auto offset = static_cast<const ObjectType*>(this_var -> getType().unqualified()) -> offsetOf(node -> variable());
+        _arg = std::make_shared<DotArg>(std::make_shared<VariableArg>(this_var), offset, node -> variable());
     }
     else
     {
-        _arg = new VariableArg(node -> variable);
+        _arg = std::make_shared<VariableArg>(node -> variable());
     }
 }
 
-void GenSSAVisitor::visit(StringNode *node)
+void GenSSAVisitor::visit(StringNode* node)
 {
-    code.addString(node -> str);
-    _arg = new StringArg(node -> str);
+    code.addString(node -> getStr());
+    _arg = std::make_shared<StringArg>(node -> getStr());
 }
 
-void GenSSAVisitor::visit(NumberNode *node)
+void GenSSAVisitor::visit(NumberNode* node)
 {
-    auto num = std::stoi(node -> num);
+    auto num = std::stoi(node -> getNum());
 
     code.addConst(num);
-    _arg = new NumberArg(num);
+    _arg = std::make_shared<NumberArg>(num);
 }
 
-void GenSSAVisitor::visit(CallNode *node)
+void GenSSAVisitor::visit(CallNode* node)
 {
-    if ( node -> inline_info.function_body )
+    if ( node -> inlineInfo().function_body )
     {
-        auto args = std::vector<Arg*>{ };
-        for ( auto param : node -> params ) {
-            args.push_back(getArg(param));
+        auto args = std::vector<Argument>{ };
+        for ( const auto& param : node -> params() ) {
+            args.push_back(getArg(param.get()));
         }
     
-        auto this_arg = node -> call_info.callee -> isMethod() ? getArg(node -> caller) : nullptr;
+        auto this_arg = node -> callInfo().callee -> isMethod() ? getArg(node -> caller()) : nullptr;
 
-        genInlineCall(node -> call_info.callee, node -> inline_info, args, this_arg);
+        genInlineCall(node -> callInfo().callee, node -> inlineInfo(), args, this_arg);
         return;
     }
 
     auto params_size = 0;
     
-    for ( auto param = node -> params.rbegin(); param != node -> params.rend(); ++param )
+    const auto& params = node -> params();
+
+    for ( auto param = params.rbegin(); param != params.rend(); ++param )
     {
-        auto info = *(node -> call_info.conversions.rbegin() + (param - node -> params.rbegin()));
-        genParam(*param, info);
+        auto info = *(node -> callInfo().conversions.rbegin() + (param - params.rbegin()));
+        genParam(param -> get(), info);
         params_size += info.desired_type -> sizeOf();
     }
 
-    if ( node -> call_info.callee -> isMethod() )
+    if ( node -> callInfo().callee -> isMethod() )
     {
         params_size += Comp::config().int_size;
-        genParam(node -> caller, ConversionInfo(nullptr, TypeFactory::getReference(node -> caller -> getType().base())));
+        genParam(node -> caller(), ConversionInfo(nullptr, TypeFactory::getReference(node -> caller() -> getType().base())));
     }
 
-    genCall(node -> call_info.callee, params_size);
+    genCall(node -> callInfo().callee, params_size);
 }
 
-void GenSSAVisitor::visit(ReturnNode *node)
+void GenSSAVisitor::visit(ReturnNode* node)
 {
-    if ( node -> is_in_inline_call )
+    if ( node -> isInInlineCall() )
     {
-        auto expr_type = node -> expr -> getType();
-        auto var_arg = new VariableArg(static_cast<VariableSymbol*>(node -> scope -> resolve("$")));
+        auto expr_type = node -> expr() -> getType();
+        auto var_arg = std::make_shared<VariableArg>(static_cast<const VariableSymbol*>(node -> scope -> resolve("$")));
 
         if ( isSimpleType(expr_type.base()) )
         {
-            auto arg = getArg(node -> expr);
-            code.add(new AssignCommand(var_arg, arg, isCharType(expr_type.base())));
+            auto arg = getArg(node -> expr());
+            code.add(std::make_shared<AssignCommand>(var_arg, arg, isCharType(expr_type.base())));
         }
         else
         {
-            code.add(new ParamCommand(getArg(node -> expr), ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
-            code.add(new ParamCommand(var_arg             , ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
+            code.add(std::make_shared<ParamCommand>(getArg(node -> expr()), ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
+            code.add(std::make_shared<ParamCommand>(var_arg               , ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
             genCall(static_cast<const StructSymbol*>(expr_type.base()) -> getCopyConstructor(), 2 * Comp::config().int_size);
         }
         _arg = var_arg;
-        code.add(new GotoCommand(loop_label.top().second));
+        code.add(std::make_shared<GotoCommand>(loop_label.top().second));
         return;
     }
 
-    code.add(new ReturnCommand(getArg(node -> expr), node -> enclosing_func -> type().returnType().isReference()));
+    code.add(std::make_shared<ReturnCommand>(getArg(node -> expr()), node -> function() -> type().returnType().isReference()));
 }
 
 void GenSSAVisitor::visit(UnsafeBlockNode *node)
 {
-    node -> block -> accept(*this);
+    node -> block().accept(*this);
 }
 
 void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
 {
-    code.rememberVar(node -> definedSymbol);
+    auto variable = static_cast<const VariableSymbol*>(node -> getDefinedSymbol());
+    code.rememberVar(variable);
 
-    auto expr_type = node -> expr -> getType().unqualified();
-
-    auto var = new VariableArg(node -> definedSymbol);
+    auto expr_type = node -> expr() -> getType().unqualified();
+    auto var = std::make_shared<VariableArg>(variable);
 
     if ( isIntType(expr_type) || isCharType(expr_type) )
     {
-        code.add(new AssignCommand(var, getArg(node -> expr), isCharType(expr_type)));
+        code.add(std::make_shared<AssignCommand>(var, getArg(node -> expr()), isCharType(expr_type)));
         return;
     }
     
-    genParam(node -> expr, node -> call_info.conversions.front());
-    code.add(new ParamCommand(var, ConversionInfo(nullptr, TypeFactory::getReference(expr_type))));
-    genCall(node -> call_info.callee, expr_type -> sizeOf() + Comp::config().int_size);
+    genParam(node -> expr(), node -> callInfo().conversions[0]);
+    code.add(std::make_shared<ParamCommand>(var, ConversionInfo(nullptr, TypeFactory::getReference(expr_type))));
+    genCall(node -> callInfo().callee, expr_type -> sizeOf() + Comp::config().int_size);
 }
 
 void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)
@@ -487,15 +493,15 @@ void GenSSAVisitor::visit(TemplateFunctionDeclarationNode* node)
 
 void GenSSAVisitor::visit(BreakNode* )
 {
-    code.add(new GotoCommand(loop_label.top().second));
+    code.add(std::make_shared<GotoCommand>(loop_label.top().second));
 }
 
 void GenSSAVisitor::visit(FunctionNode* node)
 {
-    if ( node -> function -> isMethod() )
+    if ( node -> function() -> isMethod() )
     {
-        auto _this_var = static_cast<VariableSymbol*>(node -> scope -> resolve("this"));
-        _arg = new VariableArg(_this_var);
+        auto _this_var = static_cast<const VariableSymbol*>(node -> scope -> resolve("this"));
+        _arg = std::make_shared<VariableArg>(_this_var);
     }
 }
 
@@ -507,49 +513,49 @@ void GenSSAVisitor::visit(TemplateFunctionNode* ) { }
 
 void GenSSAVisitor::genParam(ExprNode* node, ConversionInfo conversion_info)
 {
-    code.add(new ParamCommand(getArg(node), conversion_info));
+    code.add(std::make_shared<ParamCommand>(getArg(node), conversion_info));
 }
 
 void GenSSAVisitor::genCall(const FunctionSymbol* func, int params_size)
 {
-    _arg = code.add(new CallCommand(func, params_size));
+    _arg = code.add(std::make_shared<CallCommand>(func, params_size));
 }
 
-void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Arg*> params, Arg* this_expr)
+void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Argument> params, Argument this_expr)
 {
     assert(inline_info.function_body);
 
     auto exit_from_function_label = code.newLabel();
 
-    loop_label.push({nullptr, exit_from_function_label});
+    loop_label.emplace(nullptr, exit_from_function_label);
 
     if ( function -> isMethod() )
         params.insert(std::begin(params), this_expr);
 
     auto param_it = std::begin(params);
 
-    auto return_var = static_cast<VariableSymbol*>(inline_info.function_body -> scope -> resolve("$"));
+    auto return_var = static_cast<const VariableSymbol*>(inline_info.function_body -> scope -> resolve("$"));
     code.rememberVar(return_var);
 
     for ( auto var : inline_info.locals )
     {
-        code.rememberVar(var);
+        code.rememberVar(var.get());
             
         auto var_type = var -> getType();
-        auto var_arg = new VariableArg(var);
+        auto var_arg = std::make_shared<VariableArg>(var.get());
 
         if ( var_type.isReference() )
         {
-            code.add(new AssignRefCommand(var_arg, *param_it));
+            code.add(std::make_shared<AssignRefCommand>(var_arg, *param_it));
         }
         else if ( isSimpleType(var_type.base()) )
         {
-            code.add(new AssignCommand(var_arg, *param_it, isCharType(var_type.base())));
+            code.add(std::make_shared<AssignCommand>(var_arg, *param_it, isCharType(var_type.base())));
         }
         else
         {
-            code.add(new ParamCommand(*param_it, ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
-            code.add(new ParamCommand(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
+            code.add(std::make_shared<ParamCommand>(*param_it, ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
+            code.add(std::make_shared<ParamCommand>(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
             genCall(static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor(), 2 * Comp::config().int_size);
         }
 
@@ -557,15 +563,15 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, const InlineIn
     }
 
     inline_info.function_body -> accept(*this);
-    code.add(new LabelCommand(exit_from_function_label));
+    code.add(std::make_shared<LabelCommand>(exit_from_function_label));
 
-    _arg = new VariableArg(return_var);
+    _arg = std::make_shared<VariableArg>(return_var);
 
     loop_label.pop();
 }
 
-bool GenSSAVisitor::isIntType(const Type* t)    { return t == BuiltIns::int_type; }
-bool GenSSAVisitor::isCharType(const Type* t)   { return t == BuiltIns::char_type; }
+bool GenSSAVisitor::isIntType(const Type* t)    { return t == BuiltIns::int_type.get(); }
+bool GenSSAVisitor::isCharType(const Type* t)   { return t == BuiltIns::char_type.get(); }
 bool GenSSAVisitor::isPointer(const Type* t)    { return t -> getTypeKind() == TypeKind::POINTER; }
 bool GenSSAVisitor::isReference(const Type* t)  { return t -> isReference(); }
 bool GenSSAVisitor::isSimpleType(const Type* t) { return isIntType(t) || isCharType(t) || isPointer(t) || isReference(t); }

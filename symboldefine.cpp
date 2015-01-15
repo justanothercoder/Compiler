@@ -7,17 +7,14 @@
 #include "modulesymbol.hpp"
 #include "logger.hpp"
 
-SymbolDefine::SymbolDefine(Symbol* sym) : sym(sym)
-{
-
-}
+void SymbolDefine::setSymbol(std::shared_ptr<const Symbol> sym) { this -> sym = sym; }
 
 void SymbolDefine::visit(BaseScope* sc)
 {
     if ( sc -> table.find(sym -> getName()) != std::end(sc -> table) )
         throw SemanticError("Error: " + sym -> getName() + " is already defined");
 
-    sc -> table[sym -> getName()] = sym;
+    sc -> table[sym -> getName()] = std::move(sym);
 }
 
 void SymbolDefine::visit(GlobalScope* sc)   { visit(static_cast<BaseScope*>(sc)); }

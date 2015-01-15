@@ -3,7 +3,7 @@
 
 #include <string>
 #include <set>
-
+#include <memory>
 #include "typeinfo.hpp"
 #include "templateparam.hpp"
 
@@ -26,8 +26,8 @@ public:
     virtual ~Scope();
 
     virtual Scope* enclosingScope() const = 0;
-    virtual Symbol* resolve(std::string name) const = 0;
-    virtual Symbol* resolveHere(std::string name) const = 0;
+    virtual const Symbol* resolve(std::string name) const = 0;
+    virtual const Symbol* resolveHere(std::string name) const = 0;
 
     virtual std::string getScopeName() const = 0;
 
@@ -36,9 +36,9 @@ public:
     virtual const TemplateInfo& templateInfo() const = 0;
     virtual bool isUnsafeBlock() const;
 
-    void define(Symbol *sym);
+    void define(std::shared_ptr<const Symbol> sym);
 
-    const Type* resolveType(std::string name);
+    const Type* resolveType(const std::string& name);
 };
 
 #endif

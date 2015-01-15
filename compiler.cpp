@@ -12,17 +12,17 @@
 
 VariableType Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
 {
-    auto type_name = type_info.type_name;
+    auto type_name = type_info.name();
 
     const Type *type;
 
-    if ( type_info.module_name == "" )
+    if ( type_info.moduleName() == "" )
         type = scope -> resolveType(type_name);
     else
     {
-        auto module = Comp::getUnit(type_info.module_name) -> module_symbol;
+        auto module = Comp::getUnit(type_info.moduleName()) -> module_symbol;
         assert(module -> getSymbolType() == SymbolType::MODULE);
-        type = static_cast<ModuleSymbol*>(module) -> resolveType(type_name);
+        type = static_cast<ModuleSymbol*>(module.get()) -> resolveType(type_name);
     }
 
 //    if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )
@@ -33,31 +33,35 @@ VariableType Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
 
     if ( type == nullptr )
         throw SemanticError(type_name + " is not a type.");
-    
-    for ( int i = 0; i < type_info.pointer_depth; ++i )
-        type = TypeFactory::getPointer(type);
-
-    for ( auto dim : type_info.array_dimensions )
+   
+    for ( auto modifier : type_info.modifiers() )
     {
-        if ( !dim -> isCompileTimeExpr() )
-            throw SemanticError("Array dimension is not compile-time expression.");
-        type = TypeFactory::getArray(type, *dim -> getCompileTimeValue());
+        if ( modifier.isPointer() )
+            type = TypeFactory::getPointer(type);
+        else      
+        {
+            auto dim = *modifier.dimension();
+
+            if ( !dim -> isCompileTimeExpr() )
+                throw SemanticError("Array dimension is not compile-time expression.");
+            type = TypeFactory::getArray(type, *dim -> getCompileTimeValue());
+        }
     }
-    
-    if ( type_info.is_ref )
+
+    if ( type_info.isRef() )
         type = TypeFactory::getReference(type);
 
     assert(type != nullptr);
-    return VariableType(type, type_info.is_const);
+    return VariableType(type, type_info.isConst());
 }
 
-DeclarationNode* Compiler::getSpecDecl(const TemplateSymbol *sym, std::vector<TemplateParam> template_params)
+std::shared_ptr<DeclarationNode> Compiler::getSpecDecl(const TemplateSymbol *sym, std::vector<TemplateParam> template_params)
 {
     if ( auto decl = sym -> holder() -> getInstance(template_params) )
         return decl;
 
     auto decl = sym -> holder() -> instantiateWithTemplateInfo(TemplateInfo(sym, template_params));
-    sym -> holder() -> addInstance(template_params, decl);
+    sym -> holder() -> addInstance(template_params, std::shared_ptr<DeclarationNode>(decl));
     return decl;
 }
 

@@ -9,18 +9,11 @@ class StructSymbol;
 
 class TypeNode : public ExprNode
 {
-
-    friend class TemplateStructSymbol;
-    friend class Scope;
-
-    friend class GenSSAVisitor;
-    friend class CheckVisitor;
-
 public:
 
-    TypeNode(std::string name);
+    TypeNode(const std::string& name);
 
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
 
     VariableType getType() const override;
     bool isLeftValue() const override;
@@ -29,14 +22,17 @@ public:
     boost::optional<int> getCompileTimeValue() const override;
 
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
+
+    const std::string& name() const;
+
+    const Symbol* typeSymbol() const;
+    void typeSymbol(const Symbol* sym);
 
 private:
 
-    std::string name;
-
-    Symbol *type_symbol;
+    std::string name_;
+    const Symbol* type_symbol = nullptr;
 };
 
 #endif

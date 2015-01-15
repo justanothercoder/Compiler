@@ -18,10 +18,10 @@ public:
 
     bool isReference() const override;
 
-    FunctionSymbol* getConversionTo(const Type *type) const override;
-
+    const FunctionSymbol* getConversionTo(const Type *type) const override;
     const Type* removeRef() const override;
 
+private:
     const Type *type;
 };
 

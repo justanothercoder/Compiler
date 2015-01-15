@@ -5,4 +5,5 @@ TypeKind FunctionalType::getTypeKind() const { return TypeKind::OVERLOADEDFUNCTI
 
 bool FunctionalType::isConvertableTo(const Type *) const { return false; }
 boost::optional<int> FunctionalType::rankOfConversion(const Type *) const { return boost::none; }
-FunctionSymbol* FunctionalType::getConversionTo(const Type *) const { return nullptr; }
+const FunctionSymbol* FunctionalType::getConversionTo(const Type *) const { return nullptr; }
+

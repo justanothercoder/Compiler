@@ -2,7 +2,6 @@
 #define _VARIABLETYPE_HPP_
 
 #include <string>
-#include "typeinfo.hpp"
 
 class Type;
 
@@ -24,8 +23,6 @@ public:
 
     bool operator==(const VariableType& vt) const;
     bool operator!=(const VariableType& vt) const;
-
-    TypeInfo makeTypeInfo() const;
 
 private:
 

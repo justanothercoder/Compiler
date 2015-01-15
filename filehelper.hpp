@@ -11,7 +11,7 @@ class FileHelper
 {
 public:
 
-    static AST* parse(std::string filename);
+    static std::unique_ptr<AST> parse(std::string filename);
 
 private:
 

@@ -18,11 +18,13 @@ public:
     const Type* type() const override;
     void accept(CommandVisitor* visitor) override;
 
-    const FunctionSymbol* function;
+    const FunctionSymbol* function() const;
 
 private:
 
     int params_size;
+    const FunctionSymbol* function_;
+
 };
 
 #endif

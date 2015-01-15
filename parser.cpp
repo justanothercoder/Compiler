@@ -13,7 +13,7 @@
 
 #include "logger.hpp"
 
-Parser::Parser(AbstractLexer *lexer) : AbstractParser(lexer)
+Parser::Parser(std::unique_ptr<AbstractLexer> lexer) : AbstractParser(std::move(lexer))
 {
 
 }
@@ -55,7 +55,7 @@ boost::optional<SymbolType> Parser::resolveSymbolType(std::string name)
     return sym_type;
 }
 
-AST* Parser::parse()
+ASTNode Parser::parse()
 {
     pushScope();
     
@@ -69,22 +69,22 @@ AST* Parser::parse()
     rememberSymbol("print", SymbolType::FUNCTION);
     rememberSymbol("string", SymbolType::STRUCT);
 
-    std::vector<AST*> statements;
+    auto statements = std::vector<ASTNode>{ };
 
     while ( getTokenType(1) != TokenType::EOF_TYPE )
         statements.push_back(statement());
 
     popScope();
 
-    return new StatementNode(std::move(statements));
+    return std::make_unique<StatementNode>(std::move(statements));
 }
 
-AST* Parser::statement()
+ASTNode Parser::statement()
 {
     if ( getTokenType(1) == TokenType::SEMICOLON )
     {
         match(TokenType::SEMICOLON);
-        return new StatementNode({ });
+        return std::make_unique<StatementNode>(std::vector<ASTNode>{ });
     }
     else if ( getTokenType(1) == TokenType::STRUCT
               || getTokenType(1) == TokenType::DEF
@@ -107,21 +107,21 @@ AST* Parser::statement()
     else                                             return expression();
 }
 
-AST* Parser::block()
+ASTNode Parser::block()
 {
     match(TokenType::LBRACE);
 
-    std::vector<AST*> statements;
+    auto statements = std::vector< ASTNode >{ };
 
     while ( getTokenType(1) != TokenType::RBRACE )
         statements.push_back(statement());
 
     match(TokenType::RBRACE);
 
-    return new StatementNode(std::move(statements));
+    return std::make_unique<StatementNode>(std::move(statements));
 }
 
-DeclarationNode* Parser::declaration(boost::optional<std::string> struct_name)
+std::unique_ptr<DeclarationNode> Parser::declaration(boost::optional<std::string> struct_name)
 {
     if      ( getTokenType(1) == TokenType::STRUCT )   return structDecl();
     else if ( getTokenType(1) == TokenType::DEF )      return functionDecl(struct_name);
@@ -152,36 +152,39 @@ bool Parser::tryVarDecl()
     return success;
 }
 
-DeclarationNode* Parser::variableDecl(boost::optional<std::string> struct_name)
+std::unique_ptr<DeclarationNode> Parser::variableDecl(boost::optional<std::string> struct_name)
 {
     auto type_info = typeInfo();
-    std::string var_name  = id();
+    auto var_name  = id();
 
-    std::vector<ExprNode*> constructor_call_params;
+    auto constructor_params = std::vector<ASTExprNode>{ };
 
     if ( getTokenType(1) == TokenType::LPAREN )
-        constructor_call_params = call_params_list();
+        constructor_params = call_params_list();
     else if ( getTokenType(1) == TokenType::ASSIGN )
     {
         match(TokenType::ASSIGN);
-        constructor_call_params = {expression()};
+        constructor_params.push_back(expression());
     }
 
     rememberSymbol(var_name, SymbolType::VARIABLE);
 
-    return new VariableDeclarationNode(std::move(var_name), std::move(type_info), bool(struct_name), std::move(constructor_call_params));
+    return std::make_unique<VariableDeclarationNode>(std::move(var_name)
+                                                   , std::move(type_info)
+                                                   , bool(struct_name)
+                                                   , std::move(constructor_params));
 }
 
-DeclarationNode* Parser::structDecl()
+std::unique_ptr<DeclarationNode> Parser::structDecl()
 {
     match(TokenType::STRUCT);
 
-    std::string struct_name = id();
+    auto struct_name = id();
 
-    std::vector<AST*> struct_in;
+    auto struct_in = std::vector<ASTNode>{ };
     match(TokenType::LBRACE);
 
-    std::vector<AST*> functions;
+    auto functions = std::vector<ASTNode>{ };
 
     rememberSymbol(struct_name, SymbolType::STRUCT);
     pushScope();
@@ -202,16 +205,14 @@ DeclarationNode* Parser::structDecl()
     }
 
     match(TokenType::RBRACE);
-
-    for ( auto i : functions )
-        struct_in.push_back(i);
-
+    
+    std::move(std::begin(functions), std::end(functions), std::back_inserter(struct_in));
     popScope();
 
-    return new StructDeclarationNode(std::move(struct_name), std::move(struct_in));
+    return std::make_unique<StructDeclarationNode>(std::move(struct_name), std::move(struct_in));
 }
 
-DeclarationNode* Parser::templateDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params)
+std::unique_ptr<DeclarationNode> Parser::templateDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params)
 {
     if ( getTokenType(1) == TokenType::DEF )
         return templateFunctionDecl(struct_name, template_params);
@@ -224,14 +225,14 @@ TemplateParamsList Parser::templateParams()
     match(TokenType::TEMPLATE);
     match(TokenType::LESS);
 
-    TemplateParamsList template_params;
+    auto template_params = TemplateParamsList{ };
 
     if ( getTokenType(1) != TokenType::GREATER )
     {
         auto type_info = typeInfo();
         auto name = id();
 
-        template_params.push_back({std::move(name), std::move(type_info)});
+        template_params.emplace_back(std::move(name), std::move(type_info));
         while ( getTokenType(1) == TokenType::COMMA )
         {
             match(TokenType::COMMA);
@@ -239,7 +240,7 @@ TemplateParamsList Parser::templateParams()
             type_info = typeInfo();
             name = id();
 
-            template_params.push_back({std::move(name), std::move(type_info)});
+            template_params.emplace_back(std::move(name), std::move(type_info));
         }
     }
 
@@ -247,11 +248,11 @@ TemplateParamsList Parser::templateParams()
     return template_params;
 }
     
-DeclarationNode* Parser::templateStructDecl(TemplateParamsList template_params)
+std::unique_ptr<DeclarationNode> Parser::templateStructDecl(TemplateParamsList template_params)
 {
     match(TokenType::STRUCT);
 
-    std::string struct_name = id();
+    auto struct_name = id();
 
     if ( getTokenType(1) == TokenType::LESS )
     {
@@ -260,7 +261,7 @@ DeclarationNode* Parser::templateStructDecl(TemplateParamsList template_params)
         match(TokenType::GREATER);
     }
 
-    std::vector<AST*> struct_in;
+    auto struct_in = std::vector< ASTNode >{ };
     match(TokenType::LBRACE);
 
     rememberSymbol(struct_name, SymbolType::TEMPLATESTRUCT);
@@ -268,7 +269,7 @@ DeclarationNode* Parser::templateStructDecl(TemplateParamsList template_params)
 
     for ( auto param_info : template_params )
     {
-        if ( param_info.second.type_name == "class" )
+        if ( param_info.second.name() == "class" )
             rememberSymbol(param_info.first, SymbolType::STRUCT);
         else
             rememberSymbol(param_info.first, SymbolType::VARIABLE);            
@@ -287,10 +288,10 @@ DeclarationNode* Parser::templateStructDecl(TemplateParamsList template_params)
 
     popScope();
 
-    return new TemplateStructDeclarationNode(std::move(struct_name), std::move(struct_in), std::move(template_params));
+    return std::make_unique<TemplateStructDeclarationNode>(std::move(struct_name), std::move(struct_in), std::move(template_params));
 }
 
-DeclarationNode* Parser::templateFunctionDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params)
+std::unique_ptr<DeclarationNode> Parser::templateFunctionDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params)
 {
     match(TokenType::DEF);
 
@@ -304,21 +305,16 @@ DeclarationNode* Parser::templateFunctionDecl(boost::optional<std::string> struc
 
     bool is_operator = getTokenType(1) == TokenType::OPERATOR;
 
-    std::string function_name = (is_operator ? operator_name() : id());
+    auto function_name = (is_operator ? operator_name() : id());
     
     rememberSymbol(function_name, SymbolType::TEMPLATEFUNCTION);
 
     pushScope();
     
-    for ( auto param_info : template_params )
-    {
-        if ( param_info.second.type_name == "class" )
-            rememberSymbol(param_info.first, SymbolType::STRUCT);
-        else
-            rememberSymbol(param_info.first, SymbolType::VARIABLE);            
-    }
+    for ( const auto& param_info : template_params )
+        rememberSymbol(param_info.first, (param_info.second.name() == "class" ? SymbolType::STRUCT : SymbolType::VARIABLE));
 
-    std::vector< std::pair<std::string, TypeInfo> > params;
+    auto params = TemplateParamsList{ };
 
     match(TokenType::LPAREN);
 
@@ -329,7 +325,7 @@ DeclarationNode* Parser::templateFunctionDecl(boost::optional<std::string> struc
 
         rememberSymbol(name, SymbolType::VARIABLE);
 
-        params.push_back({std::move(name), std::move(type_info)});
+        params.emplace_back(std::move(name), std::move(type_info));
 
         while ( getTokenType(1) != TokenType::RPAREN )
         {
@@ -340,7 +336,7 @@ DeclarationNode* Parser::templateFunctionDecl(boost::optional<std::string> struc
 
             rememberSymbol(name, SymbolType::VARIABLE);
 
-            params.push_back({std::move(name), std::move(type_info)});
+            params.emplace_back(std::move(name), std::move(type_info));
         }
     }
 
@@ -363,21 +359,21 @@ DeclarationNode* Parser::templateFunctionDecl(boost::optional<std::string> struc
     else
         return_type = TypeInfo(*struct_name, true, false);
 
-    AST *statements = block();
+    auto statements = block();
 
     popScope();
 
-    return new TemplateFunctionDeclarationNode(std::move(function_name)
-                                             , std::move(FunctionDeclarationInfo(return_type, params))
-                                             , statements
-                                             , {bool(struct_name), is_constructor, is_operator}
-                                             , is_unsafe
-                                             , template_params
-                                            );
+    return std::make_unique<TemplateFunctionDeclarationNode>(std::move(function_name)
+                                                           , std::move(FunctionDeclarationInfo(return_type, params))
+                                                           , std::move(statements)
+                                                           , FunctionTraits{bool(struct_name), is_constructor, is_operator}
+                                                           , is_unsafe
+                                                           , std::move(template_params)
+                                                          );
 
 }
 
-DeclarationNode* Parser::functionDecl(boost::optional<std::string> struct_name)
+std::unique_ptr<DeclarationNode> Parser::functionDecl(boost::optional<std::string> struct_name)
 {
     match(TokenType::DEF);
 
@@ -391,12 +387,12 @@ DeclarationNode* Parser::functionDecl(boost::optional<std::string> struct_name)
 
     bool is_operator = getTokenType(1) == TokenType::OPERATOR;
 
-    std::string function_name = (is_operator ? operator_name() : id());
+    auto function_name = (is_operator ? operator_name() : id());
     
     rememberSymbol(function_name, SymbolType::FUNCTION);
     pushScope();
 
-    std::vector< std::pair<std::string, TypeInfo> > params;
+    auto params = TemplateParamsList{ };
 
     match(TokenType::LPAREN);
 
@@ -407,7 +403,7 @@ DeclarationNode* Parser::functionDecl(boost::optional<std::string> struct_name)
 
         rememberSymbol(name, SymbolType::VARIABLE);
 
-        params.push_back({std::move(name), std::move(type_info)});
+        params.emplace_back(std::move(name), std::move(type_info));
 
         while ( getTokenType(1) != TokenType::RPAREN )
         {
@@ -418,7 +414,7 @@ DeclarationNode* Parser::functionDecl(boost::optional<std::string> struct_name)
 
             rememberSymbol(name, SymbolType::VARIABLE);
 
-            params.push_back({std::move(name), std::move(type_info)});
+            params.emplace_back(std::move(name), std::move(type_info));
         }
     }
 
@@ -441,21 +437,21 @@ DeclarationNode* Parser::functionDecl(boost::optional<std::string> struct_name)
     else
         return_type = TypeInfo(*struct_name, true, false);
 
-    AST *statements = block();
+    auto statements = block();
 
     popScope();
 
-    return new FunctionDeclarationNode(std::move(function_name)
-                                     , std::move(FunctionDeclarationInfo(return_type, params))
-                                     , statements
-                                     , {bool(struct_name), is_constructor, is_operator}
-                                     , is_unsafe
-                                    );
+    return std::make_unique<FunctionDeclarationNode>(std::move(function_name)
+                                                   , std::move(FunctionDeclarationInfo(return_type, params))
+                                                   , std::move(statements)
+                                                   , FunctionTraits{bool(struct_name), is_constructor, is_operator}
+                                                   , is_unsafe
+                                                  );
 }
 
 std::string Parser::id()
 {
-    std::string name = getToken(1).text;
+    auto name = getToken(1).text;
     match(TokenType::ID);
     return std::move(name);
 }
@@ -488,15 +484,12 @@ std::string Parser::operator_name()
     }
 }
 
-ExprNode* Parser::literal()
+ASTExprNode Parser::literal()
 {
-    if ( getTokenType(1) == TokenType::STRING )
-        return get_string();
-    else
-        return number();
+    return (getTokenType(1) == TokenType::STRING ? get_string() : number());
 }
 
-ExprNode* Parser::variable()
+ASTExprNode Parser::variable()
 {
     auto var_name = id();
 
@@ -507,72 +500,72 @@ ExprNode* Parser::variable()
 
     switch ( *sym_type )
     {
-    case SymbolType::VARIABLE: return new VariableNode(var_name);
-    case SymbolType::MODULE  : return new ModuleNode(var_name);
-    case SymbolType::STRUCT  : return new TypeNode(var_name);
-    case SymbolType::FUNCTION: return new FunctionNode(var_name);
-    case SymbolType::TEMPLATEFUNCTION:
-    {
-        std::vector<TemplateParamInfo> template_params;
-        
-        if ( getTokenType(1) == TokenType::LESS )
+        case SymbolType::VARIABLE: return std::make_unique<VariableNode>(var_name);
+        case SymbolType::MODULE  : return std::make_unique<ModuleNode>(var_name);
+        case SymbolType::STRUCT  : return std::make_unique<TypeNode>(var_name);
+        case SymbolType::FUNCTION: return std::make_unique<FunctionNode>(var_name);
+        case SymbolType::TEMPLATEFUNCTION:
         {
-            match(TokenType::LESS);
-
-            if ( getTokenType(1) != TokenType::GREATER )
+            auto template_params = std::vector<TemplateParamInfo>{ };
+            
+            if ( getTokenType(1) == TokenType::LESS )
             {
-                if ( tryTypeInfo() )
-                    template_params.push_back(typeInfo());
-                else
-                    template_params.push_back(expression());
+                match(TokenType::LESS);
 
-                while ( getTokenType(1) == TokenType::COMMA )
+                if ( getTokenType(1) != TokenType::GREATER )
                 {
-                    match(TokenType::COMMA);
                     if ( tryTypeInfo() )
-                        template_params.push_back(typeInfo());
+                        template_params.emplace_back(std::move(typeInfo()));
                     else
-                        template_params.push_back(expression());
+                        template_params.emplace_back(std::move(expression()));
+
+                    while ( getTokenType(1) == TokenType::COMMA )
+                    {
+                        match(TokenType::COMMA);
+                        if ( tryTypeInfo() )
+                            template_params.emplace_back(std::move(typeInfo()));
+                        else
+                            template_params.emplace_back(std::move(expression()));
+                    }
                 }
+
+                match(TokenType::GREATER);
             }
 
-            match(TokenType::GREATER);
+            return std::make_unique<TemplateFunctionNode>(std::move(var_name), std::move(template_params));
         }
-
-        return new TemplateFunctionNode(var_name, template_params);
-    }
-    default: throw std::logic_error("Internal error");
+        default: throw std::logic_error("Internal error");
     }
 }
 
-ExprNode* Parser::get_string()
+ASTExprNode Parser::get_string()
 {
-    std::string str = getToken(1).text;
+    auto str = getToken(1).text;
     match(TokenType::STRING);
-    return new StringNode(str);
+    return std::make_unique<StringNode>(str);
 }
 
-ExprNode* Parser::number()
+ASTExprNode Parser::number()
 {
-    std::string num = getToken(1).text;
+    auto num = getToken(1).text;
     match(TokenType::NUMBER);
-    return new NumberNode(num);
+    return std::make_unique<NumberNode>(num);
 }
 
-ExprNode* Parser::null()
+ASTExprNode Parser::null()
 {
     match(TokenType::NULLTOKEN);
-    return new NullNode();
+    return std::make_unique<NullNode>();
 }
 
-ExprNode* Parser::primary()
+ASTExprNode Parser::primary()
 {
     if ( getTokenType(1) == TokenType::NUMBER || getTokenType(1) == TokenType::STRING )
         return literal();
     else if ( getTokenType(1) == TokenType::LPAREN )
     {
         match(TokenType::LPAREN);
-        ExprNode *expr = expression();
+        auto expr = expression();
         match(TokenType::RPAREN);
         return expr;
     }
@@ -584,16 +577,16 @@ ExprNode* Parser::primary()
         return variable();
 }
 
-ExprNode* Parser::unary_right()
+ASTExprNode Parser::unary_right()
 {
-    ExprNode* res;
+    ASTExprNode res;
 
     if ( tryModuleName() )
     {
         auto module_name = id();
         match(TokenType::DOT);
         auto member = id();
-        res = new ModuleMemberAccessNode(module_name, member);
+        res = std::make_unique<ModuleMemberAccessNode>(module_name, member);
     }
     else
     {
@@ -604,19 +597,19 @@ ExprNode* Parser::unary_right()
     {
         if ( getTokenType(1) == TokenType::LPAREN )
         {
-            res = new CallNode(res, call_params_list());
+            res = std::make_unique<CallNode>(std::move(res), call_params_list());
         }
         else if ( getTokenType(1) == TokenType::DOT )
         {
             match(TokenType::DOT);
             std::string member_name = id();
 
-            res = new DotNode(res, member_name);
+            res = std::make_unique<DotNode>(std::move(res), member_name);
         }
         else if ( getTokenType(1) == TokenType::LBRACKET )
         {
             match(TokenType::LBRACKET);
-            res = new BracketNode(res, expression());
+            res = std::make_unique<BracketNode>(std::move(res), expression());
             match(TokenType::RBRACKET);
         }
     }
@@ -624,86 +617,70 @@ ExprNode* Parser::unary_right()
     return res;
 }
 
-ExprNode* Parser::addr_expr()
+ASTExprNode Parser::addr_expr()
 {
     if ( getTokenType(1) == TokenType::REF )
     {
         match(TokenType::REF);
-        return new AddrNode(unary_right(), AddrOp::REF);
+        return std::make_unique<AddrNode>(unary_right(), AddrOp::REF);
     }
     else
     {
         match(TokenType::MUL);
-        return new AddrNode(unary_right(), AddrOp::DEREF);
+        return std::make_unique<AddrNode>(unary_right(), AddrOp::DEREF);
     }
 }
 
-ExprNode* Parser::unary_left()
+ASTExprNode Parser::unary_left()
 {
     UnaryOp op;
 
     switch ( getTokenType(1) )
     {
-    case TokenType::PLUS :
-        op = UnaryOp::PLUS ;
-        break;
-    case TokenType::MINUS:
-        op = UnaryOp::MINUS;
-        break;
-    case TokenType::NOT  :
-        op = UnaryOp::NOT  ;
-        break;
+        case TokenType::PLUS : op = UnaryOp::PLUS ; break;
+        case TokenType::MINUS: op = UnaryOp::MINUS; break;
+        case TokenType::NOT  : op = UnaryOp::NOT  ; break;
 
-    case TokenType::REF:
-        return addr_expr();
-    case TokenType::MUL:
-        return addr_expr();
-    default            :
-        return unary_right();
+        case TokenType::REF: return addr_expr();
+        case TokenType::MUL: return addr_expr();
+        default            : return unary_right();
     }
 
     match(getTokenType(1));
 
-    return new UnaryNode(unary_left(), op);
+    return std::make_unique<UnaryNode>(unary_left(), op);
 }
 
-ExprNode* Parser::factor()
+ASTExprNode Parser::factor()
 {
     return unary_left();
 }
 
-ExprNode* Parser::term()
+ASTExprNode Parser::term()
 {
-    ExprNode *res = factor();
+    auto res = factor();
 
     while ( getTokenType(1) == TokenType::MUL || getTokenType(1) == TokenType::DIV || getTokenType(1) == TokenType::MOD )
     {
         BinaryOp op;
         switch ( getTokenType(1) )
         {
-        case TokenType::MUL:
-            op = BinaryOp::MUL;
-            break;
-        case TokenType::DIV:
-            op = BinaryOp::DIV;
-            break;
-        case TokenType::MOD:
-            op = BinaryOp::MOD;
-            break;
-        default:
-            throw;
+            case TokenType::MUL: op = BinaryOp::MUL; break;
+            case TokenType::DIV: op = BinaryOp::DIV; break;
+            case TokenType::MOD: op = BinaryOp::MOD; break;
+            default: ;
         }
 
         match(getTokenType(1));
-        res = new BinaryOperatorNode(res, factor(), op);
+        res = std::make_unique<BinaryOperatorNode>(std::move(res), factor(), op);
     }
 
     return res;
 }
 
-ExprNode* Parser::sum_expr()
+ASTExprNode Parser::sum_expr()
 {
-    ExprNode *res = term();
+    auto res = term();
 
     while ( getTokenType(1) == TokenType::PLUS || getTokenType(1) == TokenType::MINUS )
     {
@@ -711,26 +688,21 @@ ExprNode* Parser::sum_expr()
 
         switch ( getTokenType(1) )
         {
-        case TokenType::PLUS :
-            op = BinaryOp::PLUS;
-            break;
-        case TokenType::MINUS:
-            op = BinaryOp::MINUS;
-            break;
-        default:
-            throw;
+            case TokenType::PLUS : op = BinaryOp::PLUS; break;
+            case TokenType::MINUS: op = BinaryOp::MINUS; break;
+            default: ;
         }
 
         match(getTokenType(1));
-        res = new BinaryOperatorNode(res, term(), op);
+        res = std::make_unique<BinaryOperatorNode>(std::move(res), term(), op);
     }
 
     return res;
 }
 
-ExprNode* Parser::relation()
+ASTExprNode Parser::relation()
 {
-    ExprNode *res = sum_expr();
+    auto res = sum_expr();
 
     while ( getTokenType(1) == TokenType::EQUALS || getTokenType(1) == TokenType::NEQUALS )
     {
@@ -738,25 +710,20 @@ ExprNode* Parser::relation()
 
         switch ( getTokenType(1) )
         {
-        case TokenType::EQUALS :
-            op = BinaryOp::EQUALS;
-            break;
-        case TokenType::NEQUALS:
-            op = BinaryOp::NEQUALS;
-            break;
-        default:
-            throw;
+            case TokenType::EQUALS : op = BinaryOp::EQUALS; break;
+            case TokenType::NEQUALS: op = BinaryOp::NEQUALS; break;
+            default: ;
         }
         match(getTokenType(1));
-        res = new BinaryOperatorNode(res, sum_expr(), op);
+        res = std::make_unique<BinaryOperatorNode>(std::move(res), sum_expr(), op);
     }
 
     return res;
 }
 
-ExprNode* Parser::bool_expr()
+ASTExprNode Parser::bool_expr()
 {
-    ExprNode *res = relation();
+    auto res = relation();
 
     while ( getTokenType(1) == TokenType::AND || getTokenType(1) == TokenType::OR )
     {
@@ -764,53 +731,47 @@ ExprNode* Parser::bool_expr()
 
         switch ( getTokenType(1) )
         {
-        case TokenType::AND :
-            op = BinaryOp::AND;
-            break;
-        case TokenType::OR:
-            op = BinaryOp::OR;
-            break;
-        default:
-            throw;
+            case TokenType::AND : op = BinaryOp::AND; break;
+            case TokenType::OR: op = BinaryOp::OR; break;
+            default: ;
         }
         match(getTokenType(1));
-        res = new BinaryOperatorNode(res, relation(), op);
+        res = std::make_unique<BinaryOperatorNode>(std::move(res), relation(), op);
     }
 
     return res;
 }
 
-ExprNode* Parser::expression()
+ASTExprNode Parser::expression()
 {
     return bool_expr();
 }
 
-AST* Parser::assignment()
+ASTNode Parser::assignment()
 {
-    ExprNode *lhs = expression();
+    auto lhs = expression();
     match(TokenType::ASSIGN);
-    ExprNode *rhs = expression();
+    auto rhs = expression();
 
-    return new BinaryOperatorNode(lhs, rhs, BinaryOp::ASSIGN);
+    return std::make_unique<BinaryOperatorNode>(std::move(lhs), std::move(rhs), BinaryOp::ASSIGN);
 }
 
-AST* Parser::return_stat()
+ASTNode Parser::return_stat()
 {
     match(TokenType::RETURN);
-
-    ExprNode *expr = expression();
-    return new ReturnNode(expr);
+    return std::make_unique<ReturnNode>(expression());
 }
 
-AST* Parser::if_stat()
+ASTNode Parser::if_stat()
 {
     match(TokenType::IF);
 
     match(TokenType::LPAREN);
-    ExprNode *cond = expression();
+    auto cond = expression();
     match(TokenType::RPAREN);
 
-    AST *stats_true, *stats_false;
+    auto stats_true  = ASTNode{ };
+    auto stats_false = ASTNode { };
 
     pushScope();
     stats_true = statement();
@@ -824,28 +785,28 @@ AST* Parser::if_stat()
         popScope();
     }
     else
-        stats_false = new StatementNode({ });
+        stats_false = std::make_unique<StatementNode>(std::vector< ASTNode >{ });
 
-    return new IfNode(cond, stats_true, stats_false);
+    return std::make_unique<IfNode>(std::move(cond), std::move(stats_true), std::move(stats_false));
 }
 
-AST* Parser::while_stat()
+ASTNode Parser::while_stat()
 {
     match(TokenType::WHILE);
 
     match(TokenType::LPAREN);
-    ExprNode *cond = expression();
+    auto cond = expression();
     match(TokenType::RPAREN);
 
     is_in_loop.push(true);
 
     pushScope();
-    AST *stats = statement();
+    auto stats = statement();
     popScope();
 
     is_in_loop.pop();
 
-    return new WhileNode(cond, stats);
+    return std::make_unique<WhileNode>(std::move(cond), std::move(stats));
 }
 
 bool Parser::tryAssignment()
@@ -868,46 +829,40 @@ bool Parser::tryAssignment()
     return success;
 }
 
-AST* Parser::for_stat()
+ASTNode Parser::for_stat()
 {
     match(TokenType::FOR);
     match(TokenType::LPAREN);
 
     pushScope();
 
-    AST *init;
+    auto init = ASTNode{ };
 
-    if ( getTokenType(1) == TokenType::SEMICOLON ) init = new StatementNode({ });
+    if ( getTokenType(1) == TokenType::SEMICOLON ) init = std::make_unique<StatementNode>(std::vector< ASTNode >{ });
     else if ( tryVarDecl() )                       init = variableDecl();
     else if ( tryAssignment() )                    init = assignment();
     else                                           throw RecognitionError("Expected declaration or expression", getToken(1).line, getToken(1).symbol);
 
     match(TokenType::SEMICOLON);
 
-    ExprNode *cond;
-
-    if ( getTokenType(1) == TokenType::SEMICOLON )
-        cond = new NumberNode("1");
-    else
-        cond = expression();
-
+    auto cond = (getTokenType(1) == TokenType::SEMICOLON ? std::make_unique<NumberNode>("1") : expression());
     match(TokenType::SEMICOLON);
 
-    AST *step;
+    auto step = ASTNode{ };
 
-    if ( getTokenType(1) == TokenType::RPAREN ) step = new StatementNode({ });
+    if ( getTokenType(1) == TokenType::RPAREN ) step = std::make_unique<StatementNode>(std::vector< ASTNode >{ });
     else if ( tryAssignment() )                 step = assignment();
     else                                        step = expression();
 
     match(TokenType::RPAREN);
 
     is_in_loop.push(true);
-    AST *stats = statement();
+    auto stats = statement();
     is_in_loop.pop();
 
     popScope();
 
-    return new ForNode(init, cond, step, stats);
+    return std::make_unique<ForNode>(std::move(init), std::move(cond), std::move(step), std::move(stats));
 }
 
 TypeInfo Parser::typeInfo()
@@ -955,7 +910,7 @@ TypeInfo Parser::typeInfo()
 
     bool is_ref = false;
 
-    std::vector<TemplateParamInfo> template_params { };
+    auto template_params = std::vector<TemplateParamInfo>{ };
 
     if ( getTokenType(1) == TokenType::LESS )
     {
@@ -964,38 +919,45 @@ TypeInfo Parser::typeInfo()
         if ( getTokenType(1) != TokenType::GREATER )
         {
             if ( tryTypeInfo() )
-                template_params.push_back(typeInfo());
+                template_params.push_back(std::move(typeInfo()));
             else
-                template_params.push_back(expression());
+                template_params.push_back(std::move(expression()));
 
             while ( getTokenType(1) == TokenType::COMMA )
             {
                 match(TokenType::COMMA);
                 if ( tryTypeInfo() )
-                    template_params.push_back(typeInfo());
+                    template_params.push_back(std::move(typeInfo()));
                 else
-                    template_params.push_back(expression());
+                    template_params.push_back(std::move(expression()));
             }
         }
 
         match(TokenType::GREATER);
     }
 
-    int pointer_depth = 0;
+    auto modifiers = std::vector<TypeModifier>{ };
 
-    while ( getTokenType(1) == TokenType::MUL )
+    while ( getTokenType(1) == TokenType::MUL || getTokenType(1) == TokenType::LBRACKET )
     {
-        match(TokenType::MUL);
-        ++pointer_depth;
-    }
-    
-    std::vector<ExprNode*> array_dimensions;
-    while ( getTokenType(1) == TokenType::LBRACKET )
-    {
-        match(TokenType::LBRACKET);
-        array_dimensions.push_back(expression());
-        match(TokenType::RBRACKET);
-    }
+        switch ( getTokenType(1) )
+        {
+            case TokenType::MUL: 
+            {
+                match(TokenType::MUL);
+                modifiers.emplace_back(); 
+                break;
+            }
+            case TokenType::LBRACKET: 
+            {
+                match(TokenType::LBRACKET);
+                modifiers.emplace_back(expression());
+                match(TokenType::RBRACKET);
+                break;
+            }
+            default: throw "";
+        }
+    }    
 
     if ( getTokenType(1) == TokenType::REF )
     {
@@ -1003,12 +965,12 @@ TypeInfo Parser::typeInfo()
         match(TokenType::REF);
     }
 
-    return TypeInfo(std::move(type_name), is_ref, is_const, std::move(template_params), pointer_depth, std::move(array_dimensions), module_name);
+    return TypeInfo(std::move(type_name), is_ref, is_const, std::move(template_params), std::move(modifiers), module_name);
 }
 
-std::vector<ExprNode*> Parser::call_params_list()
+std::vector<ASTExprNode> Parser::call_params_list()
 {
-    std::vector<ExprNode*> params;
+    auto params = std::vector<ASTExprNode>{ };
 
     match(TokenType::LPAREN);
 
@@ -1024,34 +986,33 @@ std::vector<ExprNode*> Parser::call_params_list()
 
     match(TokenType::RPAREN);
 
-    return std::move(params);
+    return params;
 }
 
-ExprNode* Parser::new_expr()
+ASTExprNode Parser::new_expr()
 {
     match(TokenType::NEW);
 
     auto type_info = typeInfo();
 
-    std::vector<ExprNode*> params = { };
+    auto params = std::vector<ASTExprNode>{ };
 
     if ( getTokenType(1) == TokenType::LPAREN )
         params = call_params_list();
 
-    return new NewExpressionNode(std::move(type_info), std::move(params));
+    return std::make_unique<NewExpressionNode>(std::move(type_info), std::move(params));
 }
 
-AST* Parser::import_stat()
+ASTNode Parser::import_stat()
 {
     match(TokenType::IMPORT);
 
     auto module_name = id();
     rememberSymbol(module_name, SymbolType::MODULE);
     
-//    auto root = FileHelper::parse((module_name + ".txt").c_str());
     auto unit = Comp::compile(module_name);
 
-    return new ImportNode(module_name, unit.root, { });
+    return std::make_unique<ImportNode>(module_name, unit.root, std::vector< std::shared_ptr<const Symbol> >{ });
 }
 
 bool Parser::tryTypeInfo()
@@ -1098,11 +1059,11 @@ bool Parser::tryModuleName()
     return success;
 }
 
-DeclarationNode* Parser::varInferDecl(boost::optional<std::string>)
+std::unique_ptr<DeclarationNode> Parser::varInferDecl(boost::optional<std::string>)
 {
     match(TokenType::VAR);
 
-    std::string name = id();
+    auto name = id();
 
     match(TokenType::ASSIGN);
 
@@ -1110,10 +1071,10 @@ DeclarationNode* Parser::varInferDecl(boost::optional<std::string>)
 
     rememberSymbol(name, SymbolType::VARIABLE);
 
-    return new VarInferTypeDeclarationNode(std::move(name), expr);
+    return std::make_unique<VarInferTypeDeclarationNode>(std::move(name), std::move(expr));
 }
 
-AST* Parser::unsafe_block()
+ASTNode Parser::unsafe_block()
 {
     match(TokenType::UNSAFE);
 
@@ -1121,10 +1082,10 @@ AST* Parser::unsafe_block()
     auto stat = block();
     popScope();
 
-    return new UnsafeBlockNode(static_cast<StatementNode*>(stat));
+    return std::make_unique<UnsafeBlockNode>(std::move(stat));
 }
 
-AST* Parser::extern_stat()
+ASTNode Parser::extern_stat()
 {
     match(TokenType::EXTERN);
 
@@ -1136,9 +1097,8 @@ AST* Parser::extern_stat()
         match(TokenType::UNSAFE);
     }
 
-    std::string function_name = (getTokenType(1) == TokenType::OPERATOR ? operator_name() : id());
-
-    std::vector< std::pair<std::string, TypeInfo> > params;
+    auto function_name = (getTokenType(1) == TokenType::OPERATOR ? operator_name() : id());
+    auto params = TemplateParamsList{ };
 
     match(TokenType::LPAREN);
 
@@ -1147,7 +1107,7 @@ AST* Parser::extern_stat()
         auto type_info = typeInfo();
         auto name = id();
 
-        params.push_back({std::move(name), std::move(type_info)});
+        params.emplace_back(std::move(name), std::move(type_info));
 
         while ( getTokenType(1) != TokenType::RPAREN )
         {
@@ -1155,7 +1115,7 @@ AST* Parser::extern_stat()
 
             type_info = typeInfo();
             name = id();
-            params.push_back({std::move(name), std::move(type_info)});
+            params.emplace_back(std::move(name), std::move(type_info));
         }
     }
 
@@ -1173,20 +1133,18 @@ AST* Parser::extern_stat()
 
     rememberSymbol(function_name, SymbolType::FUNCTION);
 
-    return new ExternNode(std::move(function_name), std::move(FunctionDeclarationInfo(return_type_info, params)), is_unsafe);
+    return std::make_unique<ExternNode>(std::move(function_name), std::move(FunctionDeclarationInfo(return_type_info, params)), is_unsafe);
 }
     
-AST* Parser::from_import_stat()
+ASTNode Parser::from_import_stat()
 {
     match(TokenType::FROM);
-    std::string module_name = id();
+    auto module_name = id();
 
     auto unit = Comp::compile(module_name);
 
-//    auto root = FileHelper::parse((module_name + ".txt").c_str());
-
     match(TokenType::IMPORT);
-    std::string member_name = id();
+    auto member_name = id();
 
     auto it = std::find_if(std::begin(unit.module_globals), std::end(unit.module_globals), [&](auto sym) 
     { 
@@ -1195,13 +1153,13 @@ AST* Parser::from_import_stat()
 
     rememberSymbol(member_name, (*it) -> getSymbolType()); 
 
-    return new ImportNode(module_name, unit.root, {*it}); 
+    return std::make_unique<ImportNode>(module_name, unit.root, std::vector< std::shared_ptr<const Symbol> >{*it});
 }
 
-AST* Parser::break_stat()
+ASTNode Parser::break_stat()
 {
     if ( !is_in_loop.top() )
         throw RecognitionError("Break not in loop", getToken(1).line, getToken(1).symbol);
     match(TokenType::BREAK);
-    return new BreakNode();
+    return std::make_unique<BreakNode>();
 }

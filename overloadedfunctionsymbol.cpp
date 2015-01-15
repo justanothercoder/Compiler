@@ -9,23 +9,15 @@
 #include "noviableoverloaderror.hpp"
 #include "logger.hpp"
 
-OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name
-                                                 , OverloadedFunctionTypeInfo type_info
-                                                 , FunctionTraits traits) : name     (name)
-                                                                          , type_info(type_info)
-                                                                          , traits   (traits)
-                                                                          , template_function(nullptr)
-{
-
-}
+OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name, FunctionTraits traits) : name(name), type_info({ }), traits(traits) { }
 
 std::string OverloadedFunctionSymbol::getName() const { return name; }
-OverloadedFunctionTypeInfo OverloadedFunctionSymbol::getTypeInfo() const { return type_info; }
+const OverloadedFunctionTypeInfo& OverloadedFunctionSymbol::getTypeInfo() const { return type_info; }
 
-void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, FunctionSymbol *sym) const
+void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, std::shared_ptr<const Symbol> sym) const
 {
     type_info.overloads.insert(func_type_info);
-    type_info.symbols[func_type_info] = sym;
+    type_info.symbols.emplace(func_type_info, sym);
 }
 
 VariableType OverloadedFunctionSymbol::getBaseType() const
@@ -38,14 +30,14 @@ SymbolType OverloadedFunctionSymbol::getSymbolType() const { return SymbolType::
 
 const FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeInfo params_type) const
 {
-    auto overloads = getTypeInfo().getPossibleOverloads(params_type);
+    auto overloads = type_info.getPossibleOverloads(params_type);
 
     auto func_better = [&params_type](const FunctionTypeInfo& lhs, const FunctionTypeInfo& rhs)
     {
         return lhs.rankOfConversion(params_type) < rhs.rankOfConversion(params_type);
     };
 
-    std::vector<FunctionTypeInfo> v(std::begin(overloads), std::end(overloads));
+    auto v = std::vector<FunctionTypeInfo>(std::begin(overloads), std::end(overloads));
     std::sort(std::begin(v), std::end(v), func_better);
 
     if ( template_function && !params_type.params().empty() )
@@ -57,16 +49,16 @@ const FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeIn
         }
     }
 
-    return v.empty() ? nullptr : getTypeInfo().symbols.at(v.front());
+    return v.empty() ? nullptr : static_cast<const FunctionSymbol*>(type_info.symbols.at(v.front()).get());
 }
     
-void OverloadedFunctionSymbol::setTemplateFunction(TemplateFunctionSymbol* function) const { template_function = function; }    
-TemplateFunctionSymbol* OverloadedFunctionSymbol::templateFunction() const { return template_function; }
+void OverloadedFunctionSymbol::setTemplateFunction(const TemplateFunctionSymbol* function) const { template_function = function; }    
+const TemplateFunctionSymbol* OverloadedFunctionSymbol::templateFunction() const { return template_function; }
     
 CallInfo OverloadedFunctionSymbol::resolveCall(std::vector<ValueInfo> arguments) const 
 {
     if ( isMethod() )
-        arguments.insert(std::begin(arguments), ValueInfo(getBaseType(), true));
+        arguments.insert(std::begin(arguments), {getBaseType(), true});
 
     std::vector<VariableType> types;
     for ( auto arg : arguments )
@@ -77,11 +69,13 @@ CallInfo OverloadedFunctionSymbol::resolveCall(std::vector<ValueInfo> arguments)
     if ( function == nullptr )
         throw NoViableOverloadError("", types);
 
-    if ( !checkValues(arguments, function -> type().typeInfo().params()) )
+    auto function_params = function -> type().typeInfo().params();
+
+    if ( !checkValues(arguments, function_params) )
         throw SemanticError("lvalue error");
 
     function -> is_used = true;
-    return CallInfo(function, getConversions(arguments, function -> type().typeInfo().params()));
+    return CallInfo(function, getConversions(arguments, function_params));
 }
 
 std::vector<ConversionInfo> OverloadedFunctionSymbol::getConversions(std::vector<ValueInfo> arguments, std::vector<VariableType> params) const
@@ -131,11 +125,13 @@ bool OverloadedFunctionSymbol::checkValues(std::vector<ValueInfo> arguments, std
     return true;
 }
     
-const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(TemplateFunctionSymbol* template_function, FunctionTypeInfo info, std::vector<TemplateParam> partial) const
+const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(const TemplateFunctionSymbol* template_function
+                                                                         , FunctionTypeInfo info
+                                                                         , std::vector<TemplateParam> partial) const
 {
     auto decl = static_cast<TemplateFunctionDeclarationNode*>(template_function -> holder());
-    auto tmpl = static_cast<TemplateFunctionSymbol*>(decl -> getDefinedSymbol());
-    const auto& function_info = decl -> info;
+    auto tmpl = static_cast<const TemplateFunctionSymbol*>(decl -> getDefinedSymbol());
+    const auto& function_info = decl -> info();
 
     if ( auto mapping = makeMappingOfParams(tmpl, function_info.formalParams(), info.params()) )
     {
@@ -164,7 +160,7 @@ const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(Templ
     return nullptr;
 }
 
-boost::optional< std::map<std::string, TemplateParam> > OverloadedFunctionSymbol::makeMappingOfParams(TemplateSymbol* tmpl, std::vector<ParamInfo> formal_params, FunctionTypeInfo arguments) const
+boost::optional< std::map<std::string, TemplateParam> > OverloadedFunctionSymbol::makeMappingOfParams(const TemplateSymbol* tmpl, std::vector<ParamInfo> formal_params, FunctionTypeInfo arguments) const
 {
     std::map<std::string, TemplateParam> template_params_map;
 
@@ -175,16 +171,16 @@ boost::optional< std::map<std::string, TemplateParam> > OverloadedFunctionSymbol
 
     for ( const auto& param : formal_params )
     {
-        if ( TemplateInfo(tmpl, { }).isIn(param.second.type_name) )
+        if ( TemplateInfo(tmpl, { }).isIn(param.second.name()) )
         {
-            if ( template_params_map.count(param.second.type_name) )
+            if ( template_params_map.count(param.second.name()) )
             {
-                if ( boost::get<TypeInfo>(template_params_map[param.second.type_name]) != it -> makeTypeInfo() )
+                if ( boost::get<TypeInfo>(template_params_map[param.second.name()]) != makeTypeInfo(*it) )
                     return boost::none;
             }
             else
             {
-                template_params_map[param.second.type_name] = it -> makeTypeInfo();
+                template_params_map[param.second.name()] = makeTypeInfo(*it);
             }
         }
 

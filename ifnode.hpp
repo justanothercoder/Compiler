@@ -2,34 +2,33 @@
 #define _IFNODE_HPP_
 
 #include <memory>
-
-#include "ast.hpp"
+#include "exprnode.hpp"
 
 class Scope;
-class ExprNode;
 
 class IfNode : public AST
 {
-    friend class GenSSAVisitor;
-
 public:
 
-    IfNode(ExprNode *cond, AST *stats_true, AST *stats_false);
+    IfNode(ASTExprNode cond, ASTNode stats_true, ASTNode stats_false);
 
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
     void build_scope() override;
 
-    std::vector<AST*> getChildren() const override;
-
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
+
+    ExprNode* condition();
+    AST* trueBranch();
+    AST* falseBranch();
 
 private:
 
-    ExprNode *cond;
-    AST *stats_true, *stats_false;
+    ASTExprNode cond;
+    ASTNode stats_true; 
+    ASTNode stats_false;
 
     std::shared_ptr<Scope> if_scope;
     std::shared_ptr<Scope> else_scope;

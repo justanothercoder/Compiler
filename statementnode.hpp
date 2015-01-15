@@ -10,17 +10,18 @@ class StatementNode : public AST
 {
 public:
 
-    StatementNode(std::vector<AST*> statements);
+    StatementNode(std::vector<ASTNode> statements);
+    void accept(ASTVisitor& visitor) override;
 
-    AST* copyTree() const override;
-
-    std::vector<AST*> getChildren() const override;
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
     std::string toString() const override;
 
-    void accept(ASTVisitor& visitor) override;
+    const std::vector<ASTNode>& statements() const;
 
-    std::vector<AST*> statements;
+private:    
+    std::vector<ASTNode> statements_;
 };
 
 #endif

@@ -7,7 +7,7 @@ class GotoCommand : public Command
 {
 public:
 
-    GotoCommand(Arg* label);
+    GotoCommand(std::shared_ptr<Arg> label);
 
     void gen(const Block& block, CodeObject& code_obj) const override;
     std::string toString() const override;
@@ -18,7 +18,7 @@ public:
 
 private:
     
-    Arg* label;
+    std::shared_ptr<Arg> label;
 };
 
 #endif

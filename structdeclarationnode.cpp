@@ -3,46 +3,54 @@
 #include "symboldefine.hpp"
 #include "functionsymbol.hpp"
 
-StructDeclarationNode::StructDeclarationNode(std::string name, std::vector<AST*> inner, boost::optional<TemplateInfo> template_info)
-    : name(name)
-    , inner(inner)
-    , template_info(template_info)
-    , definedSymbol(nullptr)
+StructDeclarationNode::StructDeclarationNode(const std::string& name
+                                           , std::vector<ASTNode> inner
+                                           , boost::optional<TemplateInfo> template_info) : template_info(template_info)
+                                                                                          , name_(name)
+                                                                                          , inner_(std::move(inner))
 {
 
 }
 
-Symbol* StructDeclarationNode::getDefinedSymbol() const { return definedSymbol; }
+const Symbol* StructDeclarationNode::getDefinedSymbol() const { return defined_symbol.get(); }
 
 void StructDeclarationNode::build_scope()
 {
-    definedSymbol = new StructSymbol(name, scope, (!template_info ? scope -> templateInfo() : *template_info));
-    scope -> define(definedSymbol);
+    defined_symbol = std::make_shared<StructSymbol>(name_, scope.get(), (!template_info ? scope -> templateInfo() : *template_info));
+    scope -> define(defined_symbol);
 
-    for ( auto decl : inner )
+    for ( const auto& decl : inner_ )
     {
-        decl -> scope = definedSymbol;
+        decl -> scope = defined_symbol;
         decl -> build_scope();
     }
 }
 
-AST* StructDeclarationNode::copyTree() const
+ASTNode StructDeclarationNode::copyTree() const
 {
-    std::vector<AST*> in;
+    auto in = std::vector<ASTNode>{ };
     
-    for ( auto decl : inner )
+    for ( const auto& decl : inner_ )
         in.push_back(decl -> copyTree());
     
-    return new StructDeclarationNode(name, in, template_info);
+    return std::make_unique<StructDeclarationNode>(name_, std::move(in), template_info);
 }
 
-std::vector<AST*> StructDeclarationNode::getChildren() const { return inner; }
+ASTChildren StructDeclarationNode::getChildren() const 
+{
+    auto in = ASTChildren{ };
+    
+    for ( const auto& decl : inner_ )
+        in.push_back(decl.get());
+    
+    return in;
+}    
 
 std::string StructDeclarationNode::toString() const
 {
-    std::string res = "struct " + name + "\n{\n";
+    auto res = "struct " + name_ + "\n{\n";
 
-    for ( auto decl : inner )
+    for ( const auto& decl : inner_ )
         res += decl -> toString() + '\n';
 
     res += "}";

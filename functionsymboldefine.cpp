@@ -7,10 +7,7 @@
 #include "modulesymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 
-FunctionSymbolDefine::FunctionSymbolDefine(FunctionSymbol* sym) : sym(sym)
-{
-
-}
+void FunctionSymbolDefine::setSymbol(std::shared_ptr<const Symbol> sym) { this -> sym = sym; }
 
 void FunctionSymbolDefine::visit(ModuleSymbol* sc)  { visit(static_cast<BaseScope*>(sc)); }
 void FunctionSymbolDefine::visit(GlobalScope* sc)   { visit(static_cast<BaseScope*>(sc)); }
@@ -20,18 +17,21 @@ void FunctionSymbolDefine::visit(FunctionScope* sc) { visit(static_cast<BaseScop
 
 void FunctionSymbolDefine::visit(BaseScope* sc)
 {
-    std::string sym_name = sym -> getName();
+    assert(sym.get() -> getSymbolType() == SymbolType::FUNCTION);
+    auto function = static_cast<const FunctionSymbol*>(sym.get());
+
+    auto sym_name = sym -> getName();
 
     auto it = sc -> table.find(sym_name);
 
     if ( it == std::end(sc -> table) )
-        sc -> table[sym_name] = new OverloadedFunctionSymbol(sym_name, OverloadedFunctionTypeInfo({ }), sym -> getTraits());
+        sc -> table[sym_name] = std::make_shared<OverloadedFunctionSymbol>(sym_name, function -> getTraits());
 
     auto _sym = sc -> table.at(sym_name);
 
     if ( _sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
         throw SemanticError(sym_name + " is already defined.");
 
-    auto ofs = static_cast<const OverloadedFunctionSymbol*>(_sym);
-    ofs -> addOverload(sym -> type().typeInfo(), sym);
+    auto ofs = static_cast<const OverloadedFunctionSymbol*>(_sym.get());
+    ofs -> addOverload(function -> type().typeInfo(), sym);
 }

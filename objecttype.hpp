@@ -11,9 +11,9 @@ public:
     
     bool isObjectType() const override;
 
-    virtual Symbol* resolveMember(std::string name) const = 0;
-    virtual FunctionalType* resolveMethod(std::string name) const = 0;
-    virtual int offsetOf(VariableSymbol* sym) const = 0;
+    virtual const Symbol* resolveMember(const std::string& name) const = 0;
+    virtual const FunctionalType* resolveMethod(const std::string& name) const = 0;
+    virtual int offsetOf(const VariableSymbol* sym) const = 0;
 };
 
 #endif

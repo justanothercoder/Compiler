@@ -13,12 +13,12 @@ public:
     SpaceAllocator(int params_offset);
 
     void remember(const Command* command, int size);
-    void remember(VariableSymbol* sym);
+    void remember(const VariableSymbol* sym);
 
     void rememberAt(const Command* command, int address);
 
     int addressOf(const Command* command);
-    int addressOf(VariableSymbol* sym);
+    int addressOf(const VariableSymbol* sym);
 
     int totalSpaceUsed() const;
 
@@ -27,7 +27,7 @@ public:
 private:
 
     std::map<const Command*, int> offsets;
-    std::map<VariableSymbol*, int> var_offsets;
+    std::map<const VariableSymbol*, int> var_offsets;
 
     int space_used;
     int param_space;    

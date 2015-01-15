@@ -1,7 +1,9 @@
 #include "partiallyinstantiatedfunctionsymbol.hpp"
 #include "functionsymbol.hpp"
 
-PartiallyInstantiatedFunctionSymbol::PartiallyInstantiatedFunctionSymbol(OverloadedFunctionSymbol* ov_func, std::vector<TemplateParam> tmpl_arguments) : ov_func(ov_func), tmpl_arguments(tmpl_arguments)
+PartiallyInstantiatedFunctionSymbol::PartiallyInstantiatedFunctionSymbol(const OverloadedFunctionSymbol* ov_func
+                                                                       , std::vector<TemplateParam> tmpl_arguments) : ov_func(ov_func)
+                                                                                                                    , tmpl_arguments(tmpl_arguments)
 {
 
 }

@@ -4,11 +4,11 @@
 #include "parser.hpp"
 #include "ast.hpp"
 
-AST* FileHelper::parse(std::string filename)
+ASTNode FileHelper::parse(std::string filename)
 {
-    return std::shared_ptr<AbstractParser>(new Parser(
-            std::shared_ptr<AbstractLexer>(new Lexer(
-                extractContents(filename))).get())) -> parse();    
+    return std::unique_ptr<AbstractParser>(new Parser(
+            std::unique_ptr<AbstractLexer>(new Lexer(
+                extractContents(filename))))) -> parse();    
 }
 
 std::string FileHelper::extractContents(std::string filename)

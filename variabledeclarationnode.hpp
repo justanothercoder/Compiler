@@ -14,28 +14,40 @@ class VariableDeclarationNode : public DeclarationNode
 {
 public:
 
-    VariableDeclarationNode(std::string name, TypeInfo type_info, bool is_field = false, std::vector<ExprNode*> constructor_call_params = {});
-
-    AST* copyTree() const override;
+    VariableDeclarationNode(const std::string& name, TypeInfo type_info, bool is_field = false, std::vector<ASTExprNode> constructor_params = {});
 
     void build_scope() override;
+    void accept(ASTVisitor& visitor) override;
 
-    Symbol* getDefinedSymbol() const override;
+    ASTNode copyTree() const override;
+    ASTChildren getChildren() const override;
 
-    std::vector<AST*> getChildren() const override;
+    const Symbol* getDefinedSymbol() const override;
+    void setDefinedSymbol(std::shared_ptr<const VariableSymbol> sym);
 
     std::string toString() const override;
 
-    void accept(ASTVisitor& visitor) override;
+    const std::string& name() const;
+    bool isField() const;
+    const std::vector<ASTExprNode>& constructorParams() const;
 
-    std::string name;
+    const CallInfo& callInfo() const;
+    void callInfo(const CallInfo& call_info);
+
+    const TypeInfo& typeInfo() const;
+    void typeInfo(const TypeInfo& type_info);
+    
+    const InlineInfo& inlineInfo() const;        
+    void inlineInfo(InlineInfo inline_info);
+
+private:
+    std::string name_;
     TypeInfo type_info;
 
     bool is_field;
 
-    VariableSymbol *definedSymbol;
-
-    std::vector<ExprNode*> constructor_params;
+    std::shared_ptr<const VariableSymbol> defined_symbol;
+    std::vector<ASTExprNode> constructor_params;
 
     CallInfo call_info;
     InlineInfo inline_info;    

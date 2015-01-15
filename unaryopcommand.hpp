@@ -8,10 +8,11 @@
 
 class UnaryOpCommand : public Command
 {
+    friend class SubstituteArgVisitor;
 public:
 
-    UnaryOpCommand(AddrOp op, Arg* expr);
-    UnaryOpCommand(UnaryOp op, Arg* expr);
+    UnaryOpCommand(AddrOp op , Argument expr);
+    UnaryOpCommand(UnaryOp op, Argument expr);
     
     void gen(const Block& block, CodeObject& code_obj) const override;
     std::string toString() const override;
@@ -20,8 +21,13 @@ public:
     const Type* type() const override;
     void accept(CommandVisitor* visitor) override;
 
-    boost::variant<AddrOp, UnaryOp> op;
-    Arg* expr;
+    Arg* expr();
+    boost::variant<AddrOp, UnaryOp> op();
+
+private:
+
+    boost::variant<AddrOp, UnaryOp> op_;
+    Argument expr_;
 };
 
 #endif

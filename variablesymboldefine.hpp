@@ -1,14 +1,15 @@
 #ifndef _VARIABLESYMBOLDEFINE_HPP_
 #define _VARIABLESYMBOLDEFINE_HPP_
 
-#include "scopevisitor.hpp"
+#include <memory>
+#include "definesymbolvisitor.hpp"
 #include "variablesymbol.hpp"
 
-class VariableSymbolDefine : public ScopeVisitor
+class VariableSymbolDefine : public DefineSymbolVisitor
 {
 public:
 
-    VariableSymbolDefine(VariableSymbol *sym);
+    void setSymbol(std::shared_ptr<const Symbol> sym) override;
 
     void visit(GlobalScope*   sc) override;
     void visit(LocalScope*    sc) override;
@@ -17,7 +18,7 @@ public:
     void visit(ModuleSymbol*  sc) override;
 
 private:
-    VariableSymbol* sym;
+    std::shared_ptr<const Symbol> sym;
 };
 
 #endif

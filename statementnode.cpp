@@ -1,27 +1,31 @@
 #include "statementnode.hpp"
 
-StatementNode::StatementNode(std::vector<AST*> statements) : statements(statements)
+StatementNode::StatementNode(std::vector<ASTNode> statements) : statements_(std::move(statements)) { }
+
+ASTNode StatementNode::copyTree() const
 {
+    auto stats = std::vector<ASTNode>{ };
 
-}
-
-AST* StatementNode::copyTree() const
-{
-    std::vector<AST*> stats;
-
-    for ( auto statement : statements )
+    for ( const auto& statement : statements_ )
         stats.push_back(statement -> copyTree());
 
-    return new StatementNode(stats);
+    return std::make_unique<StatementNode>(std::move(stats));
 }
 
-std::vector<AST*> StatementNode::getChildren() const { return statements; }
+ASTChildren StatementNode::getChildren() const 
+{
+    auto children = ASTChildren{ };
+    for ( const auto& stat : statements_ )
+        children.push_back(stat.get());
+
+    return children;
+}
 
 std::string StatementNode::toString() const
 {
-    std::string res = "{\n";
+    auto res = std::string("{\n");
 
-    for ( auto statement : statements )
+    for ( const auto& statement : statements_ )
         res += statement -> toString() + '\n';
 
     res += "}";
@@ -30,3 +34,5 @@ std::string StatementNode::toString() const
 }
 
 void StatementNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
+    
+const std::vector<ASTNode>& StatementNode::statements() const { return statements_; }

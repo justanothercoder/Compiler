@@ -15,7 +15,6 @@
 void MarkReturnAsInlineVisitor::visit(ReturnNode* node)
 {
     node -> is_in_inline_call = true;
-    node -> expr -> accept(*this);
 }
 
 void MarkReturnAsInlineVisitor::visit(IfNode* node) 

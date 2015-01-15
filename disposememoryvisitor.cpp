@@ -20,7 +20,7 @@ void DisposeMemoryVisitor::visit(NewCommand* command)      { alloc.remember(comm
 void DisposeMemoryVisitor::visit(ElemCommand* command)     { alloc.remember(command, Comp::config().int_size); }
 void DisposeMemoryVisitor::visit(BinaryOpCommand* command) { alloc.remember(command, Comp::config().int_size); }
 void DisposeMemoryVisitor::visit(UnaryOpCommand* command)  { alloc.remember(command, Comp::config().int_size); }
-void DisposeMemoryVisitor::visit(CallCommand* command)     { alloc.remember(command, command -> function -> type().returnType().sizeOf()); }
+void DisposeMemoryVisitor::visit(CallCommand* command)     { alloc.remember(command, command -> function() -> type().returnType().sizeOf()); }
 
 void DisposeMemoryVisitor::visit(IfFalseCommand* )   { }
 void DisposeMemoryVisitor::visit(GotoCommand* )      { }

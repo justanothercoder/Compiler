@@ -2,15 +2,9 @@
 #include "codeobject.hpp"
 #include "commandvisitor.hpp"
 
-LabelCommand::LabelCommand(Arg* label) : label(label)
-{
+LabelCommand::LabelCommand(Argument label) : label(label) { }
 
-}
-
-void LabelCommand::gen(const Block&, CodeObject& code_obj) const
-{
-    code_obj.emit(label -> toString() + ":");
-}
+void LabelCommand::gen(const Block&, CodeObject& code_obj) const { code_obj.emit(label -> toString() + ":"); }
 
 std::string LabelCommand::toString() const { return label -> toString() + ":"; }
 

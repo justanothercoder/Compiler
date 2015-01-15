@@ -6,9 +6,9 @@
 FunctionScope::FunctionScope(std::string scope_name
                            , Scope *enclosing_scope
                            , bool is_unsafe) : func           (nullptr)                                             
+                                             , template_info  (enclosing_scope -> templateInfo())
                                              , scope_name     (scope_name)
                                              , enclosing_scope(enclosing_scope)
-                                             , template_info  (enclosing_scope -> templateInfo())
                                              , is_unsafe      (is_unsafe)
 {
 

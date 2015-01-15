@@ -1,9 +1,10 @@
 #include "abstractparser.hpp"
 
-AbstractParser::AbstractParser(AbstractLexer *input) : input(input), pos(-1)
+AbstractParser::AbstractParser(std::unique_ptr<AbstractLexer> input) : input(std::move(input)), pos(-1)
 {
     consume();
 }
+
 AbstractParser::~AbstractParser() { }
 
 void AbstractParser::consume()

@@ -13,15 +13,7 @@ public:
     std::string getName() const;
 
     VariableType returnType() const;
-    const FunctionTypeInfo& typeInfo() const;
-
-//    bool isConvertableTo(const Type *type) const override;
-//    boost::optional<int> rankOfConversion(const Type *type) const override;
-
-//    FunctionSymbol* getConversionTo(const Type *type) const override;
-
-//    TypeKind getTypeKind() const override;
-//    size_t getSize() const override;
+    FunctionTypeInfo typeInfo() const;
 
 private:
 

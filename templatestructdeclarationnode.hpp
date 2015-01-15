@@ -11,32 +11,31 @@ class TemplateStructDeclarationNode : public TemplateDeclarationNode
 {
 public:
 
-    TemplateStructDeclarationNode(std::string name, std::vector<AST*> inner, std::vector< std::pair<std::string, TypeInfo> > template_params);
+    TemplateStructDeclarationNode(std::string name, std::vector<ASTNode> inner, TemplateParamsList template_params);
 
     void build_scope() override;
-
     void accept(ASTVisitor& visitor);
     
-    AST* copyTree() const override;
+    ASTNode copyTree() const override;
     std::string toString() const override;
     Symbol* getDefinedSymbol() const override;
 
     unsigned long long hashTemplateParams(std::vector<TemplateParam> template_params) const;
     
-    void addInstance(std::vector<TemplateParam> template_params, DeclarationNode* decl) override;
-    DeclarationNode* getInstance(std::vector<TemplateParam> template_params) const override;
-    DeclarationNode* instantiateWithTemplateInfo(TemplateInfo info) override;
-    std::vector<DeclarationNode*> allInstances() const override;
+    void addInstance(std::vector<TemplateParam> template_params, std::shared_ptr<DeclarationNode> decl) override;
+    std::shared_ptr<DeclarationNode> getInstance(std::vector<TemplateParam> template_params) const override;
+    std::shared_ptr<DeclarationNode> instantiateWithTemplateInfo(TemplateInfo info) override;
+    std::vector< std::shared_ptr<DeclarationNode> > allInstances() const override;
     
 private:
 
     std::string name;
-    std::vector<AST*> inner;
+    std::vector<ASTNode> inner;
 
-    std::map<long long, DeclarationNode*> instances;
+    std::map<long long, std::shared_ptr<DeclarationNode> > instances;
     TemplateParamsList template_params;
 
-    TemplateStructSymbol* defined_symbol;
+    std::shared_ptr<TemplateStructSymbol> defined_symbol;
 };
 
 #endif

@@ -4,24 +4,17 @@
 #include "functionsymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 
-ModuleMemberAccessNode::ModuleMemberAccessNode(std::string name
-                                             , std::string member) : name      (name)
-                                                                   , member    (member)
-                                                                   , member_sym(nullptr)
-{
+ModuleMemberAccessNode::ModuleMemberAccessNode(const std::string& name, const std::string& member) : name_(name), member_(member) { }
 
-}
-
-AST* ModuleMemberAccessNode::copyTree() const { return new ModuleMemberAccessNode(name, member); }
-
-std::string ModuleMemberAccessNode::toString() const { return name + "." + member; }
+ASTNode ModuleMemberAccessNode::copyTree() const { return std::make_unique<ModuleMemberAccessNode>(name_, member_); }
+std::string ModuleMemberAccessNode::toString() const { return name_ + "." + member_; }
 
 void ModuleMemberAccessNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
     
 VariableType ModuleMemberAccessNode::getType() const
 {    
     if ( member_sym -> getSymbolType() == SymbolType::VARIABLE ) 
-        return static_cast<VariableSymbol*>(member_sym) -> getType();
+        return static_cast<const VariableSymbol*>(member_sym) -> getType();
     return static_cast<const OverloadedFunctionSymbol*>(member_sym);
 }
 
@@ -29,3 +22,10 @@ bool ModuleMemberAccessNode::isLeftValue() const { return false; }
 
 bool ModuleMemberAccessNode::isCompileTimeExpr() const { return false; } 
 boost::optional<int> ModuleMemberAccessNode::getCompileTimeValue() const { return boost::none; }
+    
+const std::string& ModuleMemberAccessNode::name() const   { return name_; }
+const std::string& ModuleMemberAccessNode::member() const { return member_; }
+
+const Symbol* ModuleMemberAccessNode::memberSymbol() const { return member_sym; }
+void ModuleMemberAccessNode::memberSymbol(const Symbol* sym) { member_sym = sym; }
+

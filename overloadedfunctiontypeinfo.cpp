@@ -10,12 +10,12 @@ std::set<FunctionTypeInfo> OverloadedFunctionTypeInfo::getPossibleOverloads(Func
 {
     auto possible = overloads;
 
-    for ( auto i = std::begin(possible); i != std::end(possible); )
+    for ( auto it = std::begin(possible); it != std::end(possible); )
     {
-        if ( !i -> isCompatibleWith(params_type) )
-            i = possible.erase(i);
+        if ( it -> isCompatibleWith(params_type) )
+            ++it;
         else
-            ++i;
+            it = possible.erase(it);
     }
 
     return possible;

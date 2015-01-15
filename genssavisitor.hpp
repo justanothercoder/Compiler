@@ -17,8 +17,6 @@ public:
 
     GenSSAVisitor(ThreeAddressCode& code);
 
-    Arg* getArg(AST* node);
-
     void visit(IfNode* node) override;
     void visit(ForNode* node) override;
     void visit(DotNode* node) override;
@@ -53,6 +51,8 @@ public:
     
 private:
 
+    const std::shared_ptr<Arg>& getArg(AST* node);
+
     bool isIntType(const Type* t);
     bool isCharType(const Type* t);
     bool isPointer(const Type* t);
@@ -61,11 +61,11 @@ private:
 
     void genParam(ExprNode* node, ConversionInfo conversion_info);
     void genCall(const FunctionSymbol* func, int params_size);
-    void genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Arg*> params, Arg* this_expr);
+    void genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Argument> params, Argument this_expr);
 
-    std::stack< std::pair<Arg*, Arg*> > loop_label;
+    std::stack< std::pair<Argument, Argument> > loop_label;
 
-    Arg* _arg;    
+    Argument _arg;
     ThreeAddressCode& code;
 };
 

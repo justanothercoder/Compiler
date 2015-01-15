@@ -3,14 +3,13 @@
 
 #include <functional>
 #include "commandvisitor.hpp"
-
-class Arg;
+#include "arg.hpp"
 
 class SubstituteArgVisitor : public CommandVisitor
 {
 public:
 
-    SubstituteArgVisitor(std::function<Arg*(Arg*)> substitutor);
+    SubstituteArgVisitor(std::function<Argument(const Argument&)> substitutor);
 
     void visit(IfFalseCommand* command) override;
     void visit(GotoCommand* command) override;
@@ -25,7 +24,7 @@ public:
     void visit(CallCommand* command) override;
     void visit(AssignRefCommand* command) override;
 
-    std::function<Arg*(Arg*)> substitutor;
+    std::function<Argument(const Argument&)> substitutor;
 };
 
 #endif

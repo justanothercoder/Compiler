@@ -24,9 +24,9 @@ CompilableUnit& Comp::compile(std::string filename)
     CompilableUnit unit(filename);
 
     auto root = FileHelper::parse((filename + ".txt").c_str());
-    unit.root = root;
 
-    root -> scope = unit.module_symbol = new ModuleSymbol(unit.module_name, BuiltIns::global_scope);
+    unit.module_symbol = std::make_shared<ModuleSymbol>(unit.module_name, BuiltIns::global_scope.get());
+    root -> scope = unit.module_symbol;
     root -> build_scope();
 
     ExpandTemplatesVisitor expand_visitor;
@@ -46,6 +46,8 @@ CompilableUnit& Comp::compile(std::string filename)
 
     GenSSAVisitor visitor(Comp::code);
     root -> accept(visitor);
+
+    unit.root = std::shared_ptr<AST>{std::move(root)};
 
     Comp::units.push_back(unit);
     return Comp::units.back();

@@ -17,4 +17,6 @@ public:
     virtual boost::optional<int> getCompileTimeValue() const = 0;
 };
 
+using ASTExprNode = std::unique_ptr<ExprNode>;
+
 #endif

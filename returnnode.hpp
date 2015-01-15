@@ -2,25 +2,35 @@
 #define _RETURNNODE_HPP_
 
 #include "callinfo.hpp"
-#include "ast.hpp"
+#include "exprnode.hpp"
 
-class ExprNode;
 class FunctionSymbol;
 
 class ReturnNode : public AST
 {
+    friend class MarkReturnAsInlineVisitor;
 public:
 
-    ReturnNode(ExprNode *expr); 
-    AST* copyTree() const override; 
-    std::vector<AST*> getChildren() const override; 
+    ReturnNode(ASTExprNode expr);
+
+    ASTNode copyTree() const override; 
+    ASTChildren getChildren() const override; 
+
     std::string toString() const override; 
     void accept(ASTVisitor& visitor) override;
 
-    ExprNode *expr; 
-    FunctionSymbol *enclosing_func;
+    ExprNode* expr();
+    bool isInInlineCall() const;
 
-    bool is_in_inline_call;
+    const FunctionSymbol* function() const;
+    void function(const FunctionSymbol* func);
+
+private:
+
+    ASTExprNode expr_; 
+    const FunctionSymbol* enclosing_func = nullptr;
+
+    bool is_in_inline_call = false;
 };
 
 #endif

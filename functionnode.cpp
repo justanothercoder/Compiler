@@ -1,19 +1,20 @@
 #include "functionnode.hpp"
 
-FunctionNode::FunctionNode(std::string name) : name(name), function(nullptr)
-{
+FunctionNode::FunctionNode(const std::string& name) : name_(name) { }    
 
-}    
+ASTNode FunctionNode::copyTree() const { return std::make_unique<FunctionNode>(name_); }
 
-AST* FunctionNode::copyTree() const { return new FunctionNode(name); }
-
-VariableType FunctionNode::getType() const { return function;   } 
+VariableType FunctionNode::getType() const { return function_; } 
 bool FunctionNode::isLeftValue() const { return false; }
 
 bool FunctionNode::isCompileTimeExpr() const { return false; } 
 boost::optional<int> FunctionNode::getCompileTimeValue() const { return boost::none; }
 
-std::string FunctionNode::toString() const { return name; }
-
+std::string FunctionNode::toString() const { return name_; }
 void FunctionNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
+
+const std::string& FunctionNode::name() const { return name_; }
+
+const OverloadedFunctionSymbol* FunctionNode::function() { return function_; }
+void FunctionNode::function(const OverloadedFunctionSymbol* sym) { function_ = sym; }
 

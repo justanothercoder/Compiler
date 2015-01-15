@@ -13,57 +13,54 @@
 #include "callcommand.hpp"
 #include "assignrefcommand.hpp"
 
-SubstituteArgVisitor::SubstituteArgVisitor(std::function<Arg*(Arg*)> substitutor) : substitutor(substitutor)
-{
-    
-}
+SubstituteArgVisitor::SubstituteArgVisitor(std::function<Argument(const Argument&)> substitutor) : substitutor(substitutor) { }
 
 void SubstituteArgVisitor::visit(IfFalseCommand* command) 
 {
-    command -> expr = substitutor(command -> expr);
+    command -> expr_ = substitutor(command -> expr_);
 }
 
 void SubstituteArgVisitor::visit(ElemCommand* command) 
 {
-    command -> base = substitutor(command -> base);
-    command -> expr = substitutor(command -> expr);
+    command -> base_ = substitutor(command -> base_);
+    command -> expr_ = substitutor(command -> expr_);
 }
 
 void SubstituteArgVisitor::visit(AssignCommand* command) 
 {
-    command -> lhs = substitutor(command -> lhs);
-    command -> rhs = substitutor(command -> rhs);
+    command -> lhs_ = substitutor(command -> lhs_);
+    command -> rhs_ = substitutor(command -> rhs_);
 }
     
 void SubstituteArgVisitor::visit(AssignRefCommand* command) 
 {
-    command -> lhs = substitutor(command -> lhs);
-    command -> rhs = substitutor(command -> rhs);
+    command -> lhs_ = substitutor(command -> lhs_);
+    command -> rhs_ = substitutor(command -> rhs_);
 }
 
 void SubstituteArgVisitor::visit(ParamCommand* command) 
 {
-    command -> expr = substitutor(command -> expr);
+    command -> expr_ = substitutor(command -> expr_);
 }
 
 void SubstituteArgVisitor::visit(BinaryOpCommand* command) 
 {
-    command -> lhs = substitutor(command -> lhs);
-    command -> rhs = substitutor(command -> rhs);
+    command -> lhs_ = substitutor(command -> lhs_);
+    command -> rhs_ = substitutor(command -> rhs_);
 }
 
 void SubstituteArgVisitor::visit(UnaryOpCommand* command) 
 {
-    command -> expr = substitutor(command -> expr);
+    command -> expr_ = substitutor(command -> expr_);
 }
 
 void SubstituteArgVisitor::visit(ReturnCommand* command) 
 {
-    command -> expr = substitutor(command -> expr);
+    command -> expr_ = substitutor(command -> expr_);
 }
 
-void SubstituteArgVisitor::visit(CallCommand* ) { }
-void SubstituteArgVisitor::visit(GotoCommand* ) { }
+void SubstituteArgVisitor::visit(CallCommand*  ) { }
+void SubstituteArgVisitor::visit(GotoCommand*  ) { }
 void SubstituteArgVisitor::visit(LabelCommand* ) { }
-void SubstituteArgVisitor::visit(NewCommand* ) { }
+void SubstituteArgVisitor::visit(NewCommand*   ) { }
 

@@ -2,17 +2,18 @@
 #define _CONVERSIONINFO_HPP_
 
 #include <string>
+#include <memory>
 
 class Type;
 class FunctionSymbol;
 
 struct ConversionInfo
 {
-    ConversionInfo(FunctionSymbol *conversion, const Type* desired_type = nullptr);
+    ConversionInfo(const FunctionSymbol* conversion, const Type* desired_type = nullptr);
 
     std::string toString() const;
 
-    FunctionSymbol* conversion;
+    const FunctionSymbol* conversion;
     const Type* desired_type;
 };
 

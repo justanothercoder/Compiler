@@ -2,17 +2,17 @@
 #define _INLINEINFO_HPP_
 
 #include <vector>
+#include "ast.hpp"
 
-class AST;
 class VariableSymbol;
 
 struct InlineInfo
 {
     InlineInfo();
-    InlineInfo(AST* function_body, std::vector<VariableSymbol*> locals);
+    InlineInfo(ASTNode function_body, std::vector< std::shared_ptr<VariableSymbol> > locals);
 
-    AST* function_body;
-    std::vector<VariableSymbol*> locals;
+    ASTNode function_body;
+    std::vector< std::shared_ptr<VariableSymbol> > locals;
 };
 
 #endif

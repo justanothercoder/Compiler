@@ -45,8 +45,8 @@ bool InlineCallVisitor::shouldBeInlined(const FunctionSymbol* function)
     {
         return t.isReference()
             || t.base() -> getTypeKind() == TypeKind::POINTER
-            || t.base() == BuiltIns::int_type
-            || t.base() == BuiltIns::char_type;
+            || t.base() == BuiltIns::int_type.get()
+            || t.base() == BuiltIns::char_type.get();
     });
 };
 
@@ -55,20 +55,21 @@ InlineInfo InlineCallVisitor::inlineCall(const FunctionSymbol* function)
     auto function_decl = function -> function_decl;
     
     auto function_body = function_decl -> getChildren()[0] -> copyTree();
-    auto local_scope = new LocalScope(function_decl -> scope);
+    auto local_scope = std::make_shared<LocalScope>(function_decl -> scope.get());
 
     function_body -> scope = local_scope;
     function_body -> build_scope();
   
-    std::vector<VariableSymbol*> locals;
+    std::vector< std::shared_ptr<VariableSymbol> > locals;
 
-    for ( auto param : function_decl -> params_symbols ) 
+    for ( auto param : function_decl -> paramsSymbols() ) 
     {
-        auto new_var = new VariableSymbol(param -> getName(), param -> getType());
+        auto new_var = std::make_shared<VariableSymbol>(param -> getName(), param -> getType());
         locals.push_back(new_var);
         local_scope -> define(new_var);
     }
-    local_scope -> define(new VariableSymbol("$", function -> type().returnType()));
+
+    local_scope -> define(std::make_shared<VariableSymbol>("$", function -> type().returnType()));
 
     MarkReturnAsInlineVisitor mark;
 
@@ -81,34 +82,34 @@ InlineInfo InlineCallVisitor::inlineCall(const FunctionSymbol* function)
     for ( auto visitor : std::vector<ASTVisitor*>{&mark, &expand, &define, &check, &inline_call} )
         function_body -> accept(*visitor);
 
-    return InlineInfo(function_body, locals);
+    return InlineInfo(std::move(function_body), locals);
 }
 
 void InlineCallVisitor::visit(CallNode* node)
 {
-    for ( auto param : node -> params )
+    for ( const auto& param : node -> params() )
         param -> accept(*this);
 
-    auto function = node -> call_info.callee;
+    auto function = node -> callInfo().callee;
     
     if ( !shouldBeInlined(function) )
         return;
     
-    node -> inline_info = inlineCall(function);
+    node -> inlineInfo(inlineCall(function));
 }
 
 void InlineCallVisitor::visit(VariableDeclarationNode* node) 
 {
     visitChildren(node);
 
-    if ( !node -> is_field )
+    if ( !node -> isField() )
     {
-        auto function = node -> call_info.callee;
+        auto function = node -> callInfo().callee;
 
         if ( !function || !shouldBeInlined(function) )
             return;
 
-        node -> inline_info = inlineCall(function);
+        node -> inlineInfo(inlineCall(function));
     }
 }
 

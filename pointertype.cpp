@@ -16,7 +16,7 @@ TypeKind PointerType::getTypeKind() const { return TypeKind::POINTER; }
 
 bool PointerType::isConvertableTo(const Type *t) const
 {
-    return (this == t -> removeRef()) || (t == TypeFactory::getPointer(BuiltIns::void_type));
+    return (this == t -> removeRef()) || (t == TypeFactory::getPointer(BuiltIns::void_type.get()));
 }
 
 boost::optional<int> PointerType::rankOfConversion(const Type *t) const
@@ -29,6 +29,5 @@ boost::optional<int> PointerType::rankOfConversion(const Type *t) const
 
 bool PointerType::isReference() const { return false; } 
 
-FunctionSymbol* PointerType::getConversionTo(const Type *) const { return nullptr; }
-
+const FunctionSymbol* PointerType::getConversionTo(const Type *) const { return nullptr; }
 const Type* PointerType::pointedType() const { return type; }

@@ -23,11 +23,11 @@ bool CheckForUseVisitor::isUsed(Command* command) const { return used_commands.c
 void CheckForUseVisitor::checkAndMark(Arg* arg)
 {
     if ( auto temp = dynamic_cast<TemporaryArg*>(arg) ) {
-        used_commands.insert(temp -> command);
+        used_commands.insert(temp -> command());
     }
     else if ( auto dot = dynamic_cast<DotArg*>(arg) ) {
-        if ( auto temp = dynamic_cast<TemporaryArg*>(dot -> expr) ) {
-            used_commands.insert(temp -> command);
+        if ( auto temp = dynamic_cast<TemporaryArg*>(dot -> expr()) ) {
+            used_commands.insert(temp -> command());
         }
     }
 }
@@ -35,50 +35,50 @@ void CheckForUseVisitor::checkAndMark(Arg* arg)
 void CheckForUseVisitor::visit(IfFalseCommand* command) 
 {
     used_commands.insert({command});
-    checkAndMark(command -> expr);
+    checkAndMark(command -> expr());
 }
 
 void CheckForUseVisitor::visit(ElemCommand* command) 
 {
-    checkAndMark(command -> base);
-    checkAndMark(command -> expr);
+    checkAndMark(command -> base());
+    checkAndMark(command -> expr());
 }
 
 void CheckForUseVisitor::visit(AssignCommand* command) 
 {
     used_commands.insert(command);
-    checkAndMark(command -> lhs);
-    checkAndMark(command -> rhs);
+    checkAndMark(command -> lhs());
+    checkAndMark(command -> rhs());
 }
 
 void CheckForUseVisitor::visit(AssignRefCommand* command)
 {
     used_commands.insert(command);
-    checkAndMark(command -> lhs);
-    checkAndMark(command -> rhs);
+    checkAndMark(command -> lhs());
+    checkAndMark(command -> rhs());
 }
 
 void CheckForUseVisitor::visit(ParamCommand* command) 
 {
     used_commands.insert(command);
-    checkAndMark(command -> expr);
+    checkAndMark(command -> expr());
 }
 
 void CheckForUseVisitor::visit(BinaryOpCommand* command) 
 {
-    checkAndMark(command -> lhs);
-    checkAndMark(command -> rhs);
+    checkAndMark(command -> lhs());
+    checkAndMark(command -> rhs());
 }
 
 void CheckForUseVisitor::visit(UnaryOpCommand* command) 
 {
-    checkAndMark(command -> expr);
+    checkAndMark(command -> expr());
 }
 
 void CheckForUseVisitor::visit(ReturnCommand* command) 
 {
     used_commands.insert(command);
-    checkAndMark(command -> expr);
+    checkAndMark(command -> expr());
 }
 
 void CheckForUseVisitor::visit(CallCommand* command)  { used_commands.insert(command); }
