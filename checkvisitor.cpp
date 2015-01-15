@@ -390,7 +390,7 @@ void CheckVisitor::visit(ReturnNode* node)
 
 void CheckVisitor::visit(UnsafeBlockNode* node)
 {
-    node -> block().accept(*this);
+    node -> block() -> accept(*this);
 }
 
 void CheckVisitor::visit(VarInferTypeDeclarationNode* node)

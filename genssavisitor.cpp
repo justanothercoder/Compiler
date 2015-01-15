@@ -152,13 +152,19 @@ void GenSSAVisitor::visit(BracketNode* node)
 {
     if ( node -> base() -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY )
     {
-        _arg = code.add(std::make_shared<ElemCommand>(getArg(node -> base()), getArg(node -> expr())));
+        auto expr = getArg(node -> expr());
+        auto base = getArg(node -> base());
+
+        _arg = code.add(std::make_shared<ElemCommand>(base, expr));
         return;
     }
     
     if ( node -> base() -> getType().unqualified() == BuiltIns::ASCII_string_type.get() )
     {
-        _arg = code.add(std::make_shared<ElemCommand>(getArg(node -> base()), getArg(node -> expr()), true));
+        auto expr = getArg(node -> expr());
+        auto base = getArg(node -> base());
+
+        _arg = code.add(std::make_shared<ElemCommand>(base, expr, true));
         return;
     }
 
@@ -457,7 +463,7 @@ void GenSSAVisitor::visit(ReturnNode* node)
 
 void GenSSAVisitor::visit(UnsafeBlockNode *node)
 {
-    node -> block().accept(*this);
+    node -> block() -> accept(*this);
 }
 
 void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
