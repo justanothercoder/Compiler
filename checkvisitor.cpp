@@ -142,7 +142,9 @@ void CheckVisitor::visit(BinaryOperatorNode* node)
     {
         auto ov_func = resolveFunction(node -> scope.get(), node -> getOperatorName());
         node -> callInfo(ov_func -> resolveCall({valueOf(node -> lhs()), valueOf(node -> rhs())}));
-    }        
+    }
+
+//    node -> checkCall();
 }
 
 void CheckVisitor::visit(StructDeclarationNode *node)
@@ -322,29 +324,7 @@ void CheckVisitor::visit(VariableNode* node)
 void CheckVisitor::visit(CallNode* node)
 {
     visitChildren(node);
-
-    auto caller_type = node -> caller() -> getType();
-
-    const FunctionalType* ov_func = nullptr;
-    auto arguments = extractArguments(node -> params());
-
-    if ( caller_type.unqualified() -> isObjectType() )
-    {
-        auto type = static_cast<const ObjectType*>(caller_type.unqualified());
-        ov_func = type -> resolveMethod("operator()");
-
-        if ( ov_func == nullptr )
-            throw NoViableOverloadError("operator()", arguments);
-    }
-    else
-    {
-        ov_func = static_cast<const FunctionalType*>(caller_type.unqualified());
-    }
-        
-    try {
-        node -> callInfo(ov_func -> resolveCall(arguments));
-    }
-    catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(ov_func -> getName(), arguments); }
+    node -> checkCall();
 }
 
 void CheckVisitor::visit(ReturnNode* node)

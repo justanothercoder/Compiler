@@ -68,3 +68,21 @@ void CallNode::callInfo(const CallInfo& call_info) { this -> call_info = call_in
 
 const InlineInfo& CallNode::inlineInfo() const { return inline_info; }
 void CallNode::inlineInfo(InlineInfo inline_info) { this -> inline_info = std::move(inline_info); }
+    
+const FunctionalType* CallNode::function() const
+{
+    if ( caller_ -> getType().unqualified() -> isObjectType() )
+        return static_cast<const ObjectType*>(caller_ -> getType().unqualified()) -> resolveMethod("operator()");
+    else
+        return static_cast<const FunctionalType*>(caller_ -> getType().unqualified());
+}
+
+std::vector<ValueInfo> CallNode::arguments() const
+{
+    auto result = std::vector<ValueInfo>{ };
+
+    for ( const auto& param : params_ )
+        result.emplace_back(param -> getType(), param -> isLeftValue());
+
+    return result;
+}

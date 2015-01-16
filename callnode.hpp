@@ -3,14 +3,11 @@
 
 #include <vector>
 #include <algorithm>
-
-#include "exprnode.hpp"
-#include "callinfo.hpp"
-#include "inlineinfo.hpp"
+#include "callablenode.hpp"
 
 class VariableSymbol;
 
-class CallNode : public ExprNode
+class CallNode : public CallableNode
 {
 public:
 
@@ -37,13 +34,13 @@ public:
     const InlineInfo& inlineInfo() const;
     void inlineInfo(InlineInfo inline_info);
 
+    const FunctionalType* function() const override;
+    std::vector<ValueInfo> arguments() const override;
+
 private:
 
     ASTExprNode caller_;
     std::vector<ASTExprNode> params_;
-
-    CallInfo call_info;
-    InlineInfo inline_info;
 };
 
 #endif
