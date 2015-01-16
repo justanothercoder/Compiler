@@ -515,17 +515,17 @@ ASTExprNode Parser::variable()
                 if ( getTokenType(1) != TokenType::GREATER )
                 {
                     if ( tryTypeInfo() )
-                        template_params.emplace_back(std::move(typeInfo()));
+                        template_params.emplace_back(typeInfo());
                     else
-                        template_params.emplace_back(std::move(expression()));
+                        template_params.emplace_back(expression());
 
                     while ( getTokenType(1) == TokenType::COMMA )
                     {
                         match(TokenType::COMMA);
                         if ( tryTypeInfo() )
-                            template_params.emplace_back(std::move(typeInfo()));
+                            template_params.emplace_back(typeInfo());
                         else
-                            template_params.emplace_back(std::move(expression()));
+                            template_params.emplace_back(expression());
                     }
                 }
 
@@ -919,17 +919,17 @@ TypeInfo Parser::typeInfo()
         if ( getTokenType(1) != TokenType::GREATER )
         {
             if ( tryTypeInfo() )
-                template_params.push_back(std::move(typeInfo()));
+                template_params.push_back(typeInfo());
             else
-                template_params.push_back(std::move(expression()));
+                template_params.push_back(expression());
 
             while ( getTokenType(1) == TokenType::COMMA )
             {
                 match(TokenType::COMMA);
                 if ( tryTypeInfo() )
-                    template_params.push_back(std::move(typeInfo()));
+                    template_params.push_back(typeInfo());
                 else
-                    template_params.push_back(std::move(expression()));
+                    template_params.push_back(expression());
             }
         }
 
@@ -965,7 +965,7 @@ TypeInfo Parser::typeInfo()
         match(TokenType::REF);
     }
 
-    return TypeInfo(std::move(type_name), is_ref, is_const, std::move(template_params), std::move(modifiers), module_name);
+    return TypeInfo(type_name, is_ref, is_const, template_params, modifiers, module_name);
 }
 
 std::vector<ASTExprNode> Parser::call_params_list()

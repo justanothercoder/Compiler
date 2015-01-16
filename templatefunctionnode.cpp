@@ -21,20 +21,18 @@ std::string TemplateFunctionNode::toString() const
     if ( !template_params.empty() )
     {
         result += "<";
+        
+        struct StringifyVisitor : boost::static_visitor<std::string>
+        {
+            auto operator()(const std::shared_ptr<ExprNode>& expr) { return expr -> toString(); }
+            auto operator()(const TypeInfo& type_info) { return type_info.toString(); }
+        } stringify;
 
         auto it = std::begin(template_params);
-        if ( it -> which() == 0 )
-            result += boost::get<ExprNode*>(*it) -> toString();
-        else
-            result += boost::get<TypeInfo>(*it).toString();
 
+        result += boost::apply_visitor(stringify, *it);
         for ( ++it; it != std::end(template_params); ++it )
-        {
-            if ( it -> which() == 0 )
-                result += boost::get<ExprNode*>(*it) -> toString();
-            else
-                result += boost::get<TypeInfo>(*it).toString();
-        }
+            result += ", " + boost::apply_visitor(stringify, *it);
 
         result += ">";
     }

@@ -18,14 +18,29 @@ VariableDeclarationNode::VariableDeclarationNode(const std::string& name
 void VariableDeclarationNode::build_scope()
 {
     AST::build_scope();
-    for ( auto param : type_info.templateParams() )
+
+    struct BuildScopeVisitor : boost::static_visitor<>
     {
-        if ( param.which() == 0 )
+        BuildScopeVisitor(const std::shared_ptr<Scope>& scope) : scope(scope) { }
+
+        auto operator()(const std::shared_ptr<ExprNode>& expr) { expr -> scope = scope; expr -> build_scope(); }
+        auto operator()(const TypeInfo&) { }
+
+        const std::shared_ptr<Scope>& scope;
+    } build(scope);
+
+    for ( auto param : type_info.templateParams() )
+        boost::apply_visitor(build, param);
+
+    for ( const auto& modifier : type_info.modifiers() )
+    {
+        if ( modifier.isDimension() )
         {
-            boost::get<ExprNode*>(param) -> scope = scope;
-            boost::get<ExprNode*>(param) -> build_scope();
+            auto dim = *modifier.dimension();
+            dim -> scope = scope;
+            dim -> build_scope();
         }
-    }
+    }        
 }
 
 const Symbol* VariableDeclarationNode::getDefinedSymbol() const { return defined_symbol.get(); }

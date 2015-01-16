@@ -3,13 +3,7 @@
 #include "variablesymbol.hpp"
 #include "command.hpp"
 
-SpaceAllocator::SpaceAllocator(int params_offset) : space_used (0)
-                                                  , param_space(0)
-                                                  , space_offset(0)
-                                                  , params_offset(params_offset) 
-{
-
-}
+SpaceAllocator::SpaceAllocator(int params_offset) : params_offset(params_offset) { }
 
 void SpaceAllocator::remember(const Command* command, int size) 
 {   

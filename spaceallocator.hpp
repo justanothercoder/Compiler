@@ -29,10 +29,10 @@ private:
     std::map<const Command*, int> offsets;
     std::map<const VariableSymbol*, int> var_offsets;
 
-    int space_used;
-    int param_space;    
+    int space_used  = 0;
+    int param_space = 0;    
 
-    int space_offset;
+    int space_offset = 0;
     int params_offset;
 };
 

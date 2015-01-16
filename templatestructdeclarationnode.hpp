@@ -9,6 +9,8 @@
 
 class TemplateStructDeclarationNode : public TemplateDeclarationNode
 {
+    friend class ExpandTemplatesVisitor;
+
 public:
 
     TemplateStructDeclarationNode(std::string name, std::vector<ASTNode> inner, TemplateParamsList template_params);
@@ -26,7 +28,7 @@ public:
     std::shared_ptr<DeclarationNode> getInstance(std::vector<TemplateParam> template_params) const override;
     std::shared_ptr<DeclarationNode> instantiateWithTemplateInfo(TemplateInfo info) override;
     std::vector< std::shared_ptr<DeclarationNode> > allInstances() const override;
-    
+
 private:
 
     std::string name;

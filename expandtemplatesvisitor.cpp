@@ -55,38 +55,23 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
 
 void ExpandTemplatesVisitor::visit(VariableDeclarationNode *node) 
 {
-    for ( const auto& modifier : node -> typeInfo().modifiers() )
-    {
-        if ( modifier.isDimension() )
-        {
-            auto dim = *modifier.dimension();
-            dim -> scope = node -> scope;
-        }
-    }   
-
     node -> typeInfo(preprocessTypeInfo(node -> typeInfo(), node -> scope.get()));
 }
 
 void ExpandTemplatesVisitor::visit(NewExpressionNode *node)
 {
-    for ( const auto& modifier : node -> typeInfo().modifiers() )
-    {
-        if ( modifier.isDimension() )
-        {
-            auto dim = *modifier.dimension();
-            dim -> scope = node -> scope;
-        }
-    }   
-
     node -> typeInfo(preprocessTypeInfo(node -> typeInfo(), node -> scope.get()));
 }
     
 TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
 {
-    if ( info.which() == 1 )
-        return TemplateParam(boost::get<TypeInfo>(info));
-    else
-        return TemplateParam(*boost::get<ExprNode*>(info) -> getCompileTimeValue());
+    struct ExtractTemplateParam : boost::static_visitor<TemplateParam>
+    {
+        auto operator()(const std::shared_ptr<ExprNode>& expr) { return TemplateParam(*expr -> getCompileTimeValue()); }
+        auto operator()(const TypeInfo& type_info)             { return TemplateParam(type_info); }
+    } extract;
+
+    return boost::apply_visitor(extract, info);
 }
 
 TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *scope)
@@ -162,15 +147,8 @@ std::shared_ptr<DeclarationNode> ExpandTemplatesVisitor::instantiateSpec(const T
 void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode* node) { node -> expr() -> accept(*this); }
 void ExpandTemplatesVisitor::visit(DotNode* node) { node -> base() -> accept(*this); }
 
-void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode* node)
-{ 
-    node -> scope -> define(std::shared_ptr<const Symbol>(node -> getDefinedSymbol())); 
-}
-
-void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) 
-{ 
-    node -> scope -> define(std::shared_ptr<const Symbol>(node -> getDefinedSymbol())); 
-}
+void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode* node)   { node -> scope -> define(node -> defined_symbol); }
+void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) { node -> scope -> define(node -> defined_symbol); }
 
 void ExpandTemplatesVisitor::visit(CallNode* node)              { visitChildren(node); }
 void ExpandTemplatesVisitor::visit(UnsafeBlockNode* node)       { visitChildren(node); }

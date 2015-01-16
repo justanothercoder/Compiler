@@ -10,7 +10,7 @@
 
 class TypeInfo;
 
-using TemplateParamInfo = boost::variant< std::shared_ptr<ExprNode>, TypeInfo>;
+using TemplateParamInfo = boost::variant< std::shared_ptr<ExprNode>, TypeInfo >;
 
 class TypeInfo
 {

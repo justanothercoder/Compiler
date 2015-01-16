@@ -11,10 +11,20 @@ void NewExpressionNode::build_scope()
     {
         if ( param.which() == 0 )
         {
-            boost::get<ExprNode*>(param) -> scope = scope;
-            boost::get<ExprNode*>(param) -> build_scope();
+            boost::get< std::shared_ptr<ExprNode> >(param) -> scope = scope;
+            boost::get< std::shared_ptr<ExprNode> >(param) -> build_scope();
         }
     }
+    
+    for ( const auto& modifier : type_info.modifiers() )
+    {
+        if ( modifier.isDimension() )
+        {
+            auto dim = *modifier.dimension();
+            dim -> scope = scope;
+            dim -> build_scope();
+        }
+    }   
 }
 
 ASTNode NewExpressionNode::copyTree() const

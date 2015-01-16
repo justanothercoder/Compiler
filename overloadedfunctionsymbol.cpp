@@ -127,7 +127,7 @@ bool OverloadedFunctionSymbol::checkValues(std::vector<ValueInfo> arguments, std
     
 const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(const TemplateFunctionSymbol* template_function
                                                                          , FunctionTypeInfo info
-                                                                         , std::vector<TemplateParam> partial) const
+                                                                         , const std::vector<TemplateParam>& partial) const
 {
     auto decl = static_cast<TemplateFunctionDeclarationNode*>(template_function -> holder());
     auto tmpl = static_cast<const TemplateFunctionSymbol*>(decl -> getDefinedSymbol());
@@ -136,7 +136,8 @@ const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(const
     if ( auto mapping = makeMappingOfParams(tmpl, function_info.formalParams(), info.params()) )
     {
         auto template_params_map = *mapping;
-        std::vector<TemplateParam> template_params(std::begin(partial), std::end(partial));
+
+        auto template_params = std::vector<TemplateParam>(std::begin(partial), std::end(partial));
 
         for ( auto template_param : tmpl -> templateSymbols() )
         {
@@ -160,14 +161,18 @@ const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(const
     return nullptr;
 }
 
-boost::optional< std::map<std::string, TemplateParam> > OverloadedFunctionSymbol::makeMappingOfParams(const TemplateSymbol* tmpl, std::vector<ParamInfo> formal_params, FunctionTypeInfo arguments) const
+boost::optional< std::map<std::string, TemplateParam> > OverloadedFunctionSymbol::makeMappingOfParams(const TemplateSymbol* tmpl
+                                                                                                    , const std::vector<ParamInfo>& formal_params
+                                                                                                    , FunctionTypeInfo arguments) const
 {
     std::map<std::string, TemplateParam> template_params_map;
 
-    if ( arguments.params().size() != formal_params.size() )
+    auto args = arguments.params();
+
+    if ( args.size() != formal_params.size() )
         return boost::none;
 
-    auto it = std::begin(arguments.params());
+    auto it = std::begin(args);
 
     for ( const auto& param : formal_params )
     {

@@ -12,6 +12,8 @@ class TemplateFunctionSymbol;
 
 class TemplateFunctionDeclarationNode : public TemplateDeclarationNode
 {
+    friend class ExpandTemplatesVisitor;
+
 public:
 
     TemplateFunctionDeclarationNode(const std::string& name

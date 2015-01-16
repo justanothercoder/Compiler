@@ -100,7 +100,7 @@ void CheckVisitor::visit(NewExpressionNode *node)
     for ( auto param : node -> typeInfo().templateParams() )
     {
         if ( param.which() == 0 )
-            boost::get<ExprNode*>(param) -> accept(*this);
+            boost::get< std::shared_ptr<ExprNode> >(param) -> accept(*this);
     }
     
     auto tp = fromTypeInfo(node -> typeInfo(), node -> scope.get()).base();
@@ -161,7 +161,7 @@ void CheckVisitor::visit(VariableDeclarationNode* node)
     for ( auto param : node -> typeInfo().templateParams() )
     {
         if ( param.which() == 0 )
-            boost::get<ExprNode*>(param) -> accept(*this);
+            boost::get< std::shared_ptr<ExprNode> >(param) -> accept(*this);
     }
 
     if ( !node -> isField() )
@@ -282,16 +282,17 @@ void CheckVisitor::visit(TemplateFunctionNode* node)
         node -> function(ov_func);
     else
     {
+        struct ExtractTemplateParam : boost::static_visitor<TemplateParam>
+        {
+            auto operator()(const std::shared_ptr<ExprNode>& expr) { return TemplateParam(*expr -> getCompileTimeValue()); }
+            auto operator()(const TypeInfo& type_info)             { return TemplateParam(type_info); }
+        } extract;
+        
         std::vector<TemplateParam> template_arguments;
         for ( auto param : node -> templateParams() )
-        {
-            if ( param.which() == 0 )
-                template_arguments.emplace_back(*boost::get<ExprNode*>(param) -> getCompileTimeValue());
-            else
-                template_arguments.emplace_back(boost::get<TypeInfo>(param));
-        }
+            template_arguments.emplace_back(boost::apply_visitor(extract, param));
 
-        node -> function(std::make_shared<PartiallyInstantiatedFunctionSymbol>(ov_func, template_arguments).get());
+        node -> function(new PartiallyInstantiatedFunctionSymbol(ov_func, template_arguments));
     }
 }
 

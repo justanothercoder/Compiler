@@ -44,10 +44,10 @@ private:
 
     const FunctionSymbol* overloadOfTemplateFunction(const TemplateFunctionSymbol* template_function
                                                    , FunctionTypeInfo info
-                                                   , std::vector<TemplateParam> partial = { }) const;
+                                                   , const std::vector<TemplateParam>& partial = { }) const;
 
     boost::optional< std::map<std::string, TemplateParam> > makeMappingOfParams(const TemplateSymbol* tmpl
-                                                                              , std::vector<ParamInfo> formal_params
+                                                                              , const std::vector<ParamInfo>& formal_params
                                                                               , FunctionTypeInfo arguments) const;
 
 private:
