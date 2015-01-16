@@ -354,8 +354,6 @@ void GenSSAVisitor::visit(DotNode *node)
     else
     {
         auto var = static_cast<const VariableSymbol*>(node -> member());
-//        auto base_type = static_cast<const ObjectType*>(node -> base -> getType().unqualified());
-//        _arg = new DotArg(getArg(node -> base), base_type -> offsetOf(var), var);
         _arg = std::make_shared<DotArg>(getArg(node -> base()), node -> baseType() -> offsetOf(var), var);
     }
 }

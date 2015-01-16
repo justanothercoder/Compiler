@@ -97,7 +97,7 @@ void DefineVisitor::visit(FunctionDeclarationNode* node)
         node -> addParamSymbol(std::make_shared<VariableSymbol>(param.first, param_type, VariableSymbolType::PARAM));
     }
 
-    auto type = FunctionType(return_type, std::move(FunctionTypeInfo(params_types)));
+    auto type = FunctionType(return_type, FunctionTypeInfo(params_types));
 
     auto function_name = node -> traits().is_constructor ? static_cast<StructSymbol*>(node -> scope.get()) -> getName() : node -> name();
 
