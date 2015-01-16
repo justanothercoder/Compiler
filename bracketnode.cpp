@@ -1,6 +1,7 @@
 #include "bracketnode.hpp"
 #include "functionsymbol.hpp"
 #include "structsymbol.hpp"
+#include "builtins.hpp"
 
 BracketNode::BracketNode(ASTExprNode base, ASTExprNode expr) : base_(std::move(base)), expr_(std::move(expr)) { }
 
@@ -35,4 +36,23 @@ ExprNode* BracketNode::expr() { return expr_.get(); }
 
 const CallInfo& BracketNode::callInfo() const { return call_info; }
 void BracketNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
+
+const FunctionalType* BracketNode::function() const
+{
+    if ( base_ -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY )
+        return BuiltIns::global_scope -> resolveFunction("operator[]");
+    else
+    {
+        assert(base_ -> getType().unqualified() -> isObjectType());
+        return static_cast<const ObjectType*>(base_ -> getType().unqualified()) -> resolveMethod("operator[]");
+    }
+}
+
+std::vector<ValueInfo> BracketNode::arguments() const
+{
+    if ( base_ -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY )
+        return {valueOf(base_.get()), valueOf(expr_.get())};
+    else
+        return {valueOf(expr_.get())};
+}
 

@@ -52,9 +52,6 @@ private:
 
     std::vector<ValueInfo> extractArguments(const std::vector< std::unique_ptr<ExprNode> >& params);
 
-    const OverloadedFunctionSymbol* resolveFunction(const Scope* scope, const std::string& name);
-    ValueInfo valueOf(const ExprNode* expr);
-
 private:
 
     std::stack<FunctionScope*> function_scopes;

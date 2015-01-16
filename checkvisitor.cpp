@@ -41,20 +41,11 @@
 #include "objecttype.hpp"
 #include "logger.hpp"
     
-const OverloadedFunctionSymbol* CheckVisitor::resolveFunction(const Scope* scope, const std::string& name)
-{
-    auto func = scope -> resolve(name);
-    assert(func -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION);
-    return static_cast<const OverloadedFunctionSymbol*>(func);
-}
-
 void CheckVisitor::visitChildren(AST* node)
 {
     for ( auto child : node -> getChildren() )
         child -> accept(*this);
 }
-
-ValueInfo CheckVisitor::valueOf(const ExprNode* expr) { return {expr -> getType(), expr -> isLeftValue()}; }
 
 std::vector<ValueInfo> CheckVisitor::extractArguments(const std::vector< std::unique_ptr<ExprNode> >& params)
 {
@@ -69,26 +60,7 @@ std::vector<ValueInfo> CheckVisitor::extractArguments(const std::vector< std::un
 void CheckVisitor::visit(BracketNode *node)
 {
     visitChildren(node);
-
-    if ( node -> base() -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY )
-    {
-        auto ov_func = resolveFunction(BuiltIns::global_scope.get(), "operator[]");
-        if ( ov_func == nullptr )
-            throw NoViableOverloadError("operator[]", {node -> base() -> getType(), node -> expr() -> getType()});
-            
-        node -> callInfo(ov_func -> resolveCall({valueOf(node -> base()), valueOf(node -> expr())}));
-    }
-    else
-    {
-        assert(node -> base() -> getType().unqualified() -> isObjectType());
-        auto base_type = static_cast<const ObjectType*>(node -> base() -> getType().unqualified());
-        
-        auto ov_func = base_type -> resolveMethod("operator[]");
-        if ( ov_func == nullptr )
-            throw NoViableOverloadError("operator[]", {node -> expr() -> getType()});
-        
-        node -> callInfo(ov_func -> resolveCall({valueOf(node -> expr())}));
-    }
+    node -> checkCall();
 }
 
 void CheckVisitor::visit(UnaryNode* node)

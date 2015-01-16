@@ -7,17 +7,11 @@
 #include "typeinfo.hpp"
 #include "templateparam.hpp"
 
-class Type;
-class Scope;
 class Symbol;
 class ScopeVisitor;
-class VarAllocator;
-class TempAllocator;
-class VariableSymbol;
-class FunctionSymbol;
 struct TemplateInfo;
-
-class TemplateStructSymbol;
+class Type;
+class FunctionalType;
 
 class Scope
 {
@@ -39,6 +33,7 @@ public:
     void define(std::shared_ptr<const Symbol> sym);
 
     const Type* resolveType(const std::string& name);
+    const FunctionalType* resolveFunction(const std::string& name);
 };
 
 #endif

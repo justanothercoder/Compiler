@@ -39,4 +39,10 @@ const Type* Scope::resolveType(const std::string& name)
             return dynamic_cast<const Type*>(sym);
     }
 }
-
+    
+const FunctionalType* Scope::resolveFunction(const std::string& name)
+{
+    auto func = resolve(name);
+    assert(func -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION);
+    return static_cast<const OverloadedFunctionSymbol*>(func);
+}

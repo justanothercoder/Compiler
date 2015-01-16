@@ -117,17 +117,13 @@ const FunctionalType* BinaryOperatorNode::function() const
     if ( lhs_ -> getType().unqualified() -> isObjectType() )
         return static_cast<const ObjectType*>(lhs_ -> getType().unqualified()) -> resolveMethod(getOperatorName());
     else
-    {
-        auto func = scope -> resolve(getOperatorName());
-        assert(func -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION);        
-        return static_cast<const OverloadedFunctionSymbol*>(func);
-    }
+        return scope -> resolveFunction(getOperatorName());
 }
 
 std::vector<ValueInfo> BinaryOperatorNode::arguments() const 
 {
     if ( lhs_ -> getType().unqualified() -> isObjectType() )
-        return {{rhs_ -> getType(), rhs_ -> isLeftValue()}};
+        return {valueOf(rhs_.get())};
     else
-        return {{lhs_ -> getType(), lhs_ -> isLeftValue()}, {rhs_ -> getType(), rhs_ -> isLeftValue()}};
+        return {valueOf(lhs_.get()), valueOf(rhs_.get())};
 }

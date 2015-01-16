@@ -5,6 +5,7 @@
 
 #include "ast.hpp"
 #include "variabletype.hpp"
+#include "valueinfo.hpp"
 
 class ExprNode : public AST
 {
@@ -18,5 +19,7 @@ public:
 };
 
 using ASTExprNode = std::unique_ptr<ExprNode>;
+    
+ValueInfo valueOf(ExprNode* expr);
 
 #endif

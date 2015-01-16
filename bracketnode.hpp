@@ -2,10 +2,9 @@
 #define _BRACKETNODE_HPP_
 
 #include <memory>
-#include "exprnode.hpp"
-#include "callinfo.hpp"
+#include "callablenode.hpp"
 
-class BracketNode : public ExprNode
+class BracketNode : public CallableNode
 {
 public:
 
@@ -21,7 +20,6 @@ public:
     boost::optional<int> getCompileTimeValue() const override;
 
     std::string toString() const override;
-
     void accept(ASTVisitor& visitor) override;
 
     ExprNode* base();
@@ -30,12 +28,13 @@ public:
     const CallInfo& callInfo() const;
     void callInfo(const CallInfo& call_info);
 
+    const FunctionalType* function() const override;
+    std::vector<ValueInfo> arguments() const override;
+
 private:
 
     ASTExprNode base_;
     ASTExprNode expr_;
-
-    CallInfo call_info;
 };
 
 #endif
