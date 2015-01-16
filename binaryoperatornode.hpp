@@ -17,9 +17,6 @@ public:
     ASTChildren getChildren() const override;
     ASTNode copyTree() const override;
 
-    VariableType getType() const override;
-    bool isLeftValue() const override;
-
     bool isCompileTimeExpr() const override;
     boost::optional<int> getCompileTimeValue() const override;
 

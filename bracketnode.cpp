@@ -15,9 +15,6 @@ ASTNode BracketNode::copyTree() const
 
 ASTChildren BracketNode::getChildren() const { return {base_.get(), expr_.get()}; }
 
-VariableType BracketNode::getType() const { return call_info.callee -> type().returnType(); } 
-bool BracketNode::isLeftValue() const { return false; }
-
 bool BracketNode::isCompileTimeExpr() const
 {
     return base_ -> isCompileTimeExpr() 

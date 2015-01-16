@@ -17,9 +17,6 @@ public:
     std::string getOperatorName() const;
     std::string getCodeOperatorName();
 
-    VariableType getType() const override;
-    bool isLeftValue() const override;
-
     bool isCompileTimeExpr() const override;
     boost::optional<int> getCompileTimeValue() const override;
 

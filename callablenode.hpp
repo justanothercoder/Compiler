@@ -15,6 +15,9 @@ public:
     virtual const FunctionalType* function() const = 0;
     virtual std::vector<ValueInfo> arguments() const = 0;
 
+    VariableType getType() const override;
+    bool isLeftValue() const override;
+
     void checkCall();
     void genCall();
 

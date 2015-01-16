@@ -25,9 +25,6 @@ ASTChildren CallNode::getChildren() const
     return vec;
 }
 
-VariableType CallNode::getType() const { return call_info.callee -> type().returnType(); }
-bool CallNode::isLeftValue() const { return false; }
-
 bool CallNode::isCompileTimeExpr() const
 {
     return call_info.callee -> is_constexpr && std::all_of(std::begin(params_), std::end(params_), [](auto&& expr)

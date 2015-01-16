@@ -53,9 +53,6 @@ ASTNode BinaryOperatorNode::copyTree() const
 
 ASTChildren BinaryOperatorNode::getChildren() const { return {lhs_.get(), rhs_.get()}; }
 
-VariableType BinaryOperatorNode::getType() const { return call_info.callee -> type().returnType(); } 
-bool BinaryOperatorNode::isLeftValue() const { return false; }
-
 bool BinaryOperatorNode::isCompileTimeExpr() const
 {
     return lhs_ -> isCompileTimeExpr() && rhs_ -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
