@@ -129,22 +129,7 @@ void CheckVisitor::visit(NewExpressionNode* node)
 void CheckVisitor::visit(BinaryOperatorNode* node)
 {
     visitChildren(node);
-        
-    auto lhs_type = node -> lhs() -> getType();
-    auto lhs_unqualified = lhs_type.unqualified();
-
-    if ( lhs_unqualified -> isObjectType() )
-    {
-        auto ov_func = static_cast<const ObjectType*>(lhs_unqualified) -> resolveMethod(node -> getOperatorName());
-        node -> callInfo(ov_func -> resolveCall({valueOf(node -> rhs())}));
-    }
-    else
-    {
-        auto ov_func = resolveFunction(node -> scope.get(), node -> getOperatorName());
-        node -> callInfo(ov_func -> resolveCall({valueOf(node -> lhs()), valueOf(node -> rhs())}));
-    }
-
-//    node -> checkCall();
+    node -> checkCall();
 }
 
 void CheckVisitor::visit(StructDeclarationNode *node)

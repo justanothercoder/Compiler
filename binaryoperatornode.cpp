@@ -9,7 +9,7 @@ BinaryOperatorNode::BinaryOperatorNode(ASTExprNode lhs, ASTExprNode rhs, BinaryO
 
 }
 
-std::string BinaryOperatorNode::getOperatorName()
+std::string BinaryOperatorNode::getOperatorName() const
 {
     switch ( op_type )
     {
@@ -112,3 +112,22 @@ BinaryOp BinaryOperatorNode::op() const { return op_type; }
 const CallInfo& BinaryOperatorNode::callInfo() const { return call_info; }
 void BinaryOperatorNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
 
+const FunctionalType* BinaryOperatorNode::function() const
+{
+    if ( lhs_ -> getType().unqualified() -> isObjectType() )
+        return static_cast<const ObjectType*>(lhs_ -> getType().unqualified()) -> resolveMethod(getOperatorName());
+    else
+    {
+        auto func = scope -> resolve(getOperatorName());
+        assert(func -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION);        
+        return static_cast<const OverloadedFunctionSymbol*>(func);
+    }
+}
+
+std::vector<ValueInfo> BinaryOperatorNode::arguments() const 
+{
+    if ( lhs_ -> getType().unqualified() -> isObjectType() )
+        return {{rhs_ -> getType(), rhs_ -> isLeftValue()}};
+    else
+        return {{lhs_ -> getType(), lhs_ -> isLeftValue()}, {rhs_ -> getType(), rhs_ -> isLeftValue()}};
+}
