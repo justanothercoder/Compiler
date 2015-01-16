@@ -4,7 +4,7 @@
 
 UnaryNode::UnaryNode(ASTExprNode expr, UnaryOp op_type) : expr_(std::move(expr)), op_type(op_type) { }
 
-std::string UnaryNode::getOperatorName()
+std::string UnaryNode::getOperatorName() const
 {
     switch ( op_type )
     {
@@ -57,3 +57,12 @@ ExprNode* UnaryNode::expr() { return expr_.get(); }
 
 const CallInfo& UnaryNode::callInfo() const { return call_info; }
 void UnaryNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
+    
+const FunctionalType* UnaryNode::function() const 
+{
+    assert(expr_ -> getType().unqualified() -> isObjectType());
+    return static_cast<const ObjectType*>(expr_ -> getType().unqualified()) -> resolveMethod(getOperatorName());
+}
+
+std::vector<ValueInfo> UnaryNode::arguments() const { return { }; }
+

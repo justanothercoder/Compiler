@@ -66,15 +66,7 @@ void CheckVisitor::visit(BracketNode *node)
 void CheckVisitor::visit(UnaryNode* node)
 {
     node -> expr() -> accept(*this);
-    assert(node -> expr() -> getType().unqualified() -> isObjectType());
-
-    auto type = static_cast<const ObjectType*>(node -> expr() -> getType().unqualified());
-    
-    auto ov_func = type -> resolveMethod(node -> getOperatorName());
-    if ( ov_func == nullptr )
-        throw NoViableOverloadError(node -> getOperatorName(), std::vector<ValueInfo>{ });
-
-    node -> callInfo(ov_func -> resolveCall({ }));
+    node -> checkCall();
 }
 
 void CheckVisitor::visit(NewExpressionNode* node)

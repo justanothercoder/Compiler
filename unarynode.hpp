@@ -1,12 +1,11 @@
 #ifndef _UNARYNODE_HPP_
 #define _UNARYNODE_HPP_
 
-#include "exprnode.hpp"
-#include "callinfo.hpp"
+#include "callablenode.hpp"
 
 enum class UnaryOp { PLUS, MINUS, NOT };
 
-class UnaryNode : public ExprNode
+class UnaryNode : public CallableNode
 {
 public:
 
@@ -15,7 +14,7 @@ public:
     ASTNode copyTree() const override;
     ASTChildren getChildren() const override;
 
-    std::string getOperatorName();
+    std::string getOperatorName() const;
     std::string getCodeOperatorName();
 
     VariableType getType() const override;
@@ -32,11 +31,13 @@ public:
     const CallInfo& callInfo() const;
     void callInfo(const CallInfo& call_info);
 
+    const FunctionalType* function() const override;
+    std::vector<ValueInfo> arguments() const override;
+
 private:
 
     ASTExprNode expr_;
     UnaryOp op_type;
-    CallInfo call_info;
 };
 
 #endif
