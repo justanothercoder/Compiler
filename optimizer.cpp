@@ -99,10 +99,10 @@ void Optimizer::eliminateUnusedTemporaries()
             command -> accept(&checker);
         }
 
-        std::remove_if(std::begin(block -> code()), std::end(block -> code()), [&] (int command_id) 
+        block -> code().erase(std::remove_if(std::begin(block -> code()), std::end(block -> code()), [&] (int command_id) 
         {
             return !checker.isUsed(block -> commandById(command_id));
-        });
+        }), std::end(block -> code()));
     }
     
 }
