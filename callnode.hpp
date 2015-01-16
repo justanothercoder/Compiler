@@ -25,12 +25,6 @@ public:
     ExprNode* caller();
     const std::vector<ASTExprNode>& params() const;
 
-    const CallInfo& callInfo() const;
-    void callInfo(const CallInfo& call_info);
-
-    const InlineInfo& inlineInfo() const;
-    void inlineInfo(InlineInfo inline_info);
-
     const FunctionalType* function() const override;
     std::vector<ValueInfo> arguments() const override;
 

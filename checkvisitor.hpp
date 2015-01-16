@@ -7,6 +7,7 @@
 #include "valueinfo.hpp"
 
 class AST;
+class CallableNode;
 class FunctionScope;
 class OverloadedFunctionSymbol;
 
@@ -49,6 +50,7 @@ public:
 private:
 
     void visitChildren(AST* node);
+    void visitCallable(CallableNode* node);
 
     std::vector<ValueInfo> extractArguments(const std::vector< std::unique_ptr<ExprNode> >& params);
 

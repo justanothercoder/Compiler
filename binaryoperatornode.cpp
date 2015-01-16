@@ -106,9 +106,6 @@ ExprNode* BinaryOperatorNode::lhs() { return lhs_.get(); }
 ExprNode* BinaryOperatorNode::rhs() { return rhs_.get(); }
 BinaryOp BinaryOperatorNode::op() const { return op_type; }
 
-const CallInfo& BinaryOperatorNode::callInfo() const { return call_info; }
-void BinaryOperatorNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
-
 const FunctionalType* BinaryOperatorNode::function() const
 {
     if ( lhs_ -> getType().unqualified() -> isObjectType() )

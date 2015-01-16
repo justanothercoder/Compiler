@@ -18,8 +18,11 @@ public:
     VariableType getType() const override;
     bool isLeftValue() const override;
 
-    void checkCall();
-    void genCall();
+    const CallInfo& callInfo() const;
+    void callInfo(const CallInfo& call_info);
+
+    const InlineInfo& inlineInfo() const;
+    void inlineInfo(InlineInfo inline_info);
 
 protected:
 

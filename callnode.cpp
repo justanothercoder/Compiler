@@ -59,12 +59,6 @@ void CallNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
 ExprNode* CallNode::caller() { return caller_.get(); }
 const std::vector<ASTExprNode>& CallNode::params() const { return params_; }
-
-const CallInfo& CallNode::callInfo() const { return call_info; }
-void CallNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
-
-const InlineInfo& CallNode::inlineInfo() const { return inline_info; }
-void CallNode::inlineInfo(InlineInfo inline_info) { this -> inline_info = std::move(inline_info); }
     
 const FunctionalType* CallNode::function() const
 {

@@ -52,9 +52,6 @@ void UnaryNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
 ExprNode* UnaryNode::expr() { return expr_.get(); }
 
-const CallInfo& UnaryNode::callInfo() const { return call_info; }
-void UnaryNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
-    
 const FunctionalType* UnaryNode::function() const 
 {
     assert(expr_ -> getType().unqualified() -> isObjectType());

@@ -78,11 +78,11 @@ const std::string& VariableDeclarationNode::name() const { return name_; }
 bool VariableDeclarationNode::isField() const { return is_field; } 
 const std::vector<ASTExprNode>& VariableDeclarationNode::constructorParams() const { return constructor_params; }
 
-const CallInfo& VariableDeclarationNode::callInfo() const { return call_info; }
-void VariableDeclarationNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
-
 const TypeInfo& VariableDeclarationNode::typeInfo() const { return type_info; }
 void VariableDeclarationNode::typeInfo(const TypeInfo& type_info) { this -> type_info = type_info; }
+
+const CallInfo& VariableDeclarationNode::callInfo() const { return call_info; }
+void VariableDeclarationNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
 
 const InlineInfo& VariableDeclarationNode::inlineInfo() const { return inline_info; }
 void VariableDeclarationNode::inlineInfo(InlineInfo inline_info) { this -> inline_info = std::move(inline_info); }

@@ -31,9 +31,6 @@ void BracketNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 ExprNode* BracketNode::base() { return base_.get(); }
 ExprNode* BracketNode::expr() { return expr_.get(); }
 
-const CallInfo& BracketNode::callInfo() const { return call_info; }
-void BracketNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
-
 const FunctionalType* BracketNode::function() const
 {
     if ( base_ -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY )
