@@ -50,6 +50,8 @@ private:
 
     void visitChildren(AST* node);
 
+    std::vector<ValueInfo> extractArguments(const std::vector< std::unique_ptr<ExprNode> >& params);
+
     const OverloadedFunctionSymbol* resolveFunction(const Scope* scope, const std::string& name);
     ValueInfo valueOf(const ExprNode* expr);
 

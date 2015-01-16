@@ -32,7 +32,7 @@ private:
     std::string name_;
     std::string member_;
 
-    const Symbol* member_sym;
+    const Symbol* member_sym = nullptr;
 };
 
 #endif

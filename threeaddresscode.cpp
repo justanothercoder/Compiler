@@ -19,8 +19,7 @@ Argument ThreeAddressCode::newLabel(const std::string& label)
 
 Argument ThreeAddressCode::add(std::shared_ptr<Command> command)
 {
-    Block* current_block = blocks[blockStack.top()];
-
+    auto& current_block = blocks[blockStack.top()];
     current_block -> addCommand(command);
 
     return std::make_shared<TemporaryArg>(command);
@@ -29,7 +28,7 @@ Argument ThreeAddressCode::add(std::shared_ptr<Command> command)
 std::string ThreeAddressCode::toString()
 {
     std::string res;
-    for ( auto block : blocks )
+    for ( const auto& block : blocks )
         res += block -> toString() + "\n";
 
     return res;
@@ -37,7 +36,7 @@ std::string ThreeAddressCode::toString()
 
 void ThreeAddressCode::computeMemoryDisposition() const
 {
-    for ( auto block : blocks )
+    for ( const auto& block : blocks )
         block -> computeMemoryDisposition();
 }
 
@@ -131,7 +130,7 @@ void ThreeAddressCode::newBlock(Scope* scope, std::string block_name)
     if ( block_name == "" )
         block_name = scope -> getScopeName();
 
-    blocks.push_back(new Block(scope, globaltable, block_name));
+    blocks.push_back(std::make_unique<Block>(scope, globaltable, block_name));
     blockStack.push(blocks.size() - 1);
 }
 
@@ -167,6 +166,6 @@ void ThreeAddressCode::addExternalFunction(const FunctionSymbol* function)
     
 void ThreeAddressCode::rememberVar(const VariableSymbol* var) 
 {
-    Block* current_block = blocks[blockStack.top()];
+    auto& current_block = blocks[blockStack.top()];
     current_block -> allocate(var);
 }

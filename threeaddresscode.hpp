@@ -80,7 +80,7 @@ public:
 
 //private:
 
-    std::vector<Block*> blocks;
+    std::vector< std::unique_ptr<Block> > blocks;
     std::stack<int> blockStack;
 
     GlobalTable globaltable;

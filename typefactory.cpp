@@ -11,7 +11,7 @@
 
 const Type* TypeFactory::getPointer(const Type *type)
 {
-    static std::map<const Type*, const Type*> pointers;
+    static std::map<const Type*, std::unique_ptr<const Type> > pointers;
 
     if ( type -> isReference() )
         return nullptr;
@@ -20,8 +20,8 @@ const Type* TypeFactory::getPointer(const Type *type)
 
     if ( it == std::end(pointers) )
     {
-        pointers[type] = new PointerType(type);
-        const auto& _tp = pointers[type];
+        pointers[type] = std::make_unique<PointerType>(type);
+        const auto& _tp = pointers[type].get();
 
         auto tp = VariableType(_tp, false);
         auto tp_ref = VariableType(getReference(_tp), false);
@@ -33,12 +33,12 @@ const Type* TypeFactory::getPointer(const Type *type)
         static_cast<GlobalScope*>(BuiltIns::global_scope.get()) -> defineBuiltInOperator("operator+", FunctionType(tp, {tp, nonconst_int}));
     }
 
-    return pointers[type];
+    return pointers[type].get();
 }
 
 const Type* TypeFactory::getReference(const Type *type)
 {
-    static std::map<const Type*, const Type*> references;
+    static std::map<const Type*, std::unique_ptr<const Type> > references;
 
     if ( type -> isReference() )
         return nullptr;
@@ -46,25 +46,25 @@ const Type* TypeFactory::getReference(const Type *type)
     auto it = references.find(type);
 
     if ( it == std::end(references) )
-        references[type] = new ReferenceType(type);
+        references[type] = std::make_unique<ReferenceType>(type);
 
-    return references[type];
+    return references[type].get();
 }
 
 const Type* TypeFactory::getArray(const Type *type, int size)
 {
-    static std::map<const Type*, std::map<int, const Type*> > arrays;
+    static std::map<const Type*, std::map<int, std::unique_ptr<const Type> > > arrays;
 
     if ( type -> isReference() )
         return nullptr;
 
-    auto it = arrays.find(type);    
+    auto it = arrays.find(type);
 
     if ( it == std::end(arrays) || it -> second.find(size) == std::end(it -> second) )
     {
-        arrays[type][size] = new ArrayType(type, size);
+        arrays[type][size] = std::make_unique<ArrayType>(type, size);
 
-        const auto& _tp = arrays[type][size];
+        const auto& _tp = arrays[type][size].get();
 
         auto tp = VariableType(_tp, false);
         auto tp_ref = VariableType(getReference(_tp), false);
@@ -80,5 +80,5 @@ const Type* TypeFactory::getArray(const Type *type, int size)
         static_cast<GlobalScope*>(BuiltIns::global_scope.get()) -> defineBuiltInOperator("operator[]", FunctionType(type_ref, {tp, nonconst_int}));
     }
 
-    return arrays[type][size];
+    return arrays[type][size].get();
 }

@@ -53,8 +53,18 @@ void CheckVisitor::visitChildren(AST* node)
     for ( auto child : node -> getChildren() )
         child -> accept(*this);
 }
-    
+
 ValueInfo CheckVisitor::valueOf(const ExprNode* expr) { return {expr -> getType(), expr -> isLeftValue()}; }
+
+std::vector<ValueInfo> CheckVisitor::extractArguments(const std::vector< std::unique_ptr<ExprNode> >& params)
+{
+    auto result = std::vector<ValueInfo>{ };
+
+    for ( const auto& param : params )
+        result.emplace_back(param -> getType(), param -> isLeftValue());
+
+    return result;
+}
 
 void CheckVisitor::visit(BracketNode *node)
 {
@@ -81,7 +91,7 @@ void CheckVisitor::visit(BracketNode *node)
     }
 }
 
-void CheckVisitor::visit(UnaryNode *node)
+void CheckVisitor::visit(UnaryNode* node)
 {
     node -> expr() -> accept(*this);
     assert(node -> expr() -> getType().unqualified() -> isObjectType());
@@ -90,12 +100,12 @@ void CheckVisitor::visit(UnaryNode *node)
     
     auto ov_func = type -> resolveMethod(node -> getOperatorName());
     if ( ov_func == nullptr )
-        throw NoViableOverloadError(node -> getOperatorName(), { });
+        throw NoViableOverloadError(node -> getOperatorName(), std::vector<ValueInfo>{ });
 
     node -> callInfo(ov_func -> resolveCall({ }));
 }
 
-void CheckVisitor::visit(NewExpressionNode *node)
+void CheckVisitor::visit(NewExpressionNode* node)
 {
     for ( auto param : node -> typeInfo().templateParams() )
     {
@@ -110,9 +120,7 @@ void CheckVisitor::visit(NewExpressionNode *node)
     for ( const auto& param : node -> params() )
         param -> accept(*this);
 
-    std::vector<ValueInfo> arguments;
-    for ( const auto& param : node -> params() )
-        arguments.emplace_back(param -> getType(), param -> isLeftValue());
+    auto arguments = extractArguments(node -> params());
 
     auto ov_func = type -> resolveMethod(type -> getName());
     node -> callInfo(ov_func -> resolveCall(arguments));
@@ -181,24 +189,16 @@ void CheckVisitor::visit(VariableDeclarationNode* node)
             for ( const auto& param : node -> constructorParams() )
                 param -> accept(*this);
             
-            auto params    = std::vector<VariableType>{ };
-            auto arguments = std::vector<ValueInfo>{ };
-
-            for ( const auto& param : node -> constructorParams() )
-            {
-                arguments.emplace_back(param -> getType(), param -> isLeftValue());
-                params.push_back(param -> getType());
-            }
+            auto arguments = extractArguments(node -> constructorParams());
 
             auto ov_func = struct_symbol -> resolveMethod(struct_symbol -> getName());
             if ( ov_func == nullptr )
-                throw NoViableOverloadError(struct_symbol -> getName(), params);
+                throw NoViableOverloadError(struct_symbol -> getName(), arguments);
 
-            try
-            {
+            try {
                 node -> callInfo(ov_func -> resolveCall(arguments));
             }
-            catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(struct_symbol -> getName(), params); }
+            catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(struct_symbol -> getName(), arguments); }
         }
     }
 }
@@ -325,48 +325,26 @@ void CheckVisitor::visit(CallNode* node)
 
     auto caller_type = node -> caller() -> getType();
 
+    const FunctionalType* ov_func = nullptr;
+    auto arguments = extractArguments(node -> params());
+
     if ( caller_type.unqualified() -> isObjectType() )
     {
         auto type = static_cast<const ObjectType*>(caller_type.unqualified());
-        
-        auto params    = std::vector<VariableType>{ };
-        auto arguments = std::vector<ValueInfo>{ };
+        ov_func = type -> resolveMethod("operator()");
 
-        for ( const auto& param : node -> params() )
-        {
-            params.push_back(param -> getType());
-            arguments.emplace_back(param -> getType(), param -> isLeftValue());
-        }
-
-        auto ov_func = type -> resolveMethod("operator()");
         if ( ov_func == nullptr )
-            throw NoViableOverloadError("operator()", params);
-
-        try
-        {
-            node -> callInfo(ov_func -> resolveCall(arguments));
-        }
-        catch ( NoViableOverloadError& e ) { throw NoViableOverloadError("operator()", params); }
+            throw NoViableOverloadError("operator()", arguments);
     }
     else
     {
-        auto ov_func = static_cast<const FunctionalType*>(caller_type.unqualified());
-        
-        auto params    = std::vector<VariableType>{ };
-        auto arguments = std::vector<ValueInfo>{ };
-        
-        for ( const auto& param : node -> params() )
-        {
-            params.push_back(param -> getType());
-            arguments.emplace_back(param -> getType(), param -> isLeftValue());
-        }
-
-        try
-        {
-            node -> callInfo(ov_func -> resolveCall(arguments));
-        }
-        catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(ov_func -> getName(), params); }
+        ov_func = static_cast<const FunctionalType*>(caller_type.unqualified());
     }
+        
+    try {
+        node -> callInfo(ov_func -> resolveCall(arguments));
+    }
+    catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(ov_func -> getName(), arguments); }
 }
 
 void CheckVisitor::visit(ReturnNode* node)
