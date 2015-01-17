@@ -7,10 +7,9 @@
 
 #include "exprnode.hpp"
 #include "typeinfo.hpp"
-#include "callinfo.hpp"
-#include "inlineinfo.hpp"
+#include "nodewithcall.hpp"
 
-class NewExpressionNode : public ExprNode
+class NewExpressionNode : public ExprNode, public NodeWithCall
 {
 public:
     NewExpressionNode(TypeInfo type_info, std::vector<ASTExprNode> params);
@@ -34,19 +33,10 @@ public:
 
     const std::vector<ASTExprNode>& params() const;
 
-    const CallInfo& callInfo() const;
-    void callInfo(const CallInfo& call_info);
-
-    const InlineInfo& inlineInfo() const;
-    void inlineInfo(InlineInfo inline_info);
-
 private:
 
     TypeInfo type_info;
     std::vector<ASTExprNode> params_;
-
-    CallInfo call_info;
-    InlineInfo inline_info;
 };
 
 #endif

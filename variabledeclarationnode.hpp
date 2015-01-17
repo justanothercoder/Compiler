@@ -5,12 +5,11 @@
 
 #include "declarationnode.hpp"
 #include "typeinfo.hpp"
-#include "callinfo.hpp"
-#include "inlineinfo.hpp"
+#include "nodewithcall.hpp"
 
 class VariableSymbol;
 
-class VariableDeclarationNode : public DeclarationNode
+class VariableDeclarationNode : public DeclarationNode, public NodeWithCall
 {
 public:
 
@@ -27,18 +26,12 @@ public:
 
     std::string toString() const override;
 
+    const TypeInfo& typeInfo() const;
+    void typeInfo(const TypeInfo& type_info);
+
     const std::string& name() const;
     bool isField() const;
     const std::vector<ASTExprNode>& constructorParams() const;
-
-    const CallInfo& callInfo() const;
-    void callInfo(const CallInfo& call_info);
-
-    const TypeInfo& typeInfo() const;
-    void typeInfo(const TypeInfo& type_info);
-    
-    const InlineInfo& inlineInfo() const;        
-    void inlineInfo(InlineInfo inline_info);
 
 private:
     std::string name_;
@@ -48,9 +41,6 @@ private:
 
     std::shared_ptr<const VariableSymbol> defined_symbol;
     std::vector<ASTExprNode> constructor_params;
-
-    CallInfo call_info;
-    InlineInfo inline_info;    
 };
 
 #endif

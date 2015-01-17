@@ -2,13 +2,12 @@
 #define _CALLABLENODE_HPP_
 
 #include "exprnode.hpp"
-#include "callinfo.hpp"
-#include "inlineinfo.hpp"
+#include "nodewithcall.hpp"
 #include "valueinfo.hpp"
 
 class FunctionalType;
 
-class CallableNode : public ExprNode
+class CallableNode : public ExprNode, public NodeWithCall
 {
 public:
 
@@ -17,17 +16,6 @@ public:
 
     VariableType getType() const override;
     bool isLeftValue() const override;
-
-    const CallInfo& callInfo() const;
-    void callInfo(const CallInfo& call_info);
-
-    const InlineInfo& inlineInfo() const;
-    void inlineInfo(InlineInfo inline_info);
-
-protected:
-
-    CallInfo call_info;
-    InlineInfo inline_info;
 };
 
 #endif

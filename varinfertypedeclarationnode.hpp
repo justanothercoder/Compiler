@@ -2,13 +2,12 @@
 #define _VARINFERTYPEDECLARATIONNODE_HPP_
 
 #include "declarationnode.hpp"
-#include "callinfo.hpp"
-#include "inlineinfo.hpp"
+#include "nodewithcall.hpp"
 #include "exprnode.hpp"
 
 class VariableSymbol;
 
-class VarInferTypeDeclarationNode : public DeclarationNode
+class VarInferTypeDeclarationNode : public DeclarationNode, public NodeWithCall
 {
 public:
 
@@ -28,19 +27,10 @@ public:
     const std::string& name() const;
     ExprNode* expr();
     
-    const CallInfo& callInfo() const;
-    void callInfo(const CallInfo& call_info);
-    
-    const InlineInfo& inlineInfo() const;        
-    void inlineInfo(InlineInfo inline_info);
-
 private:
 
     std::string name_;
     ASTExprNode expr_;
-
-    CallInfo call_info;
-    InlineInfo inline_info;
 
     std::shared_ptr<const VariableSymbol> defined_symbol;
 };

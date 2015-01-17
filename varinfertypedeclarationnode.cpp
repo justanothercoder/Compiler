@@ -27,9 +27,3 @@ void VarInferTypeDeclarationNode::setDefinedSymbol(std::shared_ptr<const Variabl
     
 const std::string& VarInferTypeDeclarationNode::name() const { return name_; }
 ExprNode* VarInferTypeDeclarationNode::expr() { return expr_.get(); }
-
-const CallInfo& VarInferTypeDeclarationNode::callInfo() const { return call_info; }
-void VarInferTypeDeclarationNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
-
-const InlineInfo& VarInferTypeDeclarationNode::inlineInfo() const { return inline_info; }
-void VarInferTypeDeclarationNode::inlineInfo(InlineInfo inline_info) { this -> inline_info = std::move(inline_info); }

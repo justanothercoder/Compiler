@@ -78,9 +78,3 @@ void NewExpressionNode::typeInfo(const TypeInfo& type_info) { this -> type_info 
 
 const std::vector<ASTExprNode>& NewExpressionNode::params() const { return params_; }
 
-const CallInfo& NewExpressionNode::callInfo() const { return call_info; }
-void NewExpressionNode::callInfo(const CallInfo& call_info) { this -> call_info = call_info; }
-    
-const InlineInfo& NewExpressionNode::inlineInfo() const { return inline_info; }
-void NewExpressionNode::inlineInfo(InlineInfo inline_info) { this -> inline_info = std::move(inline_info); }
-
