@@ -398,17 +398,13 @@ void GenSSAVisitor::visit(NumberNode* node)
 
 void GenSSAVisitor::visit(CallNode* node)
 {
-    auto args = std::vector<Argument>{ };    
-        
-    const auto& params = node -> params();
-
-    for ( auto param = params.rbegin(); param != params.rend(); ++param )
-        args.push_back(getArg(param -> get()));
-
+    auto args = std::vector<Argument>{ };
+    
     if ( node -> callInfo().callee -> isMethod() )
         args.push_back(getArg(node -> caller()));
-
-    std::reverse(std::begin(args), std::end(args));
+   
+    for ( const auto& param : node -> params() )
+        args.push_back(getArg(param.get()));
 
     generateCall(args, node -> callInfo(), node -> inlineInfo());
 }
@@ -422,7 +418,6 @@ void GenSSAVisitor::visit(ReturnNode* node)
         auto expr_type = node -> expr() -> getType();
         auto var_arg = std::make_shared<VariableArg>(static_cast<const VariableSymbol*>(node -> scope -> resolve("$")));
 
-//        if ( expr_type.isReference() )
         if ( node -> function() -> type().returnType().isReference() )
         {
             code.add(std::make_shared<AssignRefCommand>(var_arg, expr_arg));
