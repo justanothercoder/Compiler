@@ -5,11 +5,11 @@
 #include "compiler.hpp"
 #include "astvisitor.hpp"
 #include "valueinfo.hpp"
+#include "callinfo.hpp"
 
 class AST;
-class CallableNode;
 class FunctionScope;
-class OverloadedFunctionSymbol;
+class FunctionalType;
 
 class CheckVisitor : public ASTVisitor, public Compiler
 {
@@ -50,7 +50,7 @@ public:
 private:
 
     void visitChildren(AST* node);
-    void visitCallable(CallableNode* node);
+    CallInfo checkCall(const FunctionalType* function, std::vector<ValueInfo> arguments);
 
     std::vector<ValueInfo> extractArguments(const std::vector< std::unique_ptr<ExprNode> >& params);
 

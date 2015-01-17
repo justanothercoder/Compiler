@@ -56,7 +56,7 @@ std::vector<ValueInfo> CheckVisitor::extractArguments(const std::vector< std::un
 
     return result;
 }
-
+/*
 void CheckVisitor::visitCallable(CallableNode* node)
 {
     auto function  = node -> function();
@@ -69,17 +69,27 @@ void CheckVisitor::visitCallable(CallableNode* node)
     }
     catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(function -> getName(), arguments); }
 }
+*/
+CallInfo CheckVisitor::checkCall(const FunctionalType* function, std::vector<ValueInfo> arguments)
+{
+    assert(function != nullptr);
+    try
+    {
+        return function -> resolveCall(arguments);
+    }
+    catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(function -> getName(), arguments); }
+}
 
 void CheckVisitor::visit(BracketNode* node)
 {
     visitChildren(node);
-    visitCallable(node);
+    node -> callInfo(checkCall(node -> function(), node -> arguments()));
 }
 
 void CheckVisitor::visit(UnaryNode* node)
 {
     node -> expr() -> accept(*this);
-    visitCallable(node);
+    node -> callInfo(checkCall(node -> function(), node -> arguments()));
 }
 
 void CheckVisitor::visit(NewExpressionNode* node)
@@ -98,15 +108,15 @@ void CheckVisitor::visit(NewExpressionNode* node)
         param -> accept(*this);
 
     auto arguments = extractArguments(node -> params());
-
     auto ov_func = type -> resolveMethod(type -> getName());
-    node -> callInfo(ov_func -> resolveCall(arguments));
+
+    node -> callInfo(checkCall(ov_func, arguments));
 }
 
 void CheckVisitor::visit(BinaryOperatorNode* node)
 {
     visitChildren(node);
-    visitCallable(node);
+    node -> callInfo(checkCall(node -> function(), node -> arguments()));
 }
 
 void CheckVisitor::visit(StructDeclarationNode *node)
@@ -286,7 +296,7 @@ void CheckVisitor::visit(VariableNode* node)
 void CheckVisitor::visit(CallNode* node)
 {
     visitChildren(node);
-    visitCallable(node);
+    node -> callInfo(checkCall(node -> function(), node -> arguments()));
 }
 
 void CheckVisitor::visit(ReturnNode* node)
