@@ -153,21 +153,21 @@ void DefineVisitor::visit(StatementNode* node)         { visitChildren(node); }
 void DefineVisitor::visit(ReturnNode* node)      { node -> expr() -> accept(*this); }
 void DefineVisitor::visit(UnsafeBlockNode* node) { node -> block() -> accept(*this); }
 
+void DefineVisitor::visit(DotNode* ) { }
 void DefineVisitor::visit(CallNode* ) { } 
-void DefineVisitor::visit(BracketNode* ) { }
-void DefineVisitor::visit(UnaryNode* ) { }
-void DefineVisitor::visit(NewExpressionNode* ) { }
-void DefineVisitor::visit(BinaryOperatorNode* ) { }
 void DefineVisitor::visit(AddrNode* ) { }
 void DefineVisitor::visit(NullNode* ) { }
-void DefineVisitor::visit(DotNode* ) { }
-void DefineVisitor::visit(VariableNode* ) { }
+void DefineVisitor::visit(TypeNode* ) { }
+void DefineVisitor::visit(UnaryNode* ) { }
+void DefineVisitor::visit(BreakNode* ) { } 
 void DefineVisitor::visit(StringNode* ) { }
 void DefineVisitor::visit(NumberNode* ) { }
 void DefineVisitor::visit(ModuleNode* ) { }
-void DefineVisitor::visit(TypeNode* ) { }
-void DefineVisitor::visit(FunctionNode* ) { }
-void DefineVisitor::visit(ModuleMemberAccessNode* ) { }
 void DefineVisitor::visit(ImportNode* ) { }
-void DefineVisitor::visit(BreakNode* ) { } 
+void DefineVisitor::visit(BracketNode* ) { }
+void DefineVisitor::visit(VariableNode* ) { }
+void DefineVisitor::visit(FunctionNode* ) { }
+void DefineVisitor::visit(NewExpressionNode* ) { }
+void DefineVisitor::visit(BinaryOperatorNode* ) { }
 void DefineVisitor::visit(TemplateFunctionNode* ) { }
+void DefineVisitor::visit(ModuleMemberAccessNode* ) { }

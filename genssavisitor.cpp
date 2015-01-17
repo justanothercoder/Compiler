@@ -175,19 +175,15 @@ void GenSSAVisitor::visit(BracketNode* node)
     auto expr = getArg(node -> expr());
     auto base = getArg(node -> base());
 
-    if ( node -> base() -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY )
-    {
+    if ( node -> base() -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY ) {
         _arg = code.add(std::make_shared<ElemCommand>(base, expr));
-        return;
     }
-    
-    if ( node -> base() -> getType().unqualified() == BuiltIns::ASCII_string_type.get() )
-    {
+    else if ( node -> base() -> getType().unqualified() == BuiltIns::ASCII_string_type.get() ) {
         _arg = code.add(std::make_shared<ElemCommand>(base, expr, true));
-        return;
     }
-
-    generateCall({base, expr}, node -> callInfo(), node -> inlineInfo());
+    else {
+        generateCall({base, expr}, node -> callInfo(), node -> inlineInfo());
+    }
 }
 
 void GenSSAVisitor::visit(UnaryNode* node)
@@ -197,36 +193,33 @@ void GenSSAVisitor::visit(UnaryNode* node)
 
 void GenSSAVisitor::visit(NewExpressionNode* node)
 {
-    const auto& params = node -> params();
-
     auto expr_type = node -> getType().unqualified();
-
     auto tmp_obj = code.add(std::make_shared<NewCommand>(expr_type));
     
     if ( isIntType(expr_type) || isCharType(expr_type) )
     {
         bool is_char_assign = isCharType(expr_type);
 
-        if ( params.empty() )
+        if ( node -> params().empty() )
         {
             code.addConst(0);
             code.add(std::make_shared<AssignCommand>(tmp_obj, std::make_shared<NumberArg>(0), is_char_assign));
         }
         else
         {
-            code.add(std::make_shared<AssignCommand>(tmp_obj, getArg(params[0].get()), is_char_assign));
+            code.add(std::make_shared<AssignCommand>(tmp_obj, getArg(node -> params()[0].get()), is_char_assign));
         }
-
-        _arg = tmp_obj;
-        return;
     }
-   
-    auto arguments = std::vector<Argument>{tmp_obj};
+    else
+    {
+        auto arguments = std::vector<Argument>{tmp_obj};
 
-    for ( const auto& param : node -> params() )
-        arguments.push_back(getArg(param.get()));
+        for ( const auto& param : node -> params() )
+            arguments.push_back(getArg(param.get()));
 
-    generateCall(arguments, node -> callInfo(), node -> inlineInfo());
+        generateCall(arguments, node -> callInfo(), node -> inlineInfo());
+    }
+
     _arg = tmp_obj;
 }
 
@@ -240,10 +233,12 @@ void GenSSAVisitor::visit(BinaryOperatorNode* node)
 
     if ( isSimpleType(lhs_type.unqualified()) && isSimpleType(rhs_type.unqualified()) )
     {
-        if ( node -> op() == BinaryOp::ASSIGN )
+        if ( node -> op() == BinaryOp::ASSIGN ) {
             code.add(std::make_shared<AssignCommand>(lhs, rhs, isCharType(lhs_type.unqualified())));
-        else
+        }
+        else {
             _arg = code.add(std::make_shared<BinaryOpCommand>(node -> op(), lhs, rhs));
+        }
     }
     else
     {
@@ -315,12 +310,12 @@ void GenSSAVisitor::visit(VariableDeclarationNode* node)
     }
 }
 
-void GenSSAVisitor::visit(AddrNode *node)
+void GenSSAVisitor::visit(AddrNode* node)
 {
     _arg = code.add(std::make_shared<UnaryOpCommand>(node -> op(), getArg(node -> expr())));
 }
 
-void GenSSAVisitor::visit(NullNode *)
+void GenSSAVisitor::visit(NullNode* )
 {
     code.addConst(0);
     _arg = std::make_shared<NumberArg>(0);
