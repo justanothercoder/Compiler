@@ -291,7 +291,7 @@ void CheckVisitor::visit(ReturnNode* node)
     if ( unqualified_type -> getTypeKind() != TypeKind::POINTER )
     {
         auto ov_func = static_cast<const ObjectType*>(unqualified_type) -> resolveMethod(unqualified_type -> getName());
-        ov_func -> resolveCall({valueOf(node -> expr())});
+        checkCall(ov_func, {valueOf(node -> expr())});
     }
 }
 
@@ -306,7 +306,7 @@ void CheckVisitor::visit(VarInferTypeDeclarationNode* node)
     assert(type -> isObjectType());
 
     auto ov_func = static_cast<const ObjectType*>(type) -> resolveMethod(type -> getName());
-    node -> callInfo(ov_func -> resolveCall({valueOf(node -> expr())}));
+    node -> callInfo(checkCall(ov_func, {valueOf(node -> expr())}));
 }
 
 void CheckVisitor::visit(TemplateStructDeclarationNode* node)
