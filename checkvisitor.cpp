@@ -56,20 +56,7 @@ std::vector<ValueInfo> CheckVisitor::extractArguments(const std::vector< std::un
 
     return result;
 }
-/*
-void CheckVisitor::visitCallable(CallableNode* node)
-{
-    auto function  = node -> function();
-    auto arguments = node -> arguments();
 
-    assert(function != nullptr);
-    try
-    {
-        node -> callInfo(function -> resolveCall(arguments));
-    }
-    catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(function -> getName(), arguments); }
-}
-*/
 CallInfo CheckVisitor::checkCall(const FunctionalType* function, std::vector<ValueInfo> arguments)
 {
     assert(function != nullptr);
@@ -148,31 +135,20 @@ void CheckVisitor::visit(VariableDeclarationNode* node)
 
     if ( !node -> isField() )
     {
-        if ( node -> typeInfo().isRef() || !node -> typeInfo().modifiers().empty() )
-        {
-            for ( const auto& param : node -> constructorParams() )
-                param -> accept(*this);
-        }
-        else
+        for ( const auto& param : node -> constructorParams() )
+            param -> accept(*this);
+       
+        if ( !node -> typeInfo().isRef() && node -> typeInfo().modifiers().empty() )
         {
             auto var_type = fromTypeInfo(node -> typeInfo(), node -> scope.get());
             assert(var_type.unqualified() -> isObjectType());
 
             auto struct_symbol = static_cast<const ObjectType*>(var_type.unqualified());
 
-            for ( const auto& param : node -> constructorParams() )
-                param -> accept(*this);
-            
             auto arguments = extractArguments(node -> constructorParams());
-
             auto ov_func = struct_symbol -> resolveMethod(struct_symbol -> getName());
-            if ( ov_func == nullptr )
-                throw NoViableOverloadError(struct_symbol -> getName(), arguments);
-
-            try {
-                node -> callInfo(ov_func -> resolveCall(arguments));
-            }
-            catch ( NoViableOverloadError& e ) { throw NoViableOverloadError(struct_symbol -> getName(), arguments); }
+            
+            node -> callInfo(checkCall(ov_func, arguments));
         }
     }
 }
