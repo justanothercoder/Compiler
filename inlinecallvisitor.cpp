@@ -96,9 +96,10 @@ InlineInfo InlineCallVisitor::inlineCall(const FunctionSymbol* function)
     return InlineInfo(std::move(function_body), locals);
 }
 
-void InlineCallVisitor::visit(CallNode* node) { visitCallable(node); } 
-void InlineCallVisitor::visit(UnaryNode* node) { visitCallable(node); } 
-void InlineCallVisitor::visit(BracketNode* node) { visitCallable(node); }
+void InlineCallVisitor::visit(CallNode* node)           { visitChildren(node); visitCallable(node); } 
+void InlineCallVisitor::visit(UnaryNode* node)          { visitChildren(node); visitCallable(node); } 
+void InlineCallVisitor::visit(BracketNode* node)        { visitChildren(node); visitCallable(node); }
+void InlineCallVisitor::visit(BinaryOperatorNode* node) { visitChildren(node); visitCallable(node); }
 
 void InlineCallVisitor::visit(VariableDeclarationNode* node) 
 {
@@ -135,7 +136,6 @@ void InlineCallVisitor::visit(WhileNode* node)                   { visitChildren
 void InlineCallVisitor::visit(ReturnNode* node)                  { visitChildren(node); }
 void InlineCallVisitor::visit(StatementNode* node)               { visitChildren(node); }
 void InlineCallVisitor::visit(UnsafeBlockNode* node)             { visitChildren(node); }
-void InlineCallVisitor::visit(BinaryOperatorNode* node)          { visitChildren(node); }
 void InlineCallVisitor::visit(StructDeclarationNode* node)       { visitChildren(node); }
 void InlineCallVisitor::visit(FunctionDeclarationNode* node)     { visitChildren(node); }
 void InlineCallVisitor::visit(VarInferTypeDeclarationNode* node) { visitChildren(node); }

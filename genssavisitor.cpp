@@ -261,12 +261,10 @@ void GenSSAVisitor::visit(BinaryOperatorNode* node)
     }
     else
     {
-        auto lhs_info = node -> callInfo().conversions[0];
-        auto rhs_info = node -> callInfo().conversions[1];
+        auto rhs = getArg(node -> rhs());
+        auto lhs = getArg(node -> lhs());
 
-        genParam(node -> rhs(), rhs_info);
-        genParam(node -> lhs(), lhs_info);
-        genCall(node -> callInfo().callee, lhs_info.desired_type -> sizeOf() + rhs_info.desired_type -> sizeOf());
+        generateCall({lhs, rhs}, node -> callInfo(), node -> inlineInfo());
     }
 }
 
