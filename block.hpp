@@ -11,7 +11,6 @@
 
 class Scope;
 class CodeObject;
-
 class VariableSymbol;
 class FunctionSymbol;
 

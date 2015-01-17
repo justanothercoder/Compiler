@@ -7,7 +7,7 @@ class ArrayType : public Type
 {
 public:
 
-    ArrayType(const Type *type, int size);
+    ArrayType(const Type* type, int size);
 
     std::string getName() const override;
     size_t sizeOf() const override;
@@ -25,7 +25,7 @@ public:
 
 private:
 
-    const Type *type;
+    const Type* type;
     int size;
 };
 

@@ -3,6 +3,7 @@
 #include "codeobject.hpp"
 #include "builtins.hpp"
 #include "referencetype.hpp"
+#include "structsymbol.hpp"
 #include "functionsymbol.hpp"
 #include "commandvisitor.hpp"
 #include "globalconfig.hpp"

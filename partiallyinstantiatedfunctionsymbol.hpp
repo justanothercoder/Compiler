@@ -1,7 +1,10 @@
 #ifndef _PARTIALLYINSTANTIATEDFUNCTIONSYMBOL_HPP_
 #define _PARTIALLYINSTANTIATEDFUNCTIONSYMBOL_HPP_
 
-#include "overloadedfunctionsymbol.hpp"
+#include "functionaltype.hpp"
+#include "templateparam.hpp"
+
+class OverloadedFunctionSymbol;
 
 class PartiallyInstantiatedFunctionSymbol : public FunctionalType
 {

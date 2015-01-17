@@ -8,6 +8,7 @@
 #include "structdeclarationnode.hpp"
 #include "templatesymbol.hpp"
 #include "definesymbolvisitor.hpp"
+#include "overloadedfunctionsymbol.hpp"
 
 Scope::~Scope() { }
 bool Scope::isUnsafeBlock() const { return false; }

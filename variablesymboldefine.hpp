@@ -3,7 +3,8 @@
 
 #include <memory>
 #include "definesymbolvisitor.hpp"
-#include "variablesymbol.hpp"
+
+class Symbol;
 
 class VariableSymbolDefine : public DefineSymbolVisitor
 {

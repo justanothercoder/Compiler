@@ -28,6 +28,7 @@
 #include "objecttype.hpp"
 #include "structsymbol.hpp"
 #include "modulesymbol.hpp"
+#include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
 #include "templatefunctionsymbol.hpp"

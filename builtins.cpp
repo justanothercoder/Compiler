@@ -1,11 +1,12 @@
 #include "builtins.hpp"
-#include "templatestructdeclarationnode.hpp"
-#include "structsymbol.hpp"
-#include "functionsymbol.hpp"
 #include "globalscope.hpp"
 #include "typefactory.hpp"
 #include "globalconfig.hpp"
 #include "comp.hpp"
+#include "structsymbol.hpp"
+#include "variablesymbol.hpp"
+#include "functionsymbol.hpp"
+#include "builtintypesymbol.hpp"
 
 std::shared_ptr<Scope> BuiltIns::global_scope;
 std::shared_ptr<Type> BuiltIns::void_type;

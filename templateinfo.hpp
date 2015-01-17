@@ -1,12 +1,10 @@
 #ifndef _TEMPLATEINFO_HPP_
 #define _TEMPLATEINFO_HPP_
 
-#include <boost/optional.hpp>
-
 #include <vector>
 #include <string>
 #include <map>
-
+#include <boost/optional.hpp>
 #include "templateparam.hpp"
 
 class ExprNode;

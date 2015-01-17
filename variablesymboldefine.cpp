@@ -2,8 +2,9 @@
 #include "globalscope.hpp"
 #include "localscope.hpp"
 #include "structscope.hpp"
-#include "functionsymbol.hpp"
 #include "modulesymbol.hpp"
+#include "variablesymbol.hpp"
+#include "functionsymbol.hpp"
 
 void VariableSymbolDefine::setSymbol(std::shared_ptr<const Symbol> sym) { this -> sym = sym; }
 

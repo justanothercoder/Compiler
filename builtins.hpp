@@ -2,8 +2,9 @@
 #define _BUILTINS_HPP_
 
 #include <memory>
-#include "builtintypesymbol.hpp"
-#include "templatestructsymbol.hpp"
+
+class Type;
+class Scope;
 
 class BuiltIns
 {

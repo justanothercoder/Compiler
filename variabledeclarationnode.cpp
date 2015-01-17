@@ -1,8 +1,9 @@
 #include "variabledeclarationnode.hpp"
 #include "exprnode.hpp"
 #include "scope.hpp"
-#include "templatestructsymbol.hpp"
 #include "builtins.hpp"
+#include "variablesymbol.hpp"
+#include "templatestructsymbol.hpp"
 
 VariableDeclarationNode::VariableDeclarationNode(const std::string& name
                                                , TypeInfo type_info

@@ -4,8 +4,6 @@
 #include <vector>
 #include "typeinfo.hpp"
 
-using ParamInfo = std::pair<std::string, TypeInfo>;
-
 class FunctionDeclarationInfo
 {
 public:    

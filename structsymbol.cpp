@@ -3,6 +3,8 @@
 #include "typefactory.hpp"
 #include "comp.hpp"
 #include "globalconfig.hpp"
+#include "variablesymbol.hpp"
+#include "overloadedfunctionsymbol.hpp"
 
 StructSymbol::StructSymbol(const std::string& name
                          , Scope* enclosing_scope
@@ -86,7 +88,7 @@ const FunctionSymbol* StructSymbol::methodWith(const std::string& name, Function
     if ( member == nullptr || member -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
         return nullptr;
 
-    auto func = dynamic_cast<const OverloadedFunctionSymbol*>(member);
+    auto func = static_cast<const OverloadedFunctionSymbol*>(member);
     const auto& info = func -> getTypeInfo();
 
     auto it = info.symbols.find(ft);

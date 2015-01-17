@@ -3,12 +3,8 @@
 
 #include <vector>
 #include <stack>
-
 #include "block.hpp"
-#include "codeobject.hpp"
-
 #include "globaltable.hpp"
-#include "conversioninfo.hpp"
 
 /* list of SSA commands
  *
@@ -53,6 +49,7 @@
  */
 
 class Scope;
+class CodeObject;
 
 class ThreeAddressCode
 {

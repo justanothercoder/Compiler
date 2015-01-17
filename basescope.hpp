@@ -2,7 +2,6 @@
 #define _BASESCOPE_HPP_
 
 #include <map>
-
 #include "scope.hpp"
 
 class ExprNode;

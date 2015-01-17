@@ -1,8 +1,9 @@
 #include "variablenode.hpp"
-#include "functionsymbol.hpp"
-#include "templatestructsymbol.hpp"
 #include "numbernode.hpp"
 #include "builtins.hpp"
+#include "variablesymbol.hpp"
+#include "functionsymbol.hpp"
+#include "templatestructsymbol.hpp"
 
 VariableNode::VariableNode(const std::string& name) : name_(name) { }
 

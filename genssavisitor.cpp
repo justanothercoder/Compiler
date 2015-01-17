@@ -29,6 +29,7 @@
 #include "localscope.hpp"
 #include "typefactory.hpp"
 #include "globalconfig.hpp"
+#include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
 
 #include "newcommand.hpp"

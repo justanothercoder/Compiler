@@ -6,6 +6,7 @@
 #include "commandvisitor.hpp"
 #include "globalconfig.hpp"
 #include "comp.hpp"
+#include "type.hpp"
 
 BinaryOpCommand::BinaryOpCommand(BinaryOp op, Argument lhs, Argument rhs) : op_(op), lhs_(lhs), rhs_(rhs) { }
 

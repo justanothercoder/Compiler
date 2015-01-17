@@ -3,15 +3,13 @@
 
 #include <map>
 
-#include "symbol.hpp"
 #include "scope.hpp"
+#include "symbol.hpp"
 #include "objecttype.hpp"
-#include "variablesymbol.hpp"
-#include "overloadedfunctionsymbol.hpp"
 #include "structscope.hpp"
-#include "globaltable.hpp"
+#include "functiontype.hpp"
 
-class FunctionType;
+class VariableSymbol;
 
 class StructSymbol : public Symbol, public StructScope, public ObjectType
 {

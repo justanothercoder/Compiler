@@ -1,12 +1,11 @@
 #ifndef _OVERLOADEDFUNCTIONSYMBOL_HPP_
 #define _OVERLOADEDFUNCTIONSYMBOL_HPP_
 
-#include "functionaltype.hpp"
 #include "symbol.hpp"
-#include "overloadedfunctiontypeinfo.hpp"
-#include "functiontraits.hpp"
 #include "templateparam.hpp"
-#include "functiondeclarationinfo.hpp"
+#include "functiontraits.hpp"
+#include "functionaltype.hpp"
+#include "overloadedfunctiontypeinfo.hpp"
 
 class TemplateSymbol;
 class TemplateFunctionSymbol;

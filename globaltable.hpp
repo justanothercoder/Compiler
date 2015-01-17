@@ -5,14 +5,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "templateparam.hpp"
-#include "conversioninfo.hpp"
-
-class Type;
 class Scope;
 class FunctionSymbol;
-class VariableSymbol;
-
 struct Block;
 
 class GlobalTable

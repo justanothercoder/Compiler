@@ -2,10 +2,8 @@
 #define _GLOBALSCOPE_HPP_
 
 #include <map>
-
 #include "basescope.hpp"
 #include "templateinfo.hpp"
-#include "globaltable.hpp"
 
 class FunctionType;
 

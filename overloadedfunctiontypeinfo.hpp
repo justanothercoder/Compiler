@@ -6,7 +6,8 @@
 #include <algorithm>
 #include <memory>
 #include "functiontypeinfo.hpp"
-#include "functionsymbol.hpp"
+
+class Symbol;
 
 class OverloadedFunctionTypeInfo
 {

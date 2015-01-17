@@ -9,7 +9,6 @@
 #include "functiontypeinfo.hpp"
 #include "symbol.hpp"
 #include "functiontype.hpp"
-#include "globaltable.hpp"
 
 class VariableSymbol;
 class FunctionDeclarationNode;

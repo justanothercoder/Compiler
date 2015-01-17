@@ -5,7 +5,6 @@
 #include <boost/optional.hpp>
 
 #include "declarationnode.hpp"
-#include "functionsymboldefine.hpp"
 #include "templateinfo.hpp"
 
 class StructSymbol;

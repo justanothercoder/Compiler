@@ -4,14 +4,12 @@
 #include <string>
 #include <set>
 #include <memory>
-#include "typeinfo.hpp"
-#include "templateparam.hpp"
 
+class Type;
 class Symbol;
 class ScopeVisitor;
-struct TemplateInfo;
-class Type;
 class FunctionalType;
+struct TemplateInfo;
 
 class Scope
 {

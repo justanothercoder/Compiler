@@ -6,6 +6,7 @@
 
 class AST;
 class VariableSymbol;
+class FunctionSymbol;
 class CallableNode;
 
 struct InlineInfo;

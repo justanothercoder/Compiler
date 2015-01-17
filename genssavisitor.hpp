@@ -2,18 +2,18 @@
 #define _GENSSAVISITOR_HPP_
 
 #include "astvisitor.hpp"
-#include "threeaddresscode.hpp"
 #include "compiler.hpp"
+#include "conversioninfo.hpp"
+#include "threeaddresscode.hpp"
 
 class AST;
 class CallableNode;
+
+struct CallInfo;
 struct InlineInfo;
 
 class GenSSAVisitor : public ASTVisitor, public Compiler
 {
-
-    friend class Optimizer;
-
 public:
 
     GenSSAVisitor(ThreeAddressCode& code);

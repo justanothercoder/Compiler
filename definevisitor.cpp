@@ -19,6 +19,7 @@
 #include "checkvisitor.hpp"
 #include "structsymbol.hpp"
 #include "modulesymbol.hpp"
+#include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
 

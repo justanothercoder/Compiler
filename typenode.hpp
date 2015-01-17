@@ -4,8 +4,6 @@
 #include "exprnode.hpp"
 
 class Symbol;
-class BuiltInTypeSymbol;
-class StructSymbol;
 
 class TypeNode : public ExprNode
 {

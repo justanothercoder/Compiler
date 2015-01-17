@@ -1,14 +1,13 @@
 #include "threeaddresscode.hpp"
 #include "scope.hpp"
 #include "builtins.hpp"
-#include "functionsymbol.hpp"
 #include "globaltable.hpp"
 #include "typefactory.hpp"
 #include "pointertype.hpp"
-
+#include "codeobject.hpp"
 #include "labelarg.hpp"
 #include "temporaryarg.hpp"
-
+#include "functionsymbol.hpp"
 #include "logger.hpp"
 
 Argument ThreeAddressCode::newLabel(const std::string& label)

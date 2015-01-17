@@ -18,7 +18,7 @@
 #include "inlinecallvisitor.hpp"
 
 #include "globalconfig.hpp"
-#include "statementnode.hpp"
+#include "codeobject.hpp"
 
 #include "logger.hpp"
 

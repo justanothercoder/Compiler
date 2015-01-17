@@ -1,6 +1,6 @@
 #include "partiallyinstantiatedfunctionsymbol.hpp"
 #include "functionsymbol.hpp"
-
+#include "overloadedfunctionsymbol.hpp"
 #include "logger.hpp"
 
 PartiallyInstantiatedFunctionSymbol::PartiallyInstantiatedFunctionSymbol(const OverloadedFunctionSymbol* ov_func

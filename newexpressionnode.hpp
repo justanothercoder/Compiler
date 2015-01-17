@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-
 #include "exprnode.hpp"
 #include "typeinfo.hpp"
 #include "nodewithcall.hpp"

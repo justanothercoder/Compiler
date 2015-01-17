@@ -2,8 +2,8 @@
 #define _TYPE_HPP_
 
 #include <string>
-#include <boost/optional.hpp>
 #include <memory>
+#include <boost/optional.hpp>
 
 class Symbol;
 class FunctionSymbol;

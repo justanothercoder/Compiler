@@ -1,7 +1,6 @@
 #ifndef _RETURNNODE_HPP_
 #define _RETURNNODE_HPP_
 
-#include "callinfo.hpp"
 #include "exprnode.hpp"
 
 class FunctionSymbol;
