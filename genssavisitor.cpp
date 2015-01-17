@@ -172,26 +172,20 @@ void GenSSAVisitor::visit(WhileNode* node)
 
 void GenSSAVisitor::visit(BracketNode* node)
 {
+    auto expr = getArg(node -> expr());
+    auto base = getArg(node -> base());
+
     if ( node -> base() -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY )
     {
-        auto expr = getArg(node -> expr());
-        auto base = getArg(node -> base());
-
         _arg = code.add(std::make_shared<ElemCommand>(base, expr));
         return;
     }
     
     if ( node -> base() -> getType().unqualified() == BuiltIns::ASCII_string_type.get() )
     {
-        auto expr = getArg(node -> expr());
-        auto base = getArg(node -> base());
-
         _arg = code.add(std::make_shared<ElemCommand>(base, expr, true));
         return;
     }
-
-    auto expr = getArg(node -> expr());
-    auto base = getArg(node -> base());
 
     generateCall({base, expr}, node -> callInfo(), node -> inlineInfo());
 }
@@ -241,11 +235,11 @@ void GenSSAVisitor::visit(BinaryOperatorNode* node)
     auto lhs_type = node -> lhs() -> getType();
     auto rhs_type = node -> rhs() -> getType();
 
+    auto rhs = getArg(node -> rhs());
+    auto lhs = getArg(node -> lhs());
+
     if ( isSimpleType(lhs_type.unqualified()) && isSimpleType(rhs_type.unqualified()) )
     {
-        auto rhs = getArg(node -> rhs());
-        auto lhs = getArg(node -> lhs());
-
         if ( node -> op() == BinaryOp::ASSIGN )
             code.add(std::make_shared<AssignCommand>(lhs, rhs, isCharType(lhs_type.unqualified())));
         else
@@ -253,9 +247,6 @@ void GenSSAVisitor::visit(BinaryOperatorNode* node)
     }
     else
     {
-        auto rhs = getArg(node -> rhs());
-        auto lhs = getArg(node -> lhs());
-
         generateCall({lhs, rhs}, node -> callInfo(), node -> inlineInfo());
     }
 }
