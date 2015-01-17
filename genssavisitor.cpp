@@ -458,10 +458,8 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
         code.add(std::make_shared<AssignCommand>(var, getArg(node -> expr()), isCharType(expr_type)));
         return;
     }
-    
-    genParam(node -> expr(), node -> callInfo().conversions[0]);
-    code.add(std::make_shared<ParamCommand>(var, ConversionInfo(nullptr, TypeFactory::getReference(expr_type))));
-    genCall(node -> callInfo().callee, expr_type -> sizeOf() + Comp::config().int_size);
+   
+    generateCall({var, getArg(node -> expr())}, node -> callInfo(), node -> inlineInfo());
 }
 
 void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)

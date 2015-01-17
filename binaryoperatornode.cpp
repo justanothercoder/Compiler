@@ -1,6 +1,7 @@
 #include "binaryoperatornode.hpp"
 #include "functionsymbol.hpp"
-#include "structsymbol.hpp"
+#include "objecttype.hpp"
+#include "logger.hpp"
 
 BinaryOperatorNode::BinaryOperatorNode(ASTExprNode lhs, ASTExprNode rhs, BinaryOp op_type) : lhs_(std::move(lhs))
                                                                                            , rhs_(std::move(rhs))
@@ -108,6 +109,9 @@ BinaryOp BinaryOperatorNode::op() const { return op_type; }
 
 const FunctionalType* BinaryOperatorNode::function() const
 {
+    Logger::log("Type: " + lhs_ -> getType().getName());
+    Logger::log("Operator: " + getOperatorName());
+
     if ( lhs_ -> getType().unqualified() -> isObjectType() )
         return static_cast<const ObjectType*>(lhs_ -> getType().unqualified()) -> resolveMethod(getOperatorName());
     else

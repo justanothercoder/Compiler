@@ -3,6 +3,7 @@
 
 #include "declarationnode.hpp"
 #include "callinfo.hpp"
+#include "inlineinfo.hpp"
 #include "exprnode.hpp"
 
 class VariableSymbol;
@@ -29,6 +30,9 @@ public:
     
     const CallInfo& callInfo() const;
     void callInfo(const CallInfo& call_info);
+    
+    const InlineInfo& inlineInfo() const;        
+    void inlineInfo(InlineInfo inline_info);
 
 private:
 
@@ -36,6 +40,8 @@ private:
     ASTExprNode expr_;
 
     CallInfo call_info;
+    InlineInfo inline_info;
+
     std::shared_ptr<const VariableSymbol> defined_symbol;
 };
 

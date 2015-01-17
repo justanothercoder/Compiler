@@ -117,6 +117,18 @@ void InlineCallVisitor::visit(VariableDeclarationNode* node)
     }
 }
 
+void InlineCallVisitor::visit(VarInferTypeDeclarationNode* node) 
+{
+    visitChildren(node); 
+
+    auto function = node -> callInfo().callee;
+
+    if ( !function || !shouldBeInlined(function) )
+        return;
+
+    node -> inlineInfo(inlineCall(function));
+}
+
 void InlineCallVisitor::visit(TemplateStructDeclarationNode* node) 
 {
     for ( auto instance : node -> allInstances() )
@@ -140,7 +152,6 @@ void InlineCallVisitor::visit(UnsafeBlockNode* node)             { visitChildren
 void InlineCallVisitor::visit(NewExpressionNode* node)           { visitChildren(node); }
 void InlineCallVisitor::visit(StructDeclarationNode* node)       { visitChildren(node); }
 void InlineCallVisitor::visit(FunctionDeclarationNode* node)     { visitChildren(node); }
-void InlineCallVisitor::visit(VarInferTypeDeclarationNode* node) { visitChildren(node); }
 
 void InlineCallVisitor::visit(NullNode* ) { }
 void InlineCallVisitor::visit(TypeNode* ) { }
