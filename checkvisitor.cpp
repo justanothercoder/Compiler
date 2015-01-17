@@ -292,10 +292,10 @@ void CheckVisitor::visit(CallNode* node)
 void CheckVisitor::visit(ReturnNode* node)
 {
     node -> expr() -> accept(*this);
-
+    
     if ( node -> isInInlineCall() )
         return;
-
+    
     if ( function_scopes.empty() )
         throw SemanticError("return is not in a function");
 

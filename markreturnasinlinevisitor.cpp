@@ -11,10 +11,13 @@
 #include "functionsymbol.hpp"
 
 #include "logger.hpp"
+    
+MarkReturnAsInlineVisitor::MarkReturnAsInlineVisitor(const FunctionSymbol* function) : function(function) { }
 
 void MarkReturnAsInlineVisitor::visit(ReturnNode* node)
 {
     node -> is_in_inline_call = true;
+    node -> function(function);
 }
 
 void MarkReturnAsInlineVisitor::visit(IfNode* node) 

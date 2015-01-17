@@ -3,8 +3,13 @@
 
 #include "astvisitor.hpp"
 
+class FunctionSymbol;
+
 class MarkReturnAsInlineVisitor : public ASTVisitor
 {
+public:    
+    MarkReturnAsInlineVisitor(const FunctionSymbol* function);
+
     void visit(IfNode* node) override;
     void visit(DotNode* node) override;
     void visit(ForNode* node) override;
@@ -36,6 +41,10 @@ class MarkReturnAsInlineVisitor : public ASTVisitor
     void visit(TemplateStructDeclarationNode* node) override;
     void visit(TemplateFunctionDeclarationNode* node) override;
     void visit(TemplateFunctionNode* node) override;
+
+private:
+
+    const FunctionSymbol* function;
 };
 
 #endif

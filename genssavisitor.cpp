@@ -444,7 +444,8 @@ void GenSSAVisitor::visit(ReturnNode* node)
         auto expr_type = node -> expr() -> getType();
         auto var_arg = std::make_shared<VariableArg>(static_cast<const VariableSymbol*>(node -> scope -> resolve("$")));
 
-        if ( expr_type.isReference() )
+//        if ( expr_type.isReference() )
+        if ( node -> function() -> type().returnType().isReference() )
         {
             code.add(std::make_shared<AssignRefCommand>(var_arg, expr_arg));
         }

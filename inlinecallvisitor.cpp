@@ -10,6 +10,7 @@
 #include "bracketnode.hpp"
 #include "statementnode.hpp"
 #include "unsafeblocknode.hpp"
+#include "newexpressionnode.hpp"
 #include "binaryoperatornode.hpp"
 #include "structdeclarationnode.hpp"
 #include "functiondeclarationnode.hpp"
@@ -82,7 +83,7 @@ InlineInfo InlineCallVisitor::inlineCall(const FunctionSymbol* function)
 
     local_scope -> define(std::make_shared<VariableSymbol>("$", function -> type().returnType()));
 
-    MarkReturnAsInlineVisitor mark;
+    MarkReturnAsInlineVisitor mark(function);
 
     ExpandTemplatesVisitor expand;
     DefineVisitor define;
@@ -136,6 +137,7 @@ void InlineCallVisitor::visit(WhileNode* node)                   { visitChildren
 void InlineCallVisitor::visit(ReturnNode* node)                  { visitChildren(node); }
 void InlineCallVisitor::visit(StatementNode* node)               { visitChildren(node); }
 void InlineCallVisitor::visit(UnsafeBlockNode* node)             { visitChildren(node); }
+void InlineCallVisitor::visit(NewExpressionNode* node)           { visitChildren(node); }
 void InlineCallVisitor::visit(StructDeclarationNode* node)       { visitChildren(node); }
 void InlineCallVisitor::visit(FunctionDeclarationNode* node)     { visitChildren(node); }
 void InlineCallVisitor::visit(VarInferTypeDeclarationNode* node) { visitChildren(node); }
@@ -147,9 +149,8 @@ void InlineCallVisitor::visit(ImportNode* ) { }
 void InlineCallVisitor::visit(StringNode* ) { }
 void InlineCallVisitor::visit(NumberNode* ) { }
 void InlineCallVisitor::visit(ModuleNode* ) { }
+void InlineCallVisitor::visit(ExternNode* ) { }
 void InlineCallVisitor::visit(VariableNode* ) { }
 void InlineCallVisitor::visit(FunctionNode* ) { }
-void InlineCallVisitor::visit(ModuleMemberAccessNode* ) { }
-void InlineCallVisitor::visit(NewExpressionNode* ) { }
-void InlineCallVisitor::visit(ExternNode* ) { }
 void InlineCallVisitor::visit(TemplateFunctionNode* ) { }
+void InlineCallVisitor::visit(ModuleMemberAccessNode* ) { }
