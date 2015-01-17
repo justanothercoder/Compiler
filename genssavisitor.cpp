@@ -321,35 +321,13 @@ void GenSSAVisitor::visit(VariableDeclarationNode* node)
                 }
                 return;
             }
+                
+            auto args = std::vector<Argument>{var_arg};
 
-            if ( node -> inlineInfo().function_body )
-            {
-                auto args = std::vector<Argument>{var_arg};
+            for ( const auto& param : node -> constructorParams() )
+                args.push_back(getArg(param.get()));
 
-                for ( const auto& param : node -> constructorParams() ) {
-                    args.push_back(getArg(param.get()));
-                }                
-
-                genInlineCall(node -> inlineInfo(), args);
-                return;
-            }
-
-            const auto& params = node -> constructorParams();
-            auto params_size = 0;
-
-            for ( auto param = params.rbegin(); param != params.rend(); ++param )
-            {
-                auto info = *(node -> callInfo().conversions.rbegin() + (param - params.rbegin()));
-                genParam(param -> get(), info);
-
-                params_size += info.desired_type -> sizeOf();
-            }
-
-            auto variable = static_cast<const VariableSymbol*>(node -> getDefinedSymbol());
-            code.add(std::make_shared<ParamCommand>(var_arg, ConversionInfo(nullptr, TypeFactory::getReference(variable -> getType().base()))));
-
-            params_size += Comp::config().int_size;
-            genCall(node -> callInfo().callee, params_size);
+            generateCall(args, node -> callInfo(), node -> inlineInfo()); 
         }
     }
 }
