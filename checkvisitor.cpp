@@ -1,44 +1,41 @@
 #include "checkvisitor.hpp"
 #include "ifnode.hpp"
-#include "whilenode.hpp"
-#include "fornode.hpp"
-#include "bracketnode.hpp"
-#include "unarynode.hpp"
-#include "structsymbol.hpp"
-#include "newexpressionnode.hpp"
-#include "binaryoperatornode.hpp"
-#include "structdeclarationnode.hpp"
-#include "functiondeclarationnode.hpp"
-#include "functionsymbol.hpp"
-#include "variabledeclarationnode.hpp"
-#include "addrnode.hpp"
 #include "dotnode.hpp"
-#include "statementnode.hpp"
-#include "variablenode.hpp"
-#include "templatestructsymbol.hpp"
-#include "numbernode.hpp"
+#include "fornode.hpp"
+#include "addrnode.hpp"
 #include "callnode.hpp"
-#include "returnnode.hpp"
-#include "unsafeblocknode.hpp"
-#include "varinfertypedeclarationnode.hpp"
-#include "nullnode.hpp"
-#include "templatestructdeclarationnode.hpp"
-#include "templatefunctiondeclarationnode.hpp"
-#include "templatefunctionnode.hpp"
+#include "typenode.hpp"
+#include "unarynode.hpp"
+#include "whilenode.hpp"
 #include "importnode.hpp"
 #include "modulenode.hpp"
-#include "typenode.hpp"
+#include "returnnode.hpp"
+#include "bracketnode.hpp"
+#include "variablenode.hpp"
 #include "functionnode.hpp"
+#include "statementnode.hpp"
+#include "unsafeblocknode.hpp"
+#include "newexpressionnode.hpp"
+#include "binaryoperatornode.hpp"
+#include "templatefunctionnode.hpp"
+#include "structdeclarationnode.hpp"
 #include "modulememberaccessnode.hpp"
-#include "modulesymbol.hpp"
-#include "compilableunit.hpp"
-#include "comp.hpp"
-#include "structsymbol.hpp"
-#include "builtins.hpp"
-#include "noviableoverloaderror.hpp"
-#include "partiallyinstantiatedfunctionsymbol.hpp"
-#include "templatefunctionsymbol.hpp"
+#include "functiondeclarationnode.hpp"
+#include "variabledeclarationnode.hpp"
+#include "varinfertypedeclarationnode.hpp"
+#include "templatestructdeclarationnode.hpp"
+#include "templatefunctiondeclarationnode.hpp"
 #include "objecttype.hpp"
+#include "structsymbol.hpp"
+#include "modulesymbol.hpp"
+#include "functionsymbol.hpp"
+#include "templatestructsymbol.hpp"
+#include "templatefunctionsymbol.hpp"
+#include "partiallyinstantiatedfunctionsymbol.hpp"
+#include "comp.hpp"
+#include "builtins.hpp"
+#include "compilableunit.hpp"
+#include "noviableoverloaderror.hpp"
 #include "logger.hpp"
     
 void CheckVisitor::visitChildren(AST* node)
@@ -328,10 +325,10 @@ void CheckVisitor::visit(FunctionDeclarationNode* node)
     function_scopes.pop();
 }
 
-void CheckVisitor::visit(IfNode *node)        { visitChildren(node); }
-void CheckVisitor::visit(ForNode *node)       { visitChildren(node); }
-void CheckVisitor::visit(WhileNode *node)     { visitChildren(node); }
-void CheckVisitor::visit(StatementNode *node) { visitChildren(node); }
+void CheckVisitor::visit(IfNode* node)        { visitChildren(node); }
+void CheckVisitor::visit(ForNode* node)       { visitChildren(node); }
+void CheckVisitor::visit(WhileNode* node)     { visitChildren(node); }
+void CheckVisitor::visit(StatementNode* node) { visitChildren(node); }
 
 void CheckVisitor::visit(NullNode*) { } 
 void CheckVisitor::visit(BreakNode* ) { }
