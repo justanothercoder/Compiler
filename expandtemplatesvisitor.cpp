@@ -33,7 +33,7 @@ void ExpandTemplatesVisitor::visitChildren(AST* node)
         child -> accept(*this);
 }
 
-void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
+void ExpandTemplatesVisitor::visit(FunctionDeclarationNode* node)
 {
     const auto& template_info = node -> scope -> templateInfo();
 
@@ -53,13 +53,15 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode *node)
     visitChildren(node);
 }
 
-void ExpandTemplatesVisitor::visit(VariableDeclarationNode *node) 
+void ExpandTemplatesVisitor::visit(VariableDeclarationNode* node) 
 {
-    node -> typeInfo(preprocessTypeInfo(node -> typeInfo(), node -> scope.get()));
+    visitChildren(node);
+    node -> typeInfo(preprocessTypeInfo(node -> typeInfo(), node -> scope.get()));    
 }
 
-void ExpandTemplatesVisitor::visit(NewExpressionNode *node)
+void ExpandTemplatesVisitor::visit(NewExpressionNode* node)
 {
+    visitChildren(node);
     node -> typeInfo(preprocessTypeInfo(node -> typeInfo(), node -> scope.get()));
 }
     
@@ -144,34 +146,34 @@ std::shared_ptr<DeclarationNode> ExpandTemplatesVisitor::instantiateSpec(const T
     return decl;
 }
 
-void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode* node) { node -> expr() -> accept(*this); }
-void ExpandTemplatesVisitor::visit(DotNode* node) { node -> base() -> accept(*this); }
-
 void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode* node)   { node -> scope -> define(node -> defined_symbol); }
 void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) { node -> scope -> define(node -> defined_symbol); }
 
-void ExpandTemplatesVisitor::visit(CallNode* node)              { visitChildren(node); }
-void ExpandTemplatesVisitor::visit(UnsafeBlockNode* node)       { visitChildren(node); }
-void ExpandTemplatesVisitor::visit(StatementNode* node)         { visitChildren(node); }
-void ExpandTemplatesVisitor::visit(ReturnNode* node)            { visitChildren(node); } 
-void ExpandTemplatesVisitor::visit(IfNode* node)                { visitChildren(node); } 
-void ExpandTemplatesVisitor::visit(ForNode* node)               { visitChildren(node); } 
-void ExpandTemplatesVisitor::visit(WhileNode* node)             { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(IfNode*                node) { visitChildren(node); } 
+void ExpandTemplatesVisitor::visit(ForNode*               node) { visitChildren(node); } 
+void ExpandTemplatesVisitor::visit(DotNode*               node) { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(AddrNode*              node) { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(CallNode*              node) { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(UnaryNode*             node) { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(WhileNode*             node) { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(ReturnNode*            node) { visitChildren(node); } 
+void ExpandTemplatesVisitor::visit(BracketNode*           node) { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(StatementNode*         node) { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(UnsafeBlockNode*       node) { visitChildren(node); }
+void ExpandTemplatesVisitor::visit(BinaryOperatorNode*    node) { visitChildren(node); }
 void ExpandTemplatesVisitor::visit(StructDeclarationNode* node) { visitChildren(node); }
 
-void ExpandTemplatesVisitor::visit(AddrNode* ) { }
+void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode* node) { node -> expr() -> accept(*this); }
+
 void ExpandTemplatesVisitor::visit(NullNode* ) { }
 void ExpandTemplatesVisitor::visit(TypeNode* ) { }
 void ExpandTemplatesVisitor::visit(BreakNode* ) { } 
-void ExpandTemplatesVisitor::visit(UnaryNode* ) { }
 void ExpandTemplatesVisitor::visit(StringNode* ) { }
 void ExpandTemplatesVisitor::visit(NumberNode* ) { }
 void ExpandTemplatesVisitor::visit(ExternNode* ) { }
 void ExpandTemplatesVisitor::visit(ImportNode* ) { } 
 void ExpandTemplatesVisitor::visit(ModuleNode* ) { }
-void ExpandTemplatesVisitor::visit(BracketNode* ) { }
 void ExpandTemplatesVisitor::visit(VariableNode* ) { }
 void ExpandTemplatesVisitor::visit(FunctionNode* ) { }
-void ExpandTemplatesVisitor::visit(BinaryOperatorNode* ) { }
 void ExpandTemplatesVisitor::visit(TemplateFunctionNode* ) { } 
 void ExpandTemplatesVisitor::visit(ModuleMemberAccessNode* ) { } 
