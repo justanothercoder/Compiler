@@ -87,7 +87,7 @@ void GenSSAVisitor::generateCall(std::vector<Argument> args, const CallInfo& cal
 {
     if ( inline_info.function_body )
     {
-        genInlineCall(call_info.callee, inline_info, args);
+        genInlineCall(inline_info, args);
         return;
     }
 
@@ -333,7 +333,7 @@ void GenSSAVisitor::visit(VariableDeclarationNode* node)
                     args.push_back(getArg(param.get()));
                 }                
 
-                genInlineCall(node -> callInfo().callee, node -> inlineInfo(), args);
+                genInlineCall(node -> inlineInfo(), args);
                 return;
             }
 
@@ -423,38 +423,19 @@ void GenSSAVisitor::visit(NumberNode* node)
 
 void GenSSAVisitor::visit(CallNode* node)
 {
-    if ( node -> inlineInfo().function_body )
-    {
-        auto this_arg = node -> callInfo().callee -> isMethod() ? getArg(node -> caller()) : nullptr;
-
-        auto args = std::vector<Argument>{this_arg};
+    auto args = std::vector<Argument>{ };    
         
-        for ( const auto& param : node -> params() ) {
-            args.push_back(getArg(param.get()));
-        }
-    
-        genInlineCall(node -> callInfo().callee, node -> inlineInfo(), args);
-        return;
-    }
-
-    auto params_size = 0;
-    
     const auto& params = node -> params();
 
     for ( auto param = params.rbegin(); param != params.rend(); ++param )
-    {
-        auto info = *(node -> callInfo().conversions.rbegin() + (param - params.rbegin()));
-        genParam(param -> get(), info);
-        params_size += info.desired_type -> sizeOf();
-    }
+        args.push_back(getArg(param -> get()));
 
     if ( node -> callInfo().callee -> isMethod() )
-    {
-        params_size += Comp::config().int_size;
-        genParam(node -> caller(), ConversionInfo(nullptr, TypeFactory::getReference(node -> caller() -> getType().base())));
-    }
+        args.push_back(getArg(node -> caller()));
 
-    genCall(node -> callInfo().callee, params_size);
+    std::reverse(std::begin(args), std::end(args));
+
+    generateCall(args, node -> callInfo(), node -> inlineInfo());
 }
 
 void GenSSAVisitor::visit(ReturnNode* node)
@@ -549,7 +530,7 @@ void GenSSAVisitor::genCall(const FunctionSymbol* func, int params_size)
     _arg = code.add(std::make_shared<CallCommand>(func, params_size));
 }
 
-void GenSSAVisitor::genInlineCall(const FunctionSymbol* , const InlineInfo& inline_info, std::vector<Argument> params)
+void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Argument> params)
 {
     assert(inline_info.function_body);
 
@@ -558,9 +539,6 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* , const InlineInfo& inli
     loop_label.emplace(nullptr, exit_from_function_label);
 
     auto param_it = std::begin(params);
-
-    if ( *param_it == nullptr )
-        ++param_it;
 
     auto return_var = static_cast<const VariableSymbol*>(inline_info.function_body -> scope -> resolve("$"));
     code.rememberVar(return_var);

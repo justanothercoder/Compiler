@@ -63,7 +63,7 @@ private:
 
     void genParam(ExprNode* node, ConversionInfo conversion_info);
     void genCall(const FunctionSymbol* func, int params_size);
-    void genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Argument> params);
+    void genInlineCall(const InlineInfo& inline_info, std::vector<Argument> params);
 
     std::stack< std::pair<Argument, Argument> > loop_label;
 
