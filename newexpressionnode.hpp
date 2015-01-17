@@ -8,6 +8,7 @@
 #include "exprnode.hpp"
 #include "typeinfo.hpp"
 #include "callinfo.hpp"
+#include "inlineinfo.hpp"
 
 class NewExpressionNode : public ExprNode
 {
@@ -36,11 +37,16 @@ public:
     const CallInfo& callInfo() const;
     void callInfo(const CallInfo& call_info);
 
+    const InlineInfo& inlineInfo() const;
+    void inlineInfo(InlineInfo inline_info);
+
 private:
 
     TypeInfo type_info;
     std::vector<ASTExprNode> params_;
+
     CallInfo call_info;
+    InlineInfo inline_info;
 };
 
 #endif

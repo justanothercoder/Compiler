@@ -226,21 +226,13 @@ void GenSSAVisitor::visit(NewExpressionNode* node)
         _arg = tmp_obj;
         return;
     }
-    
-    auto params_size = 0;
+   
+    auto arguments = std::vector<Argument>{tmp_obj};
 
-    for ( auto param = params.rbegin(); param != params.rend(); ++param )
-    {
-        auto info = *(node -> callInfo().conversions.rbegin() + (param - params.rbegin()));
-        genParam(param -> get(), info);
-        params_size += info.desired_type -> sizeOf();
-    }
+    for ( const auto& param : node -> params() )
+        arguments.push_back(getArg(param.get()));
 
-    code.add(std::make_shared<ParamCommand>(tmp_obj, ConversionInfo(nullptr, TypeFactory::getReference(expr_type))));
-
-    params_size += Comp::config().int_size;
-
-    genCall(node -> callInfo().callee, params_size);
+    generateCall(arguments, node -> callInfo(), node -> inlineInfo());
     _arg = tmp_obj;
 }
 

@@ -102,6 +102,18 @@ void InlineCallVisitor::visit(UnaryNode* node)          { visitChildren(node); v
 void InlineCallVisitor::visit(BracketNode* node)        { visitChildren(node); visitCallable(node); }
 void InlineCallVisitor::visit(BinaryOperatorNode* node) { visitChildren(node); visitCallable(node); }
 
+void InlineCallVisitor::visit(NewExpressionNode* node) 
+{
+    visitChildren(node); 
+
+    auto function = node -> callInfo().callee;
+    
+    if ( !shouldBeInlined(function) )
+        return;
+    
+    node -> inlineInfo(inlineCall(function));
+}
+
 void InlineCallVisitor::visit(VariableDeclarationNode* node) 
 {
     visitChildren(node);
@@ -149,7 +161,6 @@ void InlineCallVisitor::visit(WhileNode* node)                   { visitChildren
 void InlineCallVisitor::visit(ReturnNode* node)                  { visitChildren(node); }
 void InlineCallVisitor::visit(StatementNode* node)               { visitChildren(node); }
 void InlineCallVisitor::visit(UnsafeBlockNode* node)             { visitChildren(node); }
-void InlineCallVisitor::visit(NewExpressionNode* node)           { visitChildren(node); }
 void InlineCallVisitor::visit(StructDeclarationNode* node)       { visitChildren(node); }
 void InlineCallVisitor::visit(FunctionDeclarationNode* node)     { visitChildren(node); }
 
