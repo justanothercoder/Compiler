@@ -6,6 +6,7 @@
 #include "compiler.hpp"
 
 class AST;
+class CallableNode;
 struct InlineInfo;
 
 class GenSSAVisitor : public ASTVisitor, public Compiler
@@ -52,6 +53,7 @@ public:
 private:
 
     const std::shared_ptr<Arg>& getArg(AST* node);
+    void generateCall(std::vector<Argument> args, const CallInfo& call_info, const InlineInfo& inline_info);
 
     bool isIntType(const Type* t);
     bool isCharType(const Type* t);
@@ -61,11 +63,11 @@ private:
 
     void genParam(ExprNode* node, ConversionInfo conversion_info);
     void genCall(const FunctionSymbol* func, int params_size);
-    void genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Argument> params, Argument this_expr);
+    void genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Argument> params);
 
     std::stack< std::pair<Argument, Argument> > loop_label;
 
-    Argument _arg;
+    Argument _arg = nullptr;
     ThreeAddressCode& code;
 };
 

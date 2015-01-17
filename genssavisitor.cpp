@@ -52,7 +52,7 @@
 
 #include "logger.hpp"
 
-GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : _arg(nullptr), code(code)
+GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : code(code)
 {
     auto str_type = static_cast<StructSymbol*>(BuiltIns::ASCII_string_type.get());
 
@@ -81,6 +81,28 @@ const std::shared_ptr<Arg>& GenSSAVisitor::getArg(AST* node)
 {
     node -> accept(*this);
     return _arg;
+}
+
+void GenSSAVisitor::generateCall(std::vector<Argument> args, const CallInfo& call_info, const InlineInfo& inline_info)
+{
+    if ( inline_info.function_body )
+    {
+        genInlineCall(call_info.callee, inline_info, args);
+        return;
+    }
+
+    auto params_size = 0;
+    
+    auto it = call_info.conversions.rbegin();
+
+    for ( auto arg = args.rbegin(); arg != args.rend(); ++arg, ++it )
+    {
+        auto info = *it;
+        code.add(std::make_shared<ParamCommand>(*arg, info));
+        params_size += info.desired_type -> sizeOf();
+    }
+
+    genCall(call_info.callee, params_size);
 }
 
 void GenSSAVisitor::visit(ExternNode* node) { code.addExternalFunction(static_cast<const FunctionSymbol*>(node -> getDefinedSymbol())); }
@@ -234,7 +256,7 @@ void GenSSAVisitor::visit(BinaryOperatorNode* node)
         auto lhs = getArg(node -> lhs());
 
         if ( node -> op() == BinaryOp::ASSIGN )
-            code.add(std::make_shared<AssignCommand>(lhs, rhs, lhs_type.unqualified() == BuiltIns::char_type.get()));
+            code.add(std::make_shared<AssignCommand>(lhs, rhs, isCharType(lhs_type.unqualified())));
         else
             _arg = code.add(std::make_shared<BinaryOpCommand>(node -> op(), lhs, rhs));
     }
@@ -305,12 +327,13 @@ void GenSSAVisitor::visit(VariableDeclarationNode* node)
 
             if ( node -> inlineInfo().function_body )
             {
-                auto args = std::vector<Argument>{ };
+                auto args = std::vector<Argument>{var_arg};
+
                 for ( const auto& param : node -> constructorParams() ) {
                     args.push_back(getArg(param.get()));
-                }
+                }                
 
-                genInlineCall(node -> callInfo().callee, node -> inlineInfo(), args, var_arg);
+                genInlineCall(node -> callInfo().callee, node -> inlineInfo(), args);
                 return;
             }
 
@@ -402,14 +425,15 @@ void GenSSAVisitor::visit(CallNode* node)
 {
     if ( node -> inlineInfo().function_body )
     {
-        auto args = std::vector<Argument>{ };
+        auto this_arg = node -> callInfo().callee -> isMethod() ? getArg(node -> caller()) : nullptr;
+
+        auto args = std::vector<Argument>{this_arg};
+        
         for ( const auto& param : node -> params() ) {
             args.push_back(getArg(param.get()));
         }
     
-        auto this_arg = node -> callInfo().callee -> isMethod() ? getArg(node -> caller()) : nullptr;
-
-        genInlineCall(node -> callInfo().callee, node -> inlineInfo(), args, this_arg);
+        genInlineCall(node -> callInfo().callee, node -> inlineInfo(), args);
         return;
     }
 
@@ -525,7 +549,7 @@ void GenSSAVisitor::genCall(const FunctionSymbol* func, int params_size)
     _arg = code.add(std::make_shared<CallCommand>(func, params_size));
 }
 
-void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, const InlineInfo& inline_info, std::vector<Argument> params, Argument this_expr)
+void GenSSAVisitor::genInlineCall(const FunctionSymbol* , const InlineInfo& inline_info, std::vector<Argument> params)
 {
     assert(inline_info.function_body);
 
@@ -533,10 +557,10 @@ void GenSSAVisitor::genInlineCall(const FunctionSymbol* function, const InlineIn
 
     loop_label.emplace(nullptr, exit_from_function_label);
 
-    if ( function -> isMethod() )
-        params.insert(std::begin(params), this_expr);
-
     auto param_it = std::begin(params);
+
+    if ( *param_it == nullptr )
+        ++param_it;
 
     auto return_var = static_cast<const VariableSymbol*>(inline_info.function_body -> scope -> resolve("$"));
     code.rememberVar(return_var);
