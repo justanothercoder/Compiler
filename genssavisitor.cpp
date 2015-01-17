@@ -190,16 +190,15 @@ void GenSSAVisitor::visit(BracketNode* node)
         return;
     }
 
-    genParam(node -> expr(), node -> callInfo().conversions[1]);
-    genParam(node -> base(), node -> callInfo().conversions[0]);
+    auto expr = getArg(node -> expr());
+    auto base = getArg(node -> base());
 
-    genCall(node -> callInfo().callee, node -> expr() -> getType().sizeOf() + Comp::config().int_size);
+    generateCall({base, expr}, node -> callInfo(), node -> inlineInfo());
 }
 
 void GenSSAVisitor::visit(UnaryNode* node)
 {
-    genParam(node -> expr(), node -> callInfo().conversions[0]);
-    genCall(node -> callInfo().callee, node -> expr() -> getType().sizeOf());
+    generateCall({getArg(node -> expr())}, node -> callInfo(), node -> inlineInfo());
 }
 
 void GenSSAVisitor::visit(NewExpressionNode* node)
@@ -440,20 +439,25 @@ void GenSSAVisitor::visit(CallNode* node)
 
 void GenSSAVisitor::visit(ReturnNode* node)
 {
+    auto expr_arg = getArg(node -> expr());
+
     if ( node -> isInInlineCall() )
     {
         auto expr_type = node -> expr() -> getType();
         auto var_arg = std::make_shared<VariableArg>(static_cast<const VariableSymbol*>(node -> scope -> resolve("$")));
 
-        if ( isSimpleType(expr_type.base()) )
+        if ( expr_type.isReference() )
         {
-            auto arg = getArg(node -> expr());
-            code.add(std::make_shared<AssignCommand>(var_arg, arg, isCharType(expr_type.base())));
+            code.add(std::make_shared<AssignRefCommand>(var_arg, expr_arg));
+        }
+        else if ( isSimpleType(expr_type.base()) )
+        {
+            code.add(std::make_shared<AssignCommand>(var_arg, expr_arg, isCharType(expr_type.base())));
         }
         else
         {
-            code.add(std::make_shared<ParamCommand>(getArg(node -> expr()), ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
-            code.add(std::make_shared<ParamCommand>(var_arg               , ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
+            code.add(std::make_shared<ParamCommand>(expr_arg, ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
+            code.add(std::make_shared<ParamCommand>(var_arg , ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
             genCall(static_cast<const StructSymbol*>(expr_type.base()) -> getCopyConstructor(), 2 * Comp::config().int_size);
         }
         _arg = var_arg;
@@ -461,7 +465,7 @@ void GenSSAVisitor::visit(ReturnNode* node)
         return;
     }
 
-    code.add(std::make_shared<ReturnCommand>(getArg(node -> expr()), node -> function() -> type().returnType().isReference()));
+    code.add(std::make_shared<ReturnCommand>(expr_arg, node -> function() -> type().returnType().isReference()));
 }
 
 void GenSSAVisitor::visit(UnsafeBlockNode *node)

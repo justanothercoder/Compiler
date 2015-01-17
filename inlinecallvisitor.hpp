@@ -6,6 +6,7 @@
 
 class AST;
 class VariableSymbol;
+class CallableNode;
 
 struct InlineInfo;
 
@@ -51,6 +52,7 @@ private:
     InlineInfo inlineCall(const FunctionSymbol* function);
 
     void visitChildren(AST* node);
+    void visitCallable(CallableNode* node);
 };
 
 #endif

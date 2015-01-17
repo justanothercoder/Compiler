@@ -20,6 +20,7 @@
 #include "functionsymbol.hpp"
 #include "variablesymbol.hpp"
 #include "localscope.hpp"
+#include "callablenode.hpp"
 
 #include "expandtemplatesvisitor.hpp"
 #include "definevisitor.hpp"
@@ -33,6 +34,16 @@ void InlineCallVisitor::visitChildren(AST* node)
 {
     for ( auto child : node -> getChildren() )
         child -> accept(*this);
+}
+
+void InlineCallVisitor::visitCallable(CallableNode* node)
+{
+    auto function = node -> callInfo().callee;
+    
+    if ( !shouldBeInlined(function) )
+        return;
+    
+    node -> inlineInfo(inlineCall(function));
 }
 
 bool InlineCallVisitor::shouldBeInlined(const FunctionSymbol* function)
@@ -85,18 +96,9 @@ InlineInfo InlineCallVisitor::inlineCall(const FunctionSymbol* function)
     return InlineInfo(std::move(function_body), locals);
 }
 
-void InlineCallVisitor::visit(CallNode* node)
-{
-    for ( const auto& param : node -> params() )
-        param -> accept(*this);
-
-    auto function = node -> callInfo().callee;
-    
-    if ( !shouldBeInlined(function) )
-        return;
-    
-    node -> inlineInfo(inlineCall(function));
-}
+void InlineCallVisitor::visit(CallNode* node) { visitCallable(node); } 
+void InlineCallVisitor::visit(UnaryNode* node) { visitCallable(node); } 
+void InlineCallVisitor::visit(BracketNode* node) { visitCallable(node); }
 
 void InlineCallVisitor::visit(VariableDeclarationNode* node) 
 {
@@ -130,9 +132,7 @@ void InlineCallVisitor::visit(DotNode* node)                     { visitChildren
 void InlineCallVisitor::visit(ForNode* node)                     { visitChildren(node); }
 void InlineCallVisitor::visit(AddrNode* node)                    { visitChildren(node); }
 void InlineCallVisitor::visit(WhileNode* node)                   { visitChildren(node); }
-void InlineCallVisitor::visit(UnaryNode* node)                   { visitChildren(node); }
 void InlineCallVisitor::visit(ReturnNode* node)                  { visitChildren(node); }
-void InlineCallVisitor::visit(BracketNode* node)                 { visitChildren(node); }
 void InlineCallVisitor::visit(StatementNode* node)               { visitChildren(node); }
 void InlineCallVisitor::visit(UnsafeBlockNode* node)             { visitChildren(node); }
 void InlineCallVisitor::visit(BinaryOperatorNode* node)          { visitChildren(node); }
