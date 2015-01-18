@@ -25,6 +25,8 @@ public:
 
     std::unique_ptr<DefineSymbolVisitor> defineSymbolVisitor() const override;
 
+    const FunctionSymbol* overloadOfTemplateFunction(FunctionTypeInfo info, const std::vector<TemplateParam>& partial = { }) const;
+
 private:
 
     std::string name;

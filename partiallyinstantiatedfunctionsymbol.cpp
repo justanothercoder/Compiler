@@ -1,6 +1,7 @@
 #include "partiallyinstantiatedfunctionsymbol.hpp"
 #include "functionsymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
+#include "templatefunctionsymbol.hpp"
 #include "logger.hpp"
 
 PartiallyInstantiatedFunctionSymbol::PartiallyInstantiatedFunctionSymbol(const OverloadedFunctionSymbol* ov_func
@@ -16,7 +17,7 @@ CallInfo PartiallyInstantiatedFunctionSymbol::resolveCall(std::vector<ValueInfo>
     for ( auto arg : arguments )
         types.push_back(arg.type());
 
-    if ( auto overload = ov_func -> overloadOfTemplateFunction(ov_func -> template_function, types, tmpl_arguments) )
+    if ( auto overload = ov_func -> template_function -> overloadOfTemplateFunction(types, tmpl_arguments) )
     {
         if ( !checkValues(arguments, overload -> type().typeInfo().params()) )
             throw SemanticError("lvalue error");

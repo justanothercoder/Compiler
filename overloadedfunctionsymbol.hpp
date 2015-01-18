@@ -37,10 +37,6 @@ private:
 
     const FunctionSymbol* getViableOverload(FunctionTypeInfo params_type) const;
 
-    const FunctionSymbol* overloadOfTemplateFunction(const TemplateFunctionSymbol* template_function
-                                                   , FunctionTypeInfo info
-                                                   , const std::vector<TemplateParam>& partial = { }) const;
-
 private:
 
     std::string name;

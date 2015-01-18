@@ -1,11 +1,7 @@
 #include "overloadedfunctionsymbol.hpp"
-#include "functionsymbol.hpp"
-#include "templatefunctiondeclarationnode.hpp"
-#include "templatefunctionsymbol.hpp"
-#include "expandtemplatesvisitor.hpp"
-#include "definevisitor.hpp"
-#include "checkvisitor.hpp"
 #include "structsymbol.hpp"
+#include "functionsymbol.hpp"
+#include "templatefunctionsymbol.hpp"
 #include "noviableoverloaderror.hpp"
 #include "logger.hpp"
 
@@ -42,7 +38,7 @@ const FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeIn
 
     if ( template_function && !params_type.params().empty() )
     {
-        if ( auto overload = overloadOfTemplateFunction(template_function, params_type) )
+        if ( auto overload = template_function -> overloadOfTemplateFunction(params_type) )
         {
             if ( v.empty() || func_better(overload -> type().typeInfo(), v.front()) )
                 return overload;
@@ -76,42 +72,6 @@ CallInfo OverloadedFunctionSymbol::resolveCall(std::vector<ValueInfo> arguments)
 
     function -> is_used = true;
     return CallInfo(function, getConversions(arguments, function_params));
-}
-
-const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(const TemplateFunctionSymbol* template_function
-                                                                         , FunctionTypeInfo info
-                                                                         , const std::vector<TemplateParam>& partial) const
-{
-    auto decl = static_cast<TemplateFunctionDeclarationNode*>(template_function -> holder());
-    auto tmpl = static_cast<const TemplateFunctionSymbol*>(decl -> getDefinedSymbol());
-    const auto& function_info = decl -> info();
-
-    if ( auto mapping = makeMappingOfParams(tmpl, function_info.formalParams(), info.params()) )
-    {
-        auto template_params_map = *mapping;
-
-        auto template_params = std::vector<TemplateParam>(std::begin(partial), std::end(partial));
-
-        for ( auto template_param : tmpl -> templateSymbols() )
-        {
-            if ( template_params_map.count(template_param.first) )
-                template_params.push_back(template_params_map[template_param.first]);
-        }
-
-        auto new_decl = decl -> instantiateWithTemplateInfo(TemplateInfo(tmpl, template_params));
-        tmpl -> holder() -> addInstance(template_params, new_decl);
-
-        ExpandTemplatesVisitor expand;
-        DefineVisitor define;
-        CheckVisitor check;
-
-        for ( auto visitor : std::vector<ASTVisitor*>{&expand, &define, &check} )
-            new_decl -> accept(*visitor);
-
-        return static_cast<const FunctionSymbol*>(new_decl -> getDefinedSymbol());
-    }
-
-    return nullptr;
 }
 
 bool OverloadedFunctionSymbol::isMethod() const { return traits.is_method; }
