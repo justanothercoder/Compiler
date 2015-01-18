@@ -3,19 +3,18 @@ Rainbow
 
 The aim of this project is to build a compiler for the Rainbow language and produce correct x86 Linux assembly code for it.
 
-http://github.com/justanothercoder/webcompiler
-Online editor with ability to compile code.
-
 ###Algorithms and techological side.
 
 There are several phases of compilation such as:
 
 1. Lexical analysis.
-2. Syntax analysis.
+2. Syntax analysis and IR generation.
 3. Semantic analysis.
-4. Code generation.
+4. TAC generation. 
+5. Optimization.
+6. Assembly generation.
 
-On the first stage some kind of finite automaton is used. Lexical analysis is needed to divide the text of a program into tokens - minimal unit of syntax.
+On the first stage some kind of finite automaton is used. Lexical analysis is needed to divide the text of a program into tokens - minimal units of syntax.
 
 Next stage is parsing. On this stage the backtracking *LL(k)* parser is the main idea.
 It is used to make sure that program is syntactically correct and transform it to the internal representation.
@@ -23,11 +22,13 @@ This representation has form of abstract syntax tree (AST).
 
 On the next stage of compilation semantic analysis is performed. We take the several in-order traversals through the AST to make sure that all needed symbols are defined, all function calls can be performed, and to check the types.
 
-The last stage is code generation. Again this is performed by traversal through the tree. The output of this phase is the final assembly code, that can be turned into object code with **_nasm_** and then linked with **_ld_**, for example.
+The next stage is Three-Address Code (TAC) generation which is primarily used to perform optimization. Optimization currently consists of constant propagation and elimination of unused variables and temporaries.
+
+The last stage is code generation. This is performed by mapping TAC instructions to assembly instructions. The output of this phase is the final assembly code, that can be turned into object code with **_nasm_** and then linked with **_ld_**, for example.
 
 ###User guide
 
-All you need is to compile the source into the executable. For this you need **_make_** and **_clang_** that supports the _C++11_.
+All you need is to compile the source into the executable. For this you need **_make_** and **_clang_** that supports the _C++14_.
 
 Then you need to execute in shell such command as
 ```bash
@@ -52,16 +53,23 @@ The language is quite simple, there are several examples.
 def f(int x, int y) : int {
   //code
 }
+
+template <class T, class U>
+def f(U x) : T {
+  //code
+}
 ```
 
 * Struct definition
 
 ```
-//possibly templated like in C++. 
-//Unfortunately, template functions are not supported yet.
-template <class T>
 struct A {
-  //functions' and variables' definitions
+  //functions and variables and structures
+}
+
+template <class T, class U> // template metaprogramming like in C++
+struct B {
+  //functions and variables and structures
 }
 ```
 
@@ -88,11 +96,15 @@ for ( init; cond; step ) { //all three are optional, but here semicolons are man
 
 ```
 import libname
+from libname import something
 ```
 
 * New
 
 ```
+
+//Like in Java and C#
+
 struct A 
 {
   def A() {
@@ -100,16 +112,19 @@ struct A
   }
 }
 
-new A() //Like in Java and C#
+new A
+new A() 
 
 ```
 
 ##Standart Library
 
-It is not very big: only _ASCII_ strings, arrays and some functions to work with them.
+1. _ASCII_ strings
+2. Arrays
+3. Heap allocation
+4. Buffered IO
 
-In plans there are such things as: functions for allocation on heap, containers and buffered IO-system.
-
+More containers are in plans.
 As for language core, this will soon be ready: first-class functions, lambda expressions, improved import system, JIT compilation.
 
 
@@ -120,8 +135,12 @@ There are several main classes that do most of the work.
 * Parser (does all the parsing)
 * AST (base class for all AST nodes)
 * ExprNode (base class for all expressions and child of AST)
-* CallHelper (provides functions to resolve viable overload and get _CallInfo_)
-* CodeObject (provides functions for code generation)
+* ExpandTemplatesVisitor (expands templates)
+* DefineVisitor (defines symbols)
+* CheckVisitor (perform semantic analysis)
+* GenSSAVisitor (generates TAC)
+* ThreeAddressCode (code)
+* Optimizer (performs optimization)
 
 If you want to add something new you should change one of this classes and possibly add a new node as a child of AST class.
 
@@ -142,4 +161,4 @@ Reference:
 
 * http://en.cppreference.com/
 
-Inspired by C++ and Python
+Inspired by C++, D and Python
