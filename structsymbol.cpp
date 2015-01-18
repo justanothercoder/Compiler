@@ -89,10 +89,7 @@ const FunctionSymbol* StructSymbol::methodWith(const std::string& name, Function
         return nullptr;
 
     auto func = static_cast<const OverloadedFunctionSymbol*>(member);
-    const auto& info = func -> getTypeInfo();
-
-    auto it = info.symbols.find(ft);
-    return it == std::end(info.symbols) ? nullptr : static_cast<const FunctionSymbol*>(it -> second.get());
+    return func -> overloadWith(ft);
 }
 
 void StructSymbol::defineBuiltInMethod(std::string name, FunctionType type)

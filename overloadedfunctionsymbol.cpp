@@ -8,13 +8,6 @@
 OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name, FunctionTraits traits) : name(name), type_info({ }), traits(traits) { }
 
 std::string OverloadedFunctionSymbol::getName() const { return name; }
-const OverloadedFunctionTypeInfo& OverloadedFunctionSymbol::getTypeInfo() const { return type_info; }
-
-void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, std::shared_ptr<const Symbol> sym) const
-{
-    type_info.overloads.insert(func_type_info);
-    type_info.symbols.emplace(func_type_info, sym);
-}
 
 VariableType OverloadedFunctionSymbol::getBaseType() const
 {
@@ -75,3 +68,24 @@ CallInfo OverloadedFunctionSymbol::resolveCall(std::vector<ValueInfo> arguments)
 }
 
 bool OverloadedFunctionSymbol::isMethod() const { return traits.is_method; }
+    
+const FunctionSymbol* OverloadedFunctionSymbol::overloadWith(FunctionTypeInfo info) const 
+{
+    return static_cast<const FunctionSymbol*>(type_info.symbols[info].get());
+}
+
+void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, std::shared_ptr<const Symbol> sym) const
+{
+    type_info.overloads.insert(func_type_info);
+    type_info.symbols.emplace(func_type_info, sym);
+}
+
+std::vector<const FunctionSymbol*> OverloadedFunctionSymbol::allOverloads() const
+{
+    auto overloads = std::vector<const FunctionSymbol*>{ };
+
+    for ( auto entry : type_info.symbols )
+        overloads.push_back(static_cast<const FunctionSymbol*>(entry.second.get()));
+
+    return overloads;
+}

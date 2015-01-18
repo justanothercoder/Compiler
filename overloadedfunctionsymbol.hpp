@@ -17,11 +17,12 @@ class OverloadedFunctionSymbol : public Symbol, public FunctionalType
 public:
 
     OverloadedFunctionSymbol(std::string name, FunctionTraits traits);
-
     std::string getName() const override;
 
-    const OverloadedFunctionTypeInfo& getTypeInfo() const;
+    const FunctionSymbol* overloadWith(FunctionTypeInfo info) const;
     void addOverload(FunctionTypeInfo type_info, std::shared_ptr<const Symbol> sym) const;
+
+    std::vector<const FunctionSymbol*> allOverloads() const;
 
     bool isMethod() const;
     SymbolType getSymbolType() const override;

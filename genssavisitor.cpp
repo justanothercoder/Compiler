@@ -56,23 +56,23 @@ GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : code(code)
 {
     auto str_type = static_cast<StructSymbol*>(BuiltIns::ASCII_string_type.get());
 
-    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> getTypeInfo().symbols )
-        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> allOverloads() )
+        code.addExternalFunction(func);
     
-    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("print")) -> getTypeInfo().symbols )
-        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("print")) -> allOverloads() )
+        code.addExternalFunction(func);
     
-    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("length")) -> getTypeInfo().symbols )
-        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("length")) -> allOverloads() )
+        code.addExternalFunction(func);
     
-    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator+")) -> getTypeInfo().symbols )
-        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator+")) -> allOverloads() )
+        code.addExternalFunction(func);
     
-    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("string")) -> getTypeInfo().symbols )
-        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("string")) -> allOverloads() )
+        code.addExternalFunction(func);
     
-    for ( const auto& func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator=")) -> getTypeInfo().symbols )
-        code.addExternalFunction(static_cast<const FunctionSymbol*>(func.second.get()));
+    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator=")) -> allOverloads() )
+        code.addExternalFunction(func);
     
     code.newBlock(BuiltIns::global_scope.get());
 }
