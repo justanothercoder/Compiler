@@ -18,11 +18,11 @@ CallInfo PartiallyInstantiatedFunctionSymbol::resolveCall(std::vector<ValueInfo>
 
     if ( auto overload = ov_func -> overloadOfTemplateFunction(ov_func -> template_function, types, tmpl_arguments) )
     {
-        if ( !ov_func -> checkValues(arguments, overload -> type().typeInfo().params()) )
+        if ( !checkValues(arguments, overload -> type().typeInfo().params()) )
             throw SemanticError("lvalue error");
 
         overload -> is_used = true;
-        return CallInfo(overload, ov_func -> getConversions(arguments, overload -> type().typeInfo().params()));
+        return CallInfo(overload, getConversions(arguments, overload -> type().typeInfo().params()));
     }
     else
         return ov_func -> resolveCall(arguments);

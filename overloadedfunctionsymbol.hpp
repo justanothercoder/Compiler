@@ -37,17 +37,9 @@ private:
 
     const FunctionSymbol* getViableOverload(FunctionTypeInfo params_type) const;
 
-    bool checkValues(std::vector<ValueInfo> arguments, std::vector<VariableType> params) const;
-    std::vector<ConversionInfo> getConversions(std::vector<ValueInfo> arguments, std::vector<VariableType> params) const;
-    ConversionInfo getConversionInfo(const Type *lhs, const Type *rhs) const;
-
     const FunctionSymbol* overloadOfTemplateFunction(const TemplateFunctionSymbol* template_function
                                                    , FunctionTypeInfo info
                                                    , const std::vector<TemplateParam>& partial = { }) const;
-
-    boost::optional< std::map<std::string, TemplateParam> > makeMappingOfParams(const TemplateSymbol* tmpl
-                                                                              , const std::vector<ParamInfo>& formal_params
-                                                                              , FunctionTypeInfo arguments) const;
 
 private:
 

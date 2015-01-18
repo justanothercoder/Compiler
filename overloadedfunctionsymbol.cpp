@@ -78,53 +78,6 @@ CallInfo OverloadedFunctionSymbol::resolveCall(std::vector<ValueInfo> arguments)
     return CallInfo(function, getConversions(arguments, function_params));
 }
 
-std::vector<ConversionInfo> OverloadedFunctionSymbol::getConversions(std::vector<ValueInfo> arguments, std::vector<VariableType> params) const
-{
-    std::vector<ConversionInfo> conversions;
-
-    for ( size_t i = 0; i < params.size(); ++i )
-    {
-        auto actual_type = arguments[i].type();
-        auto desired_type = params[i];
-
-        conversions.push_back(getConversionInfo(actual_type.base(), desired_type.base()));
-
-        if ( !desired_type.isReference() && desired_type.unqualified() -> getTypeKind() == TypeKind::STRUCT )
-            static_cast<const StructSymbol*>(desired_type.unqualified()) -> getCopyConstructor() -> is_used = true;
-    }
-    
-    return conversions;
-}
-
-ConversionInfo OverloadedFunctionSymbol::getConversionInfo(const Type *lhs, const Type *rhs) const
-{
-    if ( !lhs -> isConvertableTo(rhs) )
-        throw SemanticError("Invalid initialization of '" + rhs -> getName() + "' with type '" + lhs -> getName() + "'.");
-
-    auto _lhs = lhs -> removeRef();
-    auto _rhs = rhs -> removeRef();
-
-    auto conv = (_lhs == _rhs) ? nullptr : _lhs -> getConversionTo(_rhs);
-
-    if ( conv != nullptr )
-        conv -> is_used = true;
-
-    return ConversionInfo(conv, rhs);
-}
-
-bool OverloadedFunctionSymbol::checkValues(std::vector<ValueInfo> arguments, std::vector<VariableType> params) const
-{
-    assert(arguments.size() == params.size());
-
-    for ( size_t i = 0; i < arguments.size(); ++i )
-    {
-        if ( params[i].isReference() && !arguments[i].isLeftValue() && !arguments[i].type().isReference() && !params[i].isConst() )
-            return false;
-    }
-
-    return true;
-}
-    
 const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(const TemplateFunctionSymbol* template_function
                                                                          , FunctionTypeInfo info
                                                                          , const std::vector<TemplateParam>& partial) const
@@ -161,38 +114,4 @@ const FunctionSymbol* OverloadedFunctionSymbol::overloadOfTemplateFunction(const
     return nullptr;
 }
 
-boost::optional< std::map<std::string, TemplateParam> > OverloadedFunctionSymbol::makeMappingOfParams(const TemplateSymbol* tmpl
-                                                                                                    , const std::vector<ParamInfo>& formal_params
-                                                                                                    , FunctionTypeInfo arguments) const
-{
-    std::map<std::string, TemplateParam> template_params_map;
-
-    auto args = arguments.params();
-
-    if ( args.size() != formal_params.size() )
-        return boost::none;
-
-    auto it = std::begin(args);
-
-    for ( const auto& param : formal_params )
-    {
-        if ( TemplateInfo(tmpl, { }).isIn(param.second.name()) )
-        {
-            if ( template_params_map.count(param.second.name()) )
-            {
-                if ( boost::get<TypeInfo>(template_params_map[param.second.name()]) != makeTypeInfo(*it) )
-                    return boost::none;
-            }
-            else
-            {
-                template_params_map[param.second.name()] = makeTypeInfo(*it);
-            }
-        }
-
-        ++it;
-    }
-
-    return std::move(template_params_map);
-}
-    
 bool OverloadedFunctionSymbol::isMethod() const { return traits.is_method; }
