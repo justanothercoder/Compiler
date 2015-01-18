@@ -102,7 +102,7 @@ void GenSSAVisitor::generateCall(std::vector<Argument> args, const CallInfo& cal
         params_size += info.desired_type -> sizeOf();
     }
 
-    genCall(call_info.callee, params_size);
+    _arg = code.add(std::make_shared<CallCommand>(call_info.callee, params_size));
 }
 
 void GenSSAVisitor::visit(ExternNode* node) { code.addExternalFunction(static_cast<const FunctionSymbol*>(node -> getDefinedSymbol())); }
@@ -406,9 +406,11 @@ void GenSSAVisitor::visit(ReturnNode* node)
         }
         else
         {
+            auto copy_constructor = static_cast<const StructSymbol*>(expr_type.base()) -> getCopyConstructor();
+
             code.add(std::make_shared<ParamCommand>(expr_arg, ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
             code.add(std::make_shared<ParamCommand>(var_arg , ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
-            genCall(static_cast<const StructSymbol*>(expr_type.base()) -> getCopyConstructor(), 2 * Comp::config().int_size);
+            _arg = code.add(std::make_shared<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
         }
         _arg = var_arg;
         code.add(std::make_shared<GotoCommand>(loop_label.top().second));
@@ -472,16 +474,6 @@ void GenSSAVisitor::visit(ModuleMemberAccessNode* ) { }
 void GenSSAVisitor::visit(ImportNode *) { }
 void GenSSAVisitor::visit(TemplateFunctionNode* ) { }
 
-void GenSSAVisitor::genParam(ExprNode* node, ConversionInfo conversion_info)
-{
-    code.add(std::make_shared<ParamCommand>(getArg(node), conversion_info));
-}
-
-void GenSSAVisitor::genCall(const FunctionSymbol* func, int params_size)
-{
-    _arg = code.add(std::make_shared<CallCommand>(func, params_size));
-}
-
 void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Argument> params)
 {
     assert(inline_info.function_body);
@@ -512,9 +504,11 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
         }
         else
         {
+            auto copy_constructor = static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor();
+
             code.add(std::make_shared<ParamCommand>(*param_it, ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
             code.add(std::make_shared<ParamCommand>(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
-            genCall(static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor(), 2 * Comp::config().int_size);
+            _arg = code.add(std::make_shared<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
         }
 
         ++param_it;
@@ -528,8 +522,3 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
     loop_label.pop();
 }
 
-bool GenSSAVisitor::isIntType(const Type* t)    { return t == BuiltIns::int_type.get(); }
-bool GenSSAVisitor::isCharType(const Type* t)   { return t == BuiltIns::char_type.get(); }
-bool GenSSAVisitor::isPointer(const Type* t)    { return t -> getTypeKind() == TypeKind::POINTER; }
-bool GenSSAVisitor::isReference(const Type* t)  { return t -> isReference(); }
-bool GenSSAVisitor::isSimpleType(const Type* t) { return isIntType(t) || isCharType(t) || isPointer(t) || isReference(t); }

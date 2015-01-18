@@ -18,5 +18,11 @@ public:
     static std::shared_ptr<Type> char_type;
     static std::shared_ptr<Type> ASCII_string_type;    
 };
+    
+bool isIntType(const Type* t);
+bool isCharType(const Type* t);
+bool isPointer(const Type* t);
+bool isReference(const Type* t);
+bool isSimpleType(const Type* t);
 
 #endif
