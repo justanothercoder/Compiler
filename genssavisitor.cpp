@@ -98,7 +98,7 @@ void GenSSAVisitor::generateCall(std::vector<Argument> args, const CallInfo& cal
     for ( auto arg = args.rbegin(); arg != args.rend(); ++arg, ++it )
     {
         auto info = *it;
-        code.add(std::make_shared<ParamCommand>(*arg, info));
+        generateParam(*arg, info);
         params_size += info.desired_type -> sizeOf();
     }
 
@@ -407,9 +407,9 @@ void GenSSAVisitor::visit(ReturnNode* node)
         else
         {
             auto copy_constructor = static_cast<const StructSymbol*>(expr_type.base()) -> getCopyConstructor();
-
-            code.add(std::make_shared<ParamCommand>(expr_arg, ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
-            code.add(std::make_shared<ParamCommand>(var_arg , ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base()))));
+           
+            generateParam(expr_arg, ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base())));
+            generateParam(var_arg , ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base())));
             _arg = code.add(std::make_shared<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
         }
         _arg = var_arg;
@@ -506,8 +506,8 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
         {
             auto copy_constructor = static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor();
 
-            code.add(std::make_shared<ParamCommand>(*param_it, ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
-            code.add(std::make_shared<ParamCommand>(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base()))));
+            generateParam(*param_it, ConversionInfo(nullptr, TypeFactory::getReference(var_type.base())));
+            generateParam(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base())));
             _arg = code.add(std::make_shared<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
         }
 
@@ -521,4 +521,6 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
 
     loop_label.pop();
 }
+
+void GenSSAVisitor::generateParam(Argument arg, ConversionInfo info) { code.add(std::make_shared<ParamCommand>(arg, info)); }
 

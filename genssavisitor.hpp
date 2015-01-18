@@ -54,9 +54,9 @@ private:
 
     const std::shared_ptr<Arg>& getArg(AST* node);
     void generateCall(std::vector<Argument> args, const CallInfo& call_info, const InlineInfo& inline_info);
-
-    void genParam(ExprNode* node, ConversionInfo conversion_info);
     void genInlineCall(const InlineInfo& inline_info, std::vector<Argument> params);
+
+    void generateParam(Argument arg, ConversionInfo info);
 
     std::stack< std::pair<Argument, Argument> > loop_label;
 
