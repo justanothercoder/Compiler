@@ -75,10 +75,9 @@ std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::instantiateWit
             templates_name += std::to_string(boost::get<int>(param));
     }
 
-    auto decl = std::make_shared<FunctionDeclarationNode>(templates_name, info_, statements -> copyTree(), traits, is_unsafe);
+    auto decl = std::make_shared<FunctionDeclarationNode>(templates_name, info_, statements -> copyTree(), traits, is_unsafe, template_info);
 
 	decl -> scope = scope;
-    decl -> template_info = template_info;
     decl -> build_scope();
 
     return decl;

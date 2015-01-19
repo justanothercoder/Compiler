@@ -24,12 +24,12 @@ public:
     std::string toString() const override;
     void accept(ASTVisitor& visitor) override;
 
-    boost::optional<TemplateInfo> template_info;
-
     const std::string& name() const;
     const std::vector<ASTNode>& inner() const;
 
 private:
+
+    boost::optional<TemplateInfo> template_info;
 
     std::string name_;
     std::vector<ASTNode> inner_;

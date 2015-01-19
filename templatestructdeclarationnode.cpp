@@ -93,10 +93,9 @@ std::shared_ptr<DeclarationNode> TemplateStructDeclarationNode::instantiateWithT
             templates_name += std::to_string(boost::get<int>(param));
     }
 
-    auto decl = std::make_shared<StructDeclarationNode>(templates_name, std::move(vec));
+    auto decl = std::make_shared<StructDeclarationNode>(templates_name, std::move(vec), info);
 
 	decl -> scope = scope;
-    decl -> template_info = info;
     decl -> build_scope();
 
     return decl;

@@ -73,7 +73,7 @@ void CheckVisitor::visit(BracketNode* node)
 
 void CheckVisitor::visit(UnaryNode* node)
 {
-    node -> expr() -> accept(*this);
+    visitChildren(node);
     node -> callInfo(checkCall(node -> function(), node -> arguments()));
 }
 
@@ -173,14 +173,11 @@ void CheckVisitor::visit(DotNode* node)
 {
     node -> base() -> accept(*this);
 
-    auto _base_type = node -> base() -> getType();
-    assert(_base_type.unqualified() -> isObjectType());
-
-    node -> baseType(static_cast<const ObjectType*>(_base_type.unqualified()));
-
-    if ( node -> baseType() == nullptr )
+    auto _base_type = node -> base() -> getType().unqualified();
+    if ( !_base_type -> isObjectType()  )
         throw SemanticError("'" + node -> base() -> toString() + "' is not an instance of struct.");
 
+    node -> baseType(static_cast<const ObjectType*>(_base_type));
     node -> member(node -> baseType() -> resolveMember(node -> memberName()));
 
     if ( node -> member() == nullptr )

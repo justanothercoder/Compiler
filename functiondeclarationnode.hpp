@@ -48,9 +48,9 @@ public:
 
     bool isUnsafe() const;
 
-    boost::optional<TemplateInfo> template_info;
-
 private:
+
+    boost::optional<TemplateInfo> template_info;
 
     std::string name_;
     FunctionDeclarationInfo info_;
