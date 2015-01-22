@@ -15,7 +15,7 @@ class StructSymbol : public Symbol, public StructScope, public ObjectType
 {
 public:
 
-    StructSymbol(const std::string& name, Scope* enclosing_scope, const TemplateInfo& template_info);
+    StructSymbol(const std::string& name, Scope* enclosing_scope);
 
     SymbolType getSymbolType() const override;
     std::string getName() const override;

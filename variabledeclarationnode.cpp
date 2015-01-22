@@ -5,6 +5,8 @@
 #include "variablesymbol.hpp"
 #include "templatestructsymbol.hpp"
 
+#include "logger.hpp"
+
 VariableDeclarationNode::VariableDeclarationNode(const std::string& name
                                                , TypeInfo type_info
                                                , bool is_field
@@ -18,6 +20,8 @@ VariableDeclarationNode::VariableDeclarationNode(const std::string& name
 
 void VariableDeclarationNode::build_scope()
 {
+    Logger::log("Node: " + toString());
+
     AST::build_scope();
 
     struct BuildScopeVisitor : boost::static_visitor<>
@@ -69,7 +73,27 @@ ASTChildren VariableDeclarationNode::getChildren() const
     return children;
 }
 
-std::string VariableDeclarationNode::toString() const { return type_info.toString() + " " + name_ + ";"; }
+std::string VariableDeclarationNode::toString() const 
+{
+    auto result = std::string("");
+    result += type_info.toString() + " " + name_;
+
+    if ( !constructor_params.empty() )
+    {
+        result += "(";
+        
+        auto it = std::begin(constructor_params);
+        result += (*it) -> toString();
+        
+        for ( ++it; it != std::end(constructor_params); ++it )
+            result += ", " + (*it) -> toString();                
+    
+        result += ")";
+    }
+
+    return result;
+}
+
 void VariableDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
 void VariableDeclarationNode::setDefinedSymbol(std::shared_ptr<const VariableSymbol> sym) { defined_symbol = sym; }

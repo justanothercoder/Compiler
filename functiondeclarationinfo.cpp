@@ -39,7 +39,7 @@ std::string FunctionDeclarationInfo::toString() const
             result += ", " + it -> second.toString() + " " + it -> first;
     }
     result += ")";
-    result += " " + return_type_info.toString();
+    result += " : " + return_type_info.toString();
 
     return result;
 }

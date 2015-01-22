@@ -18,7 +18,6 @@ public:
     Scope* enclosingScope() const override;
     void accept(ScopeVisitor& visitor) override;
 
-    const TemplateInfo& templateInfo() const override;
     bool isUnsafeBlock() const override;
 
     const FunctionSymbol* func;

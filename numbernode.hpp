@@ -20,11 +20,11 @@ public:
     std::string toString() const override;
     void accept(ASTVisitor& visitor) override;
 
-    const std::string& getNum() const;
+    std::string num() const;
 
 private:
 
-    std::string num;
+    std::string num_;
 };
 
 #endif

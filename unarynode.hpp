@@ -24,6 +24,7 @@ public:
     void accept(ASTVisitor& visitor) override;
 
     ExprNode* expr();
+    UnaryOp op() const;
 
     const FunctionalType* function() const override;
     std::vector<ValueInfo> arguments() const override;

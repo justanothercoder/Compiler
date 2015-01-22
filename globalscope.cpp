@@ -6,13 +6,12 @@
 #include "logger.hpp"
 #include "comp.hpp"
 
-GlobalScope::GlobalScope() : BaseScope(), template_info(TemplateInfo()) { } 
+GlobalScope::GlobalScope() : BaseScope() { } 
 
 Scope* GlobalScope::enclosingScope() const { return nullptr; }
 std::string GlobalScope::getScopeName() const { return ""; }
 
 bool GlobalScope::isUnsafeBlock() const { return false; }
-const TemplateInfo& GlobalScope::templateInfo() const { return template_info; }
 
 void GlobalScope::accept(ScopeVisitor& visitor) { visitor.visit(this); }
 

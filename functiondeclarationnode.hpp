@@ -20,8 +20,7 @@ public:
                             , FunctionDeclarationInfo info
                             , ASTNode statements
                             , FunctionTraits traits
-                            , bool is_unsafe = false
-                            , boost::optional<TemplateInfo> template_info = boost::none);
+                            , bool is_unsafe = false);
 
     ASTNode copyTree() const override;
     ASTChildren getChildren() const override;
@@ -49,8 +48,6 @@ public:
     bool isUnsafe() const;
 
 private:
-
-    boost::optional<TemplateInfo> template_info;
 
     std::string name_;
     FunctionDeclarationInfo info_;

@@ -60,8 +60,8 @@ std::shared_ptr<DeclarationNode> Compiler::getSpecDecl(const TemplateSymbol *sym
     if ( auto decl = sym -> holder() -> getInstance(template_params) )
         return decl;
 
-    auto decl = sym -> holder() -> instantiateWithTemplateInfo(TemplateInfo(sym, template_params));
-    sym -> holder() -> addInstance(template_params, std::shared_ptr<DeclarationNode>(decl));
+    auto decl = sym -> holder() -> instantiateWithParams(template_params);
+    sym -> holder() -> addInstance(template_params, decl);
     return decl;
 }
 

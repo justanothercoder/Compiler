@@ -20,7 +20,6 @@ public:
     std::string getScopeName() const override;
 
     void accept(ScopeVisitor& visitor) override;
-    const TemplateInfo& templateInfo() const override;
 
 private:
 

@@ -1,10 +1,7 @@
 #include "templateinfo.hpp"
 #include "templatestructsymbol.hpp"
 
-TemplateInfo::TemplateInfo() : TemplateInfo(nullptr, { })
-{
-
-}
+TemplateInfo::TemplateInfo() : TemplateInfo(nullptr, { }) { }
 
 TemplateInfo::TemplateInfo(const TemplateSymbol *sym, std::vector<TemplateParam> template_params) : sym(sym), template_params(template_params)
 {
@@ -22,12 +19,19 @@ boost::optional<TemplateParam> TemplateInfo::getReplacement(std::string name) co
     return boost::none;
 }
 
-bool TemplateInfo::isIn(std::string name) const
-{
-    auto template_symbols = sym -> templateSymbols();
+bool TemplateInfo::isIn(std::string name) const { return sym -> isIn(name); }
 
-    return std::find_if(std::begin(template_symbols),
-                        std::end(template_symbols),
-                        [&](auto p) { return name == p.first; }
-    ) != std::end(template_symbols);
+std::string TemplateInfo::getInstName() const
+{
+    auto templates_name = std::string("");
+    templates_name += sym -> getName() + "~";
+    for ( auto param : template_params )
+    {
+        if ( param.which() == 0 )
+            templates_name += boost::get<TypeInfo>(param).name();
+        else
+            templates_name += std::to_string(boost::get<int>(param));
+    }
+
+    return templates_name;
 }

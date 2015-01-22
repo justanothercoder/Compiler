@@ -39,20 +39,10 @@ void ExpandTemplatesVisitor::visitChildren(AST* node)
 
 void ExpandTemplatesVisitor::visit(FunctionDeclarationNode* node)
 {
-    const auto& template_info = node -> scope -> templateInfo();
-
-    if ( template_info.sym && node -> info().returnTypeInfo().name() == template_info.sym -> getName() )
-        node -> info().returnTypeInfo().name(static_cast<StructSymbol*>(node -> scope.get()) -> getName());
-
     node -> info().returnTypeInfo() = preprocessTypeInfo(node -> info().returnTypeInfo(), node -> functionScope());
 
     for ( auto& param : node -> info().formalParams() )
-    {
-        if ( template_info.sym && param.second.name() == template_info.sym -> getName() )
-            param.second.name(static_cast<StructSymbol*>(node -> scope.get()) -> getName());
-
         param.second = preprocessTypeInfo(param.second, node -> functionScope());
-    }
 
     visitChildren(node);
 }
@@ -60,6 +50,10 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode* node)
 void ExpandTemplatesVisitor::visit(VariableDeclarationNode* node) 
 {
     visitChildren(node);
+
+    Logger::log("Expanding " + node -> toString());
+    Logger::log("Scope: " + node -> scope -> getScopeName());
+
     node -> typeInfo(preprocessTypeInfo(node -> typeInfo(), node -> scope.get()));    
 }
 
@@ -80,34 +74,16 @@ TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
     return boost::apply_visitor(extract, info);
 }
 
-TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope *scope)
+TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope* scope)
 {
-    const auto& template_info = scope -> templateInfo();
+    Logger::log("Preprocessing " + type_info.toString());
 
-    if ( template_info.sym && template_info.isIn(type_info.name()) )
-    {
-        auto replace = template_info.getReplacement(type_info.name());
-        auto temp_info = boost::get<TypeInfo>(*replace);
+    if ( type_info.moduleName() != "" )
+        scope = Comp::getUnit(type_info.moduleName()) -> module_symbol.get();
 
-        auto modifiers = temp_info.modifiers();
-        modifiers.insert(std::end(modifiers), std::begin(type_info.modifiers()), std::end(type_info.modifiers()));
+    assert(scope != nullptr);
 
-        type_info = TypeInfo(temp_info.name()
-                           , type_info.isRef()
-                           , type_info.isConst()
-                           , temp_info.templateParams()
-                           , modifiers
-                           , type_info.moduleName());
-    }
-   
-    Scope* sc;
-    if ( type_info.moduleName() == "" )
-        sc = scope;
-    else
-        sc = Comp::getUnit(type_info.moduleName()) -> module_symbol.get();
-    assert(sc != nullptr);
-
-    auto type = sc -> resolve(type_info.name());
+    auto type = scope -> resolve(type_info.name());
 
     if ( type == nullptr )
         throw SemanticError(type_info.name() + " is not a type");

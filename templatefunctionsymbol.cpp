@@ -43,7 +43,7 @@ const FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(Functio
                 template_params.push_back(template_params_map[template_param.first]);
         }
 
-        auto new_decl = decl -> instantiateWithTemplateInfo(TemplateInfo(tmpl, template_params));
+        auto new_decl = decl -> instantiateWithParams(template_params);
         tmpl -> holder() -> addInstance(template_params, new_decl);
 
         ExpandTemplatesVisitor expand;

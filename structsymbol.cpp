@@ -7,8 +7,7 @@
 #include "overloadedfunctionsymbol.hpp"
 
 StructSymbol::StructSymbol(const std::string& name
-                         , Scope* enclosing_scope
-                         , const TemplateInfo& template_info) : StructScope(name, enclosing_scope, template_info), name(name)
+                         , Scope* enclosing_scope) : StructScope(name, enclosing_scope), name(name)
 {
 
 }

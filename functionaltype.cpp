@@ -1,4 +1,5 @@
 #include "functionaltype.hpp"
+#include "templatesymbol.hpp"
 #include "templateinfo.hpp"
 #include "structsymbol.hpp"
 #include "functionsymbol.hpp"
@@ -25,7 +26,7 @@ boost::optional< std::map<std::string, TemplateParam> > makeMappingOfParams(cons
 
     for ( const auto& param : formal_params )
     {
-        if ( TemplateInfo(tmpl, { }).isIn(param.second.name()) )
+        if ( tmpl -> isIn(param.second.name()) )
         {
             if ( template_params_map.count(param.second.name()) )
             {

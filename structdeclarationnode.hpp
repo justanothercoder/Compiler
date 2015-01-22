@@ -13,7 +13,7 @@ class StructDeclarationNode : public DeclarationNode
 {
 public:
 
-    StructDeclarationNode(const std::string& name, std::vector<ASTNode> inner, boost::optional<TemplateInfo> template_info = boost::none);
+    StructDeclarationNode(const std::string& name, std::vector<ASTNode> inner);
     
     void build_scope();
     const Symbol* getDefinedSymbol() const override;
@@ -28,8 +28,6 @@ public:
     const std::vector<ASTNode>& inner() const;
 
 private:
-
-    boost::optional<TemplateInfo> template_info;
 
     std::string name_;
     std::vector<ASTNode> inner_;

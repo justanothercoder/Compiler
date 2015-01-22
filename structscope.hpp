@@ -10,20 +10,17 @@ class StructScope : public BaseScope
 
 public:
 
-    StructScope(std::string scope_name, Scope* enclosing_scope, const TemplateInfo& template_info);
+    StructScope(std::string scope_name, Scope* enclosing_scope);
 
     Scope* enclosingScope() const override;    
     std::string getScopeName() const override;
 
     void accept(ScopeVisitor& visitor) override;
-    const TemplateInfo& templateInfo() const override;
 
 private:
     
     std::string scope_name;
     Scope* enclosing_scope;
-
-    TemplateInfo template_info;
 
 protected:
 

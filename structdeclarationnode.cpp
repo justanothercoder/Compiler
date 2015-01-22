@@ -4,10 +4,8 @@
 #include "functionsymbol.hpp"
 
 StructDeclarationNode::StructDeclarationNode(const std::string& name
-                                           , std::vector<ASTNode> inner
-                                           , boost::optional<TemplateInfo> template_info) : template_info(template_info)
-                                                                                          , name_(name)
-                                                                                          , inner_(std::move(inner))
+                                           , std::vector<ASTNode> inner) : name_(name)
+                                                                         , inner_(std::move(inner))
 {
 
 }
@@ -16,7 +14,7 @@ const Symbol* StructDeclarationNode::getDefinedSymbol() const { return defined_s
 
 void StructDeclarationNode::build_scope()
 {
-    defined_symbol = std::make_shared<StructSymbol>(name_, scope.get(), (!template_info ? scope -> templateInfo() : *template_info));
+    defined_symbol = std::make_shared<StructSymbol>(name_, scope.get());
     scope -> define(defined_symbol);
 
     for ( const auto& decl : inner_ )
@@ -33,7 +31,7 @@ ASTNode StructDeclarationNode::copyTree() const
     for ( const auto& decl : inner_ )
         in.push_back(decl -> copyTree());
     
-    return std::make_unique<StructDeclarationNode>(name_, std::move(in), template_info);
+    return std::make_unique<StructDeclarationNode>(name_, std::move(in));
 }
 
 ASTChildren StructDeclarationNode::getChildren() const 
@@ -58,3 +56,6 @@ std::string StructDeclarationNode::toString() const
 }
 
 void StructDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
+    
+const std::string& StructDeclarationNode::name() const { return name_; }
+const std::vector<ASTNode>& StructDeclarationNode::inner() const { return inner_; }

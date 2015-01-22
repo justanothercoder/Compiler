@@ -11,7 +11,7 @@ public:
 
     ASTNode copyTree() const override;
 
-    std::string getStr() const;
+    std::string str() const;
 
     VariableType getType() const override;
     bool isLeftValue() const override;
@@ -24,7 +24,7 @@ public:
 
 private:
 
-    std::string str;
+    std::string str_;
 };
 
 #endif

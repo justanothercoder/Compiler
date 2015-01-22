@@ -30,23 +30,27 @@ public:
     std::string toString() const override;
     const Symbol* getDefinedSymbol() const override;
     
-    unsigned long long hashTemplateParams(std::vector<TemplateParam> template_params) const;
-    
     void addInstance(std::vector<TemplateParam> template_params, std::shared_ptr<DeclarationNode> decl) override;
     std::shared_ptr<DeclarationNode> getInstance(std::vector<TemplateParam> template_params) const override;
-    std::shared_ptr<DeclarationNode> instantiateWithTemplateInfo(TemplateInfo info) override;
-    std::vector< std::shared_ptr<DeclarationNode> > allInstances() const override;
+    std::shared_ptr<DeclarationNode> instantiateWithParams(std::vector<TemplateParam> params) override;
+    std::vector<DeclarationNode*> allInstances() const override;
     
 public:
 
+    std::string name() const;
     const FunctionDeclarationInfo& info() const;
+    FunctionTraits traits() const;
+    bool isUnsafe() const;
+    const TemplateParamsList& templateParams() const;
+
+    AST* body();    
 
 private:
 
-    std::string name;
+    std::string name_;
     FunctionDeclarationInfo info_;
     ASTNode statements;
-    FunctionTraits traits;
+    FunctionTraits traits_;
     bool is_unsafe;
 
     std::map<long long, std::shared_ptr<DeclarationNode> > instances;

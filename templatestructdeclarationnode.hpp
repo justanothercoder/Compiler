@@ -22,16 +22,17 @@ public:
     std::string toString() const override;
     Symbol* getDefinedSymbol() const override;
 
-    unsigned long long hashTemplateParams(std::vector<TemplateParam> template_params) const;
+    std::string name() const;
+    const TemplateParamsList& templateParams() const;
     
     void addInstance(std::vector<TemplateParam> template_params, std::shared_ptr<DeclarationNode> decl) override;
     std::shared_ptr<DeclarationNode> getInstance(std::vector<TemplateParam> template_params) const override;
-    std::shared_ptr<DeclarationNode> instantiateWithTemplateInfo(TemplateInfo info) override;
-    std::vector< std::shared_ptr<DeclarationNode> > allInstances() const override;
+    std::shared_ptr<DeclarationNode> instantiateWithParams(std::vector<TemplateParam> params) override;
+    std::vector<DeclarationNode*> allInstances() const override;
 
 private:
 
-    std::string name;
+    std::string name_;
     std::vector<ASTNode> inner;
 
     std::map<long long, std::shared_ptr<DeclarationNode> > instances;

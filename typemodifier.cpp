@@ -6,7 +6,7 @@ TypeModifier::TypeModifier(std::shared_ptr<ExprNode> dimension) : dimension_(dim
 bool TypeModifier::isPointer() const { return dimension_ == nullptr; }
 bool TypeModifier::isDimension() const { return dimension_ != nullptr; }
 
-std::string TypeModifier::toString() const { return dimension_ == nullptr ? std::string("*") : dimension_ -> toString() + "]"; }
+std::string TypeModifier::toString() const { return dimension_ == nullptr ? std::string("*") : "[" + dimension_ -> toString() + "]"; }
     
 boost::optional<ExprNode*> TypeModifier::dimension() const 
 {

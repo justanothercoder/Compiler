@@ -18,15 +18,10 @@ public:
     Scope* enclosingScope() const override;
     std::string getScopeName() const override;
 
-    const TemplateInfo& templateInfo() const override;
     bool isUnsafeBlock() const override;
 
     void defineBuiltInFunction(std::string name, FunctionType type);
     void defineBuiltInOperator(std::string name, FunctionType type);
-
-private:
-
-    TemplateInfo template_info;
 };
 
 #endif

@@ -10,13 +10,11 @@ FunctionDeclarationNode::FunctionDeclarationNode(std::string name
                                                , FunctionDeclarationInfo info
                                                , ASTNode statements
                                                , FunctionTraits traits
-                                               , bool is_unsafe
-                                               , boost::optional<TemplateInfo> template_info) : template_info(template_info)
-                                                                                              , name_        (name)
-                                                                                              , info_        (info)
-                                                                                              , statements   (std::move(statements))
-                                                                                              , traits_      (traits)
-                                                                                              , is_unsafe    (is_unsafe)
+                                               , bool is_unsafe) : name_        (name)
+                                                                 , info_        (info)
+                                                                 , statements   (std::move(statements))
+                                                                 , traits_      (traits)
+                                                                 , is_unsafe    (is_unsafe)
 {
 
 }
@@ -27,7 +25,6 @@ void FunctionDeclarationNode::build_scope()
     auto scope_name = scope -> getScopeName() + "_" + function_name;
 
     func_scope = std::make_shared<FunctionScope>(scope_name, scope.get(), is_unsafe);
-    func_scope -> template_info = (!template_info ? scope -> templateInfo() : *template_info);
 
     statements -> scope = func_scope;
     statements -> build_scope();
@@ -41,7 +38,7 @@ ASTNode FunctionDeclarationNode::copyTree() const
 }
 
 ASTChildren FunctionDeclarationNode::getChildren() const { return {statements.get()}; } 
-std::string FunctionDeclarationNode::toString() const { return "def " + name_ + " " + info_.toString() + " " + statements -> toString(); }
+std::string FunctionDeclarationNode::toString() const { return "def " + name_ + info_.toString() + " " + statements -> toString(); }
 
 void FunctionDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 

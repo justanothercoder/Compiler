@@ -243,23 +243,6 @@ void CheckVisitor::visit(TemplateFunctionNode* node)
 
 void CheckVisitor::visit(VariableNode* node)
 {
-    const auto& template_info = node -> scope -> templateInfo();
-
-    if ( template_info.sym && template_info.isIn(node -> name()) )
-    {
-        auto replace = template_info.getReplacement(node -> name());
-
-        if ( replace -> which() == 0 )
-            throw SemanticError(node -> name() + " is typename");
-
-        node -> getNum() = std::make_unique<NumberNode>(std::to_string(boost::get<int>(*replace)));
-        node -> getNum() -> scope = node -> scope;
-        node -> getNum() -> build_scope();
-
-        node -> getNum() -> accept(*this);
-        return;
-    }
-    
     auto sym = node -> scope -> resolve(node -> name());
     node -> variable(static_cast<const VariableSymbol*>(sym));
 }

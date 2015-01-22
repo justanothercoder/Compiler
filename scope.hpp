@@ -24,8 +24,6 @@ public:
     virtual std::string getScopeName() const = 0;
 
     virtual void accept(ScopeVisitor& visitor) = 0;
-
-    virtual const TemplateInfo& templateInfo() const = 0;
     virtual bool isUnsafeBlock() const;
 
     void define(std::shared_ptr<const Symbol> sym);

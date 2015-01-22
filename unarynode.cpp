@@ -51,6 +51,7 @@ std::string UnaryNode::toString() const
 void UnaryNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
 ExprNode* UnaryNode::expr() { return expr_.get(); }
+UnaryOp UnaryNode::op() const { return op_type; }
 
 const FunctionalType* UnaryNode::function() const 
 {

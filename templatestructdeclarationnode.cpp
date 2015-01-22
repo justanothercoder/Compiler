@@ -3,10 +3,13 @@
 #include "templateinfo.hpp"
 #include "templatestructsymbol.hpp"
 #include "structdeclarationnode.hpp"
+#include "rebuildtreevisitor.hpp"
+
+#include "logger.hpp"
 
 TemplateStructDeclarationNode::TemplateStructDeclarationNode(std::string name
                                                            , std::vector<ASTNode> inner
-                                                           , TemplateParamsList template_params) : name(name)
+                                                           , TemplateParamsList template_params) : name_(name)
                                                                                                  , inner(std::move(inner))
                                                                                                  , template_params(template_params)
 {
@@ -17,23 +20,6 @@ void TemplateStructDeclarationNode::build_scope() { }
 void TemplateStructDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
 Symbol* TemplateStructDeclarationNode::getDefinedSymbol() const { return defined_symbol.get(); }
-
-unsigned long long TemplateStructDeclarationNode::hashTemplateParams(std::vector<TemplateParam> template_params) const
-{
-    unsigned long long P = 31, pow = 1, ans = 0;
-
-    for ( size_t i = 0; i < template_params.size(); ++i )
-    {
-        if ( template_params[i].which() == 0 )
-            ans += static_cast<int>(std::hash<std::string>()(boost::get<TypeInfo>(template_params[i]).name()) * pow);
-        else
-            ans += static_cast<int>(boost::get<int>(template_params[i])) * pow;
-
-        pow *= P;
-    }
-
-    return ans;
-}
 
 void TemplateStructDeclarationNode::addInstance(std::vector<TemplateParam> template_params, std::shared_ptr<DeclarationNode> node)
 {
@@ -46,12 +32,12 @@ std::shared_ptr<DeclarationNode> TemplateStructDeclarationNode::getInstance(std:
     return it != std::end(instances) ? it -> second : nullptr;
 }
 
-std::vector< std::shared_ptr<DeclarationNode> > TemplateStructDeclarationNode::allInstances() const
+std::vector<DeclarationNode*> TemplateStructDeclarationNode::allInstances() const
 {
-    auto result = std::vector< std::shared_ptr<DeclarationNode> >{ };
+    auto result = std::vector<DeclarationNode*>{ };
 
     for ( auto instance : instances )
-        result.emplace_back(instance.second);
+        result.emplace_back(instance.second.get());
 
     return result;
 }
@@ -62,12 +48,26 @@ ASTNode TemplateStructDeclarationNode::copyTree() const
     for ( const auto& child : inner )
         inner_copy.push_back(child -> copyTree());
 
-    return std::make_unique<TemplateStructDeclarationNode>(name, std::move(inner_copy), template_params);
+    return std::make_unique<TemplateStructDeclarationNode>(name_, std::move(inner_copy), template_params);
 }
 
 std::string TemplateStructDeclarationNode::toString() const
 {
-    auto res = "struct " + name + "\n{\n";
+    auto res = std::string("");    
+    res += "template <";
+
+    if ( !template_params.empty() )
+    {
+        auto it = std::begin(template_params);
+        res += it -> second.toString() + " " + it -> first;
+
+        for ( ++it; it != std::end(template_params); ++it )
+            res += ", " + it -> second.toString() + " " + it -> first;
+    }
+
+    res += ">\n";
+
+    res += "struct " + name_ + "\n{\n";
 
     for ( const auto& decl : inner )
         res += decl -> toString() + '\n';
@@ -76,27 +76,27 @@ std::string TemplateStructDeclarationNode::toString() const
     return res;
 }
 
-std::shared_ptr<DeclarationNode> TemplateStructDeclarationNode::instantiateWithTemplateInfo(TemplateInfo info)
+std::shared_ptr<DeclarationNode> TemplateStructDeclarationNode::instantiateWithParams(std::vector<TemplateParam> params)
 {
+    auto template_info = TemplateInfo(defined_symbol.get(), params);
+    RebuildTreeVisitor rebuild(template_info);
+
 	auto vec = std::vector<ASTNode>{ };
-
 	for ( const auto& decl : inner )
-		vec.push_back(decl -> copyTree());
-
-    auto templates_name = std::string("");
-    templates_name += name + "~";
-    for ( auto param : info.template_params )
     {
-        if ( param.which() == 0 )
-            templates_name += boost::get<TypeInfo>(param).name();
-        else
-            templates_name += std::to_string(boost::get<int>(param));
+        decl -> accept(rebuild);
+		vec.push_back(rebuild.result());
     }
 
-    auto decl = std::make_shared<StructDeclarationNode>(templates_name, std::move(vec), info);
+    auto decl = std::make_shared<StructDeclarationNode>(template_info.getInstName(), std::move(vec));
 
-	decl -> scope = scope;
+    Logger::log("Scope of template decl: " + scope -> getScopeName());
+	
+    decl -> scope = scope;
     decl -> build_scope();
-
+    
     return decl;
 }
+   
+std::string TemplateStructDeclarationNode::name() const { return name_; }
+const TemplateParamsList& TemplateStructDeclarationNode::templateParams() const { return template_params; }

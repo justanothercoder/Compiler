@@ -342,12 +342,6 @@ void GenSSAVisitor::visit(StatementNode *node)
 
 void GenSSAVisitor::visit(VariableNode *node)
 {
-    if ( node -> isTemplateParam() )
-    {
-        node -> getNum() -> accept(*this);
-        return;
-    }
-
     if ( node -> variable() -> isField() )
     {
         auto this_var = static_cast<const VariableSymbol*>(node -> scope -> resolve("this"));
@@ -362,13 +356,13 @@ void GenSSAVisitor::visit(VariableNode *node)
 
 void GenSSAVisitor::visit(StringNode* node)
 {
-    code.addString(node -> getStr());
-    _arg = std::make_shared<StringArg>(node -> getStr());
+    code.addString(node -> str());
+    _arg = std::make_shared<StringArg>(node -> str());
 }
 
 void GenSSAVisitor::visit(NumberNode* node)
 {
-    auto num = std::stoi(node -> getNum());
+    auto num = std::stoi(node -> num());
 
     code.addConst(num);
     _arg = std::make_shared<NumberArg>(num);

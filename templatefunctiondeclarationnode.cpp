@@ -10,10 +10,10 @@ TemplateFunctionDeclarationNode::TemplateFunctionDeclarationNode(const std::stri
                                                                , FunctionTraits traits
                                                                , bool is_unsafe
                                                                , TemplateParamsList template_params)
-    : name(name)
+    : name_(name)
     , info_(info)
     , statements(std::move(statements))
-    , traits(traits)
+    , traits_(traits)
     , is_unsafe(is_unsafe)
     , template_params(template_params)
 {
@@ -25,12 +25,12 @@ void TemplateFunctionDeclarationNode::accept(ASTVisitor& visitor) { visitor.visi
 
 ASTNode TemplateFunctionDeclarationNode::copyTree() const 
 {
-    return std::make_unique<TemplateFunctionDeclarationNode>(name, info_, statements -> copyTree(), traits, is_unsafe, template_params); 
+    return std::make_unique<TemplateFunctionDeclarationNode>(name_, info_, statements -> copyTree(), traits_, is_unsafe, template_params); 
 }
 
 std::string TemplateFunctionDeclarationNode::toString() const
 {
-    auto res = info_.returnTypeInfo().toString() + " " + name + "(";
+    auto res = info_.returnTypeInfo().toString() + " " + name_ + "(";
 
     if ( !info_.formalParams().empty() )
     {
@@ -63,11 +63,11 @@ std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::getInstance(st
     return it != std::end(instances) ? it -> second : nullptr;
 }
 
-std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::instantiateWithTemplateInfo(TemplateInfo template_info) 
+std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::instantiateWithParams(std::vector<TemplateParam> params) 
 {
     auto templates_name = std::string("");
-    templates_name += name + "~";
-    for ( auto param : template_info.template_params )
+    templates_name += name_ + "~";
+    for ( auto param : params )
     {
         if ( param.which() == 0 )
             templates_name += boost::get<TypeInfo>(param).name();
@@ -75,7 +75,7 @@ std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::instantiateWit
             templates_name += std::to_string(boost::get<int>(param));
     }
 
-    auto decl = std::make_shared<FunctionDeclarationNode>(templates_name, info_, statements -> copyTree(), traits, is_unsafe, template_info);
+    auto decl = std::make_shared<FunctionDeclarationNode>(templates_name, info_, statements -> copyTree(), traits_, is_unsafe);
 
 	decl -> scope = scope;
     decl -> build_scope();
@@ -83,31 +83,21 @@ std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::instantiateWit
     return decl;
 }
 
-std::vector< std::shared_ptr<DeclarationNode> > TemplateFunctionDeclarationNode::allInstances() const 
+std::vector<DeclarationNode*> TemplateFunctionDeclarationNode::allInstances() const 
 {
-    std::vector< std::shared_ptr<DeclarationNode> > result;
+    auto result = std::vector<DeclarationNode*>{ };
 
     for ( auto instance : instances )
-        result.emplace_back(instance.second);
+        result.emplace_back(instance.second.get());
 
     return result;
 }
 
-unsigned long long TemplateFunctionDeclarationNode::hashTemplateParams(std::vector<TemplateParam> template_params) const
-{
-    unsigned long long P = 31, pow = 1, ans = 0;
+std::string TemplateFunctionDeclarationNode::name() const { return name_; }
+const FunctionDeclarationInfo& TemplateFunctionDeclarationNode::info() const { return info_; }   
 
-    for ( size_t i = 0; i < template_params.size(); ++i )
-    {
-        if ( template_params[i].which() == 0 )
-            ans += static_cast<int>(std::hash<std::string>()(boost::get<TypeInfo>(template_params[i]).name()) * pow);
-        else
-            ans += static_cast<int>(boost::get<int>(template_params[i])) * pow;
+FunctionTraits TemplateFunctionDeclarationNode::traits() const { return traits_; }
+bool TemplateFunctionDeclarationNode::isUnsafe() const { return is_unsafe; }
 
-        pow *= P;
-    }
-
-    return ans;
-}
-    
-const FunctionDeclarationInfo& TemplateFunctionDeclarationNode::info() const { return info_; }
+const TemplateParamsList& TemplateFunctionDeclarationNode::templateParams() const { return template_params; }
+AST* TemplateFunctionDeclarationNode::body() { return statements.get(); }

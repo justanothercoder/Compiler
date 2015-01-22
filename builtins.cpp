@@ -19,19 +19,19 @@ void BuiltIns::defineBuiltIns()
     auto global_scope = std::make_shared<GlobalScope>();
     BuiltIns::global_scope = global_scope;
 
-    auto int_struct = std::make_shared<StructSymbol>("int", global_scope.get(), global_scope -> templateInfo());
+    auto int_struct = std::make_shared<StructSymbol>("int", global_scope.get());
     BuiltIns::int_type = int_struct;
 
     auto ref_int       = VariableType(TypeFactory::getReference(int_struct.get()), false);
     auto const_ref_int = VariableType(TypeFactory::getReference(int_struct.get()), true);
 
-    auto char_struct = std::make_shared<StructSymbol>("char", global_scope.get(), global_scope -> templateInfo());
+    auto char_struct = std::make_shared<StructSymbol>("char", global_scope.get());
     BuiltIns::char_type = char_struct;
 
     auto ref_char       = VariableType(TypeFactory::getReference(char_struct.get()), false);
     auto const_ref_char = VariableType(TypeFactory::getReference(char_struct.get()), true);
 
-    auto ASCII_string = std::make_shared<StructSymbol>("string", global_scope.get(), global_scope -> templateInfo());
+    auto ASCII_string = std::make_shared<StructSymbol>("string", global_scope.get());
     ASCII_string_type = ASCII_string;
 
     auto ref_ASCII_string       = VariableType(TypeFactory::getReference(ASCII_string.get()), false);

@@ -11,4 +11,3 @@ Scope* ModuleSymbol::enclosingScope() const { return enclosing_scope; }
 std::string ModuleSymbol::getScopeName() const { return getName(); }
 
 void ModuleSymbol::accept(ScopeVisitor& visitor) { visitor.visit(this); }
-const TemplateInfo& ModuleSymbol::templateInfo() const { return *(new TemplateInfo()); }

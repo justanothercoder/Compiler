@@ -14,7 +14,6 @@ public:
     Scope* enclosingScope() const override;
     std::string getScopeName() const override;
 
-    const TemplateInfo& templateInfo() const override;
     bool isUnsafeBlock() const override;
 
 private:
