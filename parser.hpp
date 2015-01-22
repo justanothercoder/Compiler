@@ -34,12 +34,13 @@ private:
 
     std::string id();
     std::string operator_name();
+
     TypeInfo typeInfo();
+    ParamInfo paramInfo();
     
     std::vector<ASTExprNode> call_params_list();
 
     TemplateParamInfo templateParamInfo();
-
     TemplateParamsList templateParams();
 
     std::unique_ptr<DeclarationNode> declaration(boost::optional<std::string> struct_name = boost::none);

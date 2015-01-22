@@ -253,18 +253,11 @@ TemplateParamsList Parser::templateParams()
 
     if ( getTokenType(1) != TokenType::GREATER )
     {
-        auto type_info = typeInfo();
-        auto name = id();
-
-        template_params.emplace_back(std::move(name), std::move(type_info));
+        template_params.emplace_back(paramInfo());
         while ( getTokenType(1) == TokenType::COMMA )
         {
             match(TokenType::COMMA);
-
-            type_info = typeInfo();
-            name = id();
-
-            template_params.emplace_back(std::move(name), std::move(type_info));
+            template_params.emplace_back(paramInfo());
         }
     }
 
@@ -348,7 +341,6 @@ std::unique_ptr<DeclarationNode> Parser::templateFunctionDecl(boost::optional<st
         auto name = id();
 
         rememberSymbol(name, SymbolType::VARIABLE);
-
         params.emplace_back(std::move(name), std::move(type_info));
 
         while ( getTokenType(1) != TokenType::RPAREN )
@@ -986,6 +978,14 @@ TypeInfo Parser::typeInfo()
     return TypeInfo(type_name, is_ref, is_const, template_params, modifiers, module_name);
 }
 
+ParamInfo Parser::paramInfo()
+{
+    auto type_info = typeInfo();
+    auto name      = id();
+
+    return {name, type_info};
+}
+
 std::vector<ASTExprNode> Parser::call_params_list()
 {
     auto params = std::vector<ASTExprNode>{ };
@@ -1122,18 +1122,11 @@ ASTNode Parser::extern_stat()
 
     if ( getTokenType(1) != TokenType::RPAREN )
     {
-        auto type_info = typeInfo();
-        auto name = id();
-
-        params.emplace_back(std::move(name), std::move(type_info));
-
+        params.emplace_back(paramInfo());
         while ( getTokenType(1) != TokenType::RPAREN )
         {
             match(TokenType::COMMA);
-
-            type_info = typeInfo();
-            name = id();
-            params.emplace_back(std::move(name), std::move(type_info));
+            params.emplace_back(paramInfo());
         }
     }
 
@@ -1164,7 +1157,7 @@ ASTNode Parser::from_import_stat()
     match(TokenType::IMPORT);
     auto member_name = id();
 
-    auto it = std::find_if(std::begin(unit.module_globals), std::end(unit.module_globals), [&](auto sym) 
+    auto it = std::find_if(std::begin(unit.module_globals), std::end(unit.module_globals), [&](auto&& sym) 
     { 
         return sym -> getName() == member_name; 
     });
