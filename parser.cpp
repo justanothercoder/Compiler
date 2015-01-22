@@ -778,7 +778,7 @@ ASTNode Parser::if_stat()
     match(TokenType::RPAREN);
 
     auto stats_true  = ASTNode{ };
-    auto stats_false = ASTNode { };
+    auto stats_false = ASTNode{ };
 
     pushScope();
     stats_true = statement();

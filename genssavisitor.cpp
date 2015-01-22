@@ -414,12 +414,12 @@ void GenSSAVisitor::visit(ReturnNode* node)
     code.add(std::make_shared<ReturnCommand>(expr_arg, node -> function() -> type().returnType().isReference()));
 }
 
-void GenSSAVisitor::visit(UnsafeBlockNode *node)
+void GenSSAVisitor::visit(UnsafeBlockNode* node)
 {
     node -> block() -> accept(*this);
 }
 
-void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
+void GenSSAVisitor::visit(VarInferTypeDeclarationNode* node)
 {
     auto variable = static_cast<const VariableSymbol*>(node -> getDefinedSymbol());
     code.rememberVar(variable);
@@ -436,7 +436,7 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode *node)
     generateCall({var, getArg(node -> expr())}, node -> callInfo(), node -> inlineInfo());
 }
 
-void GenSSAVisitor::visit(TemplateStructDeclarationNode *node)
+void GenSSAVisitor::visit(TemplateStructDeclarationNode* node)
 {
     for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
@@ -481,7 +481,7 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
     auto return_var = static_cast<const VariableSymbol*>(inline_info.function_body -> scope -> resolve("$"));
     code.rememberVar(return_var);
 
-    for ( auto var : inline_info.locals )
+    for ( const auto& var : inline_info.locals )
     {
         code.rememberVar(var.get());
             
