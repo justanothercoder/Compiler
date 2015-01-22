@@ -278,7 +278,7 @@ std::unique_ptr<DeclarationNode> Parser::templateStructDecl(TemplateParamsList t
         match(TokenType::GREATER);
     }
 
-    auto struct_in = std::vector< ASTNode >{ };
+    auto struct_in = std::vector<ASTNode>{ };
     match(TokenType::LBRACE);
 
     rememberSymbol(struct_name, SymbolType::TEMPLATESTRUCT);
@@ -302,7 +302,6 @@ std::unique_ptr<DeclarationNode> Parser::templateStructDecl(TemplateParamsList t
     }
 
     match(TokenType::RBRACE);
-
     popScope();
 
     return std::make_unique<TemplateStructDeclarationNode>(std::move(struct_name), std::move(struct_in), std::move(template_params));
@@ -569,21 +568,20 @@ ASTExprNode Parser::null()
 
 ASTExprNode Parser::primary()
 {
-    if ( getTokenType(1) == TokenType::NUMBER || getTokenType(1) == TokenType::STRING )
-        return literal();
-    else if ( getTokenType(1) == TokenType::LPAREN )
+    switch ( getTokenType(1) )
     {
-        match(TokenType::LPAREN);
-        auto expr = expression();
-        match(TokenType::RPAREN);
-        return expr;
+        case TokenType::NUMBER: case TokenType::STRING: return literal();
+        case TokenType::NEW:                            return new_expr();
+        case TokenType::NULLTOKEN:                      return null();
+        case TokenType::LPAREN:
+        {
+            match(TokenType::LPAREN);
+            auto expr = expression();
+            match(TokenType::RPAREN);
+            return expr;
+        }
+        default: return variable();
     }
-    else if ( getTokenType(1) == TokenType::NEW )
-        return new_expr();
-    else if ( getTokenType(1) == TokenType::NULLTOKEN )
-        return null();
-    else
-        return variable();
 }
 
 ASTExprNode Parser::unary_right()
@@ -892,8 +890,8 @@ TypeInfo Parser::typeInfo()
         match(TokenType::CONST);
     }
 
-    std::string module_name;
-    std::string type_name;
+    auto module_name = std::string("");
+    auto type_name   = std::string("");
 
     if ( tryModuleName() )
     {
@@ -903,9 +901,8 @@ TypeInfo Parser::typeInfo()
     }
     else
     {
-        module_name = "";
         type_name = id();
-    
+        
         boost::optional<SymbolType> sym_type = boost::none;
         for ( auto it = symbol_table_stack.rbegin(); it != symbol_table_stack.rend(); ++it )
         {
@@ -923,9 +920,8 @@ TypeInfo Parser::typeInfo()
             if ( !sym_type || (sym_type != SymbolType::STRUCT && sym_type != SymbolType::TEMPLATESTRUCT) )
                 throw SemanticError("'" + type_name + "' is not a type name");
         }
-    }
 
-    bool is_ref = false;
+    }
 
     auto template_params = std::vector<TemplateParamInfo>{ };
 
@@ -969,6 +965,7 @@ TypeInfo Parser::typeInfo()
         }
     }    
 
+    bool is_ref = false;
     if ( getTokenType(1) == TokenType::REF )
     {
         is_ref = true;
