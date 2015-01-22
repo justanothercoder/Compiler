@@ -44,11 +44,12 @@ public:
     void visit(TemplateFunctionDeclarationNode* node) override;
     void visit(TemplateFunctionNode* node) override;
 
+    TypeInfo processTypeInfo(TypeInfo type_info);
+    
 private:
 
     ASTNode rebuild(AST* node);
     ASTExprNode rebuild(ExprNode* node);
-    TypeInfo processTypeInfo(TypeInfo type_info);
 
     ASTNode _ast;
 

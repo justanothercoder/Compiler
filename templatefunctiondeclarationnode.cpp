@@ -1,7 +1,7 @@
 #include "templatefunctiondeclarationnode.hpp"
 #include "functiondeclarationnode.hpp"
 #include "templatefunctionsymbol.hpp"
-
+#include "rebuildtreevisitor.hpp"
 #include "logger.hpp"
 
 TemplateFunctionDeclarationNode::TemplateFunctionDeclarationNode(const std::string& name
@@ -30,14 +30,26 @@ ASTNode TemplateFunctionDeclarationNode::copyTree() const
 
 std::string TemplateFunctionDeclarationNode::toString() const
 {
-    auto res = info_.returnTypeInfo().toString() + " " + name_ + "(";
+    auto res = std::string("");    
+    res += "template <";
+
+    if ( !template_params.empty() )
+    {
+        auto it = std::begin(template_params);
+        res += it -> second.toString() + " " + it -> first;
+
+        for ( ++it; it != std::end(template_params); ++it )
+            res += ", " + it -> second.toString() + " " + it -> first;
+    }
+
+    res += ">\n";
+    res += info_.returnTypeInfo().toString() + " " + name_ + "(";
 
     if ( !info_.formalParams().empty() )
     {
         const auto& params = info_.formalParams();
 
         auto it = std::begin(params);
-
         res += it -> second.toString() + " " + it -> first;
 
         for ( ++it; it != std::end(params); ++it )
@@ -65,17 +77,20 @@ std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::getInstance(st
 
 std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::instantiateWithParams(std::vector<TemplateParam> params) 
 {
-    auto templates_name = std::string("");
-    templates_name += name_ + "~";
-    for ( auto param : params )
-    {
-        if ( param.which() == 0 )
-            templates_name += boost::get<TypeInfo>(param).name();
-        else
-            templates_name += std::to_string(boost::get<int>(param));
-    }
+    auto template_info = TemplateInfo(defined_symbol.get(), params);
+    RebuildTreeVisitor rebuild(template_info);
 
-    auto decl = std::make_shared<FunctionDeclarationNode>(templates_name, info_, statements -> copyTree(), traits_, is_unsafe);
+    statements -> accept(rebuild);    
+    auto stat = rebuild.result();
+
+    auto new_return_type_info = rebuild.processTypeInfo(info_.returnTypeInfo());
+    auto new_formal_params = std::vector<ParamInfo>{ };
+
+    for ( auto param : info_.formalParams() )
+        new_formal_params.emplace_back(param.first, rebuild.processTypeInfo(param.second));
+    auto new_info = FunctionDeclarationInfo(new_return_type_info, new_formal_params);
+
+    auto decl = std::make_shared<FunctionDeclarationNode>(template_info.getInstName(), new_info, std::move(stat), traits_, is_unsafe);
 
 	decl -> scope = scope;
     decl -> build_scope();

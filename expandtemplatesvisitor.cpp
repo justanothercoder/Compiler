@@ -50,10 +50,6 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode* node)
 void ExpandTemplatesVisitor::visit(VariableDeclarationNode* node) 
 {
     visitChildren(node);
-
-    Logger::log("Expanding " + node -> toString());
-    Logger::log("Scope: " + node -> scope -> getScopeName());
-
     node -> typeInfo(preprocessTypeInfo(node -> typeInfo(), node -> scope.get()));    
 }
 
@@ -76,8 +72,6 @@ TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
 
 TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope* scope)
 {
-    Logger::log("Preprocessing " + type_info.toString());
-
     if ( type_info.moduleName() != "" )
         scope = Comp::getUnit(type_info.moduleName()) -> module_symbol.get();
 

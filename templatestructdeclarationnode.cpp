@@ -90,8 +90,6 @@ std::shared_ptr<DeclarationNode> TemplateStructDeclarationNode::instantiateWithP
 
     auto decl = std::make_shared<StructDeclarationNode>(template_info.getInstName(), std::move(vec));
 
-    Logger::log("Scope of template decl: " + scope -> getScopeName());
-	
     decl -> scope = scope;
     decl -> build_scope();
     

@@ -50,8 +50,6 @@ ASTExprNode RebuildTreeVisitor::rebuild(ExprNode* node)
 
 TypeInfo RebuildTreeVisitor::processTypeInfo(TypeInfo type_info)
 {
-    Logger::log("Processing " + type_info.toString());
-
     auto name            = std::string("");
     auto is_ref          = type_info.isRef();
     auto is_const        = type_info.isConst();
@@ -70,8 +68,6 @@ TypeInfo RebuildTreeVisitor::processTypeInfo(TypeInfo type_info)
     {
         auto replace = template_info.getReplacement(type_info.name());
         auto new_info = boost::get<TypeInfo>(*replace);
-
-        Logger::log("New to update '" + type_info.name() + "' with '" + new_info.toString() + "'");
 
         auto modifiers_ = new_info.modifiers();
         modifiers_.insert(std::end(modifiers_), std::begin(type_info.modifiers()), std::end(type_info.modifiers()));
@@ -290,8 +286,6 @@ void RebuildTreeVisitor::visit(VariableDeclarationNode* node)
 
     for ( const auto& param : node -> constructorParams() )
         new_params.emplace_back(rebuild(param.get()));
-
-    Logger::log("New type info in '" + node -> toString() + "' is '" + new_type_info.toString() + "'");
 
     _ast = std::make_unique<VariableDeclarationNode>(node -> name()
                                                    , new_type_info

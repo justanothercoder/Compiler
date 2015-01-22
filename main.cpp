@@ -51,8 +51,6 @@ int main(int argc, char** argv)
 
         root -> scope = BuiltIns::global_scope;
         root -> build_scope();
-
-        Logger::log("Parsed as " + root -> toString());
         
         ExpandTemplatesVisitor expand_visitor;
         root -> accept(expand_visitor);

@@ -20,8 +20,6 @@ VariableDeclarationNode::VariableDeclarationNode(const std::string& name
 
 void VariableDeclarationNode::build_scope()
 {
-    Logger::log("Node: " + toString());
-
     AST::build_scope();
 
     struct BuildScopeVisitor : boost::static_visitor<>
