@@ -22,6 +22,7 @@
 #include "variablesymbol.hpp"
 #include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
+#include "logger.hpp"
 
 void DefineVisitor::visitChildren(AST* node)
 {

@@ -330,7 +330,7 @@ std::unique_ptr<DeclarationNode> Parser::templateFunctionDecl(boost::optional<st
     for ( const auto& param_info : template_params )
         rememberSymbol(param_info.first, (param_info.second.name() == "class" ? SymbolType::STRUCT : SymbolType::VARIABLE));
 
-    auto params = TemplateParamsList{ };
+    auto params = std::vector<ParamInfo>{ };
 
     match(TokenType::LPAREN);
 
