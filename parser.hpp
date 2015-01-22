@@ -38,6 +38,8 @@ private:
     
     std::vector<ASTExprNode> call_params_list();
 
+    TemplateParamInfo templateParamInfo();
+
     TemplateParamsList templateParams();
 
     std::unique_ptr<DeclarationNode> declaration(boost::optional<std::string> struct_name = boost::none);

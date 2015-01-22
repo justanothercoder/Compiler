@@ -538,18 +538,11 @@ ASTExprNode Parser::variable()
 
                 if ( getTokenType(1) != TokenType::GREATER )
                 {
-                    if ( tryTypeInfo() )
-                        template_params.emplace_back(typeInfo());
-                    else
-                        template_params.emplace_back(expression());
-
+                    template_params.emplace_back(templateParamInfo());
                     while ( getTokenType(1) == TokenType::COMMA )
                     {
                         match(TokenType::COMMA);
-                        if ( tryTypeInfo() )
-                            template_params.emplace_back(typeInfo());
-                        else
-                            template_params.emplace_back(expression());
+                        template_params.emplace_back(templateParamInfo());
                     }
                 }
 
@@ -889,6 +882,14 @@ ASTNode Parser::for_stat()
     return std::make_unique<ForNode>(std::move(init), std::move(cond), std::move(step), std::move(stats));
 }
 
+TemplateParamInfo Parser::templateParamInfo()
+{
+    if ( tryTypeInfo() )
+        return typeInfo();
+    else
+        return expression();
+}
+
 TypeInfo Parser::typeInfo()
 {
     bool is_const = false;
@@ -942,18 +943,11 @@ TypeInfo Parser::typeInfo()
 
         if ( getTokenType(1) != TokenType::GREATER )
         {
-            if ( tryTypeInfo() )
-                template_params.push_back(typeInfo());
-            else
-                template_params.push_back(expression());
-
+            template_params.emplace_back(templateParamInfo());
             while ( getTokenType(1) == TokenType::COMMA )
             {
                 match(TokenType::COMMA);
-                if ( tryTypeInfo() )
-                    template_params.push_back(typeInfo());
-                else
-                    template_params.push_back(expression());
+                template_params.emplace_back(templateParamInfo());
             }
         }
 
