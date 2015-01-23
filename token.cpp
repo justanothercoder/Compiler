@@ -55,6 +55,5 @@ std::string to_string(TokenType tt)
     case TokenType::EXTERN   : return "extern";                       
     case TokenType::FROM     : return "from";
     case TokenType::BREAK    : return "break";
-    case TokenType::LAMBDA   : return "lambda";
     }
 }

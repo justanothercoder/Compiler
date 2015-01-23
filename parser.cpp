@@ -573,6 +573,7 @@ ASTExprNode Parser::primary()
         case TokenType::NUMBER: case TokenType::STRING: return literal();
         case TokenType::NEW:                            return new_expr();
         case TokenType::NULLTOKEN:                      return null();
+        case TokenType::LBRACKET:                       return lambda_expr();
         case TokenType::LPAREN:
         {
             match(TokenType::LPAREN);
@@ -582,6 +583,12 @@ ASTExprNode Parser::primary()
         }
         default: return variable();
     }
+}
+
+ASTExprNode Parser::lambda_expr()
+{
+
+
 }
 
 ASTExprNode Parser::unary_right()
