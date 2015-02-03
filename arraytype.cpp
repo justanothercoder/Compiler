@@ -8,7 +8,7 @@ ArrayType::ArrayType(const Type *type, int size) : type(type), size(size) { }
 std::string ArrayType::getName() const { return type -> getName() + "~arr" + std::to_string(size); } 
 size_t ArrayType::sizeOf() const { return type -> sizeOf() * size; }
 
-TypeKind ArrayType::getTypeKind() const { return TypeKind::ARRAY; }
+bool ArrayType::isArray() const { return true; }
 
 const FunctionSymbol* ArrayType::getConversionTo(const Type *) const { return nullptr; }
 bool ArrayType::isConvertableTo(const Type *t) const { return (this == t -> removeRef()); }

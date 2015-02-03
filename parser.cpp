@@ -587,8 +587,7 @@ ASTExprNode Parser::primary()
 
 ASTExprNode Parser::lambda_expr()
 {
-
-
+    return nullptr;
 }
 
 ASTExprNode Parser::unary_right()

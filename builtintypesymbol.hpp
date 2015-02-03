@@ -14,7 +14,6 @@ public:
     size_t sizeOf() const override;
 
     SymbolType getSymbolType() const override;
-    TypeKind getTypeKind() const override;
 
     bool isConvertableTo(const Type *type) const override;
     boost::optional<int> rankOfConversion(const Type *type) const override;

@@ -24,7 +24,7 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
         code_obj.emit("push rax");
     }
     else if ( param_type -> removeRef() == BuiltIns::int_type.get()
-           || param_type -> removeRef() -> getTypeKind() == TypeKind::POINTER )
+           || param_type -> removeRef() -> isPointer() )
     {
         if ( param_type -> isReference() )
             code_obj.emit("mov rax, [rax]");

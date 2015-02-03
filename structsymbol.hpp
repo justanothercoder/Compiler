@@ -21,7 +21,6 @@ public:
     std::string getName() const override;
 
     size_t sizeOf() const override;
-    TypeKind getTypeKind() const override;
 
     const FunctionSymbol* getConversionTo(const Type *type) const;
     bool isConvertableTo(const Type *type) const override;

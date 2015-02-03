@@ -5,7 +5,6 @@
 #include "functionsymbol.hpp"
 
 size_t FunctionalType::sizeOf() const { return 0; }
-TypeKind FunctionalType::getTypeKind() const { return TypeKind::OVERLOADEDFUNCTION; }
 
 bool FunctionalType::isConvertableTo(const Type *) const { return false; }
 boost::optional<int> FunctionalType::rankOfConversion(const Type *) const { return boost::none; }
@@ -56,7 +55,7 @@ std::vector<ConversionInfo> getConversions(std::vector<ValueInfo> arguments, std
 
         conversions.push_back(getConversionInfo(actual_type.base(), desired_type.base()));
 
-        if ( !desired_type.isReference() && desired_type.unqualified() -> getTypeKind() == TypeKind::STRUCT )
+        if ( !desired_type.isReference() && desired_type.unqualified() -> isObjectType() )
             static_cast<const StructSymbol*>(desired_type.unqualified()) -> getCopyConstructor() -> is_used = true;
     }
     

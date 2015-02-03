@@ -4,15 +4,12 @@
 #include "comp.hpp"
 #include "typefactory.hpp"
 
-PointerType::PointerType(const Type *type) : type(type)
-{
-
-}
+PointerType::PointerType(const Type *type) : type(type) { }
 
 std::string PointerType::getName() const { return type -> getName() + "~ptr"; }
 size_t PointerType::sizeOf() const { return Comp::config().int_size; }
 
-TypeKind PointerType::getTypeKind() const { return TypeKind::POINTER; }
+bool PointerType::isPointer() const { return true; }
 
 bool PointerType::isConvertableTo(const Type *t) const
 {

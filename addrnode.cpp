@@ -9,8 +9,9 @@ AddrNode::AddrNode(ASTExprNode expr, AddrOp op) : expr_(std::move(expr)), op_(op
 VariableType AddrNode::getType() const
 {
     auto type = expr_ -> getType();
+    auto base_type = (op_ == AddrOp::REF ? TypeFactory::getPointer(type.unqualified()) 
+                                         : static_cast<const PointerType*>(type.unqualified()) -> pointedType());
 
-    auto base_type = (op_ == AddrOp::REF ? TypeFactory::getPointer(type.unqualified()) : static_cast<const PointerType*>(type.unqualified()) -> pointedType());
     return VariableType(base_type, type.isConst());
 }
 

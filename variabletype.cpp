@@ -36,24 +36,18 @@ TypeInfo makeTypeInfo(VariableType type)
 
     auto modifiers = std::vector<TypeModifier>{ };
 
-    while ( tp -> getTypeKind() == TypeKind::POINTER || tp -> getTypeKind() == TypeKind::ARRAY )
+    while ( tp -> isPointer() || tp -> isArray() )
     {
-        switch ( tp -> getTypeKind() )
+        if ( tp -> isPointer() )
         {
-            case TypeKind::POINTER:
-            {
-                modifiers.emplace_back();
-                tp = static_cast<const PointerType*>(tp) -> pointedType();
-                break;
-            }
-            case TypeKind::ARRAY:
-            {
-                auto arr = static_cast<const ArrayType*>(tp);
-                modifiers.emplace_back(std::make_shared<NumberNode>(std::to_string(arr -> sizeOfArray())));
-                tp = arr -> pointedType();
-                break;
-            }
-            default: throw;
+            modifiers.emplace_back();
+            tp = static_cast<const PointerType*>(tp) -> pointedType();
+        }
+        else
+        {
+            auto arr = static_cast<const ArrayType*>(tp);
+            modifiers.emplace_back(std::make_shared<NumberNode>(std::to_string(arr -> sizeOfArray())));
+            tp = arr -> pointedType();
         }
     }
 

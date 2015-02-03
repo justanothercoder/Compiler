@@ -31,7 +31,7 @@ void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
         auto param_type = expr_ -> type();
            
         if ( param_type -> removeRef() == BuiltIns::int_type.get()
-          || param_type -> removeRef() -> getTypeKind() == TypeKind::POINTER )
+          || param_type -> removeRef() -> isPointer() )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rbx, [rbx]");
@@ -58,7 +58,7 @@ void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
             code_obj.emit("push rbx");
             code_obj.emit("push rax");
 
-            assert(param_type -> getTypeKind() == TypeKind::STRUCT);
+            assert(param_type -> isObjectType());
 
             code_obj.emit("call " + static_cast<const StructSymbol*>(param_type) -> getCopyConstructor() -> getScopedTypedName());
             code_obj.emit("add rsp, " + std::to_string(2 * Comp::config().int_size));

@@ -11,7 +11,6 @@ public:
 
     std::string getName() const override;
     size_t sizeOf() const override;
-    TypeKind getTypeKind() const override;
 
     bool isConvertableTo(const Type* type) const override;
     boost::optional<int> rankOfConversion(const Type* type) const override;

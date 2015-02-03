@@ -85,6 +85,8 @@ private:
     ASTExprNode get_string();
     ASTExprNode null();
 
+    ASTExprNode lambda_expr();
+
     bool tryAssignment();
     bool tryVarDecl();
     bool tryTypeInfo();

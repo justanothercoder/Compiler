@@ -8,8 +8,6 @@
 class Symbol;
 class FunctionSymbol;
 
-enum class TypeKind { BUILTIN, STRUCT, FUNCTION, OVERLOADEDFUNCTION, REFERENCE, POINTER, ARRAY, TEMPLATEFUNCTION };
-
 class Type
 {
 public:
@@ -19,11 +17,11 @@ public:
     virtual std::string getName() const = 0;
     virtual size_t sizeOf() const = 0;
 
-    virtual TypeKind getTypeKind() const = 0;
-
     virtual bool isConvertableTo(const Type *type) const = 0;
     virtual boost::optional<int> rankOfConversion(const Type *type) const = 0;
 
+    virtual bool isArray() const;
+    virtual bool isPointer() const;
     virtual bool isReference() const;
     virtual bool isObjectType() const;
 

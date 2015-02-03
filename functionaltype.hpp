@@ -15,7 +15,6 @@ class FunctionalType : public Type
 public:
     
     size_t sizeOf() const override;
-    TypeKind getTypeKind() const override;
     
     bool isConvertableTo(const Type *type) const override;
     boost::optional<int> rankOfConversion(const Type *type) const override;

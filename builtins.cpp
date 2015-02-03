@@ -102,6 +102,6 @@ void BuiltIns::defineBuiltIns()
 
 bool isIntType(const Type* t)    { return t == BuiltIns::int_type.get(); }
 bool isCharType(const Type* t)   { return t == BuiltIns::char_type.get(); }
-bool isPointer(const Type* t)    { return t -> getTypeKind() == TypeKind::POINTER; }
+bool isPointer(const Type* t)    { return t -> isPointer(); }
 bool isReference(const Type* t)  { return t -> isReference(); }
 bool isSimpleType(const Type* t) { return isIntType(t) || isCharType(t) || isPointer(t) || isReference(t); }

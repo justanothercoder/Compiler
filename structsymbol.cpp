@@ -16,7 +16,7 @@ bool StructSymbol::isConvertableTo(const Type* type) const
 {
     type = type -> removeRef();
 
-    if ( type -> getTypeKind() != this -> getTypeKind() )
+    if ( !type -> isObjectType() )
         return false;
 
     auto st = static_cast<const StructSymbol*>(type);
@@ -113,7 +113,6 @@ void StructSymbol::defineBuiltInConstructor(FunctionType type)
 }
 
 SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }
-TypeKind StructSymbol::getTypeKind() const { return TypeKind::STRUCT; }
 
 size_t StructSymbol::sizeOf() const { return type_size; } 
 std::string StructSymbol::getName() const { return name; }

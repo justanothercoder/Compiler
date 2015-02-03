@@ -56,7 +56,7 @@ bool InlineCallVisitor::shouldBeInlined(const FunctionSymbol* function)
     return std::all_of(std::begin(params), std::end(params), [](auto&& t)
     {
         return t.isReference()
-            || t.base() -> getTypeKind() == TypeKind::POINTER
+            || t.base() -> isPointer()
             || t.base() == BuiltIns::int_type.get()
             || t.base() == BuiltIns::char_type.get();
     });

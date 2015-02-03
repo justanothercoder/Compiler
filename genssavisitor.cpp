@@ -175,10 +175,12 @@ void GenSSAVisitor::visit(BracketNode* node)
     auto expr = getArg(node -> expr());
     auto base = getArg(node -> base());
 
-    if ( node -> base() -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY ) {
+    auto base_type = node -> base() -> getType().unqualified();
+
+    if ( base_type -> isArray() ) {
         _arg = code.add(std::make_shared<ElemCommand>(base, expr));
     }
-    else if ( node -> base() -> getType().unqualified() == BuiltIns::ASCII_string_type.get() ) {
+    else if ( base_type == BuiltIns::ASCII_string_type.get() ) {
         _arg = code.add(std::make_shared<ElemCommand>(base, expr, true));
     }
     else {

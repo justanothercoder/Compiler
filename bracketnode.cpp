@@ -33,20 +33,25 @@ ExprNode* BracketNode::expr() { return expr_.get(); }
 
 const FunctionalType* BracketNode::function() const
 {
-    if ( base_ -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY )
-        return BuiltIns::global_scope -> resolveFunction("operator[]");
-    else
-    {
-        assert(base_ -> getType().unqualified() -> isObjectType());
-        return static_cast<const ObjectType*>(base_ -> getType().unqualified()) -> resolveMethod("operator[]");
+    auto base_type = base_ -> getType().unqualified();
+    
+    if ( base_type -> isObjectType() ) {
+        return static_cast<const ObjectType*>(base_type) -> resolveMethod("operator[]");
     }
+    else {
+        return BuiltIns::global_scope -> resolveFunction("operator[]");
+    }        
 }
 
 std::vector<ValueInfo> BracketNode::arguments() const
 {
-    if ( base_ -> getType().unqualified() -> getTypeKind() == TypeKind::ARRAY )
-        return {valueOf(base_.get()), valueOf(expr_.get())};
-    else
+    auto base_type = base_ -> getType().unqualified();
+    
+    if ( base_type -> isObjectType() ) {
         return {valueOf(expr_.get())};
+    }
+    else {
+        return {valueOf(base_.get()), valueOf(expr_.get())};
+    }        
 }
 

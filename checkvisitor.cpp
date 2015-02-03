@@ -155,17 +155,18 @@ void CheckVisitor::visit(AddrNode* node)
 {
     node -> expr() -> accept(*this);
 
-    if ( node -> op() == AddrOp::REF )
-    {
-        if ( !node -> expr() -> isLeftValue() )
+    if ( node -> op() == AddrOp::REF ) {
+        if ( !node -> expr() -> isLeftValue() ) {
             throw SemanticError("expression is not an lvalue");
+        }
     }
     else
-    {
+    {        
         auto type = node -> expr() -> getType().unqualified();
 
-        if ( type -> getTypeKind() != TypeKind::POINTER )
-            throw SemanticError("expression is not a pointer");
+        if ( !type -> isPointer() ) {            
+            throw SemanticError("Type of " + node -> toString() + " is not a pointer type.");
+        }
     }
 }
 
@@ -266,7 +267,7 @@ void CheckVisitor::visit(ReturnNode* node)
     node -> function(function_scopes.top() -> func);
 
     auto unqualified_type = node -> expr() -> getType().unqualified();
-    if ( unqualified_type -> getTypeKind() != TypeKind::POINTER )
+    if ( unqualified_type -> isObjectType() )
     {
         auto ov_func = static_cast<const ObjectType*>(unqualified_type) -> resolveMethod(unqualified_type -> getName());
         checkCall(ov_func, {valueOf(node -> expr())});
