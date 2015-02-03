@@ -13,7 +13,6 @@ TemplateStructSymbol::TemplateStructSymbol(std::string name, TemplateParamsList 
 }
 
 std::string TemplateStructSymbol::getName() const { return name; }
-SymbolType TemplateStructSymbol::getSymbolType() const { return SymbolType::TEMPLATESTRUCT; }
 
 TemplateParamsList TemplateStructSymbol::templateSymbols() const { return template_symbols; }
 TemplateDeclarationNode* TemplateStructSymbol::holder() const { return _holder; }

@@ -44,7 +44,6 @@ bool FunctionSymbol::isMethod() const { return traits.is_method; }
 bool FunctionSymbol::isConstructor() const { return traits.is_constructor; }
 
 FunctionTraits FunctionSymbol::getTraits() const { return traits; } 
-SymbolType FunctionSymbol::getSymbolType() const { return SymbolType::FUNCTION; }
 
 std::string FunctionSymbol::getName() const { return name; }
 FunctionType FunctionSymbol::type() const { return _type; } 

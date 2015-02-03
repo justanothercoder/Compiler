@@ -84,7 +84,7 @@ boost::optional<int> StructSymbol::rankOfConversion(const Type *type) const
 const FunctionSymbol* StructSymbol::methodWith(const std::string& name, FunctionTypeInfo ft) const
 {
     auto member = resolveMember(name);
-    if ( member == nullptr || member -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
+    if ( member == nullptr || !member -> isFunction() )
         return nullptr;
 
     auto func = static_cast<const OverloadedFunctionSymbol*>(member);
@@ -112,13 +112,12 @@ void StructSymbol::defineBuiltInConstructor(FunctionType type)
     define(std::make_shared<const FunctionSymbol>(name, type, scope, FunctionTraits::constructor()));
 }
 
-SymbolType StructSymbol::getSymbolType() const { return SymbolType::STRUCT; }
-
 size_t StructSymbol::sizeOf() const { return type_size; } 
 std::string StructSymbol::getName() const { return name; }
 
 bool StructSymbol::isUnsafeBlock() const { return is_unsafe; }
-    
+bool StructSymbol::isType() const { return true; }
+
 bool StructSymbol::hasConversionConstructor(const StructSymbol *st) const { return getConversionConstructor(st) != nullptr; }
 bool StructSymbol::hasConversionOperator(const StructSymbol *st) const { return getConversionOperator(st) != nullptr; }
 
@@ -134,12 +133,14 @@ int StructSymbol::offsetOf(const VariableSymbol* member) const
 
     for ( auto entry : table )
     {
-        if ( entry.second -> getSymbolType() == SymbolType::VARIABLE )
+        if ( entry.second -> isVariable() )
         {
-            if ( entry.second.get() == member )
+            if ( entry.second.get() == member ) {
                 return offset;
-            else
+            }
+            else {
                 offset += static_cast<const VariableSymbol*>(entry.second.get()) -> getType().sizeOf();
+            }
         }
     }
 

@@ -14,6 +14,8 @@
 
 class DeclarationNode;
 
+enum class SymbolType { FUNCTION, VARIABLE, STRUCT, TEMPLATESTRUCT, TEMPLATEFUNCTION, MODULE };
+
 class Parser : public AbstractParser
 {
 public:
@@ -28,6 +30,8 @@ private:
     void popScope();    
     void rememberSymbol(std::string name, SymbolType type);
     boost::optional<SymbolType> resolveSymbolType(std::string name); 
+
+    SymbolType getSymbolType(const Symbol* s);
 
     std::vector< std::map< std::string, SymbolType > > symbol_table_stack; 
     std::stack<bool> is_in_loop;

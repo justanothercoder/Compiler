@@ -325,8 +325,7 @@ void GenSSAVisitor::visit(NullNode* )
 
 void GenSSAVisitor::visit(DotNode *node)
 {
-    if ( node -> member() -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION )
-    {
+    if ( node -> member() -> isFunction() ) {
         _arg = getArg(node -> base());
     }
     else

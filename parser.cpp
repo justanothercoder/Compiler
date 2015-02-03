@@ -44,7 +44,16 @@ Parser::Parser(std::unique_ptr<AbstractLexer> lexer) : AbstractParser(std::move(
     
 void Parser::pushScope() { symbol_table_stack.emplace_back(); }
 void Parser::popScope()  { symbol_table_stack.pop_back(); }
-    
+
+SymbolType Parser::getSymbolType(const Symbol* s)
+{
+    if      ( s -> isVariable() ) { return SymbolType::VARIABLE; }
+    else if ( s -> isFunction() ) { return SymbolType::FUNCTION; }
+    else if ( s -> isType()     ) { return SymbolType::STRUCT; }
+    else if ( s -> isModule()   ) { return SymbolType::MODULE; }
+    else { throw; }
+}
+
 void Parser::rememberSymbol(std::string name, SymbolType type)
 {
     if ( isSpeculating() )
@@ -1165,7 +1174,7 @@ ASTNode Parser::from_import_stat()
         return sym -> getName() == member_name; 
     });
 
-    rememberSymbol(member_name, (*it) -> getSymbolType()); 
+    rememberSymbol(member_name, getSymbolType(it -> get())); 
 
     return std::make_unique<ImportNode>(module_name, unit.root, std::vector< std::shared_ptr<const Symbol> >{*it});
 }

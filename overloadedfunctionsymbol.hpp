@@ -25,7 +25,7 @@ public:
     std::vector<const FunctionSymbol*> allOverloads() const;
 
     bool isMethod() const;
-    SymbolType getSymbolType() const override;
+    bool isFunction() const override;
 
     const TemplateFunctionSymbol* templateFunction() const;
     void setTemplateFunction(const TemplateFunctionSymbol* function) const;

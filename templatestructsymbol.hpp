@@ -19,7 +19,6 @@ public:
     TemplateStructSymbol(std::string name, TemplateParamsList template_symbols, TemplateDeclarationNode* _holder);
 
     std::string getName() const override;
-    SymbolType getSymbolType() const override;
 
     bool isIn(std::string name) const;
     

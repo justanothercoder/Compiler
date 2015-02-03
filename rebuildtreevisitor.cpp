@@ -106,28 +106,12 @@ void RebuildTreeVisitor::visit(IfNode* node)
     _ast = std::make_unique<IfNode>(rebuild(node -> condition()), rebuild(node -> trueBranch()), rebuild(node -> falseBranch()));
 }
 
-void RebuildTreeVisitor::visit(DotNode* node) 
-{
-    _ast = std::make_unique<DotNode>(rebuild(node -> base()), node -> memberName());
-}
-
 void RebuildTreeVisitor::visit(ForNode* node) 
 {
     _ast = std::make_unique<ForNode>(rebuild(node -> initializer())
                                    , rebuild(node -> condition())
                                    , rebuild(node -> iteration())
                                    , rebuild(node -> body()));
-}
-
-void RebuildTreeVisitor::visit(AddrNode* node) 
-{
-    _ast = std::make_unique<AddrNode>(rebuild(node -> expr()), node -> op());
-    
-}
-
-void RebuildTreeVisitor::visit(NullNode* ) 
-{
-    _ast = std::make_unique<NullNode>();
 }
 
 void RebuildTreeVisitor::visit(CallNode* node) 
@@ -139,61 +123,6 @@ void RebuildTreeVisitor::visit(CallNode* node)
 
     _ast = std::make_unique<CallNode>(rebuild(node -> caller()), std::move(new_params));
 }
-
-void RebuildTreeVisitor::visit(TypeNode* node) 
-{
-    _ast = std::make_unique<TypeNode>(node -> name());
-}
-
-void RebuildTreeVisitor::visit(BreakNode* ) 
-{
-    _ast = std::make_unique<BreakNode>();
-}
-
-void RebuildTreeVisitor::visit(WhileNode* node) 
-{
-    _ast = std::make_unique<WhileNode>(rebuild(node -> condition()), rebuild(node -> body()));
-}
-
-void RebuildTreeVisitor::visit(UnaryNode* node) 
-{
-    _ast = std::make_unique<UnaryNode>(rebuild(node -> expr()), node -> op());
-}
-
-void RebuildTreeVisitor::visit(ImportNode* node) 
-{
-    _ast = std::make_unique<ImportNode>(node -> lib, node -> root, node -> imports);
-}
-
-void RebuildTreeVisitor::visit(StringNode* node) 
-{
-    _ast = std::make_unique<StringNode>(node -> str());
-}
-
-void RebuildTreeVisitor::visit(NumberNode* node) 
-{
-    _ast = std::make_unique<NumberNode>(node -> num());
-}
-
-void RebuildTreeVisitor::visit(ReturnNode* node) 
-{
-    _ast = std::make_unique<ReturnNode>(rebuild(node -> expr()));
-}
-
-void RebuildTreeVisitor::visit(ExternNode* node) 
-{
-    _ast = std::make_unique<ExternNode>(node -> name(), node -> info(), node -> isUnsafe());
-}
-
-void RebuildTreeVisitor::visit(ModuleNode* node) 
-{
-    _ast = std::make_unique<ModuleNode>(node -> name());
-}
-
-void RebuildTreeVisitor::visit(BracketNode* node) 
-{
-    _ast = std::make_unique<BracketNode>(rebuild(node -> base()), rebuild(node -> expr()));
-}                                        
 
 void RebuildTreeVisitor::visit(VariableNode* node) 
 {
@@ -210,11 +139,6 @@ void RebuildTreeVisitor::visit(VariableNode* node)
         _ast = std::make_unique<VariableNode>(node -> name());
 }
 
-void RebuildTreeVisitor::visit(FunctionNode* node) 
-{
-    _ast = std::make_unique<FunctionNode>(node -> name());
-}
-
 void RebuildTreeVisitor::visit(StatementNode* node) 
 {
     auto new_statements = std::vector<ASTNode>{ };
@@ -223,11 +147,6 @@ void RebuildTreeVisitor::visit(StatementNode* node)
         new_statements.emplace_back(rebuild(stat.get()));
 
     _ast = std::make_unique<StatementNode>(std::move(new_statements));
-}
-
-void RebuildTreeVisitor::visit(UnsafeBlockNode* node) 
-{
-    _ast = std::make_unique<UnsafeBlockNode>(rebuild(node -> block()));
 }
 
 void RebuildTreeVisitor::visit(NewExpressionNode* node) 
@@ -244,7 +163,6 @@ void RebuildTreeVisitor::visit(NewExpressionNode* node)
 void RebuildTreeVisitor::visit(BinaryOperatorNode* node) 
 {
     _ast = std::make_unique<BinaryOperatorNode>(rebuild(node -> lhs()), rebuild(node -> rhs()), node -> op());
-    
 }
 
 void RebuildTreeVisitor::visit(StructDeclarationNode* node) 
@@ -324,3 +242,20 @@ void RebuildTreeVisitor::visit(TemplateFunctionNode* node)
 {
     _ast = std::make_unique<TemplateFunctionNode>(node -> name(), node -> templateParams());
 }
+
+void RebuildTreeVisitor::visit(NullNode* )         { _ast = std::make_unique<NullNode>(); }
+void RebuildTreeVisitor::visit(BreakNode* )        { _ast = std::make_unique<BreakNode>(); }
+void RebuildTreeVisitor::visit(DotNode* node)      { _ast = std::make_unique<DotNode>(rebuild(node -> base()), node -> memberName()); }
+void RebuildTreeVisitor::visit(AddrNode* node)     { _ast = std::make_unique<AddrNode>(rebuild(node -> expr()), node -> op()); }
+void RebuildTreeVisitor::visit(TypeNode* node)     { _ast = std::make_unique<TypeNode>(node -> name()); } 
+void RebuildTreeVisitor::visit(WhileNode* node)    { _ast = std::make_unique<WhileNode>(rebuild(node -> condition()), rebuild(node -> body())); }
+void RebuildTreeVisitor::visit(UnaryNode* node)    { _ast = std::make_unique<UnaryNode>(rebuild(node -> expr()), node -> op()); } 
+void RebuildTreeVisitor::visit(ImportNode* node)   { _ast = std::make_unique<ImportNode>(node -> lib, node -> root, node -> imports); }
+void RebuildTreeVisitor::visit(StringNode* node)   { _ast = std::make_unique<StringNode>(node -> str()); }
+void RebuildTreeVisitor::visit(NumberNode* node)   { _ast = std::make_unique<NumberNode>(node -> num()); }
+void RebuildTreeVisitor::visit(ReturnNode* node)   { _ast = std::make_unique<ReturnNode>(rebuild(node -> expr())); }
+void RebuildTreeVisitor::visit(ExternNode* node)   { _ast = std::make_unique<ExternNode>(node -> name(), node -> info(), node -> isUnsafe()); }
+void RebuildTreeVisitor::visit(ModuleNode* node)   { _ast = std::make_unique<ModuleNode>(node -> name()); }
+void RebuildTreeVisitor::visit(BracketNode* node)  { _ast = std::make_unique<BracketNode>(rebuild(node -> base()), rebuild(node -> expr())); } 
+void RebuildTreeVisitor::visit(FunctionNode* node) { _ast = std::make_unique<FunctionNode>(node -> name()); }
+void RebuildTreeVisitor::visit(UnsafeBlockNode* node) { _ast = std::make_unique<UnsafeBlockNode>(rebuild(node -> block())); } 

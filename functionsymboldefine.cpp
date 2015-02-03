@@ -17,7 +17,7 @@ void FunctionSymbolDefine::visit(FunctionScope* sc) { visit(static_cast<BaseScop
 
 void FunctionSymbolDefine::visit(BaseScope* sc)
 {
-    assert(sym.get() -> getSymbolType() == SymbolType::FUNCTION);
+//    assert(sym.get() -> getSymbolType() == SymbolType::FUNCTION);
     auto function = static_cast<const FunctionSymbol*>(sym.get());
 
     auto sym_name = sym -> getName();
@@ -29,7 +29,7 @@ void FunctionSymbolDefine::visit(BaseScope* sc)
 
     auto _sym = sc -> table.at(sym_name);
 
-    if ( _sym -> getSymbolType() != SymbolType::OVERLOADED_FUNCTION )
+    if ( !_sym -> isFunction() )
         throw SemanticError(sym_name + " is already defined.");
 
     auto ofs = static_cast<const OverloadedFunctionSymbol*>(_sym.get());

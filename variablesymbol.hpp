@@ -18,7 +18,7 @@ public:
     bool isParam() const;
     bool isField() const;
 
-    SymbolType getSymbolType() const override;
+    bool isVariable() const override;
 
     std::unique_ptr<DefineSymbolVisitor> defineSymbolVisitor() const override;
 

@@ -13,9 +13,12 @@ void ModuleMemberAccessNode::accept(ASTVisitor& visitor) { visitor.visit(this); 
     
 VariableType ModuleMemberAccessNode::getType() const
 {    
-    if ( member_sym -> getSymbolType() == SymbolType::VARIABLE ) 
+    if ( member_sym -> isVariable() ) {
         return static_cast<const VariableSymbol*>(member_sym) -> getType();
-    return static_cast<const OverloadedFunctionSymbol*>(member_sym);
+    }
+    else {
+        return static_cast<const OverloadedFunctionSymbol*>(member_sym);
+    }
 }
 
 bool ModuleMemberAccessNode::isLeftValue() const { return false; }

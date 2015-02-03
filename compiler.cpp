@@ -21,7 +21,7 @@ VariableType Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
     else
     {
         auto module = Comp::getUnit(type_info.moduleName()) -> module_symbol;
-        assert(module -> getSymbolType() == SymbolType::MODULE);
+        assert(module -> isModule());
         type = static_cast<ModuleSymbol*>(module.get()) -> resolveType(type_name);
     }
 

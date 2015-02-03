@@ -12,7 +12,7 @@ VariableSymbol::VariableSymbol(const std::string& name, VariableType type, Varia
 VariableType VariableSymbol::getType() const { return type; }
 std::string VariableSymbol::getName()  const { return name; }
 
-SymbolType VariableSymbol::getSymbolType() const { return SymbolType::VARIABLE; }
+bool VariableSymbol::isVariable() const { return true; }
 
 std::unique_ptr<DefineSymbolVisitor> VariableSymbol::defineSymbolVisitor() const { return std::make_unique<VariableSymbolDefine>(); }
 

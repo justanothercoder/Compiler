@@ -8,8 +8,8 @@ DotNode::DotNode(ASTExprNode base, const std::string& member_name) : base_(std::
 
 VariableType DotNode::getType() const
 {
-    return member_ -> getSymbolType() == SymbolType::VARIABLE ? static_cast<const VariableSymbol*>(member_) -> getType() 
-                                                             : VariableType(static_cast<const OverloadedFunctionSymbol*>(member_), true);
+    return member_ -> isVariable() ? static_cast<const VariableSymbol*>(member_) -> getType() 
+                                   : VariableType(static_cast<const OverloadedFunctionSymbol*>(member_), true);
 }
 
 bool DotNode::isLeftValue() const { return true; }

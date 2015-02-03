@@ -31,7 +31,6 @@ public:
     bool isConstructor() const;
 
     std::string getName() const override;
-    SymbolType getSymbolType() const override;
     FunctionTraits getTraits() const;
 
     bool is_constexpr = false;

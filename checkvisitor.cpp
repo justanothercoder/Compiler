@@ -188,7 +188,7 @@ void CheckVisitor::visit(DotNode* node)
 void CheckVisitor::visit(ModuleMemberAccessNode* node)
 {
     auto module_sym = Comp::getUnit(node -> name()) -> module_symbol;
-    assert(module_sym && module_sym -> getSymbolType() == SymbolType::MODULE);
+    assert(module_sym && module_sym -> isModule());
 
     node -> memberSymbol(static_cast<const ModuleSymbol*>(module_sym.get()) -> resolve(node -> member()));
 }
@@ -196,7 +196,7 @@ void CheckVisitor::visit(ModuleMemberAccessNode* node)
 void CheckVisitor::visit(ModuleNode* node) 
 {
     auto sym = node -> scope -> resolve(node -> name());
-    assert(sym && sym -> getSymbolType() == SymbolType::MODULE);
+    assert(sym && sym -> isModule());
 
     node -> module(static_cast<const ModuleSymbol*>(sym));
 }
@@ -204,7 +204,7 @@ void CheckVisitor::visit(ModuleNode* node)
 void CheckVisitor::visit(TypeNode* node) 
 {
     auto sym = node -> scope -> resolve(node -> name());
-    assert(sym && sym -> getSymbolType() == SymbolType::STRUCT);
+    assert(sym && sym -> isType());
 
     node -> typeSymbol(static_cast<const StructSymbol*>(sym));
 }
@@ -212,7 +212,7 @@ void CheckVisitor::visit(TypeNode* node)
 void CheckVisitor::visit(FunctionNode* node) 
 {
     auto sym = node -> scope -> resolve(node -> name());
-    assert(sym && sym -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION);    
+    assert(sym && sym -> isFunction());
 
     node -> function(static_cast<const OverloadedFunctionSymbol*>(sym));
 }
@@ -220,7 +220,7 @@ void CheckVisitor::visit(FunctionNode* node)
 void CheckVisitor::visit(TemplateFunctionNode* node) 
 {
     auto sym = node -> scope -> resolve(node -> name());
-    assert(sym && sym -> getSymbolType() == SymbolType::OVERLOADED_FUNCTION);    
+    assert(sym && sym -> isFunction());
 
     auto ov_func = static_cast<const OverloadedFunctionSymbol*>(sym);
 

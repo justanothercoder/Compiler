@@ -18,7 +18,6 @@ TemplateFunctionSymbol::TemplateFunctionSymbol(const std::string& name, Template
 }
 
 std::string TemplateFunctionSymbol::getName() const { return name; }
-SymbolType TemplateFunctionSymbol::getSymbolType() const { return SymbolType::TEMPLATESTRUCT; }
 
 TemplateParamsList TemplateFunctionSymbol::templateSymbols() const { return template_symbols; }
 TemplateDeclarationNode* TemplateFunctionSymbol::holder() const { return _holder; }

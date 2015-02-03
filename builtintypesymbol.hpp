@@ -13,8 +13,6 @@ public:
     std::string getName() const override;
     size_t sizeOf() const override;
 
-    SymbolType getSymbolType() const override;
-
     bool isConvertableTo(const Type *type) const override;
     boost::optional<int> rankOfConversion(const Type *type) const override;
 

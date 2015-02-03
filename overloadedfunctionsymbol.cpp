@@ -15,7 +15,7 @@ VariableType OverloadedFunctionSymbol::getBaseType() const
     return std::begin(type_info.overloads) -> paramAt(0);
 }
 
-SymbolType OverloadedFunctionSymbol::getSymbolType() const { return SymbolType::OVERLOADED_FUNCTION; }
+bool OverloadedFunctionSymbol::isFunction() const { return true; }
 
 const FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeInfo params_type) const
 {

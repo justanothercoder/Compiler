@@ -17,9 +17,7 @@ public:
 
     StructSymbol(const std::string& name, Scope* enclosing_scope);
 
-    SymbolType getSymbolType() const override;
     std::string getName() const override;
-
     size_t sizeOf() const override;
 
     const FunctionSymbol* getConversionTo(const Type *type) const;
@@ -39,6 +37,7 @@ public:
     const FunctionSymbol* methodWith(const std::string& name, FunctionTypeInfo ft) const;
     const FunctionSymbol* constructorWith(FunctionTypeInfo ft) const;
 
+    bool isType() const override;
     bool isUnsafeBlock() const override;
 
     void defineBuiltInMethod(std::string name, FunctionType type);
