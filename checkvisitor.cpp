@@ -79,7 +79,7 @@ void CheckVisitor::visit(UnaryNode* node)
 
 void CheckVisitor::visit(NewExpressionNode* node)
 {
-    for ( auto param : node -> typeInfo().templateParams() )
+    for ( auto param : node -> typeInfo().templateArgumentsInfo() )
     {
         if ( param.which() == 0 )
             boost::get< std::shared_ptr<ExprNode> >(param) -> accept(*this);
@@ -125,7 +125,7 @@ void CheckVisitor::visit(StructDeclarationNode *node)
 
 void CheckVisitor::visit(VariableDeclarationNode* node)
 {
-    for ( auto param : node -> typeInfo().templateParams() )
+    for ( auto param : node -> typeInfo().templateArgumentsInfo() )
     {
         if ( param.which() == 0 )
             boost::get< std::shared_ptr<ExprNode> >(param) -> accept(*this);
@@ -224,19 +224,13 @@ void CheckVisitor::visit(TemplateFunctionNode* node)
 
     auto ov_func = static_cast<const OverloadedFunctionSymbol*>(sym);
 
-    if ( node -> templateParams().empty() )
+    if ( node -> templateArgumentsInfo().empty() )
         node -> function(ov_func);
     else
     {
-        struct ExtractTemplateParam : boost::static_visitor<TemplateParam>
-        {
-            auto operator()(const std::shared_ptr<ExprNode>& expr) { return TemplateParam(*expr -> getCompileTimeValue()); }
-            auto operator()(const TypeInfo& type_info)             { return TemplateParam(type_info); }
-        } extract;
-        
-        std::vector<TemplateParam> template_arguments;
-        for ( auto param : node -> templateParams() )
-            template_arguments.emplace_back(boost::apply_visitor(extract, param));
+        auto template_arguments = TemplateArguments{ };
+        for ( auto argument_info : node -> templateArgumentsInfo() )
+            template_arguments.emplace_back(getTemplateArgument(argument_info));
 
         node -> function(new PartiallyInstantiatedFunctionSymbol(ov_func, template_arguments));
     }

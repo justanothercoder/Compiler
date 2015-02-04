@@ -4,7 +4,7 @@
 #include <map>
 #include "templatedeclarationnode.hpp"
 #include "typeinfo.hpp"
-#include "templateparam.hpp"
+#include "templateargument.hpp"
 #include "functiondeclarationinfo.hpp"
 #include "functiontraits.hpp"
 
@@ -21,7 +21,7 @@ public:
                                   , ASTNode statements
                                   , FunctionTraits traits
                                   , bool is_unsafe
-                                  , TemplateParamsList template_params);
+                                  , TemplateParamsInfo template_params);
 
     void build_scope() override;
     void accept(ASTVisitor& visitor);
@@ -30,9 +30,9 @@ public:
     std::string toString() const override;
     const Symbol* getDefinedSymbol() const override;
     
-    void addInstance(std::vector<TemplateParam> template_params, std::shared_ptr<DeclarationNode> decl) override;
-    std::shared_ptr<DeclarationNode> getInstance(std::vector<TemplateParam> template_params) const override;
-    std::shared_ptr<DeclarationNode> instantiateWithParams(std::vector<TemplateParam> params) override;
+    void addInstance(TemplateArguments template_params, std::shared_ptr<DeclarationNode> decl) override;
+    std::shared_ptr<DeclarationNode> getInstance(TemplateArguments template_params) const override;
+    std::shared_ptr<DeclarationNode> instantiateWithArguments(TemplateArguments params) override;
     std::vector<DeclarationNode*> allInstances() const override;
     
 public:
@@ -41,7 +41,7 @@ public:
     const FunctionDeclarationInfo& info() const;
     FunctionTraits traits() const;
     bool isUnsafe() const;
-    const TemplateParamsList& templateParams() const;
+    const TemplateParamsInfo& templateParamsInfo() const;
 
     AST* body();    
 
@@ -54,7 +54,7 @@ private:
     bool is_unsafe;
 
     std::map<long long, std::shared_ptr<DeclarationNode> > instances;
-    TemplateParamsList template_params;
+    TemplateParamsInfo template_params_info;
 
     std::shared_ptr<TemplateFunctionSymbol> defined_symbol;
 };

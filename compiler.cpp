@@ -55,17 +55,17 @@ VariableType Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
     return VariableType(type, type_info.isConst());
 }
 
-std::shared_ptr<DeclarationNode> Compiler::getSpecDecl(const TemplateSymbol *sym, std::vector<TemplateParam> template_params)
+std::shared_ptr<DeclarationNode> Compiler::getSpecDecl(const TemplateSymbol *sym, TemplateArguments template_arguments)
 {
-    if ( auto decl = sym -> holder() -> getInstance(template_params) )
+    if ( auto decl = sym -> holder() -> getInstance(template_arguments) )
         return decl;
 
-    auto decl = sym -> holder() -> instantiateWithParams(template_params);
-    sym -> holder() -> addInstance(template_params, decl);
+    auto decl = sym -> holder() -> instantiateWithArguments(template_arguments);
+    sym -> holder() -> addInstance(template_arguments, decl);
     return decl;
 }
 
-const Symbol* Compiler::getSpec(const TemplateSymbol *sym, std::vector<TemplateParam> tmpl_params)
+const Symbol* Compiler::getSpec(const TemplateSymbol *sym, TemplateArguments tmpl_arguments)
 {
-    return getSpecDecl(sym, tmpl_params) -> getDefinedSymbol();
+    return getSpecDecl(sym, tmpl_arguments) -> getDefinedSymbol();
 }

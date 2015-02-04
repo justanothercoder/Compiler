@@ -10,7 +10,8 @@
 
 class TypeInfo;
 
-using TemplateParamInfo = boost::variant< std::shared_ptr<ExprNode>, TypeInfo >;
+using TemplateArgumentInfo = boost::variant< std::shared_ptr<ExprNode>, TypeInfo >;
+using TemplateArgumentsInfo = std::vector<TemplateArgumentInfo>;
 using ParamInfo = std::pair<std::string, TypeInfo>;
 
 class TypeInfo
@@ -20,18 +21,17 @@ class TypeInfo
 
 public:
     TypeInfo();
-    TypeInfo(std::string                    type_name
-           , bool                           is_ref
-           , bool                           is_const
-           , std::vector<TemplateParamInfo> template_params = { }
-           , std::vector<TypeModifier>      modifiers = { }
+    TypeInfo(std::string                type_name
+           , bool                       is_ref
+           , bool                       is_const
+           , TemplateArgumentsInfo      template_arguments = { }
+           , std::vector<TypeModifier>  modifiers = { }
            , std::string module_name = "");
 
-    TypeInfo(const TypeInfo& type_info);
-    TypeInfo& operator=(const TypeInfo& type_info);
-
-    TypeInfo(TypeInfo&& type_info);
-    TypeInfo& operator=(TypeInfo&& type_info);
+    TypeInfo(const TypeInfo& type_info)            = default;
+    TypeInfo& operator=(const TypeInfo& type_info) = default;
+    TypeInfo(TypeInfo&& type_info)                 = default;
+    TypeInfo& operator=(TypeInfo&& type_info)      = default;
 
     std::string toString() const;
 
@@ -41,14 +41,14 @@ public:
     bool isRef() const;
     bool isConst() const;
     const std::vector<TypeModifier>& modifiers() const;
-    const std::vector<TemplateParamInfo>& templateParams() const;
+    const TemplateArgumentsInfo& templateArgumentsInfo() const;
     const std::string& moduleName() const;
 
 private:
 
     std::string type_name;
     bool is_ref, is_const;
-    std::vector<TemplateParamInfo> template_params;
+    TemplateArgumentsInfo template_arguments;
     std::vector<TypeModifier> modifiers_;
     std::string module_name;
 };

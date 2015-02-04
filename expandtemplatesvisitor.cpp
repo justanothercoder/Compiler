@@ -59,17 +59,6 @@ void ExpandTemplatesVisitor::visit(NewExpressionNode* node)
     node -> typeInfo(preprocessTypeInfo(node -> typeInfo(), node -> scope.get()));
 }
     
-TemplateParam ExpandTemplatesVisitor::getTemplateParam(TemplateParamInfo info)
-{
-    struct ExtractTemplateParam : boost::static_visitor<TemplateParam>
-    {
-        auto operator()(const std::shared_ptr<ExprNode>& expr) { return TemplateParam(*expr -> getCompileTimeValue()); }
-        auto operator()(const TypeInfo& type_info)             { return TemplateParam(type_info); }
-    } extract;
-
-    return boost::apply_visitor(extract, info);
-}
-
 TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope* scope)
 {
     if ( type_info.moduleName() != "" )
@@ -84,7 +73,7 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope* s
     
     if ( auto tmpl = dynamic_cast<const TemplateSymbol*>(type) )
     {
-        auto decl = instantiateSpec(tmpl, type_info.templateParams());
+        auto decl = instantiateSpec(tmpl, type_info.templateArgumentsInfo());
         type_info.name(decl -> getDefinedSymbol() -> getName());
     
         if ( type_info.moduleName() != "" )
@@ -101,20 +90,21 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope* s
     return type_info;
 }
 
-std::shared_ptr<DeclarationNode> ExpandTemplatesVisitor::instantiateSpec(const TemplateSymbol* tmpl, std::vector<TemplateParamInfo> template_params)
+std::shared_ptr<DeclarationNode> ExpandTemplatesVisitor::instantiateSpec(const TemplateSymbol* tmpl
+                                                                       , const TemplateArgumentsInfo& template_arguments_info)
 {   
-    assert(template_params.size() == tmpl -> templateSymbols().size());
+    assert(template_arguments_info.size() == tmpl -> templateSymbols().size());
 
-    std::vector<TemplateParam> tmpl_params;
-    for ( auto param_info : template_params )
-       tmpl_params.push_back(getTemplateParam(param_info)); 
+    auto tmpl_arguments = TemplateArguments{ };
+    for ( const auto& argument_info : template_arguments_info )
+       tmpl_arguments.push_back(getTemplateArgument(argument_info)); 
     
-    if ( auto inst = tmpl -> holder() -> getInstance(tmpl_params) )
+    if ( auto inst = tmpl -> holder() -> getInstance(tmpl_arguments) )
         return inst;
 
-    auto decl = getSpecDecl(tmpl, tmpl_params);
+    auto decl = getSpecDecl(tmpl, tmpl_arguments);
 
-    tmpl -> holder() -> addInstance(tmpl_params, decl);
+    tmpl -> holder() -> addInstance(tmpl_arguments, decl);
 
     decl -> accept(*this);
     return decl;

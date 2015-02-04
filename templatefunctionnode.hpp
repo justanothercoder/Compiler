@@ -10,7 +10,7 @@ class TemplateFunctionNode : public ExprNode
 {
 public:
 
-    TemplateFunctionNode(const std::string& name, std::vector<TemplateParamInfo> template_params);
+    TemplateFunctionNode(const std::string& name, TemplateArgumentsInfo template_arguments);
 
     ASTNode copyTree() const override;
 
@@ -29,13 +29,13 @@ public:
     const FunctionalType* function();
     void function(const FunctionalType* type);
 
-    const std::vector<TemplateParamInfo>& templateParams() const;
+    const TemplateArgumentsInfo& templateArgumentsInfo() const;
 
 private:
 
     std::string name_;    
     const FunctionalType* function_ = nullptr;
-    std::vector<TemplateParamInfo> template_params;
+    TemplateArgumentsInfo template_arguments;
 };
 
 #endif

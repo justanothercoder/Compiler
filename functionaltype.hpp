@@ -6,7 +6,7 @@
 #include "type.hpp"
 #include "callinfo.hpp"
 #include "functiontypeinfo.hpp"
-#include "templateparam.hpp"
+#include "templateargument.hpp"
 
 class TemplateSymbol;
 
@@ -27,8 +27,8 @@ bool checkValues(std::vector<ValueInfo> arguments, std::vector<VariableType> par
 std::vector<ConversionInfo> getConversions(std::vector<ValueInfo> arguments, std::vector<VariableType> params);
 ConversionInfo getConversionInfo(const Type *lhs, const Type *rhs);
 
-boost::optional< std::map<std::string, TemplateParam> > makeMappingOfParams(const TemplateSymbol* tmpl
-                                                                          , const std::vector<ParamInfo>& formal_params
-                                                                          , FunctionTypeInfo arguments);
+boost::optional< std::map<std::string, TemplateArgument> > makeMappingOfParams(const TemplateSymbol* tmpl
+                                                                             , const std::vector<ParamInfo>& formal_params
+                                                                             , FunctionTypeInfo arguments);
 
 #endif

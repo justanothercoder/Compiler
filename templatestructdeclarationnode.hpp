@@ -4,7 +4,7 @@
 #include <map>
 #include "templatedeclarationnode.hpp"
 #include "typeinfo.hpp"
-#include "templateparam.hpp"
+#include "templateargument.hpp"
 #include "templatestructsymbol.hpp"
 
 class TemplateStructDeclarationNode : public TemplateDeclarationNode
@@ -13,7 +13,7 @@ class TemplateStructDeclarationNode : public TemplateDeclarationNode
 
 public:
 
-    TemplateStructDeclarationNode(std::string name, std::vector<ASTNode> inner, TemplateParamsList template_params);
+    TemplateStructDeclarationNode(std::string name, std::vector<ASTNode> inner, TemplateParamsInfo template_params);
 
     void build_scope() override;
     void accept(ASTVisitor& visitor);
@@ -23,11 +23,11 @@ public:
     Symbol* getDefinedSymbol() const override;
 
     std::string name() const;
-    const TemplateParamsList& templateParams() const;
+    const TemplateParamsInfo& templateParamsInfo() const;
     
-    void addInstance(std::vector<TemplateParam> template_params, std::shared_ptr<DeclarationNode> decl) override;
-    std::shared_ptr<DeclarationNode> getInstance(std::vector<TemplateParam> template_params) const override;
-    std::shared_ptr<DeclarationNode> instantiateWithParams(std::vector<TemplateParam> params) override;
+    void addInstance(TemplateArguments template_params, std::shared_ptr<DeclarationNode> decl) override;
+    std::shared_ptr<DeclarationNode> getInstance(TemplateArguments template_params) const override;
+    std::shared_ptr<DeclarationNode> instantiateWithArguments(TemplateArguments params) override;
     std::vector<DeclarationNode*> allInstances() const override;
 
 private:
@@ -36,7 +36,7 @@ private:
     std::vector<ASTNode> inner;
 
     std::map<long long, std::shared_ptr<DeclarationNode> > instances;
-    TemplateParamsList template_params;
+    TemplateParamsInfo template_params;
 
     std::shared_ptr<TemplateStructSymbol> defined_symbol;
 };

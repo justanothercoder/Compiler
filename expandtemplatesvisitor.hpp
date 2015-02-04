@@ -52,9 +52,7 @@ private:
     void visitChildren(AST* t);
 
     TypeInfo preprocessTypeInfo(TypeInfo type_info, Scope *scope);
-    std::shared_ptr<DeclarationNode> instantiateSpec(const TemplateSymbol* tmpl, std::vector<TemplateParamInfo> template_params);
-
-    TemplateParam getTemplateParam(TemplateParamInfo info);
+    std::shared_ptr<DeclarationNode> instantiateSpec(const TemplateSymbol* tmpl, const TemplateArgumentsInfo& template_params);
 
     std::set<TemplateSymbol*> template_symbols;
 };

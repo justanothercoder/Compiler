@@ -4,7 +4,7 @@
 
 #include "variablenode.hpp"
 
-TemplateStructSymbol::TemplateStructSymbol(std::string name, TemplateParamsList template_symbols, TemplateDeclarationNode* _holder) 
+TemplateStructSymbol::TemplateStructSymbol(std::string name, TemplateParamsInfo template_symbols, TemplateDeclarationNode* _holder) 
     : name(name)
     , template_symbols(template_symbols)
     , _holder(_holder)
@@ -14,5 +14,5 @@ TemplateStructSymbol::TemplateStructSymbol(std::string name, TemplateParamsList 
 
 std::string TemplateStructSymbol::getName() const { return name; }
 
-TemplateParamsList TemplateStructSymbol::templateSymbols() const { return template_symbols; }
+TemplateParamsInfo TemplateStructSymbol::templateSymbols() const { return template_symbols; }
 TemplateDeclarationNode* TemplateStructSymbol::holder() const { return _holder; }

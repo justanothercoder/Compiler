@@ -5,8 +5,8 @@
 #include "logger.hpp"
 
 PartiallyInstantiatedFunctionSymbol::PartiallyInstantiatedFunctionSymbol(const OverloadedFunctionSymbol* ov_func
-                                                                       , std::vector<TemplateParam> tmpl_arguments) : ov_func(ov_func)
-                                                                                                                    , tmpl_arguments(tmpl_arguments)
+                                                                       , TemplateArguments tmpl_arguments) : ov_func(ov_func)
+                                                                                                           , tmpl_arguments(tmpl_arguments)
 {
 
 }

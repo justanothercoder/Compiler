@@ -9,15 +9,15 @@ TemplateFunctionDeclarationNode::TemplateFunctionDeclarationNode(const std::stri
                                                                , ASTNode statements
                                                                , FunctionTraits traits
                                                                , bool is_unsafe
-                                                               , TemplateParamsList template_params)
+                                                               , TemplateParamsInfo template_params_info)
     : name_(name)
     , info_(info)
     , statements(std::move(statements))
     , traits_(traits)
     , is_unsafe(is_unsafe)
-    , template_params(template_params)
+    , template_params_info(template_params_info)
 {
-    defined_symbol = std::make_shared<TemplateFunctionSymbol>(name, template_params, this);
+    defined_symbol = std::make_shared<TemplateFunctionSymbol>(name, template_params_info, this);
 }
 
 void TemplateFunctionDeclarationNode::build_scope() { }
@@ -25,7 +25,7 @@ void TemplateFunctionDeclarationNode::accept(ASTVisitor& visitor) { visitor.visi
 
 ASTNode TemplateFunctionDeclarationNode::copyTree() const 
 {
-    return std::make_unique<TemplateFunctionDeclarationNode>(name_, info_, statements -> copyTree(), traits_, is_unsafe, template_params); 
+    return std::make_unique<TemplateFunctionDeclarationNode>(name_, info_, statements -> copyTree(), traits_, is_unsafe, template_params_info); 
 }
 
 std::string TemplateFunctionDeclarationNode::toString() const
@@ -33,12 +33,12 @@ std::string TemplateFunctionDeclarationNode::toString() const
     auto res = std::string("");    
     res += "template <";
 
-    if ( !template_params.empty() )
+    if ( !template_params_info.empty() )
     {
-        auto it = std::begin(template_params);
+        auto it = std::begin(template_params_info);
         res += it -> second.toString() + " " + it -> first;
 
-        for ( ++it; it != std::end(template_params); ++it )
+        for ( ++it; it != std::end(template_params_info); ++it )
             res += ", " + it -> second.toString() + " " + it -> first;
     }
 
@@ -64,20 +64,20 @@ std::string TemplateFunctionDeclarationNode::toString() const
 
 const Symbol* TemplateFunctionDeclarationNode::getDefinedSymbol() const { return defined_symbol.get(); }
 
-void TemplateFunctionDeclarationNode::addInstance(std::vector<TemplateParam> template_params, std::shared_ptr<DeclarationNode> decl) 
+void TemplateFunctionDeclarationNode::addInstance(TemplateArguments template_arguments, std::shared_ptr<DeclarationNode> decl) 
 {
-    instances[hashTemplateParams(template_params)] = decl;
+    instances[hashTemplateArguments(template_arguments)] = decl;
 }
 
-std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::getInstance(std::vector<TemplateParam> template_params) const 
+std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::getInstance(TemplateArguments template_arguments) const 
 {
-	auto it = instances.find(hashTemplateParams(template_params));
+	auto it = instances.find(hashTemplateArguments(template_arguments));
     return it != std::end(instances) ? it -> second : nullptr;
 }
 
-std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::instantiateWithParams(std::vector<TemplateParam> params) 
+std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::instantiateWithArguments(TemplateArguments arguments) 
 {
-    auto template_info = TemplateInfo(defined_symbol.get(), params);
+    auto template_info = TemplateInfo(defined_symbol.get(), arguments);
     RebuildTreeVisitor rebuild(template_info);
 
     statements -> accept(rebuild);    
@@ -114,5 +114,5 @@ const FunctionDeclarationInfo& TemplateFunctionDeclarationNode::info() const { r
 FunctionTraits TemplateFunctionDeclarationNode::traits() const { return traits_; }
 bool TemplateFunctionDeclarationNode::isUnsafe() const { return is_unsafe; }
 
-const TemplateParamsList& TemplateFunctionDeclarationNode::templateParams() const { return template_params; }
+const TemplateParamsInfo& TemplateFunctionDeclarationNode::templateParamsInfo() const { return template_params_info; }
 AST* TemplateFunctionDeclarationNode::body() { return statements.get(); }

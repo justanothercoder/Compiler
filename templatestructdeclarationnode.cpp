@@ -9,9 +9,9 @@
 
 TemplateStructDeclarationNode::TemplateStructDeclarationNode(std::string name
                                                            , std::vector<ASTNode> inner
-                                                           , TemplateParamsList template_params) : name_(name)
-                                                                                                 , inner(std::move(inner))
-                                                                                                 , template_params(template_params)
+                                                           , TemplateParamsInfo template_params) : name_(name)
+                                                                                                      , inner(std::move(inner))
+                                                                                                      , template_params(template_params)
 {
     defined_symbol = std::make_shared<TemplateStructSymbol>(name, template_params, this);
 }
@@ -21,14 +21,14 @@ void TemplateStructDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(
 
 Symbol* TemplateStructDeclarationNode::getDefinedSymbol() const { return defined_symbol.get(); }
 
-void TemplateStructDeclarationNode::addInstance(std::vector<TemplateParam> template_params, std::shared_ptr<DeclarationNode> node)
+void TemplateStructDeclarationNode::addInstance(TemplateArguments template_arguments, std::shared_ptr<DeclarationNode> node)
 {
-    instances[hashTemplateParams(template_params)] = node;
+    instances[hashTemplateArguments(template_arguments)] = node;
 }
 
-std::shared_ptr<DeclarationNode> TemplateStructDeclarationNode::getInstance(std::vector<TemplateParam> template_params) const
+std::shared_ptr<DeclarationNode> TemplateStructDeclarationNode::getInstance(TemplateArguments template_arguments) const
 {
-	auto it = instances.find(hashTemplateParams(template_params));
+	auto it = instances.find(hashTemplateArguments(template_arguments));
     return it != std::end(instances) ? it -> second : nullptr;
 }
 
@@ -76,7 +76,7 @@ std::string TemplateStructDeclarationNode::toString() const
     return res;
 }
 
-std::shared_ptr<DeclarationNode> TemplateStructDeclarationNode::instantiateWithParams(std::vector<TemplateParam> params)
+std::shared_ptr<DeclarationNode> TemplateStructDeclarationNode::instantiateWithArguments(TemplateArguments params)
 {
     auto template_info = TemplateInfo(defined_symbol.get(), params);
     RebuildTreeVisitor rebuild(template_info);
@@ -97,4 +97,4 @@ std::shared_ptr<DeclarationNode> TemplateStructDeclarationNode::instantiateWithP
 }
    
 std::string TemplateStructDeclarationNode::name() const { return name_; }
-const TemplateParamsList& TemplateStructDeclarationNode::templateParams() const { return template_params; }
+const TemplateParamsInfo& TemplateStructDeclarationNode::templateParamsInfo() const { return template_params; }

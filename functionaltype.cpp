@@ -10,11 +10,11 @@ bool FunctionalType::isConvertableTo(const Type *) const { return false; }
 boost::optional<int> FunctionalType::rankOfConversion(const Type *) const { return boost::none; }
 const FunctionSymbol* FunctionalType::getConversionTo(const Type *) const { return nullptr; }
 
-boost::optional< std::map<std::string, TemplateParam> > makeMappingOfParams(const TemplateSymbol* tmpl
-                                                                          , const std::vector<ParamInfo>& formal_params
-                                                                          , FunctionTypeInfo arguments)
+boost::optional< std::map<std::string, TemplateArgument> > makeMappingOfParams(const TemplateSymbol* tmpl
+                                                                             , const std::vector<ParamInfo>& formal_params
+                                                                             , FunctionTypeInfo arguments)
 {
-    std::map<std::string, TemplateParam> template_params_map;
+    std::map<std::string, TemplateArgument> template_params_map;
 
     auto args = arguments.params();
 

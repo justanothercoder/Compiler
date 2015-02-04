@@ -7,7 +7,7 @@ NewExpressionNode::NewExpressionNode(TypeInfo type_info, std::vector<ASTExprNode
 void NewExpressionNode::build_scope()
 {
     AST::build_scope();
-    for ( auto param : type_info.templateParams() )
+    for ( auto param : type_info.templateArgumentsInfo() )
     {
         if ( param.which() == 0 )
         {

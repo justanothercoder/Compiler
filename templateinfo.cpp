@@ -3,18 +3,18 @@
 
 TemplateInfo::TemplateInfo() : TemplateInfo(nullptr, { }) { }
 
-TemplateInfo::TemplateInfo(const TemplateSymbol *sym, std::vector<TemplateParam> template_params) : sym(sym), template_params(template_params)
+TemplateInfo::TemplateInfo(const TemplateSymbol *sym, TemplateArguments template_arguments) : sym(sym), template_arguments(template_arguments)
 {
 
 }
 
-boost::optional<TemplateParam> TemplateInfo::getReplacement(std::string name) const
+boost::optional<TemplateArgument> TemplateInfo::getReplacement(std::string name) const
 {
     auto template_symbols = sym -> templateSymbols();
     for ( size_t i = 0; i < template_symbols.size(); ++i )
     {
         if ( template_symbols[i].first == name )
-            return template_params[i];
+            return template_arguments[i];
     }
     return boost::none;
 }
@@ -25,12 +25,14 @@ std::string TemplateInfo::getInstName() const
 {
     auto templates_name = std::string("");
     templates_name += sym -> getName() + "~";
-    for ( auto param : template_params )
+    for ( auto param : template_arguments )
     {
-        if ( param.which() == 0 )
+        if ( param.which() == 0 ) {
             templates_name += boost::get<TypeInfo>(param).name();
-        else
+        }
+        else {
             templates_name += std::to_string(boost::get<int>(param));
+        }
     }
 
     return templates_name;

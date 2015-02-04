@@ -8,9 +8,9 @@
 class TemplateDeclarationNode : public DeclarationNode
 {
 public:
-    virtual void addInstance(std::vector<TemplateParam> template_params, std::shared_ptr<DeclarationNode> decl) = 0;
-    virtual std::shared_ptr<DeclarationNode> getInstance(std::vector<TemplateParam> template_params) const = 0;    
-    virtual std::shared_ptr<DeclarationNode> instantiateWithParams(std::vector<TemplateParam> params) = 0;
+    virtual void addInstance(TemplateArguments template_arguments, std::shared_ptr<DeclarationNode> decl) = 0;
+    virtual std::shared_ptr<DeclarationNode> getInstance(TemplateArguments template_arguments) const = 0;    
+    virtual std::shared_ptr<DeclarationNode> instantiateWithArguments(TemplateArguments params) = 0;
     virtual std::vector<DeclarationNode*> allInstances() const = 0;
 };
 

@@ -178,7 +178,7 @@ std::unique_ptr<DeclarationNode> Parser::declaration(boost::optional<std::string
     if      ( getTokenType(1) == TokenType::STRUCT )   return structDecl();
     else if ( getTokenType(1) == TokenType::DEF )      return functionDecl(struct_name);
     else if ( getTokenType(1) == TokenType::VAR )      return varInferDecl(struct_name);
-    else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateDecl(struct_name, templateParams()); 
+    else if ( getTokenType(1) == TokenType::TEMPLATE ) return templateDecl(struct_name, templateParamsInfo()); 
     else if ( tryVarDecl() )                           return variableDecl(struct_name);
     else                                               throw RecognitionError("Declaration expected", getToken(1).line, getToken(1).symbol);
 }
@@ -264,36 +264,36 @@ std::unique_ptr<DeclarationNode> Parser::structDecl()
     return std::make_unique<StructDeclarationNode>(std::move(struct_name), std::move(struct_in));
 }
 
-std::unique_ptr<DeclarationNode> Parser::templateDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params)
+std::unique_ptr<DeclarationNode> Parser::templateDecl(boost::optional<std::string> struct_name, TemplateParamsInfo template_params_info)
 {
     if ( getTokenType(1) == TokenType::DEF )
-        return templateFunctionDecl(struct_name, template_params);
+        return templateFunctionDecl(struct_name, template_params_info);
     else
-        return templateStructDecl(template_params);
+        return templateStructDecl(template_params_info);
 }
 
-TemplateParamsList Parser::templateParams()
+TemplateParamsInfo Parser::templateParamsInfo()
 {
     match(TokenType::TEMPLATE);
     match(TokenType::LESS);
 
-    auto template_params = TemplateParamsList{ };
+    auto template_params_info = TemplateParamsInfo{ };
 
     if ( getTokenType(1) != TokenType::GREATER )
     {
-        template_params.emplace_back(paramInfo());
+        template_params_info.emplace_back(paramInfo());
         while ( getTokenType(1) == TokenType::COMMA )
         {
             match(TokenType::COMMA);
-            template_params.emplace_back(paramInfo());
+            template_params_info.emplace_back(paramInfo());
         }
     }
 
     match(TokenType::GREATER);
-    return template_params;
+    return template_params_info;
 }
     
-std::unique_ptr<DeclarationNode> Parser::templateStructDecl(TemplateParamsList template_params)
+std::unique_ptr<DeclarationNode> Parser::templateStructDecl(TemplateParamsInfo template_params_info)
 {
     match(TokenType::STRUCT);
 
@@ -312,7 +312,7 @@ std::unique_ptr<DeclarationNode> Parser::templateStructDecl(TemplateParamsList t
     rememberSymbol(struct_name, SymbolType::TEMPLATESTRUCT);
     pushScope();
 
-    for ( auto param_info : template_params )
+    for ( const auto& param_info : template_params_info )
     {
         if ( param_info.second.name() == "class" )
             rememberSymbol(param_info.first, SymbolType::STRUCT);
@@ -332,10 +332,10 @@ std::unique_ptr<DeclarationNode> Parser::templateStructDecl(TemplateParamsList t
     match(TokenType::RBRACE);
     popScope();
 
-    return std::make_unique<TemplateStructDeclarationNode>(std::move(struct_name), std::move(struct_in), std::move(template_params));
+    return std::make_unique<TemplateStructDeclarationNode>(std::move(struct_name), std::move(struct_in), std::move(template_params_info));
 }
 
-std::unique_ptr<DeclarationNode> Parser::templateFunctionDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params)
+std::unique_ptr<DeclarationNode> Parser::templateFunctionDecl(boost::optional<std::string> struct_name, TemplateParamsInfo template_params_info)
 {
     match(TokenType::DEF);
 
@@ -355,7 +355,7 @@ std::unique_ptr<DeclarationNode> Parser::templateFunctionDecl(boost::optional<st
 
     pushScope();
     
-    for ( const auto& param_info : template_params )
+    for ( const auto& param_info : template_params_info )
         rememberSymbol(param_info.first, (param_info.second.name() == "class" ? SymbolType::STRUCT : SymbolType::VARIABLE));
 
     auto params = formalParams();
@@ -388,7 +388,7 @@ std::unique_ptr<DeclarationNode> Parser::templateFunctionDecl(boost::optional<st
                                                            , std::move(statements)
                                                            , FunctionTraits{bool(struct_name), is_constructor, is_operator}
                                                            , is_unsafe
-                                                           , std::move(template_params)
+                                                           , std::move(template_params_info)
                                                           );
 
 }
@@ -506,7 +506,7 @@ ASTExprNode Parser::variable()
         case SymbolType::FUNCTION: return std::make_unique<FunctionNode>(var_name);
         case SymbolType::TEMPLATEFUNCTION:
         {
-            auto template_params = std::vector<TemplateParamInfo>{ };
+            auto template_arguments = TemplateArgumentsInfo{ };
             
             if ( getTokenType(1) == TokenType::LESS )
             {
@@ -514,18 +514,18 @@ ASTExprNode Parser::variable()
 
                 if ( getTokenType(1) != TokenType::GREATER )
                 {
-                    template_params.emplace_back(templateParamInfo());
+                    template_arguments.emplace_back(templateArgumentInfo());
                     while ( getTokenType(1) == TokenType::COMMA )
                     {
                         match(TokenType::COMMA);
-                        template_params.emplace_back(templateParamInfo());
+                        template_arguments.emplace_back(templateArgumentInfo());
                     }
                 }
 
                 match(TokenType::GREATER);
             }
 
-            return std::make_unique<TemplateFunctionNode>(std::move(var_name), std::move(template_params));
+            return std::make_unique<TemplateFunctionNode>(std::move(var_name), std::move(template_arguments));
         }
         default: throw std::logic_error("Internal error");
     }
@@ -577,6 +577,7 @@ ASTExprNode Parser::lambda_expr()
     match(TokenType::RBRACKET);
 
     auto params = formalParams();
+    return nullptr;
 }
 
 ASTExprNode Parser::unary_right()
@@ -867,12 +868,14 @@ ASTNode Parser::for_stat()
     return std::make_unique<ForNode>(std::move(init), std::move(cond), std::move(step), std::move(stats));
 }
 
-TemplateParamInfo Parser::templateParamInfo()
+TemplateArgumentInfo Parser::templateArgumentInfo()
 {
-    if ( tryTypeInfo() )
+    if ( tryTypeInfo() ) {
         return typeInfo();
-    else
+    }
+    else {
         return expression();
+    }
 }
 
 TypeInfo Parser::typeInfo()
@@ -918,7 +921,7 @@ TypeInfo Parser::typeInfo()
 
     }
 
-    auto template_params = std::vector<TemplateParamInfo>{ };
+    auto template_arguments = TemplateArgumentsInfo{ };
 
     if ( getTokenType(1) == TokenType::LESS )
     {
@@ -926,11 +929,11 @@ TypeInfo Parser::typeInfo()
 
         if ( getTokenType(1) != TokenType::GREATER )
         {
-            template_params.emplace_back(templateParamInfo());
+            template_arguments.emplace_back(templateArgumentInfo());
             while ( getTokenType(1) == TokenType::COMMA )
             {
                 match(TokenType::COMMA);
-                template_params.emplace_back(templateParamInfo());
+                template_arguments.emplace_back(templateArgumentInfo());
             }
         }
 
@@ -967,7 +970,7 @@ TypeInfo Parser::typeInfo()
         match(TokenType::REF);
     }
 
-    return TypeInfo(type_name, is_ref, is_const, template_params, modifiers, module_name);
+    return TypeInfo(type_name, is_ref, is_const, template_arguments, modifiers, module_name);
 }
 
 ParamInfo Parser::paramInfo()

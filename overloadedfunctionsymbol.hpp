@@ -2,7 +2,7 @@
 #define _OVERLOADEDFUNCTIONSYMBOL_HPP_
 
 #include "symbol.hpp"
-#include "templateparam.hpp"
+#include "templateargument.hpp"
 #include "functiontraits.hpp"
 #include "functionaltype.hpp"
 #include "overloadedfunctiontypeinfo.hpp"

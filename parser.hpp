@@ -10,7 +10,7 @@
 
 #include "abstractparser.hpp"
 #include "symbol.hpp"
-#include "templateparam.hpp"
+#include "templateargument.hpp"
 
 class DeclarationNode;
 
@@ -46,8 +46,8 @@ private:
 
     std::vector<ASTExprNode> call_params_list();
 
-    TemplateParamInfo templateParamInfo();
-    TemplateParamsList templateParams();
+    TemplateArgumentInfo templateArgumentInfo();
+    TemplateParamsInfo templateParamsInfo();
 
     std::unique_ptr<DeclarationNode> declaration(boost::optional<std::string> struct_name = boost::none);
     std::unique_ptr<DeclarationNode> structDecl();
@@ -55,9 +55,9 @@ private:
     std::unique_ptr<DeclarationNode> functionDecl(boost::optional<std::string> struct_name = boost::none);
     std::unique_ptr<DeclarationNode> varInferDecl(boost::optional<std::string> struct_name = boost::none);
 
-    std::unique_ptr<DeclarationNode> templateDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params); 
-    std::unique_ptr<DeclarationNode> templateFunctionDecl(boost::optional<std::string> struct_name, TemplateParamsList template_params);
-    std::unique_ptr<DeclarationNode> templateStructDecl(TemplateParamsList template_params);
+    std::unique_ptr<DeclarationNode> templateDecl(boost::optional<std::string> struct_name, TemplateParamsInfo template_params_info); 
+    std::unique_ptr<DeclarationNode> templateFunctionDecl(boost::optional<std::string> struct_name, TemplateParamsInfo template_params_info);
+    std::unique_ptr<DeclarationNode> templateStructDecl(TemplateParamsInfo template_params_info);
 
     ASTNode break_stat();
     ASTNode from_import_stat();

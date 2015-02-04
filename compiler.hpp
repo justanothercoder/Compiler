@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <vector>
-#include "templateparam.hpp"
+#include "templateargument.hpp"
 #include "variabletype.hpp"
 
 class Scope;
@@ -18,8 +18,8 @@ public:
 
     VariableType fromTypeInfo(const TypeInfo& type_info, Scope* scope);
 
-    std::shared_ptr<DeclarationNode> getSpecDecl(const TemplateSymbol* sym, std::vector<TemplateParam> template_params);
-    const Symbol* getSpec(const TemplateSymbol* sym, std::vector<TemplateParam> template_params);
+    std::shared_ptr<DeclarationNode> getSpecDecl(const TemplateSymbol* sym, TemplateArguments template_arguments);
+    const Symbol* getSpec(const TemplateSymbol* sym, TemplateArguments template_arguments);
 
 };
 

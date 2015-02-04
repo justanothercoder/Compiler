@@ -32,7 +32,7 @@ void VariableDeclarationNode::build_scope()
         const std::shared_ptr<Scope>& scope;
     } build(scope);
 
-    for ( auto param : type_info.templateParams() )
+    for ( auto param : type_info.templateArgumentsInfo() )
         boost::apply_visitor(build, param);
 
     for ( const auto& modifier : type_info.modifiers() )

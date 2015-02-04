@@ -50,19 +50,19 @@ ASTExprNode RebuildTreeVisitor::rebuild(ExprNode* node)
 
 TypeInfo RebuildTreeVisitor::processTypeInfo(TypeInfo type_info)
 {
-    auto name            = std::string("");
-    auto is_ref          = type_info.isRef();
-    auto is_const        = type_info.isConst();
-    auto template_params = std::vector<TemplateParamInfo>{ };    
-    auto modifiers       = std::vector<TypeModifier>{ };
-    auto module_name     = type_info.moduleName();
+    auto name               = std::string("");
+    auto is_ref             = type_info.isRef();
+    auto is_const           = type_info.isConst();
+    auto template_arguments = TemplateArgumentsInfo{ };
+    auto modifiers          = std::vector<TypeModifier>{ };
+    auto module_name        = type_info.moduleName();
 
     if ( type_info.name() == template_info.sym -> getName() )
     {
-        name            = template_info.getInstName();
-        template_params = type_info.templateParams();
-        modifiers       = type_info.modifiers();
-        module_name     = "";
+        name               = template_info.getInstName();
+        template_arguments = type_info.templateArgumentsInfo();
+        modifiers          = type_info.modifiers();
+        module_name        = "";
     }
     else if ( template_info.isIn(type_info.name()) )
     {
@@ -72,21 +72,21 @@ TypeInfo RebuildTreeVisitor::processTypeInfo(TypeInfo type_info)
         auto modifiers_ = new_info.modifiers();
         modifiers_.insert(std::end(modifiers_), std::begin(type_info.modifiers()), std::end(type_info.modifiers()));
         
-        name            = new_info.name();
-        is_ref          = new_info.isRef()   || type_info.isRef();
-        is_const        = new_info.isConst() || type_info.isConst();
-        template_params = new_info.templateParams();
-        modifiers       = modifiers_; 
-        module_name     = "";
+        name               = new_info.name();
+        is_ref             = new_info.isRef()   || type_info.isRef();
+        is_const           = new_info.isConst() || type_info.isConst();
+        template_arguments = new_info.templateArgumentsInfo();
+        modifiers          = modifiers_; 
+        module_name        = "";
     }
     else
     {
-        name            = type_info.name();
-        template_params = type_info.templateParams();
-        modifiers       = type_info.modifiers();
+        name               = type_info.name();
+        template_arguments = type_info.templateArgumentsInfo();
+        modifiers          = type_info.modifiers();
     }
 
-    for ( auto& param : template_params )
+    for ( auto& param : template_arguments )
     {
         if ( param.which() == 0 )
             param = std::shared_ptr<ExprNode>{rebuild(boost::get< std::shared_ptr<ExprNode> >(param).get())};
@@ -98,7 +98,7 @@ TypeInfo RebuildTreeVisitor::processTypeInfo(TypeInfo type_info)
             modifier = TypeModifier(std::shared_ptr<ExprNode>{rebuild(*dim)});
     }
 
-    return TypeInfo(name, is_ref, is_const, template_params, modifiers, module_name);
+    return TypeInfo(name, is_ref, is_const, template_arguments, modifiers, module_name);
 }
 
 void RebuildTreeVisitor::visit(IfNode* node) 
@@ -225,7 +225,7 @@ void RebuildTreeVisitor::visit(TemplateStructDeclarationNode* node)
 
     _ast = std::make_unique<TemplateStructDeclarationNode>(node -> name()
                                                          , std::move(new_inner)
-                                                         , node -> templateParams());
+                                                         , node -> templateParamsInfo());
 }
 
 void RebuildTreeVisitor::visit(TemplateFunctionDeclarationNode* node) 
@@ -235,12 +235,12 @@ void RebuildTreeVisitor::visit(TemplateFunctionDeclarationNode* node)
                                                            , rebuild(node -> body())
                                                            , node -> traits()
                                                            , node -> isUnsafe()
-                                                           , node -> templateParams());
+                                                           , node -> templateParamsInfo());
 }
 
 void RebuildTreeVisitor::visit(TemplateFunctionNode* node) 
 {
-    _ast = std::make_unique<TemplateFunctionNode>(node -> name(), node -> templateParams());
+    _ast = std::make_unique<TemplateFunctionNode>(node -> name(), node -> templateArgumentsInfo());
 }
 
 void RebuildTreeVisitor::visit(NullNode* )         { _ast = std::make_unique<NullNode>(); }

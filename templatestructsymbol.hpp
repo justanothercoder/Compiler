@@ -6,7 +6,7 @@
 #include "templatesymbol.hpp"
 #include "typeinfo.hpp"
 #include "structsymbol.hpp"
-#include "templateparam.hpp"
+#include "templateargument.hpp"
 
 class DeclarationNode;
 class StructSymbol;
@@ -16,20 +16,20 @@ class TemplateStructSymbol : public TemplateSymbol
 {
 public:
 
-    TemplateStructSymbol(std::string name, TemplateParamsList template_symbols, TemplateDeclarationNode* _holder);
+    TemplateStructSymbol(std::string name, TemplateParamsInfo template_symbols, TemplateDeclarationNode* _holder);
 
     std::string getName() const override;
 
     bool isIn(std::string name) const;
     
     TemplateDeclarationNode* holder() const override;
-    TemplateParamsList templateSymbols() const override;
+    TemplateParamsInfo templateSymbols() const override;
 
 private:
 
     std::string name;
 
-    TemplateParamsList template_symbols;
+    TemplateParamsInfo template_symbols;
     TemplateDeclarationNode* _holder;
 };
 
