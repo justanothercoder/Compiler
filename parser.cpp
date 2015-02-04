@@ -88,6 +88,25 @@ boost::optional<SymbolType> Parser::resolveSymbolType(std::string name)
     return sym_type;
 }
 
+std::vector<ParamInfo> Parser::formalParams()
+{
+    auto params = std::vector<ParamInfo>{ };
+    match(TokenType::LPAREN);
+
+    if ( getTokenType(1) != TokenType::RPAREN )
+    {
+        params.emplace_back(paramInfo());
+        while ( getTokenType(1) != TokenType::RPAREN )
+        {
+            match(TokenType::COMMA);
+            params.emplace_back(paramInfo());
+        }
+    }
+
+    match(TokenType::RPAREN);
+    return params;
+}
+
 ASTNode Parser::parse()
 {
     pushScope();
@@ -130,13 +149,13 @@ ASTNode Parser::statement()
     else if ( getTokenType(1) == TokenType::IF     ) return if_stat();
     else if ( getTokenType(1) == TokenType::WHILE  ) return while_stat();
     else if ( getTokenType(1) == TokenType::FOR    ) return for_stat();
-    else if ( tryAssignment() )                      return assignment();
     else if ( getTokenType(1) == TokenType::LBRACE ) return block();
     else if ( getTokenType(1) == TokenType::IMPORT ) return import_stat();
     else if ( getTokenType(1) == TokenType::UNSAFE ) return unsafe_block();
     else if ( getTokenType(1) == TokenType::EXTERN ) return extern_stat();
     else if ( getTokenType(1) == TokenType::FROM   ) return from_import_stat();
     else if ( getTokenType(1) == TokenType::BREAK  ) return break_stat();
+    else if ( tryAssignment() )                      return assignment();
     else                                             return expression();
 }
 
@@ -339,32 +358,9 @@ std::unique_ptr<DeclarationNode> Parser::templateFunctionDecl(boost::optional<st
     for ( const auto& param_info : template_params )
         rememberSymbol(param_info.first, (param_info.second.name() == "class" ? SymbolType::STRUCT : SymbolType::VARIABLE));
 
-    auto params = std::vector<ParamInfo>{ };
-
-    match(TokenType::LPAREN);
-
-    if ( getTokenType(1) != TokenType::RPAREN )
-    {
-        auto type_info = typeInfo();
-        auto name = id();
-
-        rememberSymbol(name, SymbolType::VARIABLE);
-        params.emplace_back(std::move(name), std::move(type_info));
-
-        while ( getTokenType(1) != TokenType::RPAREN )
-        {
-            match(TokenType::COMMA);
-
-            type_info = typeInfo();
-            name = id();
-
-            rememberSymbol(name, SymbolType::VARIABLE);
-
-            params.emplace_back(std::move(name), std::move(type_info));
-        }
-    }
-
-    match(TokenType::RPAREN);
+    auto params = formalParams();
+    for ( const auto& param : params )
+        rememberSymbol(param.first, SymbolType::VARIABLE);
 
     TypeInfo return_type;
 
@@ -415,34 +411,10 @@ std::unique_ptr<DeclarationNode> Parser::functionDecl(boost::optional<std::strin
     
     rememberSymbol(function_name, SymbolType::FUNCTION);
     pushScope();
-
-    auto params = TemplateParamsList{ };
-
-    match(TokenType::LPAREN);
-
-    if ( getTokenType(1) != TokenType::RPAREN )
-    {
-        auto type_info = typeInfo();
-        auto name = id();
-
-        rememberSymbol(name, SymbolType::VARIABLE);
-
-        params.emplace_back(std::move(name), std::move(type_info));
-
-        while ( getTokenType(1) != TokenType::RPAREN )
-        {
-            match(TokenType::COMMA);
-
-            type_info = typeInfo();
-            name = id();
-
-            rememberSymbol(name, SymbolType::VARIABLE);
-
-            params.emplace_back(std::move(name), std::move(type_info));
-        }
-    }
-
-    match(TokenType::RPAREN);
+    
+    auto params = formalParams();
+    for ( const auto& param : params )
+        rememberSymbol(param.first, SymbolType::VARIABLE);
 
     TypeInfo return_type;
 
@@ -456,10 +428,14 @@ std::unique_ptr<DeclarationNode> Parser::functionDecl(boost::optional<std::strin
             return_type = typeInfo();
         }
         else
+        {
             return_type = TypeInfo("void", false, false);
+        }
     }
     else
+    {
         return_type = TypeInfo(*struct_name, true, false);
+    }
 
     auto statements = block();
 
@@ -596,7 +572,11 @@ ASTExprNode Parser::primary()
 
 ASTExprNode Parser::lambda_expr()
 {
-    return nullptr;
+    match(TokenType::LBRACKET);
+    // TODO add capture
+    match(TokenType::RBRACKET);
+
+    auto params = formalParams();
 }
 
 ASTExprNode Parser::unary_right()
@@ -1128,21 +1108,7 @@ ASTNode Parser::extern_stat()
     }
 
     auto function_name = (getTokenType(1) == TokenType::OPERATOR ? operator_name() : id());
-    auto params = TemplateParamsList{ };
-
-    match(TokenType::LPAREN);
-
-    if ( getTokenType(1) != TokenType::RPAREN )
-    {
-        params.emplace_back(paramInfo());
-        while ( getTokenType(1) != TokenType::RPAREN )
-        {
-            match(TokenType::COMMA);
-            params.emplace_back(paramInfo());
-        }
-    }
-
-    match(TokenType::RPAREN);
+    auto params = formalParams();
 
     TypeInfo return_type_info;
 

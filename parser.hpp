@@ -40,8 +40,10 @@ private:
     std::string operator_name();
 
     TypeInfo typeInfo();
+
     ParamInfo paramInfo();
-    
+    std::vector<ParamInfo> formalParams();
+
     std::vector<ASTExprNode> call_params_list();
 
     TemplateParamInfo templateParamInfo();

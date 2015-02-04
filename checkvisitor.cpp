@@ -161,10 +161,10 @@ void CheckVisitor::visit(AddrNode* node)
         }
     }
     else
-    {        
+    {
         auto type = node -> expr() -> getType().unqualified();
 
-        if ( !type -> isPointer() ) {            
+        if ( !type -> isPointer() ) {
             throw SemanticError("Type of " + node -> toString() + " is not a pointer type.");
         }
     }

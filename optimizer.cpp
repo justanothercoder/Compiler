@@ -28,7 +28,7 @@ void Optimizer::constantPropagation()
     {
         for ( auto it = std::begin(block -> code()); it != std::end(block -> code()); ++it )
         {
-            int command_id = *it;
+            auto command_id = *it;
             auto command = block -> commandById(command_id);
     
             if ( auto com = dynamic_cast<BinaryOpCommand*>(command) )
@@ -38,8 +38,8 @@ void Optimizer::constantPropagation()
 
                 if ( lhs && rhs )
                 {
-                    int n1 = lhs -> value();
-                    int n2 = rhs -> value();
+                    auto n1 = lhs -> value();
+                    auto n2 = rhs -> value();
 
                     int n3;
 
@@ -55,8 +55,6 @@ void Optimizer::constantPropagation()
 
                     code.addConst(n3);
                     
-                    auto it2 = it;
-    
                     auto num_arg = std::make_shared<NumberArg>(n3);
 
                     SubstituteArgVisitor substitutor(std::bind([](const Argument& arg1, Command* command, const Argument& arg2) -> Argument { 
@@ -73,7 +71,7 @@ void Optimizer::constantPropagation()
                         return arg1;
                     }, std::placeholders::_1, com, num_arg));
 
-                    for ( ++it2; it2 != std::end(block -> code()); ++it2 )
+                    for ( auto it2 = std::next(it); it2 != std::end(block -> code()); ++it2 )
                     {
                         int next_command_id = *it2;
                         auto next_command = block -> commandById(next_command_id);

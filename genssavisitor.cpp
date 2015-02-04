@@ -242,8 +242,7 @@ void GenSSAVisitor::visit(BinaryOperatorNode* node)
             _arg = code.add(std::make_shared<BinaryOpCommand>(node -> op(), lhs, rhs));
         }
     }
-    else
-    {
+    else {
         generateCall({lhs, rhs}, node -> callInfo(), node -> inlineInfo());
     }
 }
