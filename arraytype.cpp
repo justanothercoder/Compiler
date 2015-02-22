@@ -5,12 +5,12 @@
 
 ArrayType::ArrayType(const Type *type, int size) : type(type), size(size) { }
 
-std::string ArrayType::getName() const { return type -> getName() + "~arr" + std::to_string(size); } 
+std::string ArrayType::typeName() const { return type -> typeName() + "~arr" + std::to_string(size); } 
 size_t ArrayType::sizeOf() const { return type -> sizeOf() * size; }
 
 bool ArrayType::isArray() const { return true; }
 
-const FunctionSymbol* ArrayType::getConversionTo(const Type *) const { return nullptr; }
+const FunctionalSymbol* ArrayType::getConversionTo(const Type *) const { return nullptr; }
 bool ArrayType::isConvertableTo(const Type *t) const { return (this == t -> removeRef()); }
 
 boost::optional<int> ArrayType::rankOfConversion(const Type *t) const

@@ -30,8 +30,7 @@ void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
 
         auto param_type = expr_ -> type();
            
-        if ( param_type -> removeRef() == BuiltIns::int_type.get()
-          || param_type -> removeRef() -> isPointer() )
+        if ( isIntType(param_type -> removeRef()) || param_type -> removeRef() -> isPointer() )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rbx, [rbx]");
@@ -39,7 +38,7 @@ void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
             code_obj.emit("mov rcx, [rbx]");
             code_obj.emit("mov [rax], rcx");
         }
-        else if ( param_type -> removeRef() == BuiltIns::char_type.get() )
+        else if ( isCharType(param_type -> removeRef()) )
         {
             if ( param_type -> isReference() )
                 code_obj.emit("mov rbx, [rbx]");

@@ -54,26 +54,17 @@
 
 GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : code(code)
 {
-    auto str_type = static_cast<StructSymbol*>(BuiltIns::ASCII_string_type.get());
+    auto str_type = static_cast<const StructSymbol*>(BuiltIns::ASCII_string_type);
 
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("putchar")) -> allOverloads() )
+    for ( auto func : BuiltIns::global_scope -> getFunctions() )
+    {
+        if ( func -> getName() == "putchar" || func -> getName() == "getchar" )
+            code.addExternalFunction(func);
+    }
+
+    for ( auto func : str_type -> methods() )
         code.addExternalFunction(func);
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(BuiltIns::global_scope -> resolve("print")) -> allOverloads() )
-        code.addExternalFunction(func);
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("length")) -> allOverloads() )
-        code.addExternalFunction(func);
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator+")) -> allOverloads() )
-        code.addExternalFunction(func);
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("string")) -> allOverloads() )
-        code.addExternalFunction(func);
-    
-    for ( auto func : dynamic_cast<const OverloadedFunctionSymbol*>(str_type -> resolve("operator=")) -> allOverloads() )
-        code.addExternalFunction(func);
-    
+
     code.newBlock(BuiltIns::global_scope.get());
 }
 
@@ -180,7 +171,7 @@ void GenSSAVisitor::visit(BracketNode* node)
     if ( base_type -> isArray() ) {
         _arg = code.add(std::make_shared<ElemCommand>(base, expr));
     }
-    else if ( base_type == BuiltIns::ASCII_string_type.get() ) {
+    else if ( base_type == BuiltIns::ASCII_string_type ) {
         _arg = code.add(std::make_shared<ElemCommand>(base, expr, true));
     }
     else {
@@ -255,14 +246,14 @@ void GenSSAVisitor::visit(StructDeclarationNode* node)
 
 void GenSSAVisitor::visit(FunctionDeclarationNode* node)
 {
-    auto function = static_cast<const FunctionSymbol*>(node -> getDefinedSymbol());
+    auto function = static_cast<const FunctionalSymbol*>(node -> getDefinedSymbol());
     auto scope_name = function -> getScopedTypedName();
 
-    code.newBlock(function -> getScope(), scope_name);
+    code.newBlock(function -> innerScope(), scope_name);
     code.add(std::make_shared<LabelCommand>(code.newLabel(scope_name)));
 
     for ( auto param : node -> paramsSymbols() )
-        code.rememberVar(param.get());
+        code.rememberVar(param);
 
     node -> body() -> accept(*this);
 
@@ -271,12 +262,12 @@ void GenSSAVisitor::visit(FunctionDeclarationNode* node)
 
 void GenSSAVisitor::visit(VariableDeclarationNode* node)
 {
-    auto variable = static_cast<const VariableSymbol*>(node -> getDefinedSymbol());
+    auto variable = static_cast<const VarSymbol*>(node -> getDefinedSymbol());
     code.rememberVar(variable);
 
     if ( !node -> isField() )
     {
-        auto var_type = variable -> getType();
+        auto var_type = variable -> typeOf();
         auto var_arg = std::make_shared<VariableArg>(variable);
 
         if ( node -> typeInfo().isRef() || (node -> typeInfo().modifiers().size() > 0 && !node -> constructorParams().empty()) )
@@ -329,8 +320,8 @@ void GenSSAVisitor::visit(DotNode *node)
     }
     else
     {
-        auto var = static_cast<const VariableSymbol*>(node -> member());
-        _arg = std::make_shared<DotArg>(getArg(node -> base()), node -> baseType() -> offsetOf(var), var);
+        auto var = static_cast<const VarSymbol*>(node -> member());
+        _arg = std::make_shared<DotArg>(getArg(node -> base()), node -> baseType() -> offsetOf(var -> getName()), var);
     }
 }
 
@@ -344,8 +335,8 @@ void GenSSAVisitor::visit(VariableNode *node)
 {
     if ( node -> variable() -> isField() )
     {
-        auto this_var = static_cast<const VariableSymbol*>(node -> scope -> resolve("this"));
-        auto offset = static_cast<const ObjectType*>(this_var -> getType().unqualified()) -> offsetOf(node -> variable());
+        auto this_var = node -> scope -> resolveVariable("this");
+        auto offset = static_cast<const ObjectType*>(this_var -> typeOf().unqualified()) -> offsetOf(node -> name());
         _arg = std::make_shared<DotArg>(std::make_shared<VariableArg>(this_var), offset, node -> variable());
     }
     else
@@ -388,7 +379,7 @@ void GenSSAVisitor::visit(ReturnNode* node)
     if ( node -> isInInlineCall() )
     {
         auto expr_type = node -> expr() -> getType();
-        auto var_arg = std::make_shared<VariableArg>(static_cast<const VariableSymbol*>(node -> scope -> resolve("$")));
+        auto var_arg = std::make_shared<VariableArg>(node -> scope -> resolveVariable("$"));
 
         if ( node -> function() -> type().returnType().isReference() )
         {
@@ -457,13 +448,12 @@ void GenSSAVisitor::visit(FunctionNode* node)
 {
     if ( node -> function() -> isMethod() )
     {
-        auto _this_var = static_cast<const VariableSymbol*>(node -> scope -> resolve("this"));
+        auto _this_var = node -> scope -> resolveVariable("this");
         _arg = std::make_shared<VariableArg>(_this_var);
     }
 }
 
 void GenSSAVisitor::visit(ModuleNode* ) { }
-void GenSSAVisitor::visit(TypeNode* ) { }
 void GenSSAVisitor::visit(ModuleMemberAccessNode* ) { }
 void GenSSAVisitor::visit(ImportNode *) { }
 void GenSSAVisitor::visit(TemplateFunctionNode* ) { }
@@ -478,15 +468,15 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
 
     auto param_it = std::begin(params);
 
-    auto return_var = static_cast<const VariableSymbol*>(inline_info.function_body -> scope -> resolve("$"));
+    auto return_var = inline_info.function_body -> scope -> resolveVariable("$");
     code.rememberVar(return_var);
 
     for ( const auto& var : inline_info.locals )
     {
-        code.rememberVar(var.get());
+        code.rememberVar(var);
             
-        auto var_type = var -> getType();
-        auto var_arg = std::make_shared<VariableArg>(var.get());
+        auto var_type = var -> typeOf();
+        auto var_arg = std::make_shared<VariableArg>(var);
 
         if ( var_type.isReference() )
         {

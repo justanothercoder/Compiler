@@ -81,12 +81,12 @@ void Block::addCommand(std::shared_ptr<Command> command)
     code_.push_back(commands.size() - 1);
 }
 
-void Block::allocate(const VariableSymbol* var) const
+void Block::allocate(const VarSymbol* var) const
 {
     alloc.remember(var);
 }
     
-int Block::addressOf(const VariableSymbol* var) const { return alloc.addressOf(var); }
+int Block::addressOf(const VarSymbol* var) const { return alloc.addressOf(var); }
 int Block::addressOf(const Command* command)    const { return alloc.addressOf(command); }
 
 Command* Block::commandById(int command_id) { return commands.at(command_id).get(); }

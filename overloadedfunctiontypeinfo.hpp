@@ -8,6 +8,7 @@
 #include "functiontypeinfo.hpp"
 
 class Symbol;
+class FunctionalSymbol;
 
 class OverloadedFunctionTypeInfo
 {
@@ -19,7 +20,7 @@ public:
     std::set<FunctionTypeInfo> getPossibleOverloads(FunctionTypeInfo params_type) const;
 
     std::set<FunctionTypeInfo> overloads;
-    std::map<FunctionTypeInfo, std::shared_ptr<const Symbol> > symbols;
+    std::map<FunctionTypeInfo, FunctionalSymbol*> symbols;
 
 };
 

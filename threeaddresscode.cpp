@@ -39,6 +39,11 @@ void ThreeAddressCode::computeMemoryDisposition() const
         block -> computeMemoryDisposition();
 }
 
+std::string ThreeAddressCode::getAsmName(const FunctionalSymbol* sym) const
+{
+    return sym -> getScopedTypedName();
+}
+
 void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 {
     computeMemoryDisposition();
@@ -46,7 +51,7 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
     for ( auto p : globaltable.has_definition )
     {
         if ( !p.second && p.first -> is_used )
-            code_obj.emit("extern " + p.first -> getScopedTypedName());
+            code_obj.emit("extern " + getAsmName(p.first));
     }
 
     code_obj.emit("section .data");
@@ -158,12 +163,12 @@ void ThreeAddressCode::addString(const std::string& str)
     }
 }
 
-void ThreeAddressCode::addExternalFunction(const FunctionSymbol* function)
+void ThreeAddressCode::addExternalFunction(const FunctionalSymbol* function)
 {
     globaltable.has_definition[function] = false;
 }    
     
-void ThreeAddressCode::rememberVar(const VariableSymbol* var) 
+void ThreeAddressCode::rememberVar(const VarSymbol* var) 
 {
     auto& current_block = blocks[blockStack.top()];
     current_block -> allocate(var);

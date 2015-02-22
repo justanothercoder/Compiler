@@ -3,13 +3,13 @@
 
 #include "command.hpp"
 
-class FunctionSymbol;
+class FunctionalSymbol;
 
 class CallCommand : public Command 
 {
 public:
 
-    CallCommand(const FunctionSymbol* function, int params_size);
+    CallCommand(const FunctionalSymbol* function, int params_size);
     
     void gen(const Block& block, CodeObject& code_obj) const override;
     std::string toString() const override;
@@ -18,12 +18,12 @@ public:
     const Type* type() const override;
     void accept(CommandVisitor* visitor) override;
 
-    const FunctionSymbol* function() const;
+    const FunctionalSymbol* function() const;
 
 private:
 
     int params_size;
-    const FunctionSymbol* function_;
+    const FunctionalSymbol* function_;
 
 };
 

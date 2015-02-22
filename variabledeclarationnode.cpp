@@ -46,7 +46,7 @@ void VariableDeclarationNode::build_scope()
     }        
 }
 
-const Symbol* VariableDeclarationNode::getDefinedSymbol() const { return defined_symbol.get(); }
+Symbol* VariableDeclarationNode::getDefinedSymbol() const { return defined_symbol; }
 
 ASTNode VariableDeclarationNode::copyTree() const
 {
@@ -94,7 +94,7 @@ std::string VariableDeclarationNode::toString() const
 
 void VariableDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
-void VariableDeclarationNode::setDefinedSymbol(std::shared_ptr<const VariableSymbol> sym) { defined_symbol = sym; }
+void VariableDeclarationNode::setDefinedSymbol(VarSymbol* sym) { defined_symbol = sym; }
     
 const std::string& VariableDeclarationNode::name() const { return name_; }
 

@@ -8,7 +8,7 @@
 VariableNode::VariableNode(const std::string& name) : name_(name) { }
 ASTNode VariableNode::copyTree() const { return std::make_unique<VariableNode>(name_); }
 
-VariableType VariableNode::getType() const { return variable_ -> getType(); }
+VariableType VariableNode::getType() const { return variable_ -> typeOf(); }
 bool VariableNode::isLeftValue() const { return true; } 
 
 bool VariableNode::isCompileTimeExpr() const { return false; }
@@ -19,5 +19,5 @@ void VariableNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
     
 const std::string& VariableNode::name() const { return name_; }
 
-const VariableSymbol* VariableNode::variable() const { return variable_; }
-void VariableNode::variable(const VariableSymbol* sym) { variable_ = sym; }
+const VarSymbol* VariableNode::variable() const { return variable_; }
+void VariableNode::variable(const VarSymbol* sym) { variable_ = sym; }

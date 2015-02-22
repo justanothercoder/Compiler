@@ -1,15 +1,9 @@
 #include "callinfo.hpp"
 #include "functionsymbol.hpp"
 
-CallInfo::CallInfo() : CallInfo(nullptr, { }) 
-{
+CallInfo::CallInfo() : CallInfo(nullptr, { }) { }
 
-}
-
-CallInfo::CallInfo(const FunctionSymbol *callee, std::vector<ConversionInfo> conversions) : callee(callee), conversions(conversions)
-{
-
-}
+CallInfo::CallInfo(const FunctionalSymbol* callee, std::vector<ConversionInfo> conversions) : callee(callee), conversions(conversions) { }
     
 std::string CallInfo::toString() const
 {

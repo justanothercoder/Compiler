@@ -22,7 +22,7 @@ VariableType Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
     {
         auto module = Comp::getUnit(type_info.moduleName()) -> module_symbol;
         assert(module -> isModule());
-        type = static_cast<ModuleSymbol*>(module.get()) -> resolveType(type_name);
+        type = module -> resolveType(type_name);
     }
 
 //    if ( type_info.pointer_depth > 0 && !scope -> isUnsafeBlock() )

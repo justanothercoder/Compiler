@@ -13,6 +13,6 @@ void ReturnNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 ExprNode* ReturnNode::expr() { return expr_.get(); }
 bool ReturnNode::isInInlineCall() const { return is_in_inline_call; }
 
-const FunctionSymbol* ReturnNode::function() const { return enclosing_func; }
-void ReturnNode::function(const FunctionSymbol* func) { enclosing_func = func; }
+const FunctionalSymbol* ReturnNode::function() const { return enclosing_func; }
+void ReturnNode::function(const FunctionalSymbol* func) { enclosing_func = func; }
 

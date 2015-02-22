@@ -7,18 +7,15 @@
 
 class ModuleSymbol : public Symbol, public BaseScope
 {
-    friend class VariableSymbolDefine; 
-
 public:
 
-    ModuleSymbol(const std::string& name, Scope* enclosing_scope);
+    ModuleSymbol(std::string name, Scope* enclosing_scope);
 
     std::string getName() const override;
         
     Scope* enclosingScope() const override;
     std::string getScopeName() const override;
 
-    void accept(ScopeVisitor& visitor) override;
     bool isModule() const override;
 
 private:

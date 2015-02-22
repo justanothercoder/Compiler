@@ -15,6 +15,6 @@ void FunctionNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
 const std::string& FunctionNode::name() const { return name_; }
 
-const OverloadedFunctionSymbol* FunctionNode::function() { return function_; }
-void FunctionNode::function(const OverloadedFunctionSymbol* sym) { function_ = sym; }
+const FunctionalSymbol* FunctionNode::function() { return function_; }
+void FunctionNode::function(const FunctionalSymbol* sym) { function_ = sym; }
 

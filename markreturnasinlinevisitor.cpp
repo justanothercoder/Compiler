@@ -12,7 +12,7 @@
 
 #include "logger.hpp"
     
-MarkReturnAsInlineVisitor::MarkReturnAsInlineVisitor(const FunctionSymbol* function) : function(function) { }
+MarkReturnAsInlineVisitor::MarkReturnAsInlineVisitor(const FunctionalSymbol* function) : function(function) { }
 
 void MarkReturnAsInlineVisitor::visit(ReturnNode* node)
 {
@@ -59,7 +59,6 @@ void MarkReturnAsInlineVisitor::visit(CallNode* node)
 void MarkReturnAsInlineVisitor::visit(DotNode* ) { }
 void MarkReturnAsInlineVisitor::visit(AddrNode* ) { }
 void MarkReturnAsInlineVisitor::visit(NullNode* ) { }
-void MarkReturnAsInlineVisitor::visit(TypeNode* ) { }
 void MarkReturnAsInlineVisitor::visit(BreakNode* ) { }
 void MarkReturnAsInlineVisitor::visit(UnaryNode* ) { }
 void MarkReturnAsInlineVisitor::visit(ImportNode* ) { }

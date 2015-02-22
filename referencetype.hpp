@@ -9,7 +9,7 @@ public:
 
     ReferenceType(const Type* type);
 
-    std::string getName() const override;
+    std::string typeName() const override;
     size_t sizeOf() const override;
 
     bool isConvertableTo(const Type* type) const override;
@@ -17,7 +17,7 @@ public:
 
     bool isReference() const override;
 
-    const FunctionSymbol* getConversionTo(const Type* type) const override;
+    const FunctionalSymbol* getConversionTo(const Type* type) const override;
     const Type* removeRef() const override;
 
 private:

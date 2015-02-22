@@ -11,12 +11,16 @@ public:
     BuiltInTypeSymbol(const std::string& name, int size);
 
     std::string getName() const override;
+
+    std::string typeName() const override; 
     size_t sizeOf() const override;
 
     bool isConvertableTo(const Type *type) const override;
     boost::optional<int> rankOfConversion(const Type *type) const override;
 
-    const FunctionSymbol* getConversionTo(const Type *type) const override;
+    const FunctionalSymbol* getConversionTo(const Type *type) const override;
+
+    bool isType() const override;
 
 private:
 

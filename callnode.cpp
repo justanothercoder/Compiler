@@ -27,7 +27,7 @@ ASTChildren CallNode::getChildren() const
 
 bool CallNode::isCompileTimeExpr() const
 {
-    return call_info.callee -> is_constexpr && std::all_of(std::begin(params_), std::end(params_), [](auto&& expr)
+    return /*call_info.callee -> is_constexpr &&*/ std::all_of(std::begin(params_), std::end(params_), [](auto&& expr)
     {
         return expr -> isCompileTimeExpr();
     });
@@ -62,10 +62,12 @@ const std::vector<ASTExprNode>& CallNode::params() const { return params_; }
     
 const FunctionalType* CallNode::function() const
 {
-    if ( caller_ -> getType().unqualified() -> isObjectType() )
-        return static_cast<const ObjectType*>(caller_ -> getType().unqualified()) -> resolveMethod("operator()");
+    auto caller_type = caller_ -> getType().unqualified();
+
+    if ( caller_type -> isObjectType() )
+        return static_cast<const ObjectType*>(caller_type) -> resolveMethod("operator()");
     else
-        return static_cast<const FunctionalType*>(caller_ -> getType().unqualified());
+        return static_cast<const FunctionalType*>(caller_type);
 }
 
 std::vector<ValueInfo> CallNode::arguments() const

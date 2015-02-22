@@ -55,7 +55,7 @@ bool UnaryOpCommand::isExpr() const { return true; }
 const Type* UnaryOpCommand::type() const
 {
     if ( op_.which() == 1 )
-        return BuiltIns::int_type.get();
+        return BuiltIns::int_type;
 
     if ( boost::get<AddrOp>(op_) == AddrOp::DEREF )
         return TypeFactory::getReference(static_cast<const PointerType*>(expr_ -> type()) -> pointedType());

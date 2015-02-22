@@ -6,7 +6,7 @@ NumberNode::NumberNode(const std::string& num) : num_(num) { }
 
 ASTNode NumberNode::copyTree() const { return std::make_unique<NumberNode>(num_); }
 
-VariableType NumberNode::getType() const { return VariableType(BuiltIns::int_type.get(), true); }
+VariableType NumberNode::getType() const { return VariableType(BuiltIns::int_type, true); }
 bool NumberNode::isLeftValue() const { return false; }
 
 bool NumberNode::isCompileTimeExpr() const { return true; }

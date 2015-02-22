@@ -15,8 +15,8 @@ public:
 
     void build_scope();
 
-    const Symbol* getDefinedSymbol() const override;
-    void setDefinedSymbol(std::shared_ptr<const VariableSymbol> symbol);
+    Symbol* getDefinedSymbol() const override;
+    void setDefinedSymbol(VarSymbol* symbol);
 
     ASTNode copyTree() const override;
     ASTChildren getChildren() const override;
@@ -32,7 +32,7 @@ private:
     std::string name_;
     ASTExprNode expr_;
 
-    std::shared_ptr<const VariableSymbol> defined_symbol;
+    VarSymbol* defined_symbol;
 };
 
 #endif

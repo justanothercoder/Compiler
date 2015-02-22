@@ -30,7 +30,7 @@ void FunctionDeclarationNode::build_scope()
     statements -> build_scope();
 }
 
-const Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return defined_symbol.get(); } 
+Symbol* FunctionDeclarationNode::getDefinedSymbol() const { return defined_symbol; } 
 
 ASTNode FunctionDeclarationNode::copyTree() const 
 { 
@@ -43,12 +43,12 @@ std::string FunctionDeclarationNode::toString() const { return "def " + name_ + 
 void FunctionDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
 AST* FunctionDeclarationNode::body() { return statements.get(); }
-const std::vector< std::shared_ptr<VariableSymbol> >& FunctionDeclarationNode::paramsSymbols() const { return params_symbols; }
+const std::vector<VarSymbol*>& FunctionDeclarationNode::paramsSymbols() const { return params_symbols; }
 
-void FunctionDeclarationNode::addParamSymbol(std::shared_ptr<VariableSymbol> var)
+void FunctionDeclarationNode::addParamSymbol(std::unique_ptr<VarSymbol> var)
 {
-    params_symbols.push_back(var);
-    func_scope -> define(var);
+    params_symbols.push_back(var.get());
+    func_scope -> define(std::move(var));
 }
 
 FunctionScope* FunctionDeclarationNode::functionScope() const { return func_scope.get(); }
@@ -59,5 +59,5 @@ const std::string& FunctionDeclarationNode::name() const { return name_; }
 FunctionDeclarationInfo& FunctionDeclarationNode::info()             { return info_; }
 const FunctionDeclarationInfo& FunctionDeclarationNode::info() const { return info_; }
 
-void FunctionDeclarationNode::setDefinedSymbol(std::shared_ptr<const FunctionSymbol> symbol) { defined_symbol = symbol; }
+void FunctionDeclarationNode::setDefinedSymbol(FunctionalSymbol* symbol) { defined_symbol = symbol; }
 bool FunctionDeclarationNode::isUnsafe() const { return is_unsafe; }

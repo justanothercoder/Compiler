@@ -28,7 +28,7 @@ public:
     
     ASTNode copyTree() const override;
     std::string toString() const override;
-    const Symbol* getDefinedSymbol() const override;
+    Symbol* getDefinedSymbol() const override;
     
     void addInstance(TemplateArguments template_params, std::shared_ptr<DeclarationNode> decl) override;
     std::shared_ptr<DeclarationNode> getInstance(TemplateArguments template_params) const override;
@@ -56,7 +56,7 @@ private:
     std::map<long long, std::shared_ptr<DeclarationNode> > instances;
     TemplateParamsInfo template_params_info;
 
-    std::shared_ptr<TemplateFunctionSymbol> defined_symbol;
+    TemplateFunctionSymbol* defined_symbol;
 };
 
 #endif

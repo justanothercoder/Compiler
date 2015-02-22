@@ -19,7 +19,7 @@ bool BracketNode::isCompileTimeExpr() const
 {
     return base_ -> isCompileTimeExpr() 
         && expr_ -> isCompileTimeExpr() 
-        && call_info.callee -> is_constexpr;
+        /*&& call_info.callee -> is_constexpr*/;
 }
 
 boost::optional<int> BracketNode::getCompileTimeValue() const { return boost::none; }
@@ -39,7 +39,7 @@ const FunctionalType* BracketNode::function() const
         return static_cast<const ObjectType*>(base_type) -> resolveMethod("operator[]");
     }
     else {
-        return BuiltIns::global_scope -> resolveFunction("operator[]");
+        return BuiltIns::global_scope -> resolveFunction("operator[]", {base_ -> getType(), expr_ -> getType()});
     }        
 }
 

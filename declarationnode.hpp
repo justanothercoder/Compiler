@@ -10,7 +10,7 @@ class DeclarationNode : public AST
 public:
 
     ~DeclarationNode() override;
-    virtual const Symbol* getDefinedSymbol() const = 0;
+    virtual Symbol* getDefinedSymbol() const = 0;
 };
 
 #endif

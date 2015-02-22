@@ -1,6 +1,5 @@
 #include "structdeclarationnode.hpp"
 #include "structsymbol.hpp"
-#include "symboldefine.hpp"
 #include "functionsymbol.hpp"
 
 StructDeclarationNode::StructDeclarationNode(const std::string& name
@@ -10,16 +9,15 @@ StructDeclarationNode::StructDeclarationNode(const std::string& name
 
 }
 
-const Symbol* StructDeclarationNode::getDefinedSymbol() const { return defined_symbol.get(); }
+Symbol* StructDeclarationNode::getDefinedSymbol() const { return defined_symbol; }
 
 void StructDeclarationNode::build_scope()
 {
-    defined_symbol = std::make_shared<StructSymbol>(name_, scope.get());
-    scope -> define(defined_symbol);
+    struct_scope = std::make_shared<StructScope>(name_, scope.get());
 
     for ( const auto& decl : inner_ )
     {
-        decl -> scope = defined_symbol;
+        decl -> scope = struct_scope;
         decl -> build_scope();
     }
 }
@@ -59,3 +57,5 @@ void StructDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
     
 const std::string& StructDeclarationNode::name() const { return name_; }
 const std::vector<ASTNode>& StructDeclarationNode::inner() const { return inner_; }
+    
+StructScope* StructDeclarationNode::structScope() const { return struct_scope.get(); }

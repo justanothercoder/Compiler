@@ -8,7 +8,7 @@ class Symbol;
 class ImportNode : public AST
 {
 public:
-    ImportNode(const std::string& lib, std::shared_ptr<AST> root, std::vector< std::shared_ptr<const Symbol> > imports);
+    ImportNode(std::string lib, AST* root, std::vector<const Symbol*> imports);
 
     void build_scope();        
 
@@ -18,8 +18,8 @@ public:
     void accept(ASTVisitor& visitor) override;
 
     std::string lib;
-    std::shared_ptr<AST> root;
-    std::vector< std::shared_ptr<const Symbol> > imports;
+    AST* root;
+    std::vector<const Symbol*> imports;
 };
 
 #endif

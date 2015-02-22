@@ -7,7 +7,6 @@ class WhileNode;
 class BracketNode;
 class UnaryNode;
 class AddrNode;
-class TypeNode;
 class NullNode;
 class DotNode;
 class CallNode;
@@ -40,7 +39,6 @@ public:
     virtual void visit(ForNode* node) = 0;
     virtual void visit(DotNode* node) = 0;
     virtual void visit(AddrNode* node) = 0;
-    virtual void visit(TypeNode* node) = 0;
     virtual void visit(CallNode* node) = 0;
     virtual void visit(NullNode* node) = 0;
     virtual void visit(BreakNode* node) = 0;

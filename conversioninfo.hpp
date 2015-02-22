@@ -5,15 +5,15 @@
 #include <memory>
 
 class Type;
-class FunctionSymbol;
+class FunctionalSymbol;
 
 struct ConversionInfo
 {
-    ConversionInfo(const FunctionSymbol* conversion, const Type* desired_type = nullptr);
+    ConversionInfo(const FunctionalSymbol* conversion, const Type* desired_type = nullptr);
 
     std::string toString() const;
 
-    const FunctionSymbol* conversion;
+    const FunctionalSymbol* conversion;
     const Type* desired_type;
 };
 

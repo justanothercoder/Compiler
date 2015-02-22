@@ -1,8 +1,8 @@
 #include "conversioninfo.hpp"
 #include "functionsymbol.hpp"
 
-ConversionInfo::ConversionInfo(const FunctionSymbol *conversion, const Type* desired_type) : conversion(conversion)
-                                                                                           , desired_type(desired_type)
+ConversionInfo::ConversionInfo(const FunctionalSymbol *conversion, const Type* desired_type) : conversion(conversion)
+                                                                                             , desired_type(desired_type)
 {
 
 }
@@ -10,7 +10,7 @@ ConversionInfo::ConversionInfo(const FunctionSymbol *conversion, const Type* des
 std::string ConversionInfo::toString() const
 {
     if ( conversion == nullptr )
-        return "No conversion to '" + desired_type -> getName() + "'";
+        return "No conversion to '" + desired_type -> typeName() + "'";
     else
-        return "Conversion '" + conversion -> getName() + "' to '" + desired_type -> getName() + "'";
+        return "Conversion '" + conversion -> getName() + "' to '" + desired_type -> typeName() + "'";
 }

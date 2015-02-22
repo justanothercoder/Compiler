@@ -1,7 +1,7 @@
 #include "modulememberaccessnode.hpp"
 #include "symbol.hpp"
-#include "variablesymbol.hpp"
-#include "functionsymbol.hpp"
+#include "varsymbol.hpp"
+#include "functionalsymbol.hpp"
 #include "overloadedfunctionsymbol.hpp"
 
 ModuleMemberAccessNode::ModuleMemberAccessNode(const std::string& name, const std::string& member) : name_(name), member_(member) { }
@@ -14,10 +14,10 @@ void ModuleMemberAccessNode::accept(ASTVisitor& visitor) { visitor.visit(this); 
 VariableType ModuleMemberAccessNode::getType() const
 {    
     if ( member_sym -> isVariable() ) {
-        return static_cast<const VariableSymbol*>(member_sym) -> getType();
+        return static_cast<const VarSymbol*>(member_sym) -> typeOf();
     }
     else {
-        return static_cast<const OverloadedFunctionSymbol*>(member_sym);
+        return static_cast<const FunctionalSymbol*>(member_sym);
     }
 }
 

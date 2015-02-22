@@ -29,7 +29,7 @@ CallInfo PartiallyInstantiatedFunctionSymbol::resolveCall(std::vector<ValueInfo>
         return ov_func -> resolveCall(arguments);
 }
     
-std::string PartiallyInstantiatedFunctionSymbol::getName() const 
+std::string PartiallyInstantiatedFunctionSymbol::typeName() const 
 {
     return ov_func -> getName();
 }

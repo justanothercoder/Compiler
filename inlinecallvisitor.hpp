@@ -6,7 +6,7 @@
 
 class AST;
 class VariableSymbol;
-class FunctionSymbol;
+class FunctionalSymbol;
 class CallableNode;
 
 struct InlineInfo;
@@ -21,7 +21,6 @@ public:
     void visit(AddrNode* node) override;
     void visit(NullNode* node) override;
     void visit(CallNode* node) override;
-    void visit(TypeNode* node) override;
     void visit(BreakNode* node) override;
     void visit(WhileNode* node) override;
     void visit(UnaryNode* node) override;
@@ -49,8 +48,8 @@ public:
 
 private:
 
-    bool shouldBeInlined(const FunctionSymbol* function);
-    InlineInfo inlineCall(const FunctionSymbol* function);
+    bool shouldBeInlined(const FunctionalSymbol* function);
+    InlineInfo inlineCall(const FunctionalSymbol* function);
 
     void visitChildren(AST* node);
     void visitCallable(CallableNode* node);

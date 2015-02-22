@@ -8,7 +8,7 @@ size_t FunctionalType::sizeOf() const { return 0; }
 
 bool FunctionalType::isConvertableTo(const Type *) const { return false; }
 boost::optional<int> FunctionalType::rankOfConversion(const Type *) const { return boost::none; }
-const FunctionSymbol* FunctionalType::getConversionTo(const Type *) const { return nullptr; }
+const FunctionalSymbol* FunctionalType::getConversionTo(const Type *) const { return nullptr; }
 
 boost::optional< std::map<std::string, TemplateArgument> > makeMappingOfParams(const TemplateSymbol* tmpl
                                                                              , const std::vector<ParamInfo>& formal_params
@@ -65,7 +65,7 @@ std::vector<ConversionInfo> getConversions(std::vector<ValueInfo> arguments, std
 ConversionInfo getConversionInfo(const Type *lhs, const Type *rhs)
 {
     if ( !lhs -> isConvertableTo(rhs) )
-        throw SemanticError("Invalid initialization of '" + rhs -> getName() + "' with type '" + lhs -> getName() + "'.");
+        throw SemanticError("Invalid initialization of '" + rhs -> typeName() + "' with type '" + lhs -> typeName() + "'.");
 
     auto _lhs = lhs -> removeRef();
     auto _rhs = rhs -> removeRef();

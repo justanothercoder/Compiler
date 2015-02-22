@@ -4,15 +4,15 @@
 #include <vector>
 #include "ast.hpp"
 
-class VariableSymbol;
+class VarSymbol;
 
 struct InlineInfo
 {
     InlineInfo();
-    InlineInfo(ASTNode function_body, std::vector< std::shared_ptr<VariableSymbol> > locals);
+    InlineInfo(ASTNode function_body, std::vector<const VarSymbol*> locals);
 
     ASTNode function_body;
-    std::vector< std::shared_ptr<VariableSymbol> > locals;
+    std::vector<const VarSymbol*> locals;
 };
 
 #endif

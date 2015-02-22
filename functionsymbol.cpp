@@ -1,52 +1,50 @@
 #include "functionsymbol.hpp"
-#include "scopevisitor.hpp"
-#include "functionsymboldefine.hpp"
 #include "globalconfig.hpp"
 #include "comp.hpp"
+#include "structscope.hpp"
+#include "symbolfactory.hpp"
+#include "functiondeclarationnode.hpp"
 
 #include "logger.hpp"
 
-FunctionSymbol::FunctionSymbol(const std::string& name
-                             , FunctionType _type
-                             , FunctionScope* scope
-                             , FunctionTraits traits) : name        (name)
-                                                      , traits      (traits)
-                                                      , _type       (_type)
-                                                      , scope       (scope)
+FunctionSymbol::FunctionSymbol(std::string name, FunctionType type, FunctionScope* scope, FunctionTraits traits, bool is_unsafe) 
+    : name        (name)
+    , traits_     (traits)
+    , type_       (type)
+    , scope       (scope)
 {
-
+    this -> is_unsafe = is_unsafe;
 }
 
-std::string FunctionSymbol::getTypedName() const
-{
-    auto res = (traits.is_operator ? Comp::config().getCodeOperatorName(name) : name);
-
-    for ( auto param_type : _type.typeInfo().params() )
-        res += "_" + param_type.getName();
-
-    return res;
-}
-
-std::string FunctionSymbol::getScopedTypedName() const
-{
-    auto res = scope -> getScopeName(); 
-
-    auto pt = _type.typeInfo().params();
-
-    for ( auto param_type : pt ) 
-        res += "_" + param_type.getName();
-
-    return res;
-}
-
-bool FunctionSymbol::isOperator() const { return traits.is_operator; }
-bool FunctionSymbol::isMethod() const { return traits.is_method; }
-bool FunctionSymbol::isConstructor() const { return traits.is_constructor; }
-
-FunctionTraits FunctionSymbol::getTraits() const { return traits; } 
+FunctionTraits FunctionSymbol::traits() const { return traits_; } 
 
 std::string FunctionSymbol::getName() const { return name; }
-FunctionType FunctionSymbol::type() const { return _type; } 
-Scope* FunctionSymbol::getScope() const { return scope; }
+std::string FunctionSymbol::typeName() const { return name; }
+FunctionType FunctionSymbol::type() const { return type_; } 
+Scope* FunctionSymbol::innerScope() const { return scope; }
+    
+bool FunctionSymbol::isCompatibleWith(FunctionTypeInfo ft) const { return type_.typeInfo().isCompatibleWith(ft); }
 
-std::unique_ptr<DefineSymbolVisitor> FunctionSymbol::defineSymbolVisitor() const { return std::make_unique<FunctionSymbolDefine>(); }
+CallInfo FunctionSymbol::resolveCall(std::vector<ValueInfo> arguments) const 
+{
+    if ( isMethod() )
+        arguments.insert(std::begin(arguments), {type().typeInfo().paramAt(0), true});
+
+    Logger::log("Resolving call of " + getName() + "\n");
+
+    std::vector<VariableType> types;
+    for ( auto arg : arguments )
+        types.push_back(arg.type());
+
+    auto function_params = type().typeInfo().params();
+
+    if ( !checkValues(arguments, function_params) )
+        throw SemanticError("lvalue error");
+
+    is_used = true;
+    return CallInfo(this, getConversions(arguments, function_params));
+}
+
+AST* FunctionSymbol::getFunctionDecl() const { return function_decl; }
+    
+bool FunctionSymbol::isFunction() const { return true; }

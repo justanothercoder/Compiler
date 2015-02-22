@@ -26,13 +26,13 @@ public:
     ASTChildren getChildren() const override;
 
     void build_scope() override;
-    const Symbol* getDefinedSymbol() const override;
+    Symbol* getDefinedSymbol() const override;
 
     std::string toString() const override;
     void accept(ASTVisitor& visitor) override;
 
     AST* body();
-    const std::vector< std::shared_ptr<VariableSymbol> >& paramsSymbols() const;
+    const std::vector<VarSymbol*>& paramsSymbols() const;
 
     FunctionScope* functionScope() const;
     const FunctionTraits& traits() const;
@@ -42,8 +42,8 @@ public:
     FunctionDeclarationInfo& info();
     const FunctionDeclarationInfo& info() const;
 
-    void addParamSymbol(std::shared_ptr<VariableSymbol> var);
-    void setDefinedSymbol(std::shared_ptr<const FunctionSymbol> symbol);
+    void addParamSymbol(std::unique_ptr<VarSymbol> var);
+    void setDefinedSymbol(FunctionalSymbol* symbol);
 
     bool isUnsafe() const;
 
@@ -55,10 +55,10 @@ private:
 
     FunctionTraits traits_;
     
-    std::shared_ptr<const FunctionSymbol> defined_symbol;
+    FunctionalSymbol* defined_symbol;
     std::shared_ptr<FunctionScope> func_scope;
 
-    std::vector< std::shared_ptr<VariableSymbol> > params_symbols;
+    std::vector<VarSymbol*> params_symbols;
 
     bool is_unsafe;
 };

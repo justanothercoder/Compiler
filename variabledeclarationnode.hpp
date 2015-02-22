@@ -21,8 +21,8 @@ public:
     ASTNode copyTree() const override;
     ASTChildren getChildren() const override;
 
-    const Symbol* getDefinedSymbol() const override;
-    void setDefinedSymbol(std::shared_ptr<const VariableSymbol> sym);
+    Symbol* getDefinedSymbol() const override;
+    void setDefinedSymbol(VarSymbol* sym);
 
     std::string toString() const override;
 
@@ -39,7 +39,7 @@ private:
 
     bool is_field;
 
-    std::shared_ptr<const VariableSymbol> defined_symbol;
+    VarSymbol* defined_symbol;
     std::vector<ASTExprNode> constructor_params;
 };
 

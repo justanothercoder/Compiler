@@ -3,6 +3,7 @@
 
 #include "compiler.hpp"
 #include "astvisitor.hpp"
+#include "symbolfactory.hpp"
 
 class AST;
 
@@ -14,7 +15,6 @@ public:
     void visit(DotNode* node) override;
     void visit(ForNode* node) override;
     void visit(CallNode* node) override;
-    void visit(TypeNode* node) override;
     void visit(AddrNode* node) override;
     void visit(NullNode* node) override;
     void visit(UnaryNode* node) override;
@@ -45,6 +45,12 @@ public:
 private:
 
     void visitChildren(AST* node);
+
+private:
+
+    SymbolFactory factory;
+
+    std::vector<const ScopedSymbol*> declarations_stack;
 };
 
 #endif

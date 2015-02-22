@@ -12,8 +12,8 @@ ASTNode ExternNode::copyTree() const { return std::make_unique<ExternNode>(name_
 std::string ExternNode::toString() const { return "extern " + name_ + " " + info_.toString(); }
 
 void ExternNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
-const Symbol* ExternNode::getDefinedSymbol() const { return defined_symbol.get(); }
-void ExternNode::setDefinedSymbol(std::shared_ptr<const FunctionSymbol> sym) { defined_symbol = sym; }
+Symbol* ExternNode::getDefinedSymbol() const { return defined_symbol; }
+void ExternNode::setDefinedSymbol(FunctionalSymbol* sym) { defined_symbol = sym; }
     
 const std::string& ExternNode::name() const { return name_; }
 const FunctionDeclarationInfo& ExternNode::info() const { return info_; }

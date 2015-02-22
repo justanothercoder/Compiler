@@ -12,4 +12,4 @@ void StringArg::gen(const Block& block, CodeObject& code_obj) const
 }
 
 std::string StringArg::toString() const { return '"' + str + '"'; }
-const Type* StringArg::type() const { return BuiltIns::ASCII_string_type.get(); }
+const Type* StringArg::type() const { return BuiltIns::ASCII_string_type; }

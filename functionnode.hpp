@@ -22,13 +22,13 @@ public:
 
     const std::string& name() const;
 
-    const OverloadedFunctionSymbol* function();    
-    void function(const OverloadedFunctionSymbol* sym);
+    const FunctionalSymbol* function();    
+    void function(const FunctionalSymbol* sym);
 
 private:
 
     std::string name_;
-    const OverloadedFunctionSymbol* function_ = nullptr;
+    const FunctionalSymbol* function_ = nullptr;
 };
 
 #endif

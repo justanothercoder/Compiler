@@ -55,7 +55,7 @@ ASTChildren BinaryOperatorNode::getChildren() const { return {lhs_.get(), rhs_.g
 
 bool BinaryOperatorNode::isCompileTimeExpr() const
 {
-    return lhs_ -> isCompileTimeExpr() && rhs_ -> isCompileTimeExpr() && call_info.callee -> is_constexpr;
+    return lhs_ -> isCompileTimeExpr() && rhs_ -> isCompileTimeExpr() /*&& call_info.callee -> is_constexpr*/;
 }
 
 boost::optional<int> BinaryOperatorNode::getCompileTimeValue() const
@@ -106,12 +106,12 @@ ExprNode* BinaryOperatorNode::lhs() { return lhs_.get(); }
 ExprNode* BinaryOperatorNode::rhs() { return rhs_.get(); }
 BinaryOp BinaryOperatorNode::op() const { return op_type; }
 
-const FunctionalType* BinaryOperatorNode::function() const
+const FunctionalSymbol* BinaryOperatorNode::function() const
 {
     if ( lhs_ -> getType().unqualified() -> isObjectType() )
         return static_cast<const ObjectType*>(lhs_ -> getType().unqualified()) -> resolveMethod(getOperatorName());
     else
-        return scope -> resolveFunction(getOperatorName());
+        return scope -> resolveFunction(getOperatorName(), {lhs_ -> getType(), rhs_ -> getType()});
 }
 
 std::vector<ValueInfo> BinaryOperatorNode::arguments() const 

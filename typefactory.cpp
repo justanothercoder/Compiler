@@ -27,7 +27,7 @@ const Type* TypeFactory::getPointer(const Type *type)
         auto tp_ref = VariableType(getReference(_tp), false);
         auto const_tp_ref = VariableType(getReference(_tp), true);            
     
-        auto nonconst_int = VariableType(BuiltIns::int_type.get(), false);
+        auto nonconst_int = VariableType(BuiltIns::int_type, false);
 
         static_cast<GlobalScope*>(BuiltIns::global_scope.get()) -> defineBuiltInOperator("operator=", FunctionType(tp_ref, {tp_ref, const_tp_ref}));
         static_cast<GlobalScope*>(BuiltIns::global_scope.get()) -> defineBuiltInOperator("operator+", FunctionType(tp, {tp, nonconst_int}));
@@ -73,7 +73,7 @@ const Type* TypeFactory::getArray(const Type *type, int size)
         auto type_ptr = VariableType(getPointer(type), false);
         auto type_ref = VariableType(getReference(type), false);
 
-        auto nonconst_int = VariableType(BuiltIns::int_type.get(), false);
+        auto nonconst_int = VariableType(BuiltIns::int_type, false);
 
         static_cast<GlobalScope*>(BuiltIns::global_scope.get()) -> defineBuiltInOperator("operator=", FunctionType(tp_ref, {tp_ref, const_tp_ref}));
         static_cast<GlobalScope*>(BuiltIns::global_scope.get()) -> defineBuiltInOperator("operator+", FunctionType(type_ptr, {tp, nonconst_int}));

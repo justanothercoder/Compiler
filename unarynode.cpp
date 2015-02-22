@@ -31,7 +31,7 @@ ASTNode UnaryNode::copyTree() const
     return std::make_unique<UnaryNode>(ASTExprNode(static_cast<ExprNode*>(expr_ -> copyTree().release())), op_type); 
 }
 
-bool UnaryNode::isCompileTimeExpr() const { return expr_ -> isCompileTimeExpr() && call_info.callee -> is_constexpr; }
+bool UnaryNode::isCompileTimeExpr() const { return expr_ -> isCompileTimeExpr() /*&& call_info.callee -> is_constexpr*/; }
 boost::optional<int> UnaryNode::getCompileTimeValue() const { return boost::none; }
 
 std::string UnaryNode::toString() const

@@ -4,23 +4,21 @@
 #include "symbol.hpp"
 #include "variabletype.hpp"
 
-enum class VariableSymbolType { SIMPLE, PARAM, FIELD };
+#include "varsymbol.hpp"
 
-class VariableSymbol : public Symbol
+class VariableSymbol : public VarSymbol
 {
 public:
 
     VariableSymbol(const std::string& name, VariableType type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
 
-    VariableType getType() const;
+    bool isParam() const override;
+    bool isField() const override;
+
+    VariableType typeOf() const;
     std::string getName() const override;
 
-    bool isParam() const;
-    bool isField() const;
-
     bool isVariable() const override;
-
-    std::unique_ptr<DefineSymbolVisitor> defineSymbolVisitor() const override;
 
 private:
 

@@ -4,23 +4,20 @@
 #include "basescope.hpp"
 #include "templateinfo.hpp"
 
-class FunctionSymbol;
+class FunctionalSymbol;
 
 class FunctionScope : public BaseScope
 {
-    friend class VariableSymbolDefine;
-
 public:
 
     FunctionScope(std::string scope_name, Scope* enclosing_scope, bool is_unsafe);
 
     std::string getScopeName() const override;
     Scope* enclosingScope() const override;
-    void accept(ScopeVisitor& visitor) override;
 
     bool isUnsafeBlock() const override;
 
-    const FunctionSymbol* func;
+    const FunctionalSymbol* func = nullptr;
 
     TemplateInfo template_info;
 

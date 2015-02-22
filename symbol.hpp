@@ -6,7 +6,6 @@
 #include "semanticerror.hpp"
 
 class Scope;
-class DefineSymbolVisitor;
 
 class Symbol
 {
@@ -20,9 +19,8 @@ public:
     virtual bool isFunction() const;
     virtual bool isModule() const;
 
-    virtual std::unique_ptr<DefineSymbolVisitor> defineSymbolVisitor() const;
-
     bool is_unsafe;
+    mutable bool is_used;
 };
 
 #endif

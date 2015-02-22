@@ -7,22 +7,22 @@
 
 #include "logger.hpp"
 
-VariableArg::VariableArg(const VariableSymbol* var) : var_(var) { }
+VariableArg::VariableArg(const VarSymbol* var) : var_(var) { }
 
 void VariableArg::gen(const Block& block, CodeObject& code_obj) const
 {
     if ( var_ -> isField() )
     {
-        auto sym = static_cast<const VariableSymbol*>(block.scope() -> resolve("this"));
-        auto struc_sym = static_cast<const StructSymbol*>(sym -> getType().unqualified());
+        auto sym = block.scope() -> resolveVariable("this");
+        auto struc_sym = static_cast<const StructSymbol*>(sym -> typeOf().unqualified());
 
         block.allocate(sym);
 
         code_obj.emit("mov rax, [rbp - " + std::to_string(block.addressOf(sym)) + "]");
-        if ( int addr = struc_sym -> offsetOf(var_) )
+        if ( int addr = struc_sym -> offsetOf(var_ -> getName()) )
             code_obj.emit("lea rax, [rax + " + std::to_string(addr) + "]");
     }
-    else if ( var_ -> getType().isReference() )
+    else if ( var_ -> typeOf().isReference() )
     {
         code_obj.emit("mov rax, [rbp - " + std::to_string(block.addressOf(var_)) + "]");
     }
@@ -33,6 +33,6 @@ void VariableArg::gen(const Block& block, CodeObject& code_obj) const
 }
 
 std::string VariableArg::toString() const { return var_ -> getName(); }
-const Type* VariableArg::type() const     { return var_ -> getType().base(); }
+const Type* VariableArg::type() const     { return var_ -> typeOf().base(); }
     
-const VariableSymbol* VariableArg::var() const { return var_; }
+const VarSymbol* VariableArg::var() const { return var_; }

@@ -21,7 +21,6 @@ public:
     void visit(IfNode* node) override;
     void visit(ForNode* node) override;
     void visit(DotNode* node) override;
-    void visit(TypeNode* node) override;
     void visit(AddrNode* node) override;
     void visit(NullNode* node) override;
     void visit(CallNode* node) override;

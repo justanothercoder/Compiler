@@ -1,5 +1,4 @@
 #include "templatestructdeclarationnode.hpp"
-#include "symboldefine.hpp"
 #include "templateinfo.hpp"
 #include "templatestructsymbol.hpp"
 #include "structdeclarationnode.hpp"
@@ -13,13 +12,13 @@ TemplateStructDeclarationNode::TemplateStructDeclarationNode(std::string name
                                                                                                       , inner(std::move(inner))
                                                                                                       , template_params(template_params)
 {
-    defined_symbol = std::make_shared<TemplateStructSymbol>(name, template_params, this);
+    defined_symbol = new TemplateStructSymbol(name, template_params, this);
 }
 
 void TemplateStructDeclarationNode::build_scope() { } 
 void TemplateStructDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
-Symbol* TemplateStructDeclarationNode::getDefinedSymbol() const { return defined_symbol.get(); }
+Symbol* TemplateStructDeclarationNode::getDefinedSymbol() const { return defined_symbol; }
 
 void TemplateStructDeclarationNode::addInstance(TemplateArguments template_arguments, std::shared_ptr<DeclarationNode> node)
 {
@@ -78,7 +77,7 @@ std::string TemplateStructDeclarationNode::toString() const
 
 std::shared_ptr<DeclarationNode> TemplateStructDeclarationNode::instantiateWithArguments(TemplateArguments params)
 {
-    auto template_info = TemplateInfo(defined_symbol.get(), params);
+    auto template_info = TemplateInfo(defined_symbol, params);
     RebuildTreeVisitor rebuild(template_info);
 
 	auto vec = std::vector<ASTNode>{ };

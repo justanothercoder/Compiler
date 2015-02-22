@@ -21,7 +21,6 @@ public:
     void visit(AddrNode* node) override;
     void visit(NullNode* node) override;
     void visit(CallNode* node) override;
-    void visit(TypeNode* node) override;
     void visit(UnaryNode* node) override;
     void visit(BreakNode* node) override;
     void visit(WhileNode* node) override;
@@ -51,7 +50,7 @@ private:
 
     void visitChildren(AST* t);
 
-    TypeInfo preprocessTypeInfo(TypeInfo type_info, Scope *scope);
+    TypeInfo preprocessTypeInfo(TypeInfo type_info, const Scope *scope);
     std::shared_ptr<DeclarationNode> instantiateSpec(const TemplateSymbol* tmpl, const TemplateArgumentsInfo& template_params);
 
     std::set<TemplateSymbol*> template_symbols;

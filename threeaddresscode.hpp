@@ -60,7 +60,7 @@ public:
     Argument add(std::shared_ptr<Command> command);
     Argument newLabel(const std::string& label = "");
 
-    void rememberVar(const VariableSymbol* var);
+    void rememberVar(const VarSymbol* var);
 
     std::string toString();
 
@@ -73,9 +73,11 @@ public:
     void addConst(int c);
     void addString(const std::string& str);
 
-    void addExternalFunction(const FunctionSymbol* sym);
+    void addExternalFunction(const FunctionalSymbol* sym);
 
 //private:
+
+    std::string getAsmName(const FunctionalSymbol* sym) const;
 
     std::vector< std::unique_ptr<Block> > blocks;
     std::stack<int> blockStack;

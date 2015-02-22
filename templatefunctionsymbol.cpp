@@ -1,7 +1,6 @@
 #include "templatefunctionsymbol.hpp"
 #include "functionaltype.hpp"
 #include "templateinfo.hpp"
-#include "templatefunctionsymboldefine.hpp"
 #include "variablenode.hpp"
 #include "structdeclarationnode.hpp"
 #include "templatefunctiondeclarationnode.hpp"
@@ -22,9 +21,7 @@ std::string TemplateFunctionSymbol::getName() const { return name; }
 TemplateParamsInfo TemplateFunctionSymbol::templateSymbols() const { return template_symbols; }
 TemplateDeclarationNode* TemplateFunctionSymbol::holder() const { return _holder; }
     
-std::unique_ptr<DefineSymbolVisitor> TemplateFunctionSymbol::defineSymbolVisitor() const { return std::make_unique<TemplateFunctionSymbolDefine>(); }
-
-const FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeInfo info, const TemplateArguments& partial) const
+FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeInfo info, const TemplateArguments& partial) const
 {
     auto decl = static_cast<TemplateFunctionDeclarationNode*>(holder());
     auto tmpl = static_cast<const TemplateFunctionSymbol*>(decl -> getDefinedSymbol());
@@ -51,7 +48,7 @@ const FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(Functio
         for ( auto visitor : std::vector<ASTVisitor*>{&expand, &define, &check} )
             new_decl -> accept(*visitor);
 
-        return static_cast<const FunctionSymbol*>(new_decl -> getDefinedSymbol());
+        return static_cast<FunctionSymbol*>(new_decl -> getDefinedSymbol());
     }
 
     return nullptr;

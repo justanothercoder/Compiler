@@ -3,7 +3,7 @@
 
 #include "numbernode.hpp"
 
-class VariableSymbol;
+class VarSymbol;
 
 class VariableNode : public ExprNode
 {
@@ -25,13 +25,13 @@ public:
 
     const std::string& name() const;
 
-    const VariableSymbol* variable() const;
-    void variable(const VariableSymbol* sym);
+    const VarSymbol* variable() const;
+    void variable(const VarSymbol* sym);
 
 private:
 
     std::string name_;
-    const VariableSymbol* variable_ = nullptr;
+    const VarSymbol* variable_ = nullptr;
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include "astvisitor.hpp"
 #include "valueinfo.hpp"
 #include "callinfo.hpp"
+#include "functiontypeinfo.hpp"
 
 class AST;
 class FunctionScope;
@@ -21,7 +22,6 @@ public:
     void visit(AddrNode* node) override;
     void visit(NullNode* node) override;
     void visit(CallNode* node) override;
-    void visit(TypeNode* node) override;
     void visit(BreakNode* node) override;
     void visit(WhileNode* node) override;
     void visit(UnaryNode* node) override;
@@ -54,9 +54,14 @@ private:
 
     std::vector<ValueInfo> extractArguments(const std::vector< std::unique_ptr<ExprNode> >& params);
 
+    const FunctionTypeInfo& getCallArguments();
+    void pushArguments(FunctionTypeInfo info);
+    void popArguments();
+
 private:
 
     std::stack<FunctionScope*> function_scopes;
+    std::stack<FunctionTypeInfo> arguments_stack;
 };
 
 #endif

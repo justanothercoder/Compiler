@@ -33,7 +33,7 @@ bool ElemCommand::isExpr() const { return true; }
 const Type* ElemCommand::type() const 
 {
     if ( is_string )
-        return TypeFactory::getReference(BuiltIns::char_type.get());
+        return TypeFactory::getReference(BuiltIns::char_type);
 
     return TypeFactory::getReference(static_cast<const ArrayType*>(base_ -> type()) -> pointedType());
 }

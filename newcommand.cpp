@@ -8,7 +8,7 @@
     
 NewCommand::NewCommand(const Type* _type) : _type(_type) { }
 
-std::string NewCommand::toString() const { return "new " + _type -> getName(); }
+std::string NewCommand::toString() const { return "new " + _type -> typeName(); }
 
 bool NewCommand::isExpr() const { return true; }    
 const Type* NewCommand::type() const { return _type; }

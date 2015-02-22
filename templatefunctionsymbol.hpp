@@ -22,9 +22,7 @@ public:
     TemplateDeclarationNode* holder() const override;
     TemplateParamsInfo templateSymbols() const override;
 
-    std::unique_ptr<DefineSymbolVisitor> defineSymbolVisitor() const override;
-
-    const FunctionSymbol* overloadOfTemplateFunction(FunctionTypeInfo info, const TemplateArguments& partial = { }) const;
+    FunctionSymbol* overloadOfTemplateFunction(FunctionTypeInfo info, const TemplateArguments& partial = { }) const;
 
 private:
 

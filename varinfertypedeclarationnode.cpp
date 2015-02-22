@@ -11,7 +11,7 @@ void VarInferTypeDeclarationNode::build_scope()
     expr_ -> build_scope();
 }
 
-const Symbol* VarInferTypeDeclarationNode::getDefinedSymbol() const { return defined_symbol.get(); }
+Symbol* VarInferTypeDeclarationNode::getDefinedSymbol() const { return defined_symbol; }
 
 ASTNode VarInferTypeDeclarationNode::copyTree() const 
 { 
@@ -23,7 +23,7 @@ std::string VarInferTypeDeclarationNode::toString() const { return "var " + name
 
 void VarInferTypeDeclarationNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
-void VarInferTypeDeclarationNode::setDefinedSymbol(std::shared_ptr<const VariableSymbol> sym) { defined_symbol = sym; }
+void VarInferTypeDeclarationNode::setDefinedSymbol(VarSymbol* sym) { defined_symbol = sym; }
     
 const std::string& VarInferTypeDeclarationNode::name() const { return name_; }
 ExprNode* VarInferTypeDeclarationNode::expr() { return expr_.get(); }

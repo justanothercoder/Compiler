@@ -1,49 +1,52 @@
 #include "scope.hpp"
 #include "symbol.hpp"
 #include "type.hpp"
-#include "templateinfo.hpp"
-#include "templatestructsymbol.hpp"
-#include "variablenode.hpp"
-#include "typefactory.hpp"
-#include "structdeclarationnode.hpp"
-#include "templatesymbol.hpp"
-#include "definesymbolvisitor.hpp"
-#include "overloadedfunctionsymbol.hpp"
+#include "functionalsymbol.hpp"
+#include "typesymbol.hpp"
+#include "varsymbol.hpp"
+#include "functiontypeinfo.hpp"
+
+#include "logger.hpp"
 
 Scope::~Scope() { }
 bool Scope::isUnsafeBlock() const { return false; }
 
-void Scope::define(std::shared_ptr<const Symbol> sym) 
-{
-    auto define_symbol = sym -> defineSymbolVisitor();
-    define_symbol -> setSymbol(sym);
-    accept(*define_symbol); 
-}
-
-const Type* Scope::resolveType(const std::string& name)
+TypeSymbol* Scope::resolveType(const std::string& name) const
 {
     auto scope = this;
-
-    const Symbol *sym = nullptr;
-
-    while ( true )
+    Symbol *sym = nullptr;
+    while ( !sym || !sym -> isType() )
     {
-        while ( scope != nullptr && scope -> resolve(name) == sym )
-            scope = scope -> enclosingScope();
-
-        if ( scope == nullptr )
-            return nullptr;
-
         sym = scope -> resolve(name);
-
-        if ( !sym -> isFunction() && dynamic_cast<const Type*>(sym) != nullptr )
-            return dynamic_cast<const Type*>(sym);
+        scope = scope -> enclosingScope();
     }
+
+    return static_cast<TypeSymbol*>(sym);
 }
-    
-const FunctionalType* Scope::resolveFunction(const std::string& name)
+
+FunctionalSymbol* Scope::resolveFunction(const std::string& name, const FunctionTypeInfo& info) const
 {
-    auto func = resolve(name);
-    assert(func -> isFunction());
-    return static_cast<const OverloadedFunctionSymbol*>(func);
+    auto scope = this;
+    Symbol* sym = nullptr;
+    while ( !sym || !sym -> isFunction() || !static_cast<FunctionalSymbol*>(sym) -> isCompatibleWith(info) )
+    {
+        sym = scope -> resolve(name);
+        scope = scope -> enclosingScope();
+    }
+
+    return static_cast<FunctionalSymbol*>(sym);
 }
+
+VarSymbol* Scope::resolveVariable(const std::string& name) const
+{
+    auto scope = this;
+    Symbol* sym = nullptr;
+    while ( !sym || !sym -> isVariable() )
+    {
+        sym = scope -> resolve(name);
+        scope = scope -> enclosingScope();
+    }
+
+    return static_cast<VarSymbol*>(sym);
+}
+

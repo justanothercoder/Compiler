@@ -13,8 +13,6 @@ public:
 
     GlobalScope();
 
-    void accept(ScopeVisitor& visitor) override;
-
     Scope* enclosingScope() const override;
     std::string getScopeName() const override;
 

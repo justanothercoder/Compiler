@@ -8,7 +8,7 @@
 #include "variablearg.hpp"
 #include "logger.hpp"
 
-DotArg::DotArg(Argument expr, int offset, const VariableSymbol* member) : expr_(expr), offset_(offset), member_(member) { }
+DotArg::DotArg(Argument expr, int offset, const VarSymbol* member) : expr_(expr), offset_(offset), member_(member) { }
 
 void DotArg::gen(const Block& block, CodeObject& code_obj) const
 {
@@ -50,9 +50,9 @@ void DotArg::gen(const Block& block, CodeObject& code_obj) const
 }
 
 std::string DotArg::toString() const { return expr_ -> toString() + "." + member_ -> getName(); }
-const Type* DotArg::type() const     { return member_ -> getType().base(); }
+const Type* DotArg::type() const     { return member_ -> typeOf().base(); }
     
 Arg* DotArg::expr() const { return expr_.get(); }
 int DotArg::offset() const { return offset_; }
-const VariableSymbol* DotArg::member() const { return member_; }
+const VarSymbol* DotArg::member() const { return member_; }
 

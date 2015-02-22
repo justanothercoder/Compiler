@@ -13,10 +13,10 @@ public:
     static void defineBuiltIns();
 
     static std::shared_ptr<Scope> global_scope;
-    static std::shared_ptr<Type> void_type;
-    static std::shared_ptr<Type> int_type;
-    static std::shared_ptr<Type> char_type;
-    static std::shared_ptr<Type> ASCII_string_type;    
+    static const Type* void_type;
+    static const Type* int_type;
+    static const Type* char_type;
+    static const Type* ASCII_string_type;    
 };
     
 bool isIntType(const Type* t);

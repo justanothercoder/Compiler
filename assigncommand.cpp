@@ -26,7 +26,7 @@ void AssignCommand::gen(const Block& block, CodeObject& code_obj) const
         if ( rhs_ -> type() -> isReference() )
             code_obj.emit("mov rax, [rax]");
         
-        if ( rhs_ -> type() -> removeRef() == BuiltIns::char_type.get() )
+        if ( isCharType(rhs_ -> type() -> removeRef()) )
         {
             code_obj.emit("xor rbx, rbx");
             code_obj.emit("mov bl, byte [rax]");

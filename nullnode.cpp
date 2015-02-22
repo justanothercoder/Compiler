@@ -6,7 +6,7 @@
 ASTNode NullNode::copyTree() const { return std::make_unique<NullNode>(); }
 
 std::string NullNode::toString() const { return "null"; }
-VariableType NullNode::getType() const { return VariableType(TypeFactory::getPointer(BuiltIns::void_type.get()), true); }
+VariableType NullNode::getType() const { return VariableType(TypeFactory::getPointer(BuiltIns::void_type), true); }
 
 bool NullNode::isLeftValue() const       { return false; } 
 bool NullNode::isCompileTimeExpr() const { return false; }

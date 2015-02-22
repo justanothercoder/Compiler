@@ -3,7 +3,7 @@
 
 #include "exprnode.hpp"
 
-class FunctionSymbol;
+class FunctionalSymbol;
 
 class ReturnNode : public AST
 {
@@ -21,13 +21,13 @@ public:
     ExprNode* expr();
     bool isInInlineCall() const;
 
-    const FunctionSymbol* function() const;
-    void function(const FunctionSymbol* func);
+    const FunctionalSymbol* function() const;
+    void function(const FunctionalSymbol* func);
 
 private:
 
     ASTExprNode expr_; 
-    const FunctionSymbol* enclosing_func = nullptr;
+    const FunctionalSymbol* enclosing_func = nullptr;
 
     bool is_in_inline_call = false;
 };

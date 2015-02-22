@@ -22,6 +22,7 @@
 #include "templatestructdeclarationnode.hpp"
 #include "templatefunctiondeclarationnode.hpp"
 #include "modulesymbol.hpp"
+#include "typesymbol.hpp"
 #include "templatestructsymbol.hpp"
 #include "templatefunctionsymbol.hpp"
 #include "compilableunit.hpp"
@@ -59,14 +60,14 @@ void ExpandTemplatesVisitor::visit(NewExpressionNode* node)
     node -> typeInfo(preprocessTypeInfo(node -> typeInfo(), node -> scope.get()));
 }
     
-TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, Scope* scope)
+TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, const Scope* scope)
 {
     if ( type_info.moduleName() != "" )
         scope = Comp::getUnit(type_info.moduleName()) -> module_symbol.get();
 
     assert(scope != nullptr);
 
-    auto type = scope -> resolve(type_info.name());
+    auto type = scope -> resolveType(type_info.name());
 
     if ( type == nullptr )
         throw SemanticError(type_info.name() + " is not a type");
@@ -110,8 +111,17 @@ std::shared_ptr<DeclarationNode> ExpandTemplatesVisitor::instantiateSpec(const T
     return decl;
 }
 
-void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode* node)   { node -> scope -> define(node -> defined_symbol); }
-void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) { node -> scope -> define(node -> defined_symbol); }
+void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode* node)   
+{
+    auto sym = std::unique_ptr<TemplateSymbol>(node -> defined_symbol);
+    node -> scope -> define(std::move(sym)); 
+}
+
+void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) 
+{
+    auto sym = std::unique_ptr<TemplateSymbol>(node -> defined_symbol);
+    node -> scope -> define(std::move(sym)); 
+}
 
 void ExpandTemplatesVisitor::visit(IfNode*                node) { visitChildren(node); } 
 void ExpandTemplatesVisitor::visit(ForNode*               node) { visitChildren(node); } 
@@ -130,7 +140,6 @@ void ExpandTemplatesVisitor::visit(StructDeclarationNode* node) { visitChildren(
 void ExpandTemplatesVisitor::visit(VarInferTypeDeclarationNode* node) { node -> expr() -> accept(*this); }
 
 void ExpandTemplatesVisitor::visit(NullNode* ) { }
-void ExpandTemplatesVisitor::visit(TypeNode* ) { }
 void ExpandTemplatesVisitor::visit(BreakNode* ) { } 
 void ExpandTemplatesVisitor::visit(StringNode* ) { }
 void ExpandTemplatesVisitor::visit(NumberNode* ) { }

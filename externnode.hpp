@@ -11,6 +11,7 @@
 #include "functiondeclarationinfo.hpp"
 
 class FunctionSymbol;
+class FunctionalSymbol;
 
 class ExternNode : public DeclarationNode
 {
@@ -22,8 +23,8 @@ public:
     std::string toString() const override;
     void accept(ASTVisitor& visitor) override;
 
-    const Symbol* getDefinedSymbol() const;
-    void setDefinedSymbol(std::shared_ptr<const FunctionSymbol> symbol);
+    Symbol* getDefinedSymbol() const;
+    void setDefinedSymbol(FunctionalSymbol* symbol);
 
     const std::string& name() const;
     const FunctionDeclarationInfo& info() const;
@@ -35,7 +36,7 @@ private:
     FunctionDeclarationInfo info_;
     bool is_unsafe;
 
-    std::shared_ptr<const FunctionSymbol> defined_symbol = nullptr;
+    FunctionalSymbol* defined_symbol = nullptr;
 };
 
 #endif

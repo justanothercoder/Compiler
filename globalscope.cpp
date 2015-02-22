@@ -1,7 +1,6 @@
 #include "globalscope.hpp"
-#include "scopevisitor.hpp"
 #include "functionscope.hpp"
-#include "functionsymbol.hpp"
+#include "symbolfactory.hpp"
 #include "globalconfig.hpp"
 #include "logger.hpp"
 #include "comp.hpp"
@@ -13,18 +12,21 @@ std::string GlobalScope::getScopeName() const { return ""; }
 
 bool GlobalScope::isUnsafeBlock() const { return false; }
 
-void GlobalScope::accept(ScopeVisitor& visitor) { visitor.visit(this); }
-
 void GlobalScope::defineBuiltInFunction(std::string name, FunctionType type)
 {
+    SymbolFactory factory;
+
     auto scope_name = getScopeName() + "_" + name;
     auto scope = new FunctionScope(scope_name, this, false);
-    define(std::make_shared<FunctionSymbol>(name, type, scope, FunctionTraits::simple())); 
+    define(factory.makeFunction(name, type, FunctionTraits::simple(), false, scope));
 }
 
 void GlobalScope::defineBuiltInOperator(std::string name, FunctionType type)
 {
+    SymbolFactory factory;
+
     auto scope_name = getScopeName() + "_" + Comp::config().getCodeOperatorName(name);
     auto scope = new FunctionScope(scope_name, this, false);
-    define(std::make_shared<FunctionSymbol>(name, type, scope, FunctionTraits::oper())); 
+
+    define(factory.makeFunction(name, type, FunctionTraits::oper(), false, scope));
 }

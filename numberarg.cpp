@@ -10,5 +10,5 @@ void NumberArg::gen(const Block& block, CodeObject& code_obj) const { code_obj.e
 
 std::string NumberArg::toString() const { return std::to_string(_value); }
 
-const Type* NumberArg::type() const { return BuiltIns::int_type.get(); } 
+const Type* NumberArg::type() const { return BuiltIns::int_type; } 
 int NumberArg::value() const { return _value; }

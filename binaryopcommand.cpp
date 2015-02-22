@@ -17,7 +17,7 @@ void BinaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
     if ( rhs_ -> type() -> isReference() )
         code_obj.emit("mov rax, [rax]");
 
-    if ( rhs_ -> type() -> removeRef() == BuiltIns::char_type.get() )
+    if ( isCharType(rhs_ -> type() -> removeRef()) )
     {
         code_obj.emit("mov qword [rsp], 0");
         code_obj.emit("mov bl, byte [rax]");
@@ -34,7 +34,7 @@ void BinaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
 
     code_obj.emit("pop rbx");
 
-    if ( lhs_ -> type() -> removeRef() == BuiltIns::char_type.get() )
+    if ( isCharType(lhs_ -> type() -> removeRef()) )
         code_obj.emit("mov rax, byte [rax]");
     else
         code_obj.emit("mov rax, [rax]");
@@ -84,7 +84,7 @@ std::string BinaryOpCommand::toString() const
 }
 
 bool BinaryOpCommand::isExpr() const { return true; }
-const Type* BinaryOpCommand::type() const { return BuiltIns::int_type.get(); }
+const Type* BinaryOpCommand::type() const { return BuiltIns::int_type; }
 
 void BinaryOpCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }
     

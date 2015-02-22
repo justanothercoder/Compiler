@@ -5,9 +5,10 @@
 #include "noviableoverloaderror.hpp"
 #include "logger.hpp"
 
-OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name, FunctionTraits traits) : name(name), type_info({ }), traits(traits) { }
+OverloadedFunctionSymbol::OverloadedFunctionSymbol(std::string name, FunctionTraits traits) : name(name), type_info({ }), traits_(traits) { }
 
 std::string OverloadedFunctionSymbol::getName() const { return name; }
+std::string OverloadedFunctionSymbol::typeName() const { return name; }
 
 VariableType OverloadedFunctionSymbol::getBaseType() const
 {
@@ -17,7 +18,7 @@ VariableType OverloadedFunctionSymbol::getBaseType() const
 
 bool OverloadedFunctionSymbol::isFunction() const { return true; }
 
-const FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeInfo params_type) const
+FunctionalSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeInfo params_type) const
 {
     auto overloads = type_info.getPossibleOverloads(params_type);
 
@@ -38,7 +39,7 @@ const FunctionSymbol* OverloadedFunctionSymbol::getViableOverload(FunctionTypeIn
         }
     }
 
-    return v.empty() ? nullptr : static_cast<const FunctionSymbol*>(type_info.symbols.at(v.front()).get());
+    return v.empty() ? nullptr : static_cast<FunctionalSymbol*>(type_info.symbols.at(v.front()));
 }
     
 void OverloadedFunctionSymbol::setTemplateFunction(const TemplateFunctionSymbol* function) const { template_function = function; }    
@@ -67,25 +68,32 @@ CallInfo OverloadedFunctionSymbol::resolveCall(std::vector<ValueInfo> arguments)
     return CallInfo(function, getConversions(arguments, function_params));
 }
 
-bool OverloadedFunctionSymbol::isMethod() const { return traits.is_method; }
-    
-const FunctionSymbol* OverloadedFunctionSymbol::overloadWith(FunctionTypeInfo info) const 
+FunctionalSymbol* OverloadedFunctionSymbol::overloadWith(FunctionTypeInfo info) const 
 {
-    return static_cast<const FunctionSymbol*>(type_info.symbols[info].get());
+    return type_info.symbols[info];
 }
 
-void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, std::shared_ptr<const Symbol> sym) const
+void OverloadedFunctionSymbol::addOverload(FunctionTypeInfo func_type_info, FunctionalSymbol* sym) const
 {
     type_info.overloads.insert(func_type_info);
     type_info.symbols.emplace(func_type_info, sym);
 }
 
-std::vector<const FunctionSymbol*> OverloadedFunctionSymbol::allOverloads() const
+std::vector<FunctionalSymbol*> OverloadedFunctionSymbol::allOverloads() const
 {
-    auto overloads = std::vector<const FunctionSymbol*>{ };
+    auto overloads = std::vector<FunctionalSymbol*>{ };
 
     for ( auto entry : type_info.symbols )
-        overloads.push_back(static_cast<const FunctionSymbol*>(entry.second.get()));
+        overloads.push_back(entry.second);
 
     return overloads;
 }
+    
+AST* OverloadedFunctionSymbol::getFunctionDecl() const { return nullptr; }
+Scope* OverloadedFunctionSymbol::innerScope() const { return nullptr; }
+    
+bool OverloadedFunctionSymbol::isCompatibleWith(FunctionTypeInfo ft) const { return getViableOverload(ft) != nullptr; }
+
+FunctionType   OverloadedFunctionSymbol::type()   const { return FunctionType(VariableType(nullptr), { }); }
+FunctionTraits OverloadedFunctionSymbol::traits() const { return traits_; }
+    

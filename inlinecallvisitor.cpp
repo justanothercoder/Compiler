@@ -28,6 +28,7 @@
 #include "checkvisitor.hpp"
 #include "builtins.hpp"
 #include "markreturnasinlinevisitor.hpp"
+#include "symbolfactory.hpp"
 
 #include "logger.hpp"
 
@@ -47,24 +48,23 @@ void InlineCallVisitor::visitCallable(CallableNode* node)
     node -> inlineInfo(inlineCall(function));
 }
 
-bool InlineCallVisitor::shouldBeInlined(const FunctionSymbol* function)
+bool InlineCallVisitor::shouldBeInlined(const FunctionalSymbol* function)
 {
-    if ( function -> function_decl == nullptr )
+    if ( /*function -> function_decl == nullptr*/ function -> innerScope() == nullptr )
         return false;
 
     auto params = function -> type().typeInfo().params(); 
     return std::all_of(std::begin(params), std::end(params), [](auto&& t)
     {
-        return t.isReference()
-            || t.base() -> isPointer()
-            || t.base() == BuiltIns::int_type.get()
-            || t.base() == BuiltIns::char_type.get();
+        return t.isReference() || t.base() -> isPointer() || isIntType(t.base()) || isCharType(t.base());
     });
 };
 
-InlineInfo InlineCallVisitor::inlineCall(const FunctionSymbol* function)
+InlineInfo InlineCallVisitor::inlineCall(const FunctionalSymbol* function)
 {
-    auto function_decl = function -> function_decl;
+    SymbolFactory factory;
+
+    auto function_decl = static_cast<FunctionDeclarationNode*>(function -> getFunctionDecl());
     
     auto function_body = function_decl -> getChildren()[0] -> copyTree();
     auto local_scope = std::make_shared<LocalScope>(function_decl -> scope.get());
@@ -72,16 +72,16 @@ InlineInfo InlineCallVisitor::inlineCall(const FunctionSymbol* function)
     function_body -> scope = local_scope;
     function_body -> build_scope();
   
-    std::vector< std::shared_ptr<VariableSymbol> > locals;
+    std::vector<const VarSymbol*> locals;
 
     for ( auto param : function_decl -> paramsSymbols() ) 
     {
-        auto new_var = std::make_shared<VariableSymbol>(param -> getName(), param -> getType());
-        locals.push_back(new_var);
-        local_scope -> define(new_var);
+        auto new_var = factory.makeVariable(param -> getName(), param -> typeOf());
+        locals.push_back(new_var.get());
+        local_scope -> define(std::move(new_var));
     }
 
-    local_scope -> define(std::make_shared<VariableSymbol>("$", function -> type().returnType()));
+    local_scope -> define(factory.makeVariable("$", function -> type().returnType()));
 
     MarkReturnAsInlineVisitor mark(function);
 
@@ -165,7 +165,6 @@ void InlineCallVisitor::visit(StructDeclarationNode* node)       { visitChildren
 void InlineCallVisitor::visit(FunctionDeclarationNode* node)     { visitChildren(node); }
 
 void InlineCallVisitor::visit(NullNode* ) { }
-void InlineCallVisitor::visit(TypeNode* ) { }
 void InlineCallVisitor::visit(BreakNode* ) { }
 void InlineCallVisitor::visit(ImportNode* ) { }
 void InlineCallVisitor::visit(StringNode* ) { }

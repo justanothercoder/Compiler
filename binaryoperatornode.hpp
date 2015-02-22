@@ -2,6 +2,7 @@
 #define _BINARYOPERATORNODE_HPP_
 
 #include "callablenode.hpp"
+#include "functionalsymbol.hpp"
 
 enum class BinaryOp { ASSIGN, PLUS, MINUS, MUL, EQUALS, NEQUALS, AND, OR, DIV, MOD };
 
@@ -27,7 +28,7 @@ public:
     ExprNode* rhs();
     BinaryOp op() const;
 
-    const FunctionalType* function() const override;
+    const FunctionalSymbol* function() const override;
     std::vector<ValueInfo> arguments() const override;
 
 protected:

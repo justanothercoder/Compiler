@@ -1,18 +1,51 @@
 #include "basescope.hpp"
 #include "symbol.hpp"
+#include "functionalsymbol.hpp"
+#include "varsymbol.hpp"
+#include "typesymbol.hpp"
+#include "builtintypesymbol.hpp"
+#include "modulesymbol.hpp"
+#include "templatesymbol.hpp"
+#include "aliassymbol.hpp"
+#include "overloadedfunctionsymbol.hpp"
+#include "functiontypeinfo.hpp"
 
 BaseScope::~BaseScope() { } 
 
-const Symbol* BaseScope::resolveHere(std::string name) const
-{
-    auto it = table.find(name);
-    return it == std::end(table) ? nullptr : it -> second.get();
-}
+Symbol* BaseScope::resolveHere(const std::string& name) const { return table.resolve(name); }
 
-const Symbol* BaseScope::resolve(std::string name) const
+Symbol* BaseScope::resolve(const std::string& name) const
 {
     auto symbol = resolveHere(name);
     if ( enclosingScope() == nullptr ) 
         return symbol;
     return symbol == nullptr ? enclosingScope() -> resolve(name) : symbol;
 }
+    
+void BaseScope::define(std::unique_ptr<FunctionalSymbol> func) { table.define(std::move(func)); }
+void BaseScope::define(std::unique_ptr<VarSymbol> var)         { table.define(std::move(var));  }
+void BaseScope::define(std::unique_ptr<TypeSymbol> type)       { table.define(std::move(type)); }
+    
+void BaseScope::define(std::unique_ptr<BuiltInTypeSymbol> builtin) { table.define(std::move(builtin)); }
+void BaseScope::define(std::unique_ptr<AliasSymbol> alias)         { table.define(std::move(alias)); }
+void BaseScope::define(std::unique_ptr<TemplateSymbol> templ)      { table.define(std::move(templ)); }
+
+void BaseScope::define(std::shared_ptr<ModuleSymbol> module) { table.define(module); }
+
+std::vector<VarSymbol*> BaseScope::getVars() const             { return table.getVars(); }
+std::vector<FunctionalSymbol*> BaseScope::getFunctions() const { return table.getFunctions(); }
+std::vector<Symbol*> BaseScope::allSymbols() const             { return table.allSymbols(); }
+
+FunctionalSymbol* BaseScope::resolveFunction(const std::string& name, const FunctionTypeInfo& info) const 
+{
+    auto overloads = table.resolveFunction(name);
+
+    for ( const auto& overload : overloads )
+    {
+        if ( overload -> isCompatibleWith(info) )
+            return overload;
+    }
+
+    return nullptr; 
+}
+

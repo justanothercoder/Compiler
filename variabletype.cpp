@@ -23,7 +23,7 @@ std::string VariableType::getName() const
 {
     std::string res = "";
     res += isConst() ? "const~" : "";
-    res += type -> getName();
+    res += type -> typeName();
     return res;
 }
     
@@ -51,5 +51,5 @@ TypeInfo makeTypeInfo(VariableType type)
         }
     }
 
-    return TypeInfo(type.unqualified() -> getName(), type.isReference(), type.isConst(), { }, modifiers);
+    return TypeInfo(type.unqualified() -> typeName(), type.isReference(), type.isConst(), { }, modifiers);
 }

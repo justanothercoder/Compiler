@@ -16,25 +16,25 @@ void SpaceAllocator::rememberAt(const Command* command, int address)
     offsets[command] = address;
 }
 
-void SpaceAllocator::remember(const VariableSymbol* sym)
+void SpaceAllocator::remember(const VarSymbol* sym)
 {
     if ( var_offsets.count(sym) )
         return;
 
     if ( sym -> isParam() )
     {
-        param_space += sym -> getType().sizeOf();
+        param_space += sym -> typeOf().sizeOf();
         var_offsets[sym] = -(params_offset + param_space);
     }
     else
     {
-        space_used += sym -> getType().sizeOf();
+        space_used += sym -> typeOf().sizeOf();
         var_offsets[sym] = space_offset + space_used;
     }
 }
 
-int SpaceAllocator::addressOf(const Command* command)    { return offsets.at(command); }
-int SpaceAllocator::addressOf(const VariableSymbol* sym) { return var_offsets.at(sym); }
+int SpaceAllocator::addressOf(const Command* command) { return offsets.at(command); }
+int SpaceAllocator::addressOf(const VarSymbol* sym)   { return var_offsets.at(sym); }
 
 int SpaceAllocator::totalSpaceUsed() const { return space_used; }
 

@@ -29,14 +29,13 @@ CompilableUnit& Comp::compile(std::string filename)
     root -> scope = unit.module_symbol;
     root -> build_scope();
 
-    ExpandTemplatesVisitor expand_visitor;
-    root -> accept(expand_visitor);
-
     DefineVisitor define_visitor;
     root -> accept(define_visitor);
 
-    for ( auto sym : unit.module_symbol -> table )
-        unit.module_globals.push_back(sym.second);
+    ExpandTemplatesVisitor expand_visitor;
+    root -> accept(expand_visitor);
+
+    unit.module_globals = unit.module_symbol -> allSymbols();
 
     CheckVisitor check_visitor;
     root -> accept(check_visitor);
@@ -47,9 +46,9 @@ CompilableUnit& Comp::compile(std::string filename)
     GenSSAVisitor visitor(Comp::code);
     root -> accept(visitor);
 
-    unit.root = std::shared_ptr<AST>{std::move(root)};
+    unit.root = std::move(root);
 
-    Comp::units.push_back(unit);
+    Comp::units.push_back(std::move(unit));
     return Comp::units.back();
 }
     

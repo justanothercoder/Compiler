@@ -12,7 +12,7 @@ public:
 
     PartiallyInstantiatedFunctionSymbol(const OverloadedFunctionSymbol* ov_func, TemplateArguments tmpl_arguments);
 
-    std::string getName() const override;
+    std::string typeName() const override;
     CallInfo resolveCall(std::vector<ValueInfo> arguments) const override;
 
 private:

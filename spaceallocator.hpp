@@ -4,7 +4,7 @@
 #include <map>
 
 class Command;
-class VariableSymbol;
+class VarSymbol;
 
 class SpaceAllocator
 {
@@ -13,12 +13,12 @@ public:
     SpaceAllocator(int params_offset);
 
     void remember(const Command* command, int size);
-    void remember(const VariableSymbol* sym);
+    void remember(const VarSymbol* sym);
 
     void rememberAt(const Command* command, int address);
 
     int addressOf(const Command* command);
-    int addressOf(const VariableSymbol* sym);
+    int addressOf(const VarSymbol* sym);
 
     int totalSpaceUsed() const;
 
@@ -27,7 +27,7 @@ public:
 private:
 
     std::map<const Command*, int> offsets;
-    std::map<const VariableSymbol*, int> var_offsets;
+    std::map<const VarSymbol*, int> var_offsets;
 
     int space_used  = 0;
     int param_space = 0;    

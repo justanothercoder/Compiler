@@ -6,7 +6,7 @@
 #include "commandvisitor.hpp"
 #include "globalconfig.hpp"
 
-CallCommand::CallCommand(const FunctionSymbol* function, int params_size) : params_size(params_size), function_(function) { }
+CallCommand::CallCommand(const FunctionalSymbol* function, int params_size) : params_size(params_size), function_(function) { }
 
 void CallCommand::gen(const Block& block, CodeObject& code_obj) const
 {
@@ -33,4 +33,4 @@ const Type* CallCommand::type() const { return function_ -> type().returnType().
 
 void CallCommand::accept(CommandVisitor* visitor) { visitor -> visit(this); }
 
-const FunctionSymbol* CallCommand::function() const { return function_; }
+const FunctionalSymbol* CallCommand::function() const { return function_; }

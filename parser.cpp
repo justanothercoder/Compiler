@@ -2,7 +2,6 @@
 #include "semanticerror.hpp"
 #include "breaknode.hpp"
 #include "functionnode.hpp"
-#include "typenode.hpp"
 #include "modulenode.hpp"
 #include "filehelper.hpp"
 #include "modulememberaccessnode.hpp"
@@ -45,16 +44,16 @@ Parser::Parser(std::unique_ptr<AbstractLexer> lexer) : AbstractParser(std::move(
 void Parser::pushScope() { symbol_table_stack.emplace_back(); }
 void Parser::popScope()  { symbol_table_stack.pop_back(); }
 
-SymbolType Parser::getSymbolType(const Symbol* s)
+SymbolType_ Parser::getSymbolType(const Symbol* s)
 {
-    if      ( s -> isVariable() ) { return SymbolType::VARIABLE; }
-    else if ( s -> isFunction() ) { return SymbolType::FUNCTION; }
-    else if ( s -> isType()     ) { return SymbolType::STRUCT; }
-    else if ( s -> isModule()   ) { return SymbolType::MODULE; }
+    if      ( s -> isVariable() ) { return SymbolType_::VARIABLE; }
+    else if ( s -> isFunction() ) { return SymbolType_::FUNCTION; }
+    else if ( s -> isType()     ) { return SymbolType_::STRUCT; }
+    else if ( s -> isModule()   ) { return SymbolType_::MODULE; }
     else { throw; }
 }
 
-void Parser::rememberSymbol(std::string name, SymbolType type)
+void Parser::rememberSymbol(std::string name, SymbolType_ type)
 {
     if ( isSpeculating() )
         return;
@@ -67,14 +66,14 @@ void Parser::rememberSymbol(std::string name, SymbolType type)
         table[name] = type;
     else
     {
-        if ( !(it -> second == SymbolType::FUNCTION && type == SymbolType::FUNCTION) )
+        if ( !(it -> second == SymbolType_::FUNCTION && type == SymbolType_::FUNCTION) )
             throw SemanticError("Symbol " + name + " is already defined");
     }
 }
     
-boost::optional<SymbolType> Parser::resolveSymbolType(std::string name)
+boost::optional<SymbolType_> Parser::resolveSymbolType(std::string name)
 {
-    boost::optional<SymbolType> sym_type = boost::none;
+    boost::optional<SymbolType_> sym_type = boost::none;
     for ( auto it = symbol_table_stack.rbegin(); it != symbol_table_stack.rend(); ++it )
     {
         auto map_it = it -> find(name);
@@ -113,13 +112,13 @@ ASTNode Parser::parse()
     
     is_in_loop.push(false);
 
-    rememberSymbol("int", SymbolType::STRUCT);
-    rememberSymbol("void", SymbolType::STRUCT);
-    rememberSymbol("char", SymbolType::STRUCT);
-    rememberSymbol("class", SymbolType::STRUCT);
-    rememberSymbol("putchar", SymbolType::FUNCTION);
-    rememberSymbol("print", SymbolType::FUNCTION);
-    rememberSymbol("string", SymbolType::STRUCT);
+    rememberSymbol("int", SymbolType_::STRUCT);
+    rememberSymbol("void", SymbolType_::STRUCT);
+    rememberSymbol("char", SymbolType_::STRUCT);
+    rememberSymbol("class", SymbolType_::STRUCT);
+    rememberSymbol("putchar", SymbolType_::FUNCTION);
+    rememberSymbol("print", SymbolType_::FUNCTION);
+    rememberSymbol("string", SymbolType_::STRUCT);
 
     auto statements = std::vector<ASTNode>{ };
 
@@ -219,7 +218,7 @@ std::unique_ptr<DeclarationNode> Parser::variableDecl(boost::optional<std::strin
         constructor_params.push_back(expression());
     }
 
-    rememberSymbol(var_name, SymbolType::VARIABLE);
+    rememberSymbol(var_name, SymbolType_::VARIABLE);
 
     return std::make_unique<VariableDeclarationNode>(std::move(var_name)
                                                    , std::move(type_info)
@@ -238,9 +237,9 @@ std::unique_ptr<DeclarationNode> Parser::structDecl()
 
     auto functions = std::vector<ASTNode>{ };
 
-    rememberSymbol(struct_name, SymbolType::STRUCT);
+    rememberSymbol(struct_name, SymbolType_::STRUCT);
     pushScope();
-    rememberSymbol("this", SymbolType::VARIABLE);
+    rememberSymbol("this", SymbolType_::VARIABLE);
 
     while ( getTokenType(1) != TokenType::RBRACE )
     {
@@ -309,15 +308,15 @@ std::unique_ptr<DeclarationNode> Parser::templateStructDecl(TemplateParamsInfo t
     auto struct_in = std::vector<ASTNode>{ };
     match(TokenType::LBRACE);
 
-    rememberSymbol(struct_name, SymbolType::TEMPLATESTRUCT);
+    rememberSymbol(struct_name, SymbolType_::TEMPLATESTRUCT);
     pushScope();
 
     for ( const auto& param_info : template_params_info )
     {
         if ( param_info.second.name() == "class" )
-            rememberSymbol(param_info.first, SymbolType::STRUCT);
+            rememberSymbol(param_info.first, SymbolType_::STRUCT);
         else
-            rememberSymbol(param_info.first, SymbolType::VARIABLE);            
+            rememberSymbol(param_info.first, SymbolType_::VARIABLE);            
     }
 
     while ( getTokenType(1) != TokenType::RBRACE )
@@ -351,16 +350,16 @@ std::unique_ptr<DeclarationNode> Parser::templateFunctionDecl(boost::optional<st
 
     auto function_name = (is_operator ? operator_name() : id());
     
-    rememberSymbol(function_name, SymbolType::TEMPLATEFUNCTION);
+    rememberSymbol(function_name, SymbolType_::TEMPLATEFUNCTION);
 
     pushScope();
     
     for ( const auto& param_info : template_params_info )
-        rememberSymbol(param_info.first, (param_info.second.name() == "class" ? SymbolType::STRUCT : SymbolType::VARIABLE));
+        rememberSymbol(param_info.first, (param_info.second.name() == "class" ? SymbolType_::STRUCT : SymbolType_::VARIABLE));
 
     auto params = formalParams();
     for ( const auto& param : params )
-        rememberSymbol(param.first, SymbolType::VARIABLE);
+        rememberSymbol(param.first, SymbolType_::VARIABLE);
 
     TypeInfo return_type;
 
@@ -409,12 +408,12 @@ std::unique_ptr<DeclarationNode> Parser::functionDecl(boost::optional<std::strin
 
     auto function_name = (is_operator ? operator_name() : id());
     
-    rememberSymbol(function_name, SymbolType::FUNCTION);
+    rememberSymbol(function_name, SymbolType_::FUNCTION);
     pushScope();
     
     auto params = formalParams();
     for ( const auto& param : params )
-        rememberSymbol(param.first, SymbolType::VARIABLE);
+        rememberSymbol(param.first, SymbolType_::VARIABLE);
 
     TypeInfo return_type;
 
@@ -500,11 +499,10 @@ ASTExprNode Parser::variable()
 
     switch ( *sym_type )
     {
-        case SymbolType::VARIABLE: return std::make_unique<VariableNode>(var_name);
-        case SymbolType::MODULE  : return std::make_unique<ModuleNode>(var_name);
-        case SymbolType::STRUCT  : return std::make_unique<TypeNode>(var_name);
-        case SymbolType::FUNCTION: return std::make_unique<FunctionNode>(var_name);
-        case SymbolType::TEMPLATEFUNCTION:
+        case SymbolType_::VARIABLE: return std::make_unique<VariableNode>(var_name);
+        case SymbolType_::MODULE  : return std::make_unique<ModuleNode>(var_name);
+        case SymbolType_::FUNCTION: return std::make_unique<FunctionNode>(var_name);
+        case SymbolType_::TEMPLATEFUNCTION:
         {
             auto template_arguments = TemplateArgumentsInfo{ };
             
@@ -901,21 +899,21 @@ TypeInfo Parser::typeInfo()
     {
         type_name = id();
         
-        boost::optional<SymbolType> sym_type = boost::none;
+        boost::optional<SymbolType_> sym_type = boost::none;
         for ( auto it = symbol_table_stack.rbegin(); it != symbol_table_stack.rend(); ++it )
         {
             auto map_it = it -> find(type_name);
 
-            if ( map_it != std::end(*it) && (map_it -> second == SymbolType::STRUCT || map_it -> second == SymbolType::TEMPLATESTRUCT) )
+            if ( map_it != std::end(*it) && (map_it -> second == SymbolType_::STRUCT || map_it -> second == SymbolType_::TEMPLATESTRUCT) )
             {
-                sym_type = SymbolType::STRUCT;
+                sym_type = SymbolType_::STRUCT;
                 break;
             }            
         }
 
         if ( !isSpeculating() )
         {
-            if ( !sym_type || (sym_type != SymbolType::STRUCT && sym_type != SymbolType::TEMPLATESTRUCT) )
+            if ( !sym_type || (sym_type != SymbolType_::STRUCT && sym_type != SymbolType_::TEMPLATESTRUCT) )
                 throw SemanticError("'" + type_name + "' is not a type name");
         }
 
@@ -1021,11 +1019,11 @@ ASTNode Parser::import_stat()
     match(TokenType::IMPORT);
 
     auto module_name = id();
-    rememberSymbol(module_name, SymbolType::MODULE);
+    rememberSymbol(module_name, SymbolType_::MODULE);
     
-    auto unit = Comp::compile(module_name);
+    const auto& unit = Comp::compile(module_name);
 
-    return std::make_unique<ImportNode>(module_name, unit.root, std::vector< std::shared_ptr<const Symbol> >{ });
+    return std::make_unique<ImportNode>(module_name, unit.root.get(), std::vector<const Symbol*>{ });
 }
 
 bool Parser::tryTypeInfo()
@@ -1059,7 +1057,7 @@ bool Parser::tryModuleName()
         auto str = id();
         auto sym_type = resolveSymbolType(str);
 
-        if ( !sym_type || *sym_type != SymbolType::MODULE )
+        if ( !sym_type || *sym_type != SymbolType_::MODULE )
             throw RecognitionError("", 0, 0);
     }
     catch ( RecognitionError& e )
@@ -1082,7 +1080,7 @@ std::unique_ptr<DeclarationNode> Parser::varInferDecl(boost::optional<std::strin
 
     auto expr = expression();
 
-    rememberSymbol(name, SymbolType::VARIABLE);
+    rememberSymbol(name, SymbolType_::VARIABLE);
 
     return std::make_unique<VarInferTypeDeclarationNode>(std::move(name), std::move(expr));
 }
@@ -1123,7 +1121,7 @@ ASTNode Parser::extern_stat()
     else
         return_type_info = TypeInfo("void", false, false);
 
-    rememberSymbol(function_name, SymbolType::FUNCTION);
+    rememberSymbol(function_name, SymbolType_::FUNCTION);
 
     return std::make_unique<ExternNode>(std::move(function_name), std::move(FunctionDeclarationInfo(return_type_info, params)), is_unsafe);
 }
@@ -1133,7 +1131,7 @@ ASTNode Parser::from_import_stat()
     match(TokenType::FROM);
     auto module_name = id();
 
-    auto unit = Comp::compile(module_name);
+    const auto& unit = Comp::compile(module_name);
 
     match(TokenType::IMPORT);
     auto member_name = id();
@@ -1143,9 +1141,9 @@ ASTNode Parser::from_import_stat()
         return sym -> getName() == member_name; 
     });
 
-    rememberSymbol(member_name, getSymbolType(it -> get())); 
+    rememberSymbol(member_name, getSymbolType(*it)); 
 
-    return std::make_unique<ImportNode>(module_name, unit.root, std::vector< std::shared_ptr<const Symbol> >{*it});
+    return std::make_unique<ImportNode>(module_name, unit.root.get(), std::vector<const Symbol*>{*it});
 }
 
 ASTNode Parser::break_stat()

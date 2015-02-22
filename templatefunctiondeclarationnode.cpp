@@ -17,7 +17,7 @@ TemplateFunctionDeclarationNode::TemplateFunctionDeclarationNode(const std::stri
     , is_unsafe(is_unsafe)
     , template_params_info(template_params_info)
 {
-    defined_symbol = std::make_shared<TemplateFunctionSymbol>(name, template_params_info, this);
+    defined_symbol = new TemplateFunctionSymbol(name, template_params_info, this);
 }
 
 void TemplateFunctionDeclarationNode::build_scope() { }
@@ -62,7 +62,7 @@ std::string TemplateFunctionDeclarationNode::toString() const
     return res;
 }
 
-const Symbol* TemplateFunctionDeclarationNode::getDefinedSymbol() const { return defined_symbol.get(); }
+Symbol* TemplateFunctionDeclarationNode::getDefinedSymbol() const { return defined_symbol; }
 
 void TemplateFunctionDeclarationNode::addInstance(TemplateArguments template_arguments, std::shared_ptr<DeclarationNode> decl) 
 {
@@ -77,7 +77,7 @@ std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::getInstance(Te
 
 std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::instantiateWithArguments(TemplateArguments arguments) 
 {
-    auto template_info = TemplateInfo(defined_symbol.get(), arguments);
+    auto template_info = TemplateInfo(defined_symbol, arguments);
     RebuildTreeVisitor rebuild(template_info);
 
     statements -> accept(rebuild);    

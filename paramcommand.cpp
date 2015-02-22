@@ -23,7 +23,7 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
     {
         code_obj.emit("push rax");
     }
-    else if ( param_type -> removeRef() == BuiltIns::int_type.get()
+    else if ( isIntType(param_type -> removeRef())
            || param_type -> removeRef() -> isPointer() )
     {
         if ( param_type -> isReference() )
@@ -31,7 +31,7 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
 
         code_obj.emit("push qword [rax]");
     }
-    else if ( param_type -> removeRef() == BuiltIns::char_type.get() )
+    else if ( isCharType(param_type -> removeRef()) )
     {
         if ( param_type -> isReference() )
             code_obj.emit("mov rax, [rax]");

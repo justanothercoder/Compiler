@@ -10,41 +10,40 @@
 #include "symbol.hpp"
 #include "functiontype.hpp"
 
+#include "functionalsymbol.hpp"
+
 class VariableSymbol;
 class FunctionDeclarationNode;
 
-class FunctionSymbol : public Symbol
+class FunctionSymbol : public FunctionalSymbol
 {
 public:
 
-    FunctionSymbol(const std::string& name, FunctionType type, FunctionScope* scope, FunctionTraits traits);
-
-    std::string getTypedName() const;
-    std::string getScopedTypedName() const;
+    FunctionSymbol(std::string name, FunctionType type, FunctionScope* scope, FunctionTraits traits, bool is_unsafe = false);
 
     FunctionType type() const;
-
-    Scope* getScope() const;
-
-    bool isOperator() const;
-    bool isMethod() const;
-    bool isConstructor() const;
+    Scope* innerScope() const override;
 
     std::string getName() const override;
-    FunctionTraits getTraits() const;
+    std::string typeName() const override;
 
+    bool isFunction() const override;
+
+    bool isCompatibleWith(FunctionTypeInfo ft) const override;
+    FunctionTraits traits() const override;
+    
+    CallInfo resolveCall(std::vector<ValueInfo> arguments) const override;
+
+    AST* getFunctionDecl() const override;
     bool is_constexpr = false;
-    mutable bool is_used = false;
-
-    std::unique_ptr<DefineSymbolVisitor> defineSymbolVisitor() const override;
 
     FunctionDeclarationNode* function_decl = nullptr;
 private:
 
     std::string name;
 
-    FunctionTraits traits;
-    FunctionType _type;
+    FunctionTraits traits_;
+    FunctionType type_;
     FunctionScope* scope;
 };
 

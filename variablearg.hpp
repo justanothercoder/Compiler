@@ -3,24 +3,23 @@
 
 #include "arg.hpp"
 
-class VariableSymbol;
+class VarSymbol;
 
 class VariableArg : public Arg
 {
 public:
 
-    VariableArg(const VariableSymbol* var);
+    VariableArg(const VarSymbol* var);
     
     std::string toString() const override;
     void gen(const Block& block, CodeObject& code_obj) const override;
 
     const Type* type() const override;
-
-    const VariableSymbol* var() const;
+    const VarSymbol* var() const;
 
 private:
 
-    const VariableSymbol* var_;
+    const VarSymbol* var_;
 };
 
 #endif

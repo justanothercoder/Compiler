@@ -52,12 +52,12 @@ int main(int argc, char** argv)
         root -> scope = BuiltIns::global_scope;
         root -> build_scope();
         
-        ExpandTemplatesVisitor expand_visitor;
-        root -> accept(expand_visitor);
-       
         DefineVisitor define_visitor;
         root -> accept(define_visitor);
     
+        ExpandTemplatesVisitor expand_visitor;
+        root -> accept(expand_visitor);
+       
         CheckVisitor check_visitor;
         root -> accept(check_visitor);
 

@@ -6,7 +6,7 @@
 #include <boost/optional.hpp>
 
 class Symbol;
-class FunctionSymbol;
+class FunctionalSymbol;
 
 class Type
 {
@@ -14,7 +14,7 @@ public:
 
     virtual ~Type();
 
-    virtual std::string getName() const = 0;
+    virtual std::string typeName() const = 0;
     virtual size_t sizeOf() const = 0;
 
     virtual bool isConvertableTo(const Type *type) const = 0;
@@ -25,7 +25,7 @@ public:
     virtual bool isReference() const;
     virtual bool isObjectType() const;
 
-    virtual const FunctionSymbol* getConversionTo(const Type *type) const = 0;
+    virtual const FunctionalSymbol* getConversionTo(const Type *type) const = 0;
     virtual const Type* removeRef() const;
 };
 

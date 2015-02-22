@@ -11,8 +11,8 @@
 
 class Scope;
 class CodeObject;
-class VariableSymbol;
-class FunctionSymbol;
+class VarSymbol;
+class FunctionalSymbol;
 
 class GlobalTable;
 
@@ -28,10 +28,10 @@ public:
 
     void addCommand(std::shared_ptr<Command> command);
 
-    int addressOf(const VariableSymbol* var) const;
+    int addressOf(const VarSymbol* var) const;
     int addressOf(const Command* command) const;
 
-    void allocate(const VariableSymbol* sym) const;
+    void allocate(const VarSymbol* sym) const;
 
     Command* commandById(int command_id);
     int numId(int num) const;

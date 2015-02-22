@@ -6,8 +6,6 @@
 
 class StructScope : public BaseScope
 {
-    friend class VariableSymbolDefine;
-
 public:
 
     StructScope(std::string scope_name, Scope* enclosing_scope);
@@ -15,16 +13,18 @@ public:
     Scope* enclosingScope() const override;    
     std::string getScopeName() const override;
 
-    void accept(ScopeVisitor& visitor) override;
+    bool isUnsafeBlock() const override;
+
+    int type_size;
+
+    const std::string& structName() const;
 
 private:
     
     std::string scope_name;
     Scope* enclosing_scope;
 
-protected:
-
-    int type_size;
+    std::string name;
 };
 
 #endif

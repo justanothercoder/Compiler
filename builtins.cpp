@@ -3,105 +3,109 @@
 #include "typefactory.hpp"
 #include "globalconfig.hpp"
 #include "comp.hpp"
-#include "structsymbol.hpp"
-#include "variablesymbol.hpp"
-#include "functionsymbol.hpp"
 #include "builtintypesymbol.hpp"
+#include "symbolfactory.hpp"
+#include "typesymbol.hpp"
+#include "functiontype.hpp"
+#include "structscope.hpp"
 
 std::shared_ptr<Scope> BuiltIns::global_scope;
-std::shared_ptr<Type> BuiltIns::void_type;
-std::shared_ptr<Type> BuiltIns::int_type;
-std::shared_ptr<Type> BuiltIns::char_type;
-std::shared_ptr<Type> BuiltIns::ASCII_string_type;
+const Type* BuiltIns::void_type;
+const Type* BuiltIns::int_type;
+const Type* BuiltIns::char_type;
+const Type* BuiltIns::ASCII_string_type;
 
 void BuiltIns::defineBuiltIns()
 {
+    auto factory = SymbolFactory{ };
+
+    auto makeRef = [](auto&& type, bool is_const) { return VariableType(TypeFactory::getReference(type.get()), is_const); };
+
     auto global_scope = std::make_shared<GlobalScope>();
-    BuiltIns::global_scope = global_scope;
+   
+    auto int_          = factory.makeStruct("int", new StructScope("int", global_scope.get()));
+    auto ref_int       = makeRef(int_, false);
+    auto const_ref_int = makeRef(int_, true);
 
-    auto int_struct = std::make_shared<StructSymbol>("int", global_scope.get());
-    BuiltIns::int_type = int_struct;
+    auto char_          = factory.makeStruct("char", new StructScope("char", global_scope.get()));
+    auto ref_char       = makeRef(char_, false);
+    auto const_ref_char = makeRef(char_, true);
 
-    auto ref_int       = VariableType(TypeFactory::getReference(int_struct.get()), false);
-    auto const_ref_int = VariableType(TypeFactory::getReference(int_struct.get()), true);
+    auto str           = factory.makeStruct("string", new StructScope("string", global_scope.get()));
+    auto ref_str       = makeRef(str, false);
+    auto const_ref_str = makeRef(str, true);
 
-    auto char_struct = std::make_shared<StructSymbol>("char", global_scope.get());
-    BuiltIns::char_type = char_struct;
-
-    auto ref_char       = VariableType(TypeFactory::getReference(char_struct.get()), false);
-    auto const_ref_char = VariableType(TypeFactory::getReference(char_struct.get()), true);
-
-    auto ASCII_string = std::make_shared<StructSymbol>("string", global_scope.get());
-    ASCII_string_type = ASCII_string;
-
-    auto ref_ASCII_string       = VariableType(TypeFactory::getReference(ASCII_string.get()), false);
-    auto const_ref_ASCII_string = VariableType(TypeFactory::getReference(ASCII_string.get()), true);
-
-    auto int_builtin = VariableType(new BuiltInTypeSymbol("~~int", Comp::config().int_size), false);
-
+    auto int_builtin  = VariableType(new BuiltInTypeSymbol("~~int", Comp::config().int_size), false);
     auto char_builtin = VariableType(new BuiltInTypeSymbol("~~char", Comp::config().int_size), false);
 
-    auto tp = FunctionType(int_struct.get(), {ref_int, int_struct.get()});
+    auto simple_traits = FunctionTraits::simple();
+    auto op_traits     = FunctionTraits::methodOper();
+    auto meth_traits   = FunctionTraits::method();
+    auto constr_traits = FunctionTraits::constructor();
 
-//	int_plus  -> is_constexpr = true;
-//	int_minus -> is_constexpr = true;
+    auto tp = FunctionType(int_.get(), {ref_int, int_.get()});
 
-    auto void_type = std::make_shared<BuiltInTypeSymbol>("void", 0);
-    BuiltIns::void_type = void_type;
+    auto void_type = std::make_unique<BuiltInTypeSymbol>("void", 0);
 
-    global_scope -> defineBuiltInFunction("putchar", FunctionType(void_type.get(), {char_struct.get()}));    
-    global_scope -> defineBuiltInFunction("getchar", FunctionType(int_struct.get(), { }));
+    global_scope -> define(factory.makeFunction("putchar", FunctionType(void_type.get(), {char_.get()}), simple_traits, false));
+    global_scope -> define(factory.makeFunction("getchar", FunctionType(int_.get(), { }), simple_traits, false));
 
-    auto string_builtin = VariableType(new BuiltInTypeSymbol("~~string", 256), false);
-    ASCII_string -> define(std::make_unique<VariableSymbol>("~~impl", string_builtin, VariableSymbolType::FIELD));
+    auto string_builtin = VariableType(new BuiltInTypeSymbol("~~string", 256), false);    
+    str -> defineMember(factory.makeVariable("~~impl", string_builtin, VariableSymbolType::FIELD));
 
-    auto str_tp = FunctionType(ref_ASCII_string, {ref_ASCII_string, const_ref_ASCII_string});
+    auto str_tp = FunctionType(ref_str, {ref_str, const_ref_str});
     
-    int_struct  -> define(std::make_unique<VariableSymbol>("~~impl", int_builtin, VariableSymbolType::FIELD));
+    int_ -> defineMember(factory.makeVariable("~~impl", int_builtin, VariableSymbolType::FIELD));
     
-    int_struct -> defineBuiltInConstructor(FunctionType(ref_int, {ref_int}));
-    int_struct -> defineBuiltInConstructor(FunctionType(ref_int, {ref_int, const_ref_int}));
+    int_ -> defineMethod(factory.makeFunction("int", FunctionType(ref_int, {ref_int}), constr_traits, false));
+    int_ -> defineMethod(factory.makeFunction("int", FunctionType(ref_int, {ref_int, const_ref_int}), constr_traits, false));
     
-    int_struct -> defineBuiltInOperator("operator=", FunctionType(ref_int, {ref_int, const_ref_int}));
+    int_ -> defineMethod(factory.makeFunction("operator=", FunctionType(ref_int, {ref_int, const_ref_int}), op_traits, false));
 
-    int_struct -> defineBuiltInOperator("operator+", tp);
-    int_struct -> defineBuiltInOperator("operator-", tp);
-    int_struct -> defineBuiltInOperator("operator*", tp);
-    int_struct -> defineBuiltInOperator("operator/", tp);
-    int_struct -> defineBuiltInOperator("operator%", tp);
-    int_struct -> defineBuiltInOperator("operator==", tp);
-    int_struct -> defineBuiltInOperator("operator!=", tp);
-    int_struct -> defineBuiltInOperator("operator&&", tp);
-    int_struct -> defineBuiltInOperator("operator||", tp);
+    int_ -> defineMethod(factory.makeFunction("operator+", tp, op_traits, false));
+    int_ -> defineMethod(factory.makeFunction("operator-", tp, op_traits, false));
+    int_ -> defineMethod(factory.makeFunction("operator*", tp, op_traits, false));
+    int_ -> defineMethod(factory.makeFunction("operator/", tp, op_traits, false));
+    int_ -> defineMethod(factory.makeFunction("operator%", tp, op_traits, false));
+    int_ -> defineMethod(factory.makeFunction("operator==", tp, op_traits, false));
+    int_ -> defineMethod(factory.makeFunction("operator!=", tp, op_traits, false));
+    int_ -> defineMethod(factory.makeFunction("operator&&", tp, op_traits, false));
+    int_ -> defineMethod(factory.makeFunction("operator||", tp, op_traits, false));
 
-    int_struct -> defineBuiltInConstructor(FunctionType(ref_int, {ref_int, char_struct.get()}));
+    int_ -> defineMethod(factory.makeFunction("int", FunctionType(ref_int, {ref_int, char_.get()}), constr_traits, false));
 
-    char_struct -> define(std::make_unique<VariableSymbol>("~~impl", char_builtin, VariableSymbolType::FIELD));
+    char_ -> defineMember(factory.makeVariable("~~impl", char_builtin, VariableSymbolType::FIELD));
 
-    char_struct -> defineBuiltInConstructor(FunctionType(ref_char, {ref_char}));
-    char_struct -> defineBuiltInConstructor(FunctionType(ref_char, {ref_char, const_ref_char}));
-    char_struct -> defineBuiltInConstructor(FunctionType(ref_char, {ref_char, const_ref_int}));
+    char_ -> defineMethod(factory.makeFunction("char", FunctionType(ref_char, {ref_char}), constr_traits, false));
+    char_ -> defineMethod(factory.makeFunction("char", FunctionType(ref_char, {ref_char, const_ref_char}), constr_traits, false));
+    char_ -> defineMethod(factory.makeFunction("char", FunctionType(ref_char, {ref_char, const_ref_int}), constr_traits, false));
 
-    char_struct -> defineBuiltInOperator("operator=", FunctionType(ref_char, {ref_char, const_ref_char}));
+    char_ -> defineMethod(factory.makeFunction("operator=", FunctionType(ref_char, {ref_char, const_ref_char}), constr_traits, false));
 
-    ASCII_string -> defineBuiltInConstructor(str_tp);
-    ASCII_string -> defineBuiltInMethod("length", FunctionType(int_struct.get(), {ref_ASCII_string}));
+    str -> defineMethod(factory.makeFunction("string", str_tp, constr_traits, false));
+    str -> defineMethod(factory.makeFunction("length", FunctionType(int_.get(), {ref_str}), meth_traits, false));
 
-    ASCII_string -> defineBuiltInOperator("operator[]", FunctionType(ref_char, {ref_ASCII_string, int_struct.get()}));
-    ASCII_string -> defineBuiltInOperator("operator+", FunctionType(ASCII_string.get(), {ref_ASCII_string, const_ref_ASCII_string}));
-    ASCII_string -> defineBuiltInOperator("operator=", str_tp);
+    str -> defineMethod(factory.makeFunction("operator[]", FunctionType(ref_char, {ref_str, int_.get()}), op_traits, false));
+    str -> defineMethod(factory.makeFunction("operator+", FunctionType(str.get(), {ref_str, const_ref_str}), op_traits, false));
+    str -> defineMethod(factory.makeFunction("operator=", str_tp, op_traits, false));
 
-    global_scope -> defineBuiltInFunction("print" , FunctionType(void_type.get(), {const_ref_ASCII_string}));
+    global_scope -> define(factory.makeFunction("print", FunctionType(void_type.get(), {const_ref_str}), simple_traits, false));
+    
+    BuiltIns::int_type          = int_.get();
+    BuiltIns::char_type         = char_.get();
+    BuiltIns::ASCII_string_type = str.get();
+    BuiltIns::void_type         = void_type.get();
     
     global_scope -> define(std::move(void_type));
-    global_scope -> define(std::move(int_struct));
-    global_scope -> define(std::move(ASCII_string));
-    global_scope -> define(std::move(char_struct));
+    global_scope -> define(std::move(int_));
+    global_scope -> define(std::move(str));
+    global_scope -> define(std::move(char_));
     
+    BuiltIns::global_scope      = global_scope;
 }
 
-bool isIntType(const Type* t)    { return t == BuiltIns::int_type.get(); }
-bool isCharType(const Type* t)   { return t == BuiltIns::char_type.get(); }
+bool isIntType(const Type* t)    { return t == BuiltIns::int_type; }
+bool isCharType(const Type* t)   { return t == BuiltIns::char_type; }
 bool isPointer(const Type* t)    { return t -> isPointer(); }
 bool isReference(const Type* t)  { return t -> isReference(); }
 bool isSimpleType(const Type* t) { return isIntType(t) || isCharType(t) || isPointer(t) || isReference(t); }

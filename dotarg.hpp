@@ -4,13 +4,13 @@
 #include <memory>
 #include "arg.hpp"
 
-class VariableSymbol;
+class VarSymbol;
 
 class DotArg : public Arg
 {
 public:
 
-    DotArg(Argument expr, int offset, const VariableSymbol* member);
+    DotArg(Argument expr, int offset, const VarSymbol* member);
     
     std::string toString() const override;
     void gen(const Block& block, CodeObject& code_obj) const override;
@@ -19,13 +19,13 @@ public:
 
     Arg* expr() const;
     int offset() const;
-    const VariableSymbol* member() const;
+    const VarSymbol* member() const;
 
 private:
 
     Argument expr_;
     int offset_;
-    const VariableSymbol* member_;
+    const VarSymbol* member_;
 
 };
 

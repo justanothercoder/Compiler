@@ -5,7 +5,6 @@
 #include "nullnode.hpp"
 #include "addrnode.hpp"
 #include "callnode.hpp"
-#include "typenode.hpp"
 #include "unarynode.hpp"
 #include "breaknode.hpp"
 #include "whilenode.hpp"
@@ -247,7 +246,6 @@ void RebuildTreeVisitor::visit(NullNode* )         { _ast = std::make_unique<Nul
 void RebuildTreeVisitor::visit(BreakNode* )        { _ast = std::make_unique<BreakNode>(); }
 void RebuildTreeVisitor::visit(DotNode* node)      { _ast = std::make_unique<DotNode>(rebuild(node -> base()), node -> memberName()); }
 void RebuildTreeVisitor::visit(AddrNode* node)     { _ast = std::make_unique<AddrNode>(rebuild(node -> expr()), node -> op()); }
-void RebuildTreeVisitor::visit(TypeNode* node)     { _ast = std::make_unique<TypeNode>(node -> name()); } 
 void RebuildTreeVisitor::visit(WhileNode* node)    { _ast = std::make_unique<WhileNode>(rebuild(node -> condition()), rebuild(node -> body())); }
 void RebuildTreeVisitor::visit(UnaryNode* node)    { _ast = std::make_unique<UnaryNode>(rebuild(node -> expr()), node -> op()); } 
 void RebuildTreeVisitor::visit(ImportNode* node)   { _ast = std::make_unique<ImportNode>(node -> lib, node -> root, node -> imports); }

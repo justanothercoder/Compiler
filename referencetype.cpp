@@ -7,7 +7,7 @@ ReferenceType::ReferenceType(const Type *type) : type(type)
 
 }
 
-std::string ReferenceType::getName() const { return type -> getName() + "~ref"; } 
+std::string ReferenceType::typeName() const { return type -> typeName() + "~ref"; } 
 size_t ReferenceType::sizeOf() const { return Comp::config().int_size; } 
 
 bool ReferenceType::isConvertableTo(const Type *t) const { return (this == t) || type -> isConvertableTo(t); }
@@ -22,5 +22,5 @@ boost::optional<int> ReferenceType::rankOfConversion(const Type *t) const
 
 bool ReferenceType::isReference() const { return true; }
 
-const FunctionSymbol* ReferenceType::getConversionTo(const Type *) const { return nullptr; }
+const FunctionalSymbol* ReferenceType::getConversionTo(const Type *) const { return nullptr; }
 const Type* ReferenceType::removeRef() const { return type; }

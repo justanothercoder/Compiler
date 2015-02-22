@@ -38,7 +38,7 @@ private:
     std::map<long long, std::shared_ptr<DeclarationNode> > instances;
     TemplateParamsInfo template_params;
 
-    std::shared_ptr<TemplateStructSymbol> defined_symbol;
+    TemplateStructSymbol* defined_symbol;
 };
 
 #endif
