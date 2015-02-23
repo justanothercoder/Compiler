@@ -4,7 +4,7 @@ LDFLAGS=
 SOURCES=main.cpp token.cpp abstractlexer.cpp lexer.cpp abstractparser.cpp parser.cpp ast.cpp declarationnode.cpp structdeclarationnode.cpp \
 	   	scope.cpp structsymbol.cpp globalscope.cpp variabledeclarationnode.cpp variablesymbol.cpp codeobject.cpp builtintypesymbol.cpp \
 	   	functiondeclarationnode.cpp functiontypeinfo.cpp functionsymbol.cpp statementnode.cpp variablenode.cpp numbernode.cpp callnode.cpp \
-	   	overloadedfunctiontypeinfo.cpp semanticerror.cpp typeinfo.cpp symbol.cpp overloadedfunctionsymbol.cpp returnnode.cpp ifnode.cpp \
+	   	semanticerror.cpp typeinfo.cpp symbol.cpp returnnode.cpp ifnode.cpp \
 	   	basescope.cpp localscope.cpp whilenode.cpp dotnode.cpp binaryoperatornode.cpp builtins.cpp functiontraits.cpp newexpressionnode.cpp \
 	   	templatestructdeclarationnode.cpp bracketnode.cpp fornode.cpp conversioninfo.cpp callinfo.cpp templateinfo.cpp stringnode.cpp \
 	   	unarynode.cpp filehelper.cpp importnode.cpp filenotfoundexception.cpp logger.cpp varinfertypedeclarationnode.cpp structscope.cpp \

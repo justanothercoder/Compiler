@@ -47,6 +47,9 @@ void DefineVisitor::visit(ExternNode* node)
 //    auto func_scope = new FunctionScope("_" + node -> name(), node -> scope.get(), false);
     auto symbol = factory.makeFunction(node -> name(), type, FunctionTraits::simple(), node -> isUnsafe());
 
+    Logger::log("Processing " + node -> toString()); 
+    Logger::log("Defining " + symbol -> getName());
+
     node -> setDefinedSymbol(symbol.get());
     node -> scope -> define(std::move(symbol));
 }

@@ -56,7 +56,7 @@ UnaryOp UnaryNode::op() const { return op_type; }
 const FunctionalType* UnaryNode::function() const 
 {
     assert(expr_ -> getType().unqualified() -> isObjectType());
-    return static_cast<const ObjectType*>(expr_ -> getType().unqualified()) -> resolveMethod(getOperatorName());
+    return static_cast<const ObjectType*>(expr_ -> getType().unqualified()) -> resolveMethod(getOperatorName(), {});
 }
 
 std::vector<ValueInfo> UnaryNode::arguments() const { return { }; }

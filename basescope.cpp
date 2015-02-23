@@ -7,8 +7,9 @@
 #include "modulesymbol.hpp"
 #include "templatesymbol.hpp"
 #include "aliassymbol.hpp"
-#include "overloadedfunctionsymbol.hpp"
 #include "functiontypeinfo.hpp"
+
+#include "logger.hpp"
 
 BaseScope::~BaseScope() { } 
 
@@ -22,13 +23,13 @@ Symbol* BaseScope::resolve(const std::string& name) const
     return symbol == nullptr ? enclosingScope() -> resolve(name) : symbol;
 }
     
-void BaseScope::define(std::unique_ptr<FunctionalSymbol> func) { table.define(std::move(func)); }
-void BaseScope::define(std::unique_ptr<VarSymbol> var)         { table.define(std::move(var));  }
-void BaseScope::define(std::unique_ptr<TypeSymbol> type)       { table.define(std::move(type)); }
+void BaseScope::define(std::unique_ptr<FunctionalSymbol> func) { func -> scope = this; table.define(std::move(func)); }
+void BaseScope::define(std::unique_ptr<VarSymbol> var)         { var  -> scope = this; table.define(std::move(var));  }
+void BaseScope::define(std::unique_ptr<TypeSymbol> type)       { type -> scope = this; table.define(std::move(type)); }
     
-void BaseScope::define(std::unique_ptr<BuiltInTypeSymbol> builtin) { table.define(std::move(builtin)); }
-void BaseScope::define(std::unique_ptr<AliasSymbol> alias)         { table.define(std::move(alias)); }
-void BaseScope::define(std::unique_ptr<TemplateSymbol> templ)      { table.define(std::move(templ)); }
+void BaseScope::define(std::unique_ptr<BuiltInTypeSymbol> builtin) { builtin -> scope = this; table.define(std::move(builtin)); }
+void BaseScope::define(std::unique_ptr<AliasSymbol> alias)         { alias   -> scope = this; table.define(std::move(alias)); }
+void BaseScope::define(std::unique_ptr<TemplateSymbol> templ)      { templ   -> scope = this; table.define(std::move(templ)); }
 
 void BaseScope::define(std::shared_ptr<ModuleSymbol> module) { table.define(module); }
 
@@ -39,13 +40,16 @@ std::vector<Symbol*> BaseScope::allSymbols() const             { return table.al
 FunctionalSymbol* BaseScope::resolveFunction(const std::string& name, const FunctionTypeInfo& info) const 
 {
     auto overloads = table.resolveFunction(name);
+    
+    Logger::log("Resolving function " + name);
 
     for ( const auto& overload : overloads )
-    {
+    {       
+        Logger::log("Overload: " + overload -> getName());
         if ( overload -> isCompatibleWith(info) )
             return overload;
     }
 
-    return nullptr; 
+    return enclosingScope() -> resolveFunction(name, info); 
 }
 

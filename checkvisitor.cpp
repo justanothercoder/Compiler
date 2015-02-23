@@ -36,6 +36,7 @@
 #include "builtins.hpp"
 #include "compilableunit.hpp"
 #include "noviableoverloaderror.hpp"
+#include "typefactory.hpp"
 #include "logger.hpp"
 
 const FunctionTypeInfo& CheckVisitor::getCallArguments() { return arguments_stack.top(); }
@@ -93,11 +94,15 @@ void CheckVisitor::visit(NewExpressionNode* node)
     assert(tp -> isObjectType());
     auto type = static_cast<const ObjectType*>(tp);
 
+    auto types = std::vector<VariableType>{ };
     for ( const auto& param : node -> params() )
+    {
         param -> accept(*this);
+        types.emplace_back(param -> getType());
+    }
 
     auto arguments = extractArguments(node -> params());
-    auto ov_func = type -> resolveMethod(type -> typeName());
+    auto ov_func = type -> resolveMethod(type -> typeName(), types);
 
     node -> callInfo(checkCall(ov_func, arguments));
 }
@@ -106,6 +111,7 @@ void CheckVisitor::visit(BinaryOperatorNode* node)
 {
     visitChildren(node);
 
+    Logger::log("Processing node " + node -> toString());
     Logger::log("Function: " + node -> function() -> getName());
     Logger::log(std::string("Function: ") + (node -> function() -> isMethod() ? std::string("method") : std::string("not method")));
 
@@ -141,8 +147,12 @@ void CheckVisitor::visit(VariableDeclarationNode* node)
 
     if ( !node -> isField() )
     {
+        auto types = std::vector<VariableType>{ };
         for ( const auto& param : node -> constructorParams() )
+        {
             param -> accept(*this);
+            types.emplace_back(param -> getType());
+        }
        
         if ( !node -> typeInfo().isRef() && node -> typeInfo().modifiers().empty() )
         {
@@ -151,10 +161,8 @@ void CheckVisitor::visit(VariableDeclarationNode* node)
 
             auto struct_symbol = static_cast<const ObjectType*>(var_type.unqualified());
 
-            Logger::log("Type name: " + struct_symbol -> typeName());
-
             auto arguments = extractArguments(node -> constructorParams());
-            auto ov_func = struct_symbol -> resolveMethod(struct_symbol -> typeName());
+            auto ov_func = struct_symbol -> resolveMethod(struct_symbol -> typeName(), types);
 
             if ( ov_func == nullptr )
                 throw SemanticError("No constructor defined");
@@ -192,10 +200,15 @@ void CheckVisitor::visit(DotNode* node)
         throw SemanticError("'" + node -> base() -> toString() + "' is not an instance of struct.");
 
     node -> baseType(static_cast<const ObjectType*>(_base_type));
-    node -> member(node -> baseType() -> resolveMember(node -> memberName()));
 
-    if ( node -> member() == nullptr )
+    auto mem = node -> baseType() -> resolveMember(node -> memberName());
+    if ( mem == nullptr )
+        mem = node -> baseType() -> resolveMethod(node -> memberName(), getCallArguments());
+
+    if ( mem == nullptr )
         throw SemanticError(node -> memberName() + " is not member of " + node -> baseType() -> typeName());
+
+    node -> member(mem);
 }
 
 void CheckVisitor::visit(ModuleMemberAccessNode* node)
@@ -216,6 +229,9 @@ void CheckVisitor::visit(ModuleNode* node)
 
 void CheckVisitor::visit(FunctionNode* node) 
 {
+    Logger::log("Processing node " + node -> toString());
+    Logger::log("Call arguments: " + getCallArguments().toString());
+
     auto sym = node -> scope -> resolveFunction(node -> name(), getCallArguments());
     node -> function(sym);
 }
@@ -224,7 +240,7 @@ void CheckVisitor::visit(TemplateFunctionNode* node)
 {
     auto sym = node -> scope -> resolve(node -> name());
     assert(sym && sym -> isFunction());
-
+/*
     auto ov_func = static_cast<const OverloadedFunctionSymbol*>(sym);
 
     if ( node -> templateArgumentsInfo().empty() )
@@ -237,6 +253,7 @@ void CheckVisitor::visit(TemplateFunctionNode* node)
 
         node -> function(new PartiallyInstantiatedFunctionSymbol(ov_func, template_arguments));
     }
+*/    
 }
 
 void CheckVisitor::visit(VariableNode* node)
@@ -247,8 +264,9 @@ void CheckVisitor::visit(VariableNode* node)
 
 void CheckVisitor::visit(CallNode* node)
 {
-    std::vector<VariableType> types;
+    Logger::log("Processing node " + node -> toString());
 
+    auto types = std::vector<VariableType>{ };
     for ( const auto& param : node -> params() )
     {
         param -> accept(*this);
@@ -277,7 +295,8 @@ void CheckVisitor::visit(ReturnNode* node)
     auto unqualified_type = node -> expr() -> getType().unqualified();
     if ( unqualified_type -> isObjectType() )
     {
-        auto ov_func = static_cast<const ObjectType*>(unqualified_type) -> resolveMethod(unqualified_type -> typeName());
+        auto obj_type = static_cast<const ObjectType*>(unqualified_type);
+        auto ov_func = obj_type -> resolveMethod(obj_type -> typeName(), {VariableType(TypeFactory::getReference(obj_type), true)});
         checkCall(ov_func, {valueOf(node -> expr())});
     }
 }
@@ -292,7 +311,7 @@ void CheckVisitor::visit(VarInferTypeDeclarationNode* node)
     auto type = node -> expr() -> getType().unqualified();
     assert(type -> isObjectType());
 
-    auto ov_func = static_cast<const ObjectType*>(type) -> resolveMethod(type -> typeName());
+    auto ov_func = static_cast<const ObjectType*>(type) -> resolveMethod(type -> typeName(), {node -> expr() -> getType()});
     node -> callInfo(checkCall(ov_func, {valueOf(node -> expr())}));
 }
 

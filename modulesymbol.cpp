@@ -4,6 +4,6 @@ ModuleSymbol::ModuleSymbol(std::string name, Scope* enclosing_scope) : name(name
 std::string ModuleSymbol::getName() const { return name; }
 
 Scope* ModuleSymbol::enclosingScope() const { return enclosing_scope; }
-std::string ModuleSymbol::getScopeName() const { return getName(); }
+std::string ModuleSymbol::getScopeName() const { return /*getName()*/ ""; }
 
 bool ModuleSymbol::isModule() const { return true; }

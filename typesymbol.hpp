@@ -12,7 +12,7 @@ public:
     virtual void defineMember(std::unique_ptr<VarSymbol> member) = 0;
     
     const Symbol*           resolveMember(const std::string& name) const;
-    const FunctionalSymbol* resolveMethod(const std::string& name) const;
+    const FunctionalSymbol* resolveMethod(const std::string& name, const FunctionTypeInfo& info) const;
 };
 
 #endif

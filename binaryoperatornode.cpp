@@ -108,10 +108,12 @@ BinaryOp BinaryOperatorNode::op() const { return op_type; }
 
 const FunctionalSymbol* BinaryOperatorNode::function() const
 {
-    if ( lhs_ -> getType().unqualified() -> isObjectType() )
-        return static_cast<const ObjectType*>(lhs_ -> getType().unqualified()) -> resolveMethod(getOperatorName());
-    else
+    if ( lhs_ -> getType().unqualified() -> isObjectType() ) {        
+        return static_cast<const ObjectType*>(lhs_ -> getType().unqualified()) -> resolveMethod(getOperatorName(), {rhs_ -> getType()});
+    }
+    else {       
         return scope -> resolveFunction(getOperatorName(), {lhs_ -> getType(), rhs_ -> getType()});
+    }
 }
 
 std::vector<ValueInfo> BinaryOperatorNode::arguments() const 

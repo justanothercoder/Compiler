@@ -4,12 +4,12 @@
 #include "functionaltype.hpp"
 #include "templateargument.hpp"
 
-class OverloadedFunctionSymbol;
+//class OverloadedFunctionSymbol;
 
 class PartiallyInstantiatedFunctionSymbol : public FunctionalType
 {
 public:
-
+/*
     PartiallyInstantiatedFunctionSymbol(const OverloadedFunctionSymbol* ov_func, TemplateArguments tmpl_arguments);
 
     std::string typeName() const override;
@@ -18,6 +18,7 @@ public:
 private:
     const OverloadedFunctionSymbol* ov_func;
     TemplateArguments tmpl_arguments;
+*/    
 };
 
 #endif

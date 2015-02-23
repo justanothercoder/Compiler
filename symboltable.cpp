@@ -99,7 +99,7 @@ Symbol* SymbolTable::resolve(const std::string& name) const
     
 std::vector<VarSymbol*> SymbolTable::getVars() const 
 {
-    std::vector<VarSymbol*> vars;
+    auto vars = std::vector<VarSymbol*>{ };
 
     for ( const auto& entry : table )
     {
@@ -112,7 +112,7 @@ std::vector<VarSymbol*> SymbolTable::getVars() const
 
 std::vector<FunctionalSymbol*> SymbolTable::getFunctions() const
 {
-    std::vector<FunctionalSymbol*> funcs;
+    auto funcs = std::vector<FunctionalSymbol*>{ };
 
     for ( const auto& entry : table )
     {
@@ -125,7 +125,7 @@ std::vector<FunctionalSymbol*> SymbolTable::getFunctions() const
     
 std::vector<Symbol*> SymbolTable::allSymbols() const
 {
-    std::vector<Symbol*> symbols;
+    auto symbols = std::vector<Symbol*>{ };
 
     for ( const auto& entry : table )
         symbols.emplace_back(entry.second.symbol());

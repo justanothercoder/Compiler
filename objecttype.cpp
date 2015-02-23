@@ -4,6 +4,8 @@
 #include "varsymbol.hpp"
 #include "functionalsymbol.hpp"
 
+#include "logger.hpp"
+
 bool ObjectType::isObjectType() const { return true; }
 
 bool ObjectType::hasConversionConstructor(const ObjectType *st) const 
@@ -49,7 +51,8 @@ const FunctionalSymbol* ObjectType::methodWith(const std::string& name, Function
 {
     for ( const auto& meth : methods() )
     {
-        if ( meth -> getName() == name && meth -> isCompatibleWith(ft) )
+        Logger::log("Method name: " + meth -> getName());
+        if ( meth -> getName() == name && /*meth -> isCompatibleWith(ft)*/ meth -> type().typeInfo() == ft )
             return meth;
     }
     return nullptr;

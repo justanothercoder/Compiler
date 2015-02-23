@@ -36,7 +36,7 @@ const FunctionalType* BracketNode::function() const
     auto base_type = base_ -> getType().unqualified();
     
     if ( base_type -> isObjectType() ) {
-        return static_cast<const ObjectType*>(base_type) -> resolveMethod("operator[]");
+        return static_cast<const ObjectType*>(base_type) -> resolveMethod("operator[]", {expr_ -> getType()});
     }
     else {
         return BuiltIns::global_scope -> resolveFunction("operator[]", {base_ -> getType(), expr_ -> getType()});

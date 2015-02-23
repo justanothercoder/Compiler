@@ -23,7 +23,12 @@ std::string FunctionSymbol::typeName() const { return name; }
 FunctionType FunctionSymbol::type() const { return type_; } 
 Scope* FunctionSymbol::innerScope() const { return scope; }
     
-bool FunctionSymbol::isCompatibleWith(FunctionTypeInfo ft) const { return type_.typeInfo().isCompatibleWith(ft); }
+bool FunctionSymbol::isCompatibleWith(FunctionTypeInfo ft) const 
+{   
+    Logger::log("Is " + getName() + " compatible with " + ft.toString());
+
+    return type_.typeInfo().isCompatibleWith(ft); 
+}
 
 CallInfo FunctionSymbol::resolveCall(std::vector<ValueInfo> arguments) const 
 {
@@ -37,6 +42,8 @@ CallInfo FunctionSymbol::resolveCall(std::vector<ValueInfo> arguments) const
         types.push_back(arg.type());
 
     auto function_params = type().typeInfo().params();
+
+    Logger::log("Type: " + type().typeInfo().toString());
 
     if ( !checkValues(arguments, function_params) )
         throw SemanticError("lvalue error");

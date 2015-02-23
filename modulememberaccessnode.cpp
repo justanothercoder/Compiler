@@ -2,7 +2,6 @@
 #include "symbol.hpp"
 #include "varsymbol.hpp"
 #include "functionalsymbol.hpp"
-#include "overloadedfunctionsymbol.hpp"
 
 ModuleMemberAccessNode::ModuleMemberAccessNode(const std::string& name, const std::string& member) : name_(name), member_(member) { }
 

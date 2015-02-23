@@ -1,4 +1,5 @@
 #include "functionnode.hpp"
+#include "functionalsymbol.hpp"
 
 FunctionNode::FunctionNode(const std::string& name) : name_(name) { }    
 
@@ -15,6 +16,6 @@ void FunctionNode::accept(ASTVisitor& visitor) { visitor.visit(this); }
 
 const std::string& FunctionNode::name() const { return name_; }
 
-const FunctionalSymbol* FunctionNode::function() { return function_; }
-void FunctionNode::function(const FunctionalSymbol* sym) { function_ = sym; }
+FunctionalSymbol* FunctionNode::function() { return function_; }
+void FunctionNode::function(FunctionalSymbol* sym) { function_ = sym; }
 

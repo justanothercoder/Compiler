@@ -63,11 +63,17 @@ const std::vector<ASTExprNode>& CallNode::params() const { return params_; }
 const FunctionalType* CallNode::function() const
 {
     auto caller_type = caller_ -> getType().unqualified();
-
-    if ( caller_type -> isObjectType() )
-        return static_cast<const ObjectType*>(caller_type) -> resolveMethod("operator()");
-    else
+   
+    if ( caller_type -> isObjectType() ) 
+    {
+        auto types = std::vector<VariableType>{ };
+        for ( const auto& param : params() )
+            types.emplace_back(param -> getType());
+        return static_cast<const ObjectType*>(caller_type) -> resolveMethod("operator()", types);
+    }
+    else {
         return static_cast<const FunctionalType*>(caller_type);
+    }
 }
 
 std::vector<ValueInfo> CallNode::arguments() const

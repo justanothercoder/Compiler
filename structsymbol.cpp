@@ -58,7 +58,7 @@ bool StructSymbol::isType() const { return true; }
 Scope* StructSymbol::innerScope() const { return scope; }
     
 std::vector<VarSymbol*> StructSymbol::members()        const { return scope -> getVars(); }
-std::vector<FunctionalSymbol*> StructSymbol::methods() const { Logger::log("Scope: " + scope -> getScopeName()); return scope -> getFunctions(); }
+std::vector<FunctionalSymbol*> StructSymbol::methods() const { return scope -> getFunctions(); }
     
 void StructSymbol::defineMethod(std::unique_ptr<FunctionalSymbol> method) { scope -> define(std::move(method)); }
 void StructSymbol::defineMember(std::unique_ptr<VarSymbol> member)        { scope -> define(std::move(member)); }

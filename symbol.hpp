@@ -21,6 +21,7 @@ public:
 
     bool is_unsafe;
     mutable bool is_used;
+    Scope* scope;
 };
 
 #endif

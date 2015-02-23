@@ -1,9 +1,8 @@
 #include "partiallyinstantiatedfunctionsymbol.hpp"
 #include "functionsymbol.hpp"
-#include "overloadedfunctionsymbol.hpp"
 #include "templatefunctionsymbol.hpp"
 #include "logger.hpp"
-
+/*
 PartiallyInstantiatedFunctionSymbol::PartiallyInstantiatedFunctionSymbol(const OverloadedFunctionSymbol* ov_func
                                                                        , TemplateArguments tmpl_arguments) : ov_func(ov_func)
                                                                                                            , tmpl_arguments(tmpl_arguments)
@@ -33,3 +32,4 @@ std::string PartiallyInstantiatedFunctionSymbol::typeName() const
 {
     return ov_func -> getName();
 }
+*/

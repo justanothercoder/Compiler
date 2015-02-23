@@ -2,7 +2,8 @@
 #define _FUNCTIONNODE_HPP_
 
 #include "exprnode.hpp"
-#include "overloadedfunctionsymbol.hpp"
+
+class FunctionalSymbol;
 
 class FunctionNode : public ExprNode
 {
@@ -22,13 +23,13 @@ public:
 
     const std::string& name() const;
 
-    const FunctionalSymbol* function();    
-    void function(const FunctionalSymbol* sym);
+    FunctionalSymbol* function();    
+    void function(FunctionalSymbol* sym);
 
 private:
 
     std::string name_;
-    const FunctionalSymbol* function_ = nullptr;
+    FunctionalSymbol* function_ = nullptr;
 };
 
 #endif
