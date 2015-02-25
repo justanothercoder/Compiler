@@ -8,18 +8,18 @@ TemplateInfo::TemplateInfo(const TemplateSymbol *sym, TemplateArguments template
 
 }
 
-boost::optional<TemplateArgument> TemplateInfo::getReplacement(std::string name) const
+boost::optional<TemplateArgument> TemplateInfo::getReplacement(const std::string& name) const
 {
-    auto template_symbols = sym -> templateSymbols();
-    for ( size_t i = 0; i < template_symbols.size(); ++i )
+    auto template_params = sym -> templateParams();
+    for ( size_t i = 0; i < template_params.size(); ++i )
     {
-        if ( template_symbols[i].first == name )
+        if ( template_params[i].first == name )
             return template_arguments[i];
     }
     return boost::none;
 }
 
-bool TemplateInfo::isIn(std::string name) const { return sym -> isIn(name); }
+bool TemplateInfo::isIn(const std::string& name) const { return sym -> isIn(name); }
 
 std::string TemplateInfo::getInstName() const
 {

@@ -16,8 +16,8 @@ struct TemplateInfo
     TemplateInfo();
     TemplateInfo(const TemplateSymbol* sym, TemplateArguments template_arguments);
 
-    boost::optional<TemplateArgument> getReplacement(std::string name) const;
-    bool isIn(std::string name) const;    
+    boost::optional<TemplateArgument> getReplacement(const std::string& name) const;
+    bool isIn(const std::string& name) const;    
     std::string getInstName() const;
 
     const TemplateSymbol* sym;

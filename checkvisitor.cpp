@@ -25,10 +25,8 @@
 #include "templatestructdeclarationnode.hpp"
 #include "templatefunctiondeclarationnode.hpp"
 #include "objecttype.hpp"
-#include "structsymbol.hpp"
 #include "modulesymbol.hpp"
-#include "variablesymbol.hpp"
-#include "functionsymbol.hpp"
+#include "varsymbol.hpp"
 #include "templatestructsymbol.hpp"
 #include "templatefunctionsymbol.hpp"
 #include "partiallyinstantiatedfunctionsymbol.hpp"
@@ -110,11 +108,6 @@ void CheckVisitor::visit(NewExpressionNode* node)
 void CheckVisitor::visit(BinaryOperatorNode* node)
 {
     visitChildren(node);
-
-    Logger::log("Processing node " + node -> toString());
-    Logger::log("Function: " + node -> function() -> getName());
-    Logger::log(std::string("Function: ") + (node -> function() -> isMethod() ? std::string("method") : std::string("not method")));
-
     node -> callInfo(checkCall(node -> function(), node -> arguments()));
 }
 
@@ -229,9 +222,6 @@ void CheckVisitor::visit(ModuleNode* node)
 
 void CheckVisitor::visit(FunctionNode* node) 
 {
-    Logger::log("Processing node " + node -> toString());
-    Logger::log("Call arguments: " + getCallArguments().toString());
-
     auto sym = node -> scope -> resolveFunction(node -> name(), getCallArguments());
     node -> function(sym);
 }
@@ -247,10 +237,7 @@ void CheckVisitor::visit(TemplateFunctionNode* node)
         node -> function(ov_func);
     else
     {
-        auto template_arguments = TemplateArguments{ };
-        for ( auto argument_info : node -> templateArgumentsInfo() )
-            template_arguments.emplace_back(getTemplateArgument(argument_info));
-
+        auto template_arguments = getTemplateArguments(node -> templateArgumentsInfo());
         node -> function(new PartiallyInstantiatedFunctionSymbol(ov_func, template_arguments));
     }
 */    
@@ -264,8 +251,6 @@ void CheckVisitor::visit(VariableNode* node)
 
 void CheckVisitor::visit(CallNode* node)
 {
-    Logger::log("Processing node " + node -> toString());
-
     auto types = std::vector<VariableType>{ };
     for ( const auto& param : node -> params() )
     {

@@ -10,14 +10,28 @@
 #include "templatedeclarationnode.hpp"
 #include "comp.hpp"
 
+#include "logger.hpp"
+
 VariableType Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
 {
     auto type_name = type_info.name();
 
     const Type *type;
 
+    Logger::log("Trying to get type from " + type_info.toString());
+
     if ( type_info.moduleName() == "" )
-        type = scope -> resolveType(type_name);
+    {
+        auto template_arguments_info = type_info.templateArgumentsInfo();
+
+        if ( template_arguments_info.empty() ) {
+            type = scope -> resolveType(type_name);
+        }
+        else {
+            auto template_arguments = getTemplateArguments(template_arguments_info);
+            type = (const Type*)scope -> resolveTemplate(type_name, template_arguments);
+        }
+    }
     else
     {
         auto module = Comp::getUnit(type_info.moduleName()) -> module_symbol;

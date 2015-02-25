@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include "templateargument.hpp"
 
 class Type;
 class Symbol;
@@ -46,6 +47,8 @@ public:
     virtual TypeSymbol* resolveType    (const std::string& name) const;
     virtual FunctionalSymbol* resolveFunction(const std::string& name, const FunctionTypeInfo& info) const;
     virtual VarSymbol* resolveVariable(const std::string& name) const;
+
+    virtual Symbol* resolveTemplate(const std::string& name, const TemplateArguments& args) const;
 
     virtual std::vector<VarSymbol*> getVars() const = 0;
     virtual std::vector<FunctionalSymbol*> getFunctions() const = 0;

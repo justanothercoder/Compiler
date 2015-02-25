@@ -48,3 +48,13 @@ std::string toString(const TemplateArgumentsInfo& template_arguments_info)
     result += ">";
     return result;
 }
+
+TemplateArguments getTemplateArguments(TemplateArgumentsInfo info)
+{
+    auto template_arguments = TemplateArguments{ };
+    
+    for ( const auto& i : info )
+        template_arguments.emplace_back(getTemplateArgument(i));
+
+    return template_arguments;
+}

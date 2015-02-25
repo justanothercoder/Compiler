@@ -67,7 +67,7 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, const Sc
 
     assert(scope != nullptr);
 
-    auto type = scope -> resolveType(type_info.name());
+    auto type = scope -> resolve(type_info.name());
 
     if ( type == nullptr )
         throw SemanticError(type_info.name() + " is not a type");
@@ -94,7 +94,7 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, const Sc
 std::shared_ptr<DeclarationNode> ExpandTemplatesVisitor::instantiateSpec(const TemplateSymbol* tmpl
                                                                        , const TemplateArgumentsInfo& template_arguments_info)
 {   
-    assert(template_arguments_info.size() == tmpl -> templateSymbols().size());
+    assert(template_arguments_info.size() == tmpl -> templateParams().size());
 
     auto tmpl_arguments = TemplateArguments{ };
     for ( const auto& argument_info : template_arguments_info )

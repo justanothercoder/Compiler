@@ -8,9 +8,9 @@
 #include "definevisitor.hpp"
 #include "checkvisitor.hpp"
 
-TemplateFunctionSymbol::TemplateFunctionSymbol(const std::string& name, TemplateParamsInfo template_symbols, TemplateDeclarationNode* _holder) 
+TemplateFunctionSymbol::TemplateFunctionSymbol(const std::string& name, TemplateParamsInfo template_params, TemplateDeclarationNode* _holder) 
     : name(name)
-    , template_symbols(template_symbols)
+    , template_params(template_params)
     , _holder(_holder)
 {
 
@@ -18,7 +18,7 @@ TemplateFunctionSymbol::TemplateFunctionSymbol(const std::string& name, Template
 
 std::string TemplateFunctionSymbol::getName() const { return name; }
 
-TemplateParamsInfo TemplateFunctionSymbol::templateSymbols() const { return template_symbols; }
+TemplateParamsInfo TemplateFunctionSymbol::templateParams() const { return template_params; }
 TemplateDeclarationNode* TemplateFunctionSymbol::holder() const { return _holder; }
     
 FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeInfo info, const TemplateArguments& partial) const
@@ -32,7 +32,7 @@ FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeI
         auto template_params_map = *mapping;
         auto template_arguments = TemplateArguments(std::begin(partial), std::end(partial));
 
-        for ( auto template_param : tmpl -> templateSymbols() )
+        for ( auto template_param : tmpl -> templateParams() )
         {
             if ( template_params_map.count(template_param.first) )
                 template_arguments.push_back(template_params_map[template_param.first]);
@@ -53,4 +53,8 @@ FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeI
 
     return nullptr;
 }
+    
+Symbol* TemplateFunctionSymbol::specializeWith(const TemplateArguments& arguments) 
+{
 
+}

@@ -12,9 +12,12 @@ class TemplateSymbol : public Symbol
 {
 public:
     virtual TemplateDeclarationNode* holder() const = 0;
-    virtual TemplateParamsInfo templateSymbols() const = 0;
+    virtual TemplateParamsInfo templateParams() const = 0;
 
-    bool isIn(std::string name) const;
+    virtual Symbol* specializeWith(const TemplateArguments& arguments) = 0;
+
+    bool isIn(const std::string& name) const;
+    bool canBeSpecializedWith(const TemplateArguments& arguments);
 };
 
 #endif

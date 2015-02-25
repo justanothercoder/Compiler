@@ -1,7 +1,9 @@
 #include "spaceallocator.hpp"
 #include "globalconfig.hpp"
-#include "variablesymbol.hpp"
 #include "command.hpp"
+#include "varsymbol.hpp"
+
+#include "logger.hpp"
 
 SpaceAllocator::SpaceAllocator(int params_offset) : params_offset(params_offset) { }
 

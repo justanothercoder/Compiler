@@ -25,8 +25,6 @@ Scope* FunctionSymbol::innerScope() const { return scope; }
     
 bool FunctionSymbol::isCompatibleWith(FunctionTypeInfo ft) const 
 {   
-    Logger::log("Is " + getName() + " compatible with " + ft.toString());
-
     return type_.typeInfo().isCompatibleWith(ft); 
 }
 
@@ -35,15 +33,11 @@ CallInfo FunctionSymbol::resolveCall(std::vector<ValueInfo> arguments) const
     if ( isMethod() )
         arguments.insert(std::begin(arguments), {type().typeInfo().paramAt(0), true});
 
-    Logger::log("Resolving call of " + getName() + "\n");
-
     std::vector<VariableType> types;
     for ( auto arg : arguments )
         types.push_back(arg.type());
 
     auto function_params = type().typeInfo().params();
-
-    Logger::log("Type: " + type().typeInfo().toString());
 
     if ( !checkValues(arguments, function_params) )
         throw SemanticError("lvalue error");

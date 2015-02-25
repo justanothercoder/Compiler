@@ -1,12 +1,12 @@
 #include "dotarg.hpp"
-#include "variablesymbol.hpp"
 #include "block.hpp"
-#include "codeobject.hpp"
 #include "scope.hpp"
-#include "structsymbol.hpp"
 #include "temporaryarg.hpp"
 #include "variablearg.hpp"
+#include "codeobject.hpp"
 #include "logger.hpp"
+#include "type.hpp"
+#include "varsymbol.hpp"
 
 DotArg::DotArg(Argument expr, int offset, const VarSymbol* member) : expr_(expr), offset_(offset), member_(member) { }
 

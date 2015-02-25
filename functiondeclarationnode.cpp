@@ -2,9 +2,9 @@
 #include "typefactory.hpp"
 #include "comp.hpp"
 #include "globalconfig.hpp"
-#include "variablesymbol.hpp"
-#include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
+#include "functionalsymbol.hpp"
+#include "varsymbol.hpp"
 
 FunctionDeclarationNode::FunctionDeclarationNode(std::string name
                                                , FunctionDeclarationInfo info

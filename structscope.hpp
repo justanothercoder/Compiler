@@ -12,6 +12,9 @@ public:
 
     Scope* enclosingScope() const override;    
     std::string getScopeName() const override;
+    
+    void define(std::unique_ptr<VarSymbol> var) override;
+    void define(std::unique_ptr<FunctionalSymbol> func) override;
 
     bool isUnsafeBlock() const override;
 

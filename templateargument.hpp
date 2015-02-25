@@ -12,4 +12,6 @@ unsigned long long hashTemplateArguments(const TemplateArguments& template_param
 TemplateArgument getTemplateArgument(TemplateArgumentInfo info);
 std::string toString(const TemplateArgumentsInfo& info);
 
+TemplateArguments getTemplateArguments(TemplateArgumentsInfo info);
+
 #endif

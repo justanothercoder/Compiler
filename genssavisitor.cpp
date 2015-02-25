@@ -29,8 +29,6 @@
 #include "localscope.hpp"
 #include "typefactory.hpp"
 #include "globalconfig.hpp"
-#include "variablesymbol.hpp"
-#include "functionsymbol.hpp"
 
 #include "newcommand.hpp"
 #include "elemcommand.hpp"
@@ -50,11 +48,14 @@
 #include "stringarg.hpp"
 #include "variablearg.hpp"
 
+#include "varsymbol.hpp"
+#include "functionalsymbol.hpp"
+
 #include "logger.hpp"
 
 GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : code(code)
 {
-    auto str_type = static_cast<const StructSymbol*>(BuiltIns::ASCII_string_type);
+    auto str_type = static_cast<const TypeSymbol*>(BuiltIns::ASCII_string_type);
 
     for ( auto func : BuiltIns::global_scope -> getFunctions() )
     {
@@ -96,7 +97,7 @@ void GenSSAVisitor::generateCall(std::vector<Argument> args, const CallInfo& cal
     _arg = code.add(std::make_shared<CallCommand>(call_info.callee, params_size));
 }
 
-void GenSSAVisitor::visit(ExternNode* node) { code.addExternalFunction(static_cast<const FunctionSymbol*>(node -> getDefinedSymbol())); }
+void GenSSAVisitor::visit(ExternNode* node) { code.addExternalFunction(static_cast<const FunctionalSymbol*>(node -> getDefinedSymbol())); }
 
 void GenSSAVisitor::visit(IfNode* node)
 {
@@ -412,7 +413,7 @@ void GenSSAVisitor::visit(UnsafeBlockNode* node)
 
 void GenSSAVisitor::visit(VarInferTypeDeclarationNode* node)
 {
-    auto variable = static_cast<const VariableSymbol*>(node -> getDefinedSymbol());
+    auto variable = static_cast<const VarSymbol*>(node -> getDefinedSymbol());
     code.rememberVar(variable);
 
     auto expr_type = node -> expr() -> getType().unqualified();

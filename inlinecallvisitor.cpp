@@ -18,8 +18,6 @@
 #include "varinfertypedeclarationnode.hpp"
 #include "templatestructdeclarationnode.hpp"
 #include "templatefunctiondeclarationnode.hpp"
-#include "functionsymbol.hpp"
-#include "variablesymbol.hpp"
 #include "localscope.hpp"
 #include "callablenode.hpp"
 

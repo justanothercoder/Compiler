@@ -41,11 +41,8 @@ FunctionalSymbol* BaseScope::resolveFunction(const std::string& name, const Func
 {
     auto overloads = table.resolveFunction(name);
     
-    Logger::log("Resolving function " + name);
-
     for ( const auto& overload : overloads )
     {       
-        Logger::log("Overload: " + overload -> getName());
         if ( overload -> isCompatibleWith(info) )
             return overload;
     }

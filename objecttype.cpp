@@ -51,7 +51,6 @@ const FunctionalSymbol* ObjectType::methodWith(const std::string& name, Function
 {
     for ( const auto& meth : methods() )
     {
-        Logger::log("Method name: " + meth -> getName());
         if ( meth -> getName() == name && /*meth -> isCompatibleWith(ft)*/ meth -> type().typeInfo() == ft )
             return meth;
     }

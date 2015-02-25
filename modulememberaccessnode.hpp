@@ -25,14 +25,14 @@ public:
     const std::string& member() const;
 
     const Symbol* memberSymbol() const;
-    void memberSymbol(const Symbol* sym);
+    void memberSymbol(Symbol* sym);
 
 private:
 
     std::string name_;
     std::string member_;
 
-    const Symbol* member_sym = nullptr;
+    Symbol* member_sym = nullptr;
 };
 
 #endif

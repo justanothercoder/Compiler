@@ -1,7 +1,8 @@
 #include "varinfertypedeclarationnode.hpp"
 #include "scope.hpp"
 #include "exprnode.hpp"
-#include "variablesymbol.hpp"
+#include "varsymbol.hpp"
+#include "functionalsymbol.hpp"
 
 VarInferTypeDeclarationNode::VarInferTypeDeclarationNode(const std::string& name, ASTExprNode expr) : name_(name), expr_(std::move(expr)) { }
 

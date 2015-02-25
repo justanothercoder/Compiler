@@ -20,15 +20,17 @@ public:
     std::string getName() const override;
 
     TemplateDeclarationNode* holder() const override;
-    TemplateParamsInfo templateSymbols() const override;
+    TemplateParamsInfo templateParams() const override;
 
     FunctionSymbol* overloadOfTemplateFunction(FunctionTypeInfo info, const TemplateArguments& partial = { }) const;
+    
+    Symbol* specializeWith(const TemplateArguments& arguments) override;
 
 private:
 
     std::string name;
 
-    TemplateParamsInfo template_symbols;
+    TemplateParamsInfo template_params;
     TemplateDeclarationNode* _holder;
 };
 

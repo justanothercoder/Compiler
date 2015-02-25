@@ -1,9 +1,9 @@
 #include "variablearg.hpp"
-#include "variablesymbol.hpp"
 #include "block.hpp"
-#include "codeobject.hpp"
 #include "scope.hpp"
-#include "structsymbol.hpp"
+#include "codeobject.hpp"
+#include "varsymbol.hpp"
+#include "objecttype.hpp"
 
 #include "logger.hpp"
 
@@ -14,7 +14,7 @@ void VariableArg::gen(const Block& block, CodeObject& code_obj) const
     if ( var_ -> isField() )
     {
         auto sym = block.scope() -> resolveVariable("this");
-        auto struc_sym = static_cast<const StructSymbol*>(sym -> typeOf().unqualified());
+        auto struc_sym = static_cast<const ObjectType*>(sym -> typeOf().unqualified());
 
         block.allocate(sym);
 

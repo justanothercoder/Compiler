@@ -29,5 +29,5 @@ const std::string& ModuleMemberAccessNode::name() const   { return name_; }
 const std::string& ModuleMemberAccessNode::member() const { return member_; }
 
 const Symbol* ModuleMemberAccessNode::memberSymbol() const { return member_sym; }
-void ModuleMemberAccessNode::memberSymbol(const Symbol* sym) { member_sym = sym; }
+void ModuleMemberAccessNode::memberSymbol(Symbol* sym) { member_sym = sym; }
 

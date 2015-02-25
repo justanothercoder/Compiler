@@ -1,7 +1,7 @@
 #include "dotnode.hpp"
-#include "variablesymbol.hpp"
-#include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
+#include "functionalsymbol.hpp"
+#include "varsymbol.hpp"
 
 DotNode::DotNode(ASTExprNode base, const std::string& member_name) : base_(std::move(base)), member_name(member_name) { }
 

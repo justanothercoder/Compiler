@@ -1,12 +1,11 @@
 #include "templatestructsymbol.hpp"
 #include "structdeclarationnode.hpp"
 #include "templateinfo.hpp"
+#include "templatedeclarationnode.hpp"
 
-#include "variablenode.hpp"
-
-TemplateStructSymbol::TemplateStructSymbol(std::string name, TemplateParamsInfo template_symbols, TemplateDeclarationNode* _holder) 
+TemplateStructSymbol::TemplateStructSymbol(std::string name, TemplateParamsInfo template_params, TemplateDeclarationNode* _holder) 
     : name(name)
-    , template_symbols(template_symbols)
+    , template_params(template_params)
     , _holder(_holder)
 {
 
@@ -14,5 +13,10 @@ TemplateStructSymbol::TemplateStructSymbol(std::string name, TemplateParamsInfo 
 
 std::string TemplateStructSymbol::getName() const { return name; }
 
-TemplateParamsInfo TemplateStructSymbol::templateSymbols() const { return template_symbols; }
+TemplateParamsInfo TemplateStructSymbol::templateParams() const { return template_params; }
 TemplateDeclarationNode* TemplateStructSymbol::holder() const { return _holder; }
+
+Symbol* TemplateStructSymbol::specializeWith(const TemplateArguments& arguments) 
+{
+    return holder() -> instantiateWithArguments(arguments) -> getDefinedSymbol();
+}

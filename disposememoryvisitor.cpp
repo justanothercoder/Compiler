@@ -1,7 +1,5 @@
 #include "disposememoryvisitor.hpp"
 #include "spaceallocator.hpp"
-#include "functionsymbol.hpp"
-#include "variablesymbol.hpp"
 #include "variablearg.hpp"
 #include "temporaryarg.hpp"
 #include "globalconfig.hpp"

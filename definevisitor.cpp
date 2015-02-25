@@ -17,10 +17,7 @@
 #include "globaltable.hpp"
 #include "builtins.hpp"
 #include "checkvisitor.hpp"
-#include "structsymbol.hpp"
 #include "modulesymbol.hpp"
-#include "variablesymbol.hpp"
-#include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
 #include "logger.hpp"
 
@@ -47,16 +44,13 @@ void DefineVisitor::visit(ExternNode* node)
 //    auto func_scope = new FunctionScope("_" + node -> name(), node -> scope.get(), false);
     auto symbol = factory.makeFunction(node -> name(), type, FunctionTraits::simple(), node -> isUnsafe());
 
-    Logger::log("Processing " + node -> toString()); 
-    Logger::log("Defining " + symbol -> getName());
-
     node -> setDefinedSymbol(symbol.get());
     node -> scope -> define(std::move(symbol));
 }
 
 void DefineVisitor::visit(FunctionDeclarationNode* node)
 {
-    bool is_in_struct = (declarations_stack.back() -> isType());
+    bool is_in_struct = (!declarations_stack.empty() && declarations_stack.back() -> isType());
     auto struc = is_in_struct ? static_cast<const TypeSymbol*>(declarations_stack.back()) : nullptr;
         
     auto fromTypeInfo = [&] (auto&& type_info) 
@@ -64,14 +58,15 @@ void DefineVisitor::visit(FunctionDeclarationNode* node)
         if ( node -> traits().is_constructor )
         {
             assert(is_in_struct);
-            assert(type_info.name() == struc -> getName());
+            if ( type_info.name() == struc -> getName() )
+            {
+                const Type* type = struc;
 
-            const Type* type = struc;
+                if ( type_info.isRef() )
+                    type = TypeFactory::getReference(type);
 
-            if ( type_info.isRef() )
-                type = TypeFactory::getReference(type);
-
-            return VariableType(type, type_info.isConst());
+                return VariableType(type, type_info.isConst());
+            }
         }
         return DefineVisitor::fromTypeInfo(type_info, node -> functionScope());
     };
