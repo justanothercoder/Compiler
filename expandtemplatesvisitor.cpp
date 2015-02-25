@@ -27,6 +27,7 @@
 #include "templatefunctionsymbol.hpp"
 #include "compilableunit.hpp"
 #include "comp.hpp"
+#include "definetypesvisitor.hpp"
 #include "definevisitor.hpp"
 #include "checkvisitor.hpp"
 #include "genssavisitor.hpp"
@@ -70,12 +71,15 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, const Sc
     auto type = scope -> resolve(type_info.name());
 
     if ( type == nullptr )
-        throw SemanticError(type_info.name() + " is not a type");
+        return type_info;
+//        throw SemanticError(type_info.name() + " is not a type");
     
-    if ( auto tmpl = dynamic_cast<const TemplateSymbol*>(type) )
+    if ( auto tmpl = dynamic_cast<TemplateSymbol*>(type) )
     {
         auto decl = instantiateSpec(tmpl, type_info.templateArgumentsInfo());
-        type_info.name(decl -> getDefinedSymbol() -> getName());
+            
+        DefineTypesVisitor define_types_visitor;
+        decl -> accept(define_types_visitor);
     
         if ( type_info.moduleName() != "" )
         {
@@ -86,6 +90,10 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, const Sc
             for ( auto visitor : std::vector<ASTVisitor*>{this, &define_visitor, &check_visitor, &gen_visitor} )
                 decl -> accept(*visitor);
         }
+        
+        Logger::log("Type decl: " + decl -> toString());
+
+        type_info.name(decl -> getDefinedSymbol() -> getName());
     }
 
     return type_info;
@@ -113,8 +121,8 @@ std::shared_ptr<DeclarationNode> ExpandTemplatesVisitor::instantiateSpec(const T
 
 void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode* node)   
 {
-    auto sym = std::unique_ptr<TemplateSymbol>(node -> defined_symbol);
-    node -> scope -> define(std::move(sym)); 
+//    for ( auto instance : node -> allInstances() )
+//        instance -> accept(*this);
 }
 
 void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) 

@@ -10,6 +10,7 @@
 class TemplateStructDeclarationNode : public TemplateDeclarationNode
 {
     friend class ExpandTemplatesVisitor;
+    friend class DefineTypesVisitor;
 
 public:
 

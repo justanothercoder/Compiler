@@ -30,6 +30,8 @@ public:
 
     StructScope* structScope() const;
 
+    void setDefinedSymbol(TypeSymbol* type);
+
 private:
 
     std::string name_;

@@ -59,3 +59,4 @@ const std::string& StructDeclarationNode::name() const { return name_; }
 const std::vector<ASTNode>& StructDeclarationNode::inner() const { return inner_; }
     
 StructScope* StructDeclarationNode::structScope() const { return struct_scope.get(); }
+void StructDeclarationNode::setDefinedSymbol(TypeSymbol* type) { defined_symbol = type; }

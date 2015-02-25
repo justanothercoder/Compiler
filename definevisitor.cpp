@@ -2,23 +2,19 @@
 #include "ifnode.hpp"
 #include "fornode.hpp"
 #include "whilenode.hpp"
-#include "returnnode.hpp"
 #include "externnode.hpp"
-#include "importnode.hpp"
 #include "statementnode.hpp"
 #include "unsafeblocknode.hpp"
-#include "structdeclarationnode.hpp"
 #include "functiondeclarationnode.hpp"
 #include "variabledeclarationnode.hpp"
+#include "structdeclarationnode.hpp"
 #include "varinfertypedeclarationnode.hpp"
 #include "templatestructdeclarationnode.hpp"
 #include "templatefunctiondeclarationnode.hpp"
 #include "typefactory.hpp"
-#include "globaltable.hpp"
-#include "builtins.hpp"
 #include "checkvisitor.hpp"
-#include "modulesymbol.hpp"
 #include "templatestructsymbol.hpp"
+#include "builtins.hpp"
 #include "logger.hpp"
 
 void DefineVisitor::visitChildren(AST* node)
@@ -147,22 +143,16 @@ void DefineVisitor::visit(TemplateFunctionDeclarationNode* node)
 
 void DefineVisitor::visit(StructDeclarationNode *node) 
 {
-    SymbolFactory factory;
-    auto struc = factory.makeStruct(node -> name(), node -> structScope());
-
-    declarations_stack.push_back(struc.get());
-    node -> scope -> define(std::move(struc));
+    declarations_stack.push_back(static_cast<TypeSymbol*>(node -> getDefinedSymbol()));
     visitChildren(node); 
-
     declarations_stack.pop_back();
-}
+} 
 
 void DefineVisitor::visit(IfNode *node)                { visitChildren(node); }
 void DefineVisitor::visit(ForNode *node)               { visitChildren(node); } 
 void DefineVisitor::visit(WhileNode *node)             { visitChildren(node); } 
 void DefineVisitor::visit(StatementNode* node)         { visitChildren(node); }
 
-void DefineVisitor::visit(ReturnNode* node)      { node -> expr() -> accept(*this); }
 void DefineVisitor::visit(UnsafeBlockNode* node) { node -> block() -> accept(*this); }
 
 void DefineVisitor::visit(DotNode* ) { }
@@ -175,6 +165,7 @@ void DefineVisitor::visit(StringNode* ) { }
 void DefineVisitor::visit(NumberNode* ) { }
 void DefineVisitor::visit(ModuleNode* ) { }
 void DefineVisitor::visit(ImportNode* ) { }
+void DefineVisitor::visit(ReturnNode* ) { }
 void DefineVisitor::visit(BracketNode* ) { }
 void DefineVisitor::visit(VariableNode* ) { }
 void DefineVisitor::visit(FunctionNode* ) { }

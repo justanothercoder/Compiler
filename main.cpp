@@ -13,6 +13,7 @@
 #include "checkvisitor.hpp"
 #include "genssavisitor.hpp"
 #include "expandtemplatesvisitor.hpp"
+#include "definetypesvisitor.hpp"
 #include "comp.hpp"
 #include "optimizer.hpp"
 #include "inlinecallvisitor.hpp"
@@ -51,7 +52,10 @@ int main(int argc, char** argv)
 
         root -> scope = BuiltIns::global_scope;
         root -> build_scope();
-        
+       
+        DefineTypesVisitor define_types_visitor;
+        root -> accept(define_types_visitor);
+
         ExpandTemplatesVisitor expand_visitor;
         root -> accept(expand_visitor);
        
