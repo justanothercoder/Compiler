@@ -38,6 +38,8 @@ void InlineCallVisitor::visitChildren(AST* node)
 
 void InlineCallVisitor::visitCallable(CallableNode* node)
 {
+    Logger::log("Inlining " + node -> toString());
+
     auto function = node -> callInfo().callee;
     
     if ( !shouldBeInlined(function) )
@@ -48,7 +50,7 @@ void InlineCallVisitor::visitCallable(CallableNode* node)
 
 bool InlineCallVisitor::shouldBeInlined(const FunctionalSymbol* function)
 {
-    if ( /*function -> function_decl == nullptr*/ function -> innerScope() == nullptr )
+    if ( function -> getFunctionDecl() == nullptr || function -> innerScope() == nullptr )
         return false;
 
     auto params = function -> type().typeInfo().params(); 
