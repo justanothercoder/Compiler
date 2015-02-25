@@ -59,7 +59,7 @@ GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : code(code)
 
     for ( auto func : BuiltIns::global_scope -> getFunctions() )
     {
-        if ( func -> getName() == "putchar" || func -> getName() == "getchar" )
+        if ( func -> getName() == "putchar" || func -> getName() == "getchar" || func -> getName() == "print" )
             code.addExternalFunction(func);
     }
 

@@ -209,7 +209,7 @@ void CheckVisitor::visit(ModuleMemberAccessNode* node)
     auto module_sym = Comp::getUnit(node -> name()) -> module_symbol;
     assert(module_sym && module_sym -> isModule());
 
-    node -> memberSymbol(module_sym -> resolveVariable(node -> member()));
+    node -> memberSymbol(module_sym -> resolve(node -> member()));
 }
 
 void CheckVisitor::visit(ModuleNode* node) 
