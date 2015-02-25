@@ -46,6 +46,8 @@ void DefineVisitor::visit(ExternNode* node)
 
 void DefineVisitor::visit(FunctionDeclarationNode* node)
 {
+    Logger::log("Defining " + node -> toString());
+
     bool is_in_struct = (!declarations_stack.empty() && declarations_stack.back() -> isType());
     auto struc = is_in_struct ? static_cast<const TypeSymbol*>(declarations_stack.back()) : nullptr;
         
@@ -141,7 +143,7 @@ void DefineVisitor::visit(TemplateFunctionDeclarationNode* node)
         instance -> accept(*this);
 }
 
-void DefineVisitor::visit(StructDeclarationNode *node) 
+void DefineVisitor::visit(StructDeclarationNode* node) 
 {
     declarations_stack.push_back(static_cast<TypeSymbol*>(node -> getDefinedSymbol()));
     visitChildren(node); 

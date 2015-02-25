@@ -9,9 +9,10 @@
 #include "compilableunit.hpp"
 #include "modulesymbol.hpp"
 #include "optimizer.hpp"
-#include "logger.hpp"
 #include "globalconfig.hpp"
 #include "inlinecallvisitor.hpp"
+#include "definetypesvisitor.hpp"
+#include "logger.hpp"
 
 std::vector<CompilableUnit> Comp::units;
 ThreeAddressCode Comp::code;
@@ -29,11 +30,14 @@ CompilableUnit& Comp::compile(std::string filename)
     root -> scope = unit.module_symbol;
     root -> build_scope();
 
-    DefineVisitor define_visitor;
-    root -> accept(define_visitor);
+    DefineTypesVisitor define_types_visitor;
+    root -> accept(define_types_visitor);
 
     ExpandTemplatesVisitor expand_visitor;
     root -> accept(expand_visitor);
+
+    DefineVisitor define_visitor;
+    root -> accept(define_visitor);
 
     unit.module_globals = unit.module_symbol -> allSymbols();
 
