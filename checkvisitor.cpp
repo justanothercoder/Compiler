@@ -36,7 +36,12 @@
 #include "typefactory.hpp"
 #include "logger.hpp"
 
-const FunctionTypeInfo& CheckVisitor::getCallArguments() { return arguments_stack.top(); }
+const FunctionTypeInfo& CheckVisitor::getCallArguments() 
+{
+    if ( arguments_stack.empty() )
+        throw SemanticError("Internal error");
+    return arguments_stack.top(); 
+}
 
 void CheckVisitor::pushArguments(FunctionTypeInfo info) { arguments_stack.push(info); }
 void CheckVisitor::popArguments() { arguments_stack.pop(); }
@@ -225,8 +230,19 @@ void CheckVisitor::visit(ModuleNode* node)
 
 void CheckVisitor::visit(FunctionNode* node) 
 {
-    auto sym = node -> scope -> resolveFunction(node -> name(), getCallArguments());
-    node -> function(sym);
+    try
+    {
+        auto sym = node -> scope -> resolveFunction(node -> name(), getCallArguments());
+
+        if ( sym == nullptr )
+            throw NoViableOverloadError(node -> name(), getCallArguments().params());
+
+        node -> function(sym);
+    }
+    catch ( SemanticError& e )
+    {
+        throw SemanticError("No arguments provided to '" + node -> name() + "'");
+    }
 }
 
 void CheckVisitor::visit(TemplateFunctionNode* node) 

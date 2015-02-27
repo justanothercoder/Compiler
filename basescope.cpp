@@ -47,6 +47,9 @@ FunctionalSymbol* BaseScope::resolveFunction(const std::string& name, const Func
             return overload;
     }
 
-    return enclosingScope() -> resolveFunction(name, info); 
+    if ( enclosingScope() )
+        return enclosingScope() -> resolveFunction(name, info); 
+
+    return nullptr;
 }
 
