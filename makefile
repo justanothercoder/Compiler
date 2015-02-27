@@ -17,7 +17,7 @@ SOURCES=main.cpp token.cpp abstractlexer.cpp lexer.cpp abstractparser.cpp parser
 	   	stringarg.cpp returncommand.cpp labelarg.cpp temporaryarg.cpp spaceallocator.cpp substituteargvisitor.cpp checkforusevisitor.cpp \
 	   	functiondeclarationinfo.cpp disposememoryvisitor.cpp inlinecallvisitor.cpp markreturnasinlinevisitor.cpp assignrefcommand.cpp dotarg.cpp \
 	   	inlineinfo.cpp templatefunctiondeclarationnode.cpp templatefunctionnode.cpp templatefunctionsymbol.cpp templatestructsymbol.cpp \
-		functionaltype.cpp valueinfo.cpp partiallyinstantiatedfunctionsymbol.cpp objecttype.cpp typemodifier.cpp callablenode.cpp exprnode.cpp \
+		functionaltype.cpp valueinfo.cpp objecttype.cpp typemodifier.cpp callablenode.cpp exprnode.cpp \
 	   	nodewithcall.cpp rebuildtreevisitor.cpp templatesymbol.cpp templateargument.cpp typesymbol.cpp symbolentry.cpp symbolfactory.cpp \
 	   	functionalsymbol.cpp aliassymbol.cpp symboltable.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
