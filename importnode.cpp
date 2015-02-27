@@ -3,7 +3,7 @@
 #include "symbol.hpp"
 #include "aliassymbol.hpp"
 
-ImportNode::ImportNode(std::string lib, AST* root, std::vector<const Symbol*> imports) : lib(lib), root(root), imports(imports) { }
+ImportNode::ImportNode(std::string lib, AST* root, std::vector<Symbol*> imports) : lib(lib), root(root), imports(imports) { }
 
 void ImportNode::build_scope()
 {

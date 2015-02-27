@@ -45,9 +45,9 @@ public:
 
     virtual void define(std::shared_ptr<ModuleSymbol> module) = 0;
 
-    virtual TypeSymbol* resolveType    (const std::string& name) const;
+    virtual TypeSymbol*       resolveType    (const std::string& name) const;
     virtual FunctionalSymbol* resolveFunction(const std::string& name, const FunctionTypeInfo& info) const;
-    virtual VarSymbol* resolveVariable(const std::string& name) const;
+    virtual VarSymbol*        resolveVariable(const std::string& name) const;
 
     virtual Symbol* resolveTemplate(const std::string& name, const TemplateArguments& args) const;
     virtual FunctionalSymbol* resolveTemplateFunction(const std::string& name, const TemplateArguments& args, const FunctionTypeInfo& info) const;

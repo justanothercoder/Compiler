@@ -8,7 +8,7 @@ class Symbol;
 class ImportNode : public AST
 {
 public:
-    ImportNode(std::string lib, AST* root, std::vector<const Symbol*> imports);
+    ImportNode(std::string lib, AST* root, std::vector<Symbol*> imports);
 
     void build_scope();        
 
@@ -19,7 +19,7 @@ public:
 
     std::string lib;
     AST* root;
-    std::vector<const Symbol*> imports;
+    std::vector<Symbol*> imports;
 };
 
 #endif

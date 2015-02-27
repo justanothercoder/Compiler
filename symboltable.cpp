@@ -94,6 +94,10 @@ Symbol* SymbolTable::resolve(const std::string& name) const
     auto it = table.find(name);
     if ( it == std::end(table) )
         return nullptr;
+
+    if ( it -> second.type() == SymbolType::Alias ) {
+        return static_cast<AliasSymbol*>(it -> second.symbol()) -> symbol();
+    }
     return it -> second.symbol();
 }
     

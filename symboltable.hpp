@@ -20,7 +20,7 @@ public:
     void define(std::unique_ptr<BuiltInTypeSymbol> builtin);
     void define(std::unique_ptr<FunctionalSymbol> func);
     void define(std::unique_ptr<VarSymbol> var);
-    void define(std::unique_ptr<AliasSymbol> type);
+    void define(std::unique_ptr<AliasSymbol> alias);
     void define(std::unique_ptr<TemplateSymbol> templ);
     void define(std::unique_ptr<TypeSymbol> type);
 

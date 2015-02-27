@@ -1023,7 +1023,7 @@ ASTNode Parser::import_stat()
     
     const auto& unit = Comp::compile(module_name);
 
-    return std::make_unique<ImportNode>(module_name, unit.root.get(), std::vector<const Symbol*>{ });
+    return std::make_unique<ImportNode>(module_name, unit.root.get(), std::vector<Symbol*>{ });
 }
 
 bool Parser::tryTypeInfo()
@@ -1143,7 +1143,7 @@ ASTNode Parser::from_import_stat()
 
     rememberSymbol(member_name, getSymbolType(*it)); 
 
-    return std::make_unique<ImportNode>(module_name, unit.root.get(), std::vector<const Symbol*>{*it});
+    return std::make_unique<ImportNode>(module_name, unit.root.get(), std::vector<Symbol*>{*it});
 }
 
 ASTNode Parser::break_stat()

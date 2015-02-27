@@ -7,7 +7,7 @@ class AliasSymbol : public Symbol
 {
 public:
 
-    AliasSymbol(const Symbol* aliased);
+    AliasSymbol(Symbol* aliased);
     
     std::string getName() const override;
 
@@ -16,9 +16,11 @@ public:
     bool isFunction() const override;
     bool isModule() const override;
 
+    Symbol* symbol() const;
+
 private:
 
-    const Symbol* aliased;
+    Symbol* aliased;
 };
 
 #endif
