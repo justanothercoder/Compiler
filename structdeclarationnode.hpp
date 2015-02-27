@@ -14,7 +14,7 @@ class StructDeclarationNode : public DeclarationNode
 {
 public:
 
-    StructDeclarationNode(const std::string& name, std::vector<ASTNode> inner);
+    StructDeclarationNode(std::string name, std::vector<ASTNode> inner);
     
     void build_scope();
     Symbol* getDefinedSymbol() const override;

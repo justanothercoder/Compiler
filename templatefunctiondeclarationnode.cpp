@@ -4,7 +4,7 @@
 #include "rebuildtreevisitor.hpp"
 #include "logger.hpp"
 
-TemplateFunctionDeclarationNode::TemplateFunctionDeclarationNode(const std::string& name
+TemplateFunctionDeclarationNode::TemplateFunctionDeclarationNode(std::string name
                                                                , FunctionDeclarationInfo info
                                                                , ASTNode statements
                                                                , FunctionTraits traits

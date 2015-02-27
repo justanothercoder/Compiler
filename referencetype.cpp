@@ -2,10 +2,7 @@
 #include "comp.hpp"
 #include "globalconfig.hpp"
 
-ReferenceType::ReferenceType(const Type *type) : type(type)
-{
-
-}
+ReferenceType::ReferenceType(const Type *type) : type(type) { }
 
 std::string ReferenceType::typeName() const { return type -> typeName() + "~ref"; } 
 size_t ReferenceType::sizeOf() const { return Comp::config().int_size; } 

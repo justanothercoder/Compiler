@@ -51,7 +51,7 @@ const FunctionalSymbol* ObjectType::methodWith(const std::string& name, Function
 {
     for ( const auto& meth : methods() )
     {
-        if ( meth -> getName() == name && /*meth -> isCompatibleWith(ft)*/ meth -> type().typeInfo() == ft )
+        if ( meth -> getName() == name && meth -> type().typeInfo() == ft )
             return meth;
     }
     return nullptr;
@@ -66,12 +66,10 @@ int ObjectType::offsetOf(const std::string& name) const
 
     for ( const auto& mem : members() )
     {
-        if ( mem -> getName() == name ) {
+        if ( mem -> getName() == name )
             return offset;
-        }
-        else {
-            offset += mem -> typeOf().sizeOf();
-        }
+    
+        offset += mem -> typeOf().sizeOf();
     }
 
     throw std::logic_error("Not found");

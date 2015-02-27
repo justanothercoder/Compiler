@@ -5,7 +5,7 @@
 #include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
 
-VariableNode::VariableNode(const std::string& name) : name_(name) { }
+VariableNode::VariableNode(std::string name) : name_(name) { }
 ASTNode VariableNode::copyTree() const { return std::make_unique<VariableNode>(name_); }
 
 VariableType VariableNode::getType() const { return variable_ -> typeOf(); }

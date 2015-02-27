@@ -7,7 +7,7 @@ class StringNode : public ExprNode
 {
 public:
 
-    StringNode(const std::string& str);
+    StringNode(std::string str);
 
     ASTNode copyTree() const override;
 

@@ -21,10 +21,4 @@ std::string FunctionalSymbol::getTypedName() const
 std::string FunctionalSymbol::getScopedTypedName() const
 {
     return scope -> getScopeName() + "_" + getTypedName();
-//    auto res = innerScope() ? innerScope() -> getScopeName() : nm; 
-//
-//    for ( auto param_type : type().typeInfo().params() ) 
-//        res += "_" + param_type.getName();
-
-//    return res;
 }

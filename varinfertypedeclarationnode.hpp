@@ -11,7 +11,7 @@ class VarInferTypeDeclarationNode : public DeclarationNode, public NodeWithCall
 {
 public:
 
-    VarInferTypeDeclarationNode(const std::string& name, ASTExprNode expr);
+    VarInferTypeDeclarationNode(std::string name, ASTExprNode expr);
 
     void build_scope();
 

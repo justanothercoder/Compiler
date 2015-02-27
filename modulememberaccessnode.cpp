@@ -3,7 +3,7 @@
 #include "varsymbol.hpp"
 #include "functionalsymbol.hpp"
 
-ModuleMemberAccessNode::ModuleMemberAccessNode(const std::string& name, const std::string& member) : name_(name), member_(member) { }
+ModuleMemberAccessNode::ModuleMemberAccessNode(std::string name, std::string member) : name_(name), member_(member) { }
 
 ASTNode ModuleMemberAccessNode::copyTree() const { return std::make_unique<ModuleMemberAccessNode>(name_, member_); }
 std::string ModuleMemberAccessNode::toString() const { return name_ + "." + member_; }

@@ -10,7 +10,7 @@ class VariableSymbol : public VarSymbol
 {
 public:
 
-    VariableSymbol(const std::string& name, VariableType type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
+    VariableSymbol(std::string name, VariableType type, VariableSymbolType sym_type = VariableSymbolType::SIMPLE);
 
     bool isParam() const override;
     bool isField() const override;

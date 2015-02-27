@@ -15,7 +15,7 @@ class TemplateFunctionSymbol : public TemplateSymbol
 {
 public:
 
-    TemplateFunctionSymbol(const std::string& name, TemplateParamsInfo template_symbols, TemplateDeclarationNode* _holder);
+    TemplateFunctionSymbol(std::string name, TemplateParamsInfo template_symbols, TemplateDeclarationNode* _holder);
 
     std::string getName() const override;
 

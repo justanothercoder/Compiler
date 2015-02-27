@@ -2,10 +2,7 @@
 #include "exprnode.hpp"
 #include "localscope.hpp"
 
-WhileNode::WhileNode(ASTExprNode cond, ASTNode stats) : cond(std::move(cond)), stats(std::move(stats))
-{
-
-}
+WhileNode::WhileNode(ASTExprNode cond, ASTNode stats) : cond(std::move(cond)), stats(std::move(stats)) { }
 
 void WhileNode::build_scope()
 {

@@ -9,7 +9,7 @@ class ModuleNode : public ExprNode
 {
 public:
 
-    ModuleNode(const std::string& name);
+    ModuleNode(std::string name);
 
     ASTNode copyTree() const override;
 

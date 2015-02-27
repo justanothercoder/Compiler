@@ -11,10 +11,7 @@
 #include "dotarg.hpp"
 #include "callcommand.hpp"
 
-Optimizer::Optimizer(ThreeAddressCode& code) : code(code)
-{
-
-}
+Optimizer::Optimizer(ThreeAddressCode& code) : code(code) { }
 
 void Optimizer::optimize()
 {

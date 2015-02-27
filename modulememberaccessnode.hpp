@@ -9,7 +9,7 @@ class ModuleMemberAccessNode : public ExprNode
 {
 public:
 
-    ModuleMemberAccessNode(const std::string& name, const std::string& member);
+    ModuleMemberAccessNode(std::string name, std::string member);
 
     ASTNode copyTree() const override;
     std::string toString() const override;

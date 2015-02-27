@@ -11,10 +11,10 @@ public:
     FunctionDeclarationInfo(TypeInfo return_type_info, std::vector<ParamInfo> formal_parameters);
 
     FunctionDeclarationInfo(const FunctionDeclarationInfo& info) = default;
-    FunctionDeclarationInfo(FunctionDeclarationInfo&& info);
+    FunctionDeclarationInfo(FunctionDeclarationInfo&& info)      = default;
 
     FunctionDeclarationInfo& operator=(const FunctionDeclarationInfo& info) = default;
-    FunctionDeclarationInfo& operator=(FunctionDeclarationInfo&& info);
+    FunctionDeclarationInfo& operator=(FunctionDeclarationInfo&& info)      = default;
 
     TypeInfo& returnTypeInfo();
     const TypeInfo& returnTypeInfo() const;

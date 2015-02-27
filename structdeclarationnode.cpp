@@ -2,12 +2,7 @@
 #include "structsymbol.hpp"
 #include "functionsymbol.hpp"
 
-StructDeclarationNode::StructDeclarationNode(const std::string& name
-                                           , std::vector<ASTNode> inner) : name_(name)
-                                                                         , inner_(std::move(inner))
-{
-
-}
+StructDeclarationNode::StructDeclarationNode(std::string name, std::vector<ASTNode> inner) : name_(name), inner_(std::move(inner)) { }
 
 Symbol* StructDeclarationNode::getDefinedSymbol() const { return defined_symbol; }
 

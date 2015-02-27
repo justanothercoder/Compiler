@@ -1,7 +1,7 @@
 #include "modulenode.hpp"
 #include "modulesymbol.hpp"
 
-ModuleNode::ModuleNode(const std::string& name) : name_(name) { }
+ModuleNode::ModuleNode(std::string name) : name_(name) { }
 
 ASTNode ModuleNode::copyTree() const { return std::make_unique<ModuleNode>(name_); }
 

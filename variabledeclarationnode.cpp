@@ -7,7 +7,7 @@
 
 #include "logger.hpp"
 
-VariableDeclarationNode::VariableDeclarationNode(const std::string& name
+VariableDeclarationNode::VariableDeclarationNode(std::string name
                                                , TypeInfo type_info
                                                , bool is_field
                                                , std::vector<ASTExprNode> constructor_params) : name_             (name)

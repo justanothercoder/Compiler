@@ -10,7 +10,7 @@ class TemplateFunctionNode : public ExprNode
 {
 public:
 
-    TemplateFunctionNode(const std::string& name, TemplateArgumentsInfo template_arguments);
+    TemplateFunctionNode(std::string name, TemplateArgumentsInfo template_arguments);
 
     ASTNode copyTree() const override;
 

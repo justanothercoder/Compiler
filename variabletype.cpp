@@ -8,7 +8,7 @@
 
 #include "logger.hpp"
 
-VariableType::VariableType(const Type* type) : type(type), is_const(false) { } 
+VariableType::VariableType(const Type* type) : VariableType(type, false) { } 
 VariableType::VariableType(const Type* type, bool is_const) : type(type), is_const(is_const) { } 
 
 const Type* VariableType::base() const { return type; }

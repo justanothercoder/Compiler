@@ -16,7 +16,7 @@ public:
 
     virtual Symbol* specializeWith(const TemplateArguments& arguments) = 0;
 
-    bool isIn(const std::string& name) const;
+    bool isIn(std::string name) const;
     bool canBeSpecializedWith(const TemplateArguments& arguments);
 };
 

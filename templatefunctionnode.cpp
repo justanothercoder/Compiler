@@ -1,8 +1,8 @@
 #include "templatefunctionnode.hpp"
 #include "functionalsymbol.hpp"
 
-TemplateFunctionNode::TemplateFunctionNode(const std::string& name, TemplateArgumentsInfo template_arguments) : name_(name)
-                                                                                                              , template_arguments(template_arguments)
+TemplateFunctionNode::TemplateFunctionNode(std::string name, TemplateArgumentsInfo template_arguments) : name_(name)
+                                                                                                       , template_arguments(template_arguments)
 {
 
 }

@@ -6,7 +6,7 @@
 class RecognitionError : public std::logic_error
 {
 public:
-    RecognitionError(const std::string& message, int line, int symbol);
+    RecognitionError(std::string message, int line, int symbol);
 };
 
 #endif

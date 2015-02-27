@@ -4,7 +4,7 @@
 #include "varsymbol.hpp"
 #include "functionalsymbol.hpp"
 
-VarInferTypeDeclarationNode::VarInferTypeDeclarationNode(const std::string& name, ASTExprNode expr) : name_(name), expr_(std::move(expr)) { }
+VarInferTypeDeclarationNode::VarInferTypeDeclarationNode(std::string name, ASTExprNode expr) : name_(name), expr_(std::move(expr)) { }
 
 void VarInferTypeDeclarationNode::build_scope()
 {

@@ -106,7 +106,7 @@ void GenSSAVisitor::generateCall(std::vector<Argument> args, const CallInfo& cal
         params_size += info.desired_type -> sizeOf();
     }
 
-    _arg = code.add(std::make_shared<CallCommand>(call_info.callee, params_size));
+    _arg = code.add(makeCommand<CallCommand>(call_info.callee, params_size));
 }
 
 void GenSSAVisitor::visit(ExternNode* node) { code.addExternalFunction(static_cast<const FunctionalSymbol*>(node -> getDefinedSymbol())); }
@@ -118,16 +118,16 @@ void GenSSAVisitor::visit(IfNode* node)
 
     auto expr = getArg(node -> condition());
 
-    code.add(std::make_shared<IfFalseCommand>(expr, false_label));
+    code.add(makeCommand<IfFalseCommand>(expr, false_label));
 
     node -> trueBranch() -> accept(*this);
 
-    code.add(std::make_shared<GotoCommand>(exit_label));
-    code.add(std::make_shared<LabelCommand>(false_label));
+    code.add(makeCommand<GotoCommand>(exit_label));
+    code.add(makeCommand<LabelCommand>(false_label));
 
     node -> falseBranch() -> accept(*this);
 
-    code.add(std::make_shared<LabelCommand>(exit_label));
+    code.add(makeCommand<LabelCommand>(exit_label));
 }
 
 void GenSSAVisitor::visit(ForNode* node)
@@ -138,19 +138,19 @@ void GenSSAVisitor::visit(ForNode* node)
     loop_label.emplace(cycle_label, exit_label);
 
     node -> initializer() -> accept(*this);
-    code.add(std::make_shared<LabelCommand>(cycle_label));
+    code.add(makeCommand<LabelCommand>(cycle_label));
 
     auto cond = getArg(node -> condition());
 
-    code.add(std::make_shared<IfFalseCommand>(cond, exit_label));
+    code.add(makeCommand<IfFalseCommand>(cond, exit_label));
 
     node -> body() -> accept(*this);
     node -> iteration() -> accept(*this);
 
     loop_label.pop();
 
-    code.add(std::make_shared<GotoCommand>(cycle_label));
-    code.add(std::make_shared<LabelCommand>(exit_label));
+    code.add(makeCommand<GotoCommand>(cycle_label));
+    code.add(makeCommand<LabelCommand>(exit_label));
 }
 
 void GenSSAVisitor::visit(WhileNode* node)
@@ -160,18 +160,18 @@ void GenSSAVisitor::visit(WhileNode* node)
 
     loop_label.emplace(cycle_label, exit_label);
 
-    code.add(std::make_shared<LabelCommand>(cycle_label));
+    code.add(makeCommand<LabelCommand>(cycle_label));
 
     auto cond = getArg(node -> condition());
 
-    code.add(std::make_shared<IfFalseCommand>(cond, exit_label));
+    code.add(makeCommand<IfFalseCommand>(cond, exit_label));
 
     node -> body() -> accept(*this);
 
     loop_label.pop();
 
-    code.add(std::make_shared<GotoCommand>(cycle_label));
-    code.add(std::make_shared<LabelCommand>(exit_label));
+    code.add(makeCommand<GotoCommand>(cycle_label));
+    code.add(makeCommand<LabelCommand>(exit_label));
 }
 
 void GenSSAVisitor::visit(BracketNode* node)
@@ -182,10 +182,10 @@ void GenSSAVisitor::visit(BracketNode* node)
     auto base_type = node -> base() -> getType().unqualified();
 
     if ( base_type -> isArray() ) {
-        _arg = code.add(std::make_shared<ElemCommand>(base, expr));
+        _arg = code.add(makeCommand<ElemCommand>(base, expr));
     }
     else if ( base_type == BuiltIns::ASCII_string_type ) {
-        _arg = code.add(std::make_shared<ElemCommand>(base, expr, true));
+        _arg = code.add(makeCommand<ElemCommand>(base, expr, true));
     }
     else {
         generateCall({base, expr}, node -> callInfo(), node -> inlineInfo());
@@ -200,7 +200,7 @@ void GenSSAVisitor::visit(UnaryNode* node)
 void GenSSAVisitor::visit(NewExpressionNode* node)
 {
     auto expr_type = node -> getType().unqualified();
-    auto tmp_obj = code.add(std::make_shared<NewCommand>(expr_type));
+    auto tmp_obj = code.add(makeCommand<NewCommand>(expr_type));
     
     if ( isIntType(expr_type) || isCharType(expr_type) )
     {
@@ -209,11 +209,11 @@ void GenSSAVisitor::visit(NewExpressionNode* node)
         if ( node -> params().empty() )
         {
             code.addConst(0);
-            code.add(std::make_shared<AssignCommand>(tmp_obj, std::make_shared<NumberArg>(0), is_char_assign));
+            code.add(makeCommand<AssignCommand>(tmp_obj, makeArg<NumberArg>(0), is_char_assign));
         }
         else
         {
-            code.add(std::make_shared<AssignCommand>(tmp_obj, getArg(node -> params()[0].get()), is_char_assign));
+            code.add(makeCommand<AssignCommand>(tmp_obj, getArg(node -> params()[0].get()), is_char_assign));
         }
     }
     else
@@ -240,10 +240,10 @@ void GenSSAVisitor::visit(BinaryOperatorNode* node)
     if ( isSimpleType(lhs_type.unqualified()) && isSimpleType(rhs_type.unqualified()) )
     {
         if ( node -> op() == BinaryOp::ASSIGN ) {
-            code.add(std::make_shared<AssignCommand>(lhs, rhs, isCharType(lhs_type.unqualified())));
+            code.add(makeCommand<AssignCommand>(lhs, rhs, isCharType(lhs_type.unqualified())));
         }
         else {
-            _arg = code.add(std::make_shared<BinaryOpCommand>(node -> op(), lhs, rhs));
+            _arg = code.add(makeCommand<BinaryOpCommand>(node -> op(), lhs, rhs));
         }
     }
     else {
@@ -263,7 +263,7 @@ void GenSSAVisitor::visit(FunctionDeclarationNode* node)
     auto scope_name = function -> getScopedTypedName();
 
     code.newBlock(function -> innerScope(), scope_name);
-    code.add(std::make_shared<LabelCommand>(code.newLabel(scope_name)));
+    code.add(makeCommand<LabelCommand>(code.newLabel(scope_name)));
 
     for ( auto param : node -> paramsSymbols() )
         code.rememberVar(param);
@@ -281,12 +281,12 @@ void GenSSAVisitor::visit(VariableDeclarationNode* node)
     if ( !node -> isField() )
     {
         auto var_type = variable -> typeOf();
-        auto var_arg = std::make_shared<VariableArg>(variable);
+        auto var_arg = makeArg<VariableArg>(variable);
 
         if ( node -> typeInfo().isRef() || (node -> typeInfo().modifiers().size() > 0 && !node -> constructorParams().empty()) )
         {
             auto arg = getArg(node -> constructorParams()[0].get());
-            code.add(std::make_shared<AssignCommand>(var_arg, arg, false));
+            code.add(makeCommand<AssignCommand>(var_arg, arg, false));
         }
         else
         {
@@ -296,11 +296,11 @@ void GenSSAVisitor::visit(VariableDeclarationNode* node)
                 if ( node -> constructorParams().empty() )
                 {
                     code.addConst(0);
-                    code.add(std::make_shared<AssignCommand>(var_arg, std::make_shared<NumberArg>(0), is_char_assign));
+                    code.add(makeCommand<AssignCommand>(var_arg, makeArg<NumberArg>(0), is_char_assign));
                 }
                 else
                 {
-                    code.add(std::make_shared<AssignCommand>(var_arg, getArg(node -> constructorParams()[0].get()), is_char_assign));
+                    code.add(makeCommand<AssignCommand>(var_arg, getArg(node -> constructorParams()[0].get()), is_char_assign));
                 }
                 return;
             }
@@ -317,13 +317,13 @@ void GenSSAVisitor::visit(VariableDeclarationNode* node)
 
 void GenSSAVisitor::visit(AddrNode* node)
 {
-    _arg = code.add(std::make_shared<UnaryOpCommand>(node -> op(), getArg(node -> expr())));
+    _arg = code.add(makeCommand<UnaryOpCommand>(node -> op(), getArg(node -> expr())));
 }
 
 void GenSSAVisitor::visit(NullNode* )
 {
     code.addConst(0);
-    _arg = std::make_shared<NumberArg>(0);
+    _arg = makeArg<NumberArg>(0);
 }
 
 void GenSSAVisitor::visit(DotNode *node)
@@ -334,7 +334,7 @@ void GenSSAVisitor::visit(DotNode *node)
     else
     {
         auto var = static_cast<const VarSymbol*>(node -> member());
-        _arg = std::make_shared<DotArg>(getArg(node -> base()), node -> baseType() -> offsetOf(var -> getName()), var);
+        _arg = makeArg<DotArg>(getArg(node -> base()), node -> baseType() -> offsetOf(var -> getName()), var);
     }
 }
 
@@ -350,18 +350,18 @@ void GenSSAVisitor::visit(VariableNode *node)
     {
         auto this_var = node -> scope -> resolveVariable("this");
         auto offset = static_cast<const ObjectType*>(this_var -> typeOf().unqualified()) -> offsetOf(node -> name());
-        _arg = std::make_shared<DotArg>(std::make_shared<VariableArg>(this_var), offset, node -> variable());
+        _arg = makeArg<DotArg>(makeArg<VariableArg>(this_var), offset, node -> variable());
     }
     else
     {
-        _arg = std::make_shared<VariableArg>(node -> variable());
+        _arg = makeArg<VariableArg>(node -> variable());
     }
 }
 
 void GenSSAVisitor::visit(StringNode* node)
 {
     code.addString(node -> str());
-    _arg = std::make_shared<StringArg>(node -> str());
+    _arg = makeArg<StringArg>(node -> str());
 }
 
 void GenSSAVisitor::visit(NumberNode* node)
@@ -369,7 +369,7 @@ void GenSSAVisitor::visit(NumberNode* node)
     auto num = std::stoi(node -> num());
 
     code.addConst(num);
-    _arg = std::make_shared<NumberArg>(num);
+    _arg = makeArg<NumberArg>(num);
 }
 
 void GenSSAVisitor::visit(CallNode* node)
@@ -392,15 +392,15 @@ void GenSSAVisitor::visit(ReturnNode* node)
     if ( node -> isInInlineCall() )
     {
         auto expr_type = node -> expr() -> getType();
-        auto var_arg = std::make_shared<VariableArg>(node -> scope -> resolveVariable("$"));
+        auto var_arg = makeArg<VariableArg>(node -> scope -> resolveVariable("$"));
 
         if ( node -> function() -> type().returnType().isReference() )
         {
-            code.add(std::make_shared<AssignRefCommand>(var_arg, expr_arg));
+            code.add(makeCommand<AssignRefCommand>(var_arg, expr_arg));
         }
         else if ( isSimpleType(expr_type.base()) )
         {
-            code.add(std::make_shared<AssignCommand>(var_arg, expr_arg, isCharType(expr_type.base())));
+            code.add(makeCommand<AssignCommand>(var_arg, expr_arg, isCharType(expr_type.base())));
         }
         else
         {
@@ -408,14 +408,14 @@ void GenSSAVisitor::visit(ReturnNode* node)
            
             generateParam(expr_arg, ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base())));
             generateParam(var_arg , ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base())));
-            _arg = code.add(std::make_shared<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
+            _arg = code.add(makeCommand<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
         }
         _arg = var_arg;
-        code.add(std::make_shared<GotoCommand>(loop_label.top().second));
+        code.add(makeCommand<GotoCommand>(loop_label.top().second));
         return;
     }
 
-    code.add(std::make_shared<ReturnCommand>(expr_arg, node -> function() -> type().returnType().isReference()));
+    code.add(makeCommand<ReturnCommand>(expr_arg, node -> function() -> type().returnType().isReference()));
 }
 
 void GenSSAVisitor::visit(UnsafeBlockNode* node)
@@ -429,11 +429,11 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode* node)
     code.rememberVar(variable);
 
     auto expr_type = node -> expr() -> getType().unqualified();
-    auto var = std::make_shared<VariableArg>(variable);
+    auto var = makeArg<VariableArg>(variable);
 
     if ( isIntType(expr_type) || isCharType(expr_type) )
     {
-        code.add(std::make_shared<AssignCommand>(var, getArg(node -> expr()), isCharType(expr_type)));
+        code.add(makeCommand<AssignCommand>(var, getArg(node -> expr()), isCharType(expr_type)));
         return;
     }
    
@@ -454,7 +454,7 @@ void GenSSAVisitor::visit(TemplateFunctionDeclarationNode* node)
 
 void GenSSAVisitor::visit(BreakNode* )
 {
-    code.add(std::make_shared<GotoCommand>(loop_label.top().second));
+    code.add(makeCommand<GotoCommand>(loop_label.top().second));
 }
 
 void GenSSAVisitor::visit(FunctionNode* node)
@@ -462,7 +462,7 @@ void GenSSAVisitor::visit(FunctionNode* node)
     if ( node -> function() -> isMethod() )
     {
         auto _this_var = node -> scope -> resolveVariable("this");
-        _arg = std::make_shared<VariableArg>(_this_var);
+        _arg = makeArg<VariableArg>(_this_var);
     }
 }
 
@@ -489,15 +489,15 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
         code.rememberVar(var);
             
         auto var_type = var -> typeOf();
-        auto var_arg = std::make_shared<VariableArg>(var);
+        auto var_arg = makeArg<VariableArg>(var);
 
         if ( var_type.isReference() )
         {
-            code.add(std::make_shared<AssignRefCommand>(var_arg, *param_it));
+            code.add(makeCommand<AssignRefCommand>(var_arg, *param_it));
         }
         else if ( isSimpleType(var_type.base()) )
         {
-            code.add(std::make_shared<AssignCommand>(var_arg, *param_it, isCharType(var_type.base())));
+            code.add(makeCommand<AssignCommand>(var_arg, *param_it, isCharType(var_type.base())));
         }
         else
         {
@@ -505,19 +505,19 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
 
             generateParam(*param_it, ConversionInfo(nullptr, TypeFactory::getReference(var_type.base())));
             generateParam(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base())));
-            _arg = code.add(std::make_shared<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
+            _arg = code.add(makeCommand<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
         }
 
         ++param_it;
     }
 
     inline_info.function_body -> accept(*this);
-    code.add(std::make_shared<LabelCommand>(exit_from_function_label));
+    code.add(makeCommand<LabelCommand>(exit_from_function_label));
 
-    _arg = std::make_shared<VariableArg>(return_var);
+    _arg = makeArg<VariableArg>(return_var);
 
     loop_label.pop();
 }
 
-void GenSSAVisitor::generateParam(Argument arg, ConversionInfo info) { code.add(std::make_shared<ParamCommand>(arg, info)); }
+void GenSSAVisitor::generateParam(Argument arg, ConversionInfo info) { code.add(makeCommand<ParamCommand>(arg, info)); }
 

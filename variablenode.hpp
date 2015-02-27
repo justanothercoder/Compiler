@@ -9,7 +9,7 @@ class VariableNode : public ExprNode
 {
 public:
 
-    VariableNode(const std::string& name);
+    VariableNode(std::string name);
 
     ASTNode copyTree() const override;
 

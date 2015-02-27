@@ -1,6 +1,6 @@
 #include "templatesymbol.hpp"
 
-bool TemplateSymbol::isIn(const std::string& name) const
+bool TemplateSymbol::isIn(std::string name) const
 {
     const auto& template_params = templateParams();
 

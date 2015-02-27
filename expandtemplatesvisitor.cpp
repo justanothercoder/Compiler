@@ -72,7 +72,6 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, const Sc
 
     if ( type == nullptr )
         return type_info;
-//        throw SemanticError(type_info.name() + " is not a type");
     
     if ( auto tmpl = dynamic_cast<TemplateSymbol*>(type) )
     {

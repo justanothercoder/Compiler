@@ -8,7 +8,7 @@
 #include "definevisitor.hpp"
 #include "checkvisitor.hpp"
 
-TemplateFunctionSymbol::TemplateFunctionSymbol(const std::string& name, TemplateParamsInfo template_params, TemplateDeclarationNode* _holder) 
+TemplateFunctionSymbol::TemplateFunctionSymbol(std::string name, TemplateParamsInfo template_params, TemplateDeclarationNode* _holder) 
     : name(name)
     , template_params(template_params)
     , _holder(_holder)

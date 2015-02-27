@@ -2,7 +2,7 @@
 #include "typefactory.hpp"
 #include "builtins.hpp"
 
-StringNode::StringNode(const std::string& str) : str_(str) { }
+StringNode::StringNode(std::string str) : str_(str) { }
 
 ASTNode StringNode::copyTree() const { return std::make_unique<StringNode>(str_); }
 std::string StringNode::str() const { return str_; }

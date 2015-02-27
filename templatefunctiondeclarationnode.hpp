@@ -16,7 +16,7 @@ class TemplateFunctionDeclarationNode : public TemplateDeclarationNode
 
 public:
 
-    TemplateFunctionDeclarationNode(const std::string& name
+    TemplateFunctionDeclarationNode(std::string name
                                   , FunctionDeclarationInfo info
                                   , ASTNode statements
                                   , FunctionTraits traits

@@ -13,7 +13,7 @@ class VariableDeclarationNode : public DeclarationNode, public NodeWithCall
 {
 public:
 
-    VariableDeclarationNode(const std::string& name, TypeInfo type_info, bool is_field = false, std::vector<ASTExprNode> constructor_params = {});
+    VariableDeclarationNode(std::string name, TypeInfo type_info, bool is_field = false, std::vector<ASTExprNode> constructor_params = {});
 
     void build_scope() override;
     void accept(ASTVisitor& visitor) override;
