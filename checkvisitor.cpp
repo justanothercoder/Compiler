@@ -228,19 +228,8 @@ void CheckVisitor::visit(FunctionNode* node)
 
 void CheckVisitor::visit(TemplateFunctionNode* node) 
 {
-    auto sym = node -> scope -> resolve(node -> name());
-    assert(sym && sym -> isFunction());
-/*
-    auto ov_func = static_cast<const OverloadedFunctionSymbol*>(sym);
-
-    if ( node -> templateArgumentsInfo().empty() )
-        node -> function(ov_func);
-    else
-    {
-        auto template_arguments = getTemplateArguments(node -> templateArgumentsInfo());
-        node -> function(new PartiallyInstantiatedFunctionSymbol(ov_func, template_arguments));
-    }
-*/    
+    auto sym = node -> scope -> resolveTemplateFunction(node -> name(), getTemplateArguments(node -> templateArgumentsInfo()), getCallArguments());
+    node -> function(sym);
 }
 
 void CheckVisitor::visit(VariableNode* node)
@@ -251,6 +240,8 @@ void CheckVisitor::visit(VariableNode* node)
 
 void CheckVisitor::visit(CallNode* node)
 {
+    Logger::log("Checking node " + node -> toString());
+
     auto types = std::vector<VariableType>{ };
     for ( const auto& param : node -> params() )
     {

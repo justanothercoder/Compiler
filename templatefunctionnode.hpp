@@ -4,7 +4,7 @@
 #include "exprnode.hpp"
 #include "typeinfo.hpp"
 
-class FunctionalType;
+class FunctionalSymbol;
 
 class TemplateFunctionNode : public ExprNode
 {
@@ -26,15 +26,15 @@ public:
 
     const std::string& name() const;
 
-    const FunctionalType* function();
-    void function(const FunctionalType* type);
+    FunctionalSymbol* function();
+    void function(FunctionalSymbol* type);
 
     const TemplateArgumentsInfo& templateArgumentsInfo() const;
 
 private:
 
     std::string name_;    
-    const FunctionalType* function_ = nullptr;
+    FunctionalSymbol* function_ = nullptr;
     TemplateArgumentsInfo template_arguments;
 };
 

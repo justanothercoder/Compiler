@@ -56,5 +56,10 @@ FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeI
     
 Symbol* TemplateFunctionSymbol::specializeWith(const TemplateArguments& arguments) 
 {
-
+    return nullptr;
+}
+    
+bool TemplateFunctionSymbol::canBeSpecializedWith(const TemplateArguments& args, const FunctionTypeInfo& info)
+{
+    return overloadOfTemplateFunction(info, args) != nullptr;
 }

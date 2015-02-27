@@ -19,6 +19,7 @@ class TypeSymbol;
 class BuiltInTypeSymbol;
 class AliasSymbol;
 class ModuleSymbol;
+class TemplateFunctionSymbol;
 
 struct FunctionTypeInfo;
 
@@ -49,6 +50,7 @@ public:
     virtual VarSymbol* resolveVariable(const std::string& name) const;
 
     virtual Symbol* resolveTemplate(const std::string& name, const TemplateArguments& args) const;
+    virtual FunctionalSymbol* resolveTemplateFunction(const std::string& name, const TemplateArguments& args, const FunctionTypeInfo& info) const;
 
     virtual std::vector<VarSymbol*> getVars() const = 0;
     virtual std::vector<FunctionalSymbol*> getFunctions() const = 0;

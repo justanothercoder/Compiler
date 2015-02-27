@@ -6,6 +6,7 @@
 #include "varsymbol.hpp"
 #include "templatesymbol.hpp"
 #include "functiontypeinfo.hpp"
+#include "templatefunctionsymbol.hpp"
 
 #include "logger.hpp"
 
@@ -67,10 +68,6 @@ Symbol* Scope::resolveTemplate(const std::string& name, const TemplateArguments&
     while ( scope && (!sym || !dynamic_cast<TemplateSymbol*>(sym) || !static_cast<TemplateSymbol*>(sym) -> canBeSpecializedWith(args)) )
     {
         sym = scope -> resolve(name);
-
-        if ( sym )
-            Logger::log("Found " + sym -> getName());
-
         scope = scope -> enclosingScope();
     }
 
@@ -78,4 +75,20 @@ Symbol* Scope::resolveTemplate(const std::string& name, const TemplateArguments&
         return nullptr;
 
     return sym;
+}
+
+FunctionalSymbol* Scope::resolveTemplateFunction(const std::string& name, const TemplateArguments& args, const FunctionTypeInfo& info) const
+{
+    auto scope = this;
+    Symbol* sym = nullptr;
+    while ( scope && (!sym || !dynamic_cast<TemplateFunctionSymbol*>(sym) || !static_cast<TemplateFunctionSymbol*>(sym) -> canBeSpecializedWith(args, info)) )
+    {
+        sym = scope -> resolve(name);
+        scope = scope -> enclosingScope();
+    }
+
+    if ( !sym || !dynamic_cast<TemplateFunctionSymbol*>(sym) || !static_cast<TemplateFunctionSymbol*>(sym) -> canBeSpecializedWith(args, info) )
+        return nullptr;
+
+    return static_cast<TemplateFunctionSymbol*>(sym) -> overloadOfTemplateFunction(info, args);;
 }

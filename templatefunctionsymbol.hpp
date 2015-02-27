@@ -26,6 +26,8 @@ public:
     
     Symbol* specializeWith(const TemplateArguments& arguments) override;
 
+    bool canBeSpecializedWith(const TemplateArguments& args, const FunctionTypeInfo& info);
+
 private:
 
     std::string name;
