@@ -29,7 +29,6 @@
 #include "varsymbol.hpp"
 #include "templatestructsymbol.hpp"
 #include "templatefunctionsymbol.hpp"
-#include "partiallyinstantiatedfunctionsymbol.hpp"
 #include "comp.hpp"
 #include "builtins.hpp"
 #include "compilableunit.hpp"
@@ -80,12 +79,19 @@ void CheckVisitor::visit(UnaryNode* node)
     node -> callInfo(checkCall(node -> function(), node -> arguments()));
 }
 
+void CheckVisitor::visit(BinaryOperatorNode* node)
+{
+    visitChildren(node);
+    node -> callInfo(checkCall(node -> function(), node -> arguments()));
+}
+
 void CheckVisitor::visit(NewExpressionNode* node)
 {
     for ( auto param : node -> typeInfo().templateArgumentsInfo() )
     {
-        if ( param.which() == 0 )
+        if ( param.which() == 0 ) {
             boost::get< std::shared_ptr<ExprNode> >(param) -> accept(*this);
+        }
     }
     
     auto tp = fromTypeInfo(node -> typeInfo(), node -> scope.get()).base();
@@ -103,12 +109,6 @@ void CheckVisitor::visit(NewExpressionNode* node)
     auto ov_func = type -> resolveMethod(type -> typeName(), types);
 
     node -> callInfo(checkCall(ov_func, arguments));
-}
-
-void CheckVisitor::visit(BinaryOperatorNode* node)
-{
-    visitChildren(node);
-    node -> callInfo(checkCall(node -> function(), node -> arguments()));
 }
 
 void CheckVisitor::visit(StructDeclarationNode *node)
@@ -134,8 +134,9 @@ void CheckVisitor::visit(VariableDeclarationNode* node)
 {
     for ( auto param : node -> typeInfo().templateArgumentsInfo() )
     {
-        if ( param.which() == 0 )
+        if ( param.which() == 0 ) {
             boost::get< std::shared_ptr<ExprNode> >(param) -> accept(*this);
+        }
     }
 
     if ( !node -> isField() )
@@ -155,12 +156,13 @@ void CheckVisitor::visit(VariableDeclarationNode* node)
             auto struct_symbol = static_cast<const ObjectType*>(var_type.unqualified());
 
             auto arguments = extractArguments(node -> constructorParams());
-            auto ov_func = struct_symbol -> resolveMethod(struct_symbol -> typeName(), types);
+            auto constructor = struct_symbol -> resolveMethod(struct_symbol -> typeName(), types);
 
-            if ( ov_func == nullptr )
+            if ( constructor == nullptr ) {
                 throw SemanticError("No constructor defined");
+            }
             
-            node -> callInfo(checkCall(ov_func, arguments));
+            node -> callInfo(checkCall(constructor, arguments));
         }
     }
 }
@@ -169,7 +171,8 @@ void CheckVisitor::visit(AddrNode* node)
 {
     node -> expr() -> accept(*this);
 
-    if ( node -> op() == AddrOp::REF ) {
+    if ( node -> op() == AddrOp::REF ) 
+    {
         if ( !node -> expr() -> isLeftValue() ) {
             throw SemanticError("expression is not an lvalue");
         }
@@ -188,11 +191,11 @@ void CheckVisitor::visit(DotNode* node)
 {
     node -> base() -> accept(*this);
 
-    auto _base_type = node -> base() -> getType().unqualified();
-    if ( !_base_type -> isObjectType()  )
+    auto base_type = node -> base() -> getType().unqualified();
+    if ( !base_type -> isObjectType()  )
         throw SemanticError("'" + node -> base() -> toString() + "' is not an instance of struct.");
 
-    node -> baseType(static_cast<const ObjectType*>(_base_type));
+    node -> baseType(static_cast<const ObjectType*>(base_type));
 
     auto mem = node -> baseType() -> resolveMember(node -> memberName());
     if ( mem == nullptr )
@@ -240,8 +243,6 @@ void CheckVisitor::visit(VariableNode* node)
 
 void CheckVisitor::visit(CallNode* node)
 {
-    Logger::log("Checking node " + node -> toString());
-
     auto types = std::vector<VariableType>{ };
     for ( const auto& param : node -> params() )
     {

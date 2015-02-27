@@ -23,8 +23,6 @@ void DefineTypesVisitor::visit(TemplateStructDeclarationNode* node)
     
 void DefineTypesVisitor::visit(StructDeclarationNode *node) 
 {
-    Logger::log("defining " + node -> toString());
-
     auto struc = factory.makeStruct(node -> name(), node -> structScope());
 
     node -> setDefinedSymbol(struc.get());

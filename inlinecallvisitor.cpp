@@ -38,8 +38,6 @@ void InlineCallVisitor::visitChildren(AST* node)
 
 void InlineCallVisitor::visitCallable(CallableNode* node)
 {
-    Logger::log("Inlining " + node -> toString());
-
     auto function = node -> callInfo().callee;
     
     if ( !shouldBeInlined(function) )

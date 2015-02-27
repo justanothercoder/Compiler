@@ -53,6 +53,18 @@
 
 #include "logger.hpp"
 
+template <class T, class... Args>
+std::shared_ptr<Arg> makeArg(Args&&... args)
+{
+    return std::make_shared<T>(std::forward<Args>(args)...);
+}
+
+template <class T, class... Args>
+std::shared_ptr<Command> makeCommand(Args&&... args)
+{
+    return std::make_shared<T>(std::forward<Args>(args)...);
+}
+
 GenSSAVisitor::GenSSAVisitor(ThreeAddressCode& code) : code(code)
 {
     auto str_type = static_cast<const TypeSymbol*>(BuiltIns::ASCII_string_type);

@@ -36,8 +36,6 @@ void DefineVisitor::visit(ExternNode* node)
     }
 
     auto type = FunctionType(std::move(return_type), std::move(FunctionTypeInfo(params_types)));
-  
-//    auto func_scope = new FunctionScope("_" + node -> name(), node -> scope.get(), false);
     auto symbol = factory.makeFunction(node -> name(), type, FunctionTraits::simple(), node -> isUnsafe());
 
     node -> setDefinedSymbol(symbol.get());
@@ -46,8 +44,6 @@ void DefineVisitor::visit(ExternNode* node)
 
 void DefineVisitor::visit(FunctionDeclarationNode* node)
 {
-    Logger::log("Defining " + node -> toString());
-
     bool is_in_struct = (!declarations_stack.empty() && declarations_stack.back() -> isType());
     auto struc = is_in_struct ? static_cast<const TypeSymbol*>(declarations_stack.back()) : nullptr;
         

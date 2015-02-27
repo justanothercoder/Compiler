@@ -15,10 +15,7 @@
 VariableType Compiler::fromTypeInfo(const TypeInfo& type_info, Scope *scope)
 {
     auto type_name = type_info.name();
-
-    const Type *type;
-
-    Logger::log("Trying to get type from " + type_info.toString());
+    const Type *type = nullptr;
 
     if ( type_info.moduleName() == "" ) {
         type = scope -> resolveType(type_name);

@@ -91,8 +91,6 @@ TypeInfo ExpandTemplatesVisitor::preprocessTypeInfo(TypeInfo type_info, const Sc
                 decl -> accept(*visitor);
         }
         
-        Logger::log("Type decl: " + decl -> toString());
-
         type_info.name(decl -> getDefinedSymbol() -> getName());
     }
 
@@ -117,12 +115,6 @@ std::shared_ptr<DeclarationNode> ExpandTemplatesVisitor::instantiateSpec(const T
 
     decl -> accept(*this);
     return decl;
-}
-
-void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode* node)   
-{
-//    for ( auto instance : node -> allInstances() )
-//        instance -> accept(*this);
 }
 
 void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node) 
@@ -158,3 +150,5 @@ void ExpandTemplatesVisitor::visit(VariableNode* ) { }
 void ExpandTemplatesVisitor::visit(FunctionNode* ) { }
 void ExpandTemplatesVisitor::visit(TemplateFunctionNode* ) { } 
 void ExpandTemplatesVisitor::visit(ModuleMemberAccessNode* ) { } 
+void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode* )   { }
+
