@@ -230,24 +230,26 @@ void CheckVisitor::visit(ModuleNode* node)
 
 void CheckVisitor::visit(FunctionNode* node) 
 {
-    try
-    {
-        auto sym = node -> scope -> resolveFunction(node -> name(), getCallArguments());
+    try { getCallArguments(); }
+    catch ( SemanticError& e ) { throw SemanticError("No arguments provided to '" + node -> name() + "'"); }
+        
+    auto sym = node -> scope -> resolveFunction(node -> name(), getCallArguments());
 
-        if ( sym == nullptr )
-            throw NoViableOverloadError(node -> name(), getCallArguments().params());
+    if ( sym == nullptr )
+        throw NoViableOverloadError(node -> name(), getCallArguments().params());
 
-        node -> function(sym);
-    }
-    catch ( SemanticError& e )
-    {
-        throw SemanticError("No arguments provided to '" + node -> name() + "'");
-    }
+    node -> function(sym);
 }
 
 void CheckVisitor::visit(TemplateFunctionNode* node) 
 {
     auto sym = node -> scope -> resolveTemplateFunction(node -> name(), getTemplateArguments(node -> templateArgumentsInfo()), getCallArguments());
+
+    if ( sym == nullptr )
+        throw NoViableOverloadError(node -> name(), getCallArguments().params());
+
+    Logger::log(sym -> getName());
+
     node -> function(sym);
 }
 
@@ -259,6 +261,8 @@ void CheckVisitor::visit(VariableNode* node)
 
 void CheckVisitor::visit(CallNode* node)
 {
+    Logger::log("Checking " + node -> toString());
+
     auto types = std::vector<VariableType>{ };
     for ( const auto& param : node -> params() )
     {
