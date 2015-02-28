@@ -14,6 +14,9 @@ public:
 
     Token getToken() override;
 
+private:
+
+    TokenType getNameTokenType(const std::string& str);
 };
 
 #endif

@@ -5,6 +5,30 @@ Lexer::Lexer(std::string input) : AbstractLexer(input)
 
 }
 
+TokenType Lexer::getNameTokenType(const std::string& str)
+{
+    if      ( str == "struct"   ) return TokenType::STRUCT;
+    else if ( str == "def"      ) return TokenType::DEF;
+    else if ( str == "return"   ) return TokenType::RETURN;
+    else if ( str == "if"       ) return TokenType::IF;
+    else if ( str == "else"     ) return TokenType::ELSE;
+    else if ( str == "while"    ) return TokenType::WHILE;
+    else if ( str == "new"      ) return TokenType::NEW;
+    else if ( str == "template" ) return TokenType::TEMPLATE;
+    else if ( str == "operator" ) return TokenType::OPERATOR;
+    else if ( str == "for"      ) return TokenType::FOR;
+    else if ( str == "const"    ) return TokenType::CONST;
+    else if ( str == "import"   ) return TokenType::IMPORT;
+    else if ( str == "var"      ) return TokenType::VAR;
+    else if ( str == "unsafe"   ) return TokenType::UNSAFE;
+    else if ( str == "null"     ) return TokenType::NULLTOKEN;
+    else if ( str == "extern"   ) return TokenType::EXTERN;
+    else if ( str == "from"     ) return TokenType::FROM;
+    else if ( str == "break"    ) return TokenType::BREAK;
+    else if ( str == "lambda"   ) return TokenType::LAMBDA;
+    else                          return TokenType::ID;
+}
+
 Token Lexer::getToken()
 {
     while ( cur != (char)(-1) )
@@ -104,28 +128,7 @@ Token Lexer::getToken()
                 consume();
             }
 
-            TokenType token_type;
-
-            if      ( buf == "struct"   ) token_type = TokenType::STRUCT;
-            else if ( buf == "def"      ) token_type = TokenType::DEF;
-            else if ( buf == "return"   ) token_type = TokenType::RETURN;
-            else if ( buf == "if"       ) token_type = TokenType::IF;
-            else if ( buf == "else"     ) token_type = TokenType::ELSE;
-            else if ( buf == "while"    ) token_type = TokenType::WHILE;
-            else if ( buf == "new"      ) token_type = TokenType::NEW;
-            else if ( buf == "template" ) token_type = TokenType::TEMPLATE;
-            else if ( buf == "operator" ) token_type = TokenType::OPERATOR;
-            else if ( buf == "for"      ) token_type = TokenType::FOR;
-            else if ( buf == "const"    ) token_type = TokenType::CONST;
-            else if ( buf == "import"   ) token_type = TokenType::IMPORT;
-            else if ( buf == "var"      ) token_type = TokenType::VAR;
-            else if ( buf == "unsafe"   ) token_type = TokenType::UNSAFE;
-            else if ( buf == "null"     ) token_type = TokenType::NULLTOKEN;
-            else if ( buf == "extern"   ) token_type = TokenType::EXTERN;
-            else if ( buf == "from"     ) token_type = TokenType::FROM;
-            else if ( buf == "break"    ) token_type = TokenType::BREAK;
-            else                          token_type = TokenType::ID;
-
+            auto token_type = getNameTokenType(buf);
             return Token(token_type, buf, l, s);
         }
         else if ( std::isdigit(cur) )

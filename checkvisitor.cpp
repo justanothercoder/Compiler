@@ -248,8 +248,6 @@ void CheckVisitor::visit(TemplateFunctionNode* node)
     if ( sym == nullptr )
         throw NoViableOverloadError(node -> name(), getCallArguments().params());
 
-    Logger::log(sym -> getName());
-
     node -> function(sym);
 }
 
@@ -261,8 +259,6 @@ void CheckVisitor::visit(VariableNode* node)
 
 void CheckVisitor::visit(CallNode* node)
 {
-    Logger::log("Checking " + node -> toString());
-
     auto types = std::vector<VariableType>{ };
     for ( const auto& param : node -> params() )
     {
