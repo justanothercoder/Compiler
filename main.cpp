@@ -57,10 +57,10 @@ int main(int argc, char** argv)
 
         ExpandTemplatesVisitor expand_visitor;
         root -> accept(expand_visitor);
-       
+
         DefineVisitor define_visitor;
         root -> accept(define_visitor);
-    
+
         CheckVisitor check_visitor;
         root -> accept(check_visitor);
 

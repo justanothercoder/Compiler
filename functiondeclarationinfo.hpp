@@ -2,7 +2,7 @@
 #define _FUNCTIONDECLARATIONINFO_HPP_
 
 #include <vector>
-#include "typeinfo.hpp"
+#include "paraminfo.hpp"
 
 class FunctionDeclarationInfo
 {

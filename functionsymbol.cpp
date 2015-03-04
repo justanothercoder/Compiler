@@ -46,6 +46,6 @@ CallInfo FunctionSymbol::resolveCall(std::vector<ValueInfo> arguments) const
     return CallInfo(this, getConversions(arguments, function_params));
 }
 
-AST* FunctionSymbol::getFunctionDecl() const { return function_decl; }
+AST* FunctionSymbol::getFunctionBody() const { return function_body; }
     
 bool FunctionSymbol::isFunction() const { return true; }

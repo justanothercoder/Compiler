@@ -3,17 +3,12 @@
 
 #include <map>
 #include <boost/optional.hpp>
-
-#include "functionscope.hpp"
-#include "functiontraits.hpp"
-#include "functiontypeinfo.hpp"
 #include "symbol.hpp"
-#include "functiontype.hpp"
-
+#include "functionscope.hpp"
 #include "functionalsymbol.hpp"
 
 class VariableSymbol;
-class FunctionDeclarationNode;
+class AST;
 
 class FunctionSymbol : public FunctionalSymbol
 {
@@ -34,10 +29,10 @@ public:
     
     CallInfo resolveCall(std::vector<ValueInfo> arguments) const override;
 
-    AST* getFunctionDecl() const override;
+    AST* getFunctionBody() const override;
     bool is_constexpr = false;
 
-    FunctionDeclarationNode* function_decl = nullptr;
+    AST* function_body = nullptr;
 private:
 
     std::string name;

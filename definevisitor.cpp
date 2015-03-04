@@ -2,6 +2,7 @@
 #include "ifnode.hpp"
 #include "fornode.hpp"
 #include "whilenode.hpp"
+#include "lambdanode.hpp"
 #include "externnode.hpp"
 #include "statementnode.hpp"
 #include "unsafeblocknode.hpp"
@@ -31,7 +32,7 @@ void DefineVisitor::visit(ExternNode* node)
 
     for ( auto formal_param : node -> info().formalParams() )
     {
-        auto param_type = fromTypeInfo(formal_param.second, node -> scope.get());
+        auto param_type = fromTypeInfo(formal_param.typeInfo(), node -> scope.get());
         params_types.push_back(std::move(param_type));
     }
 
@@ -81,10 +82,10 @@ void DefineVisitor::visit(FunctionDeclarationNode* node)
 
     for ( auto param : node -> info().formalParams() )
     {
-        auto param_type = fromTypeInfo(param.second);
+        auto param_type = fromTypeInfo(param.typeInfo());
         params_types.push_back(param_type);
 
-        auto param_sym = factory.makeVariable(param.first, param_type, VariableSymbolType::PARAM);
+        auto param_sym = factory.makeVariable(param.name(), param_type, VariableSymbolType::PARAM);
         node -> addParamSymbol(std::move(param_sym));
     }
 
@@ -115,6 +116,8 @@ void DefineVisitor::visit(VariableDeclarationNode* node)
 
 void DefineVisitor::visit(VarInferTypeDeclarationNode* node)
 {
+    node -> expr() -> accept(*this);
+
     CheckVisitor visitor;
     node -> expr() -> accept(visitor);
 
@@ -145,6 +148,24 @@ void DefineVisitor::visit(StructDeclarationNode* node)
     visitChildren(node); 
     declarations_stack.pop_back();
 } 
+
+void DefineVisitor::visit(LambdaNode* node) 
+{
+    auto capture = std::vector<VarSymbol*>{ };
+    auto info    = std::vector<VarInfo>{ };
+
+    for ( auto var : node -> capture() )
+    {
+        auto var_sym = node -> scope -> resolveVariable(var);
+        capture.emplace_back(var_sym);
+        info.emplace_back(var, var_sym -> typeOf());
+    }
+
+    auto lambda_type = factory.makeLambda(capture, info, node -> body());
+    node -> setLambdaType(lambda_type.get());
+
+    node -> scope -> define(std::move(lambda_type));
+}
 
 void DefineVisitor::visit(IfNode *node)                { visitChildren(node); }
 void DefineVisitor::visit(ForNode *node)               { visitChildren(node); } 

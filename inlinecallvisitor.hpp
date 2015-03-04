@@ -30,6 +30,7 @@ public:
     void visit(ReturnNode* node) override;
     void visit(ExternNode* node) override;
     void visit(ModuleNode* node) override;
+    void visit(LambdaNode* node) override;
     void visit(BracketNode* node) override;
     void visit(VariableNode* node) override;
     void visit(FunctionNode* node) override;

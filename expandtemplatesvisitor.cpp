@@ -44,7 +44,7 @@ void ExpandTemplatesVisitor::visit(FunctionDeclarationNode* node)
     node -> info().returnTypeInfo() = preprocessTypeInfo(node -> info().returnTypeInfo(), node -> functionScope());
 
     for ( auto& param : node -> info().formalParams() )
-        param.second = preprocessTypeInfo(param.second, node -> functionScope());
+        param.typeInfo() = preprocessTypeInfo(param.typeInfo(), node -> functionScope());
 
     visitChildren(node);
 }
@@ -121,6 +121,8 @@ void ExpandTemplatesVisitor::visit(TemplateFunctionDeclarationNode* node)
     auto sym = std::unique_ptr<TemplateSymbol>(node -> defined_symbol);
     node -> scope -> define(std::move(sym)); 
 }
+
+void ExpandTemplatesVisitor::visit(LambdaNode*) { }
 
 void ExpandTemplatesVisitor::visit(IfNode*                node) { visitChildren(node); } 
 void ExpandTemplatesVisitor::visit(ForNode*               node) { visitChildren(node); } 

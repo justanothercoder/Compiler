@@ -11,6 +11,7 @@
 #include "abstractparser.hpp"
 #include "symbol.hpp"
 #include "templateargument.hpp"
+#include "paraminfo.hpp"
 
 class DeclarationNode;
 

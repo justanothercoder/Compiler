@@ -2,6 +2,7 @@
 #include "ifnode.hpp"
 #include "fornode.hpp"
 #include "whilenode.hpp"
+#include "lambdanode.hpp"
 #include "statementnode.hpp"
 #include "unsafeblocknode.hpp"
 #include "structdeclarationnode.hpp"
@@ -29,6 +30,12 @@ void DefineTypesVisitor::visit(StructDeclarationNode *node)
 
     node -> scope -> define(std::move(struc));
     visitChildren(node); 
+}
+
+void DefineTypesVisitor::visit(LambdaNode* ) 
+{
+//    auto lambda_type = factory.makeLambda(node -> capture(), node -> formalParams(), node -> body());
+//    node -> setLambdaType(lambda_type);
 }
 
 void DefineTypesVisitor::visit(IfNode *node)                { visitChildren(node); }

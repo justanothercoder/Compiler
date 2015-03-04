@@ -13,7 +13,7 @@ boost::optional<TemplateArgument> TemplateInfo::getReplacement(const std::string
     auto template_params = sym -> templateParams();
     for ( size_t i = 0; i < template_params.size(); ++i )
     {
-        if ( template_params[i].first == name )
+        if ( template_params[i].name() == name )
             return template_arguments[i];
     }
     return boost::none;

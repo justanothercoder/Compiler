@@ -34,8 +34,8 @@ FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeI
 
         for ( auto template_param : tmpl -> templateParams() )
         {
-            if ( template_params_map.count(template_param.first) )
-                template_arguments.push_back(template_params_map[template_param.first]);
+            if ( template_params_map.count(template_param.name()) )
+                template_arguments.push_back(template_params_map[template_param.name()]);
         }
 
         auto new_decl = decl -> instantiateWithArguments(template_arguments);
@@ -54,7 +54,7 @@ FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeI
     return nullptr;
 }
     
-Symbol* TemplateFunctionSymbol::specializeWith(const TemplateArguments& arguments) 
+Symbol* TemplateFunctionSymbol::specializeWith(const TemplateArguments& ) 
 {
     return nullptr;
 }

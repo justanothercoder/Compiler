@@ -48,7 +48,7 @@ void InlineCallVisitor::visitCallable(CallableNode* node)
 
 bool InlineCallVisitor::shouldBeInlined(const FunctionalSymbol* function)
 {
-    if ( function -> getFunctionDecl() == nullptr || function -> innerScope() == nullptr )
+    if ( function -> getFunctionBody() == nullptr || function -> innerScope() == nullptr )
         return false;
 
     auto params = function -> type().typeInfo().params(); 
@@ -62,23 +62,33 @@ InlineInfo InlineCallVisitor::inlineCall(const FunctionalSymbol* function)
 {
     SymbolFactory factory;
 
-    auto function_decl = static_cast<FunctionDeclarationNode*>(function -> getFunctionDecl());
-    
-    auto function_body = function_decl -> getChildren()[0] -> copyTree();
-    auto local_scope = std::make_shared<LocalScope>(function_decl -> scope.get());
+    auto function_body = function -> getFunctionBody() -> copyTree();
+    //    auto local_scope = std::make_shared<LocalScope>(function_decl -> scope.get());
+    auto local_scope = std::make_shared<LocalScope>(function -> innerScope());
 
     function_body -> scope = local_scope;
     function_body -> build_scope();
   
     std::vector<const VarSymbol*> locals;
-
+/*
     for ( auto param : function_decl -> paramsSymbols() ) 
     {
         auto new_var = factory.makeVariable(param -> getName(), param -> typeOf());
         locals.push_back(new_var.get());
         local_scope -> define(std::move(new_var));
     }
-
+*/
+    
+    for ( auto param : function_body -> scope -> getVars() ) 
+    {
+        if ( param -> isParam() )
+        {
+            auto new_var = factory.makeVariable(param -> getName(), param -> typeOf());
+            locals.push_back(new_var.get());
+            local_scope -> define(std::move(new_var));
+        }
+    }
+    
     local_scope -> define(factory.makeVariable("$", function -> type().returnType()));
 
     MarkReturnAsInlineVisitor mark(function);
@@ -150,6 +160,8 @@ void InlineCallVisitor::visit(TemplateFunctionDeclarationNode* node)
     for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
 }
+
+void InlineCallVisitor::visit(LambdaNode*) { }
 
 void InlineCallVisitor::visit(IfNode* node)                      { visitChildren(node); }
 void InlineCallVisitor::visit(DotNode* node)                     { visitChildren(node); } 

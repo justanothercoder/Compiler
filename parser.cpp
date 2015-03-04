@@ -32,6 +32,7 @@
 #include "stringnode.hpp"
 #include "addrnode.hpp"
 #include "nullnode.hpp"
+#include "lambdanode.hpp"
 #include "comp.hpp"
 
 #include "logger.hpp"
@@ -313,10 +314,10 @@ std::unique_ptr<DeclarationNode> Parser::templateStructDecl(TemplateParamsInfo t
 
     for ( const auto& param_info : template_params_info )
     {
-        if ( param_info.second.name() == "class" )
-            rememberSymbol(param_info.first, SymbolType_::STRUCT);
+        if ( param_info.typeInfo().name() == "class" )
+            rememberSymbol(param_info.name(), SymbolType_::STRUCT);
         else
-            rememberSymbol(param_info.first, SymbolType_::VARIABLE);            
+            rememberSymbol(param_info.name(), SymbolType_::VARIABLE);            
     }
 
     while ( getTokenType(1) != TokenType::RBRACE )
@@ -355,11 +356,11 @@ std::unique_ptr<DeclarationNode> Parser::templateFunctionDecl(boost::optional<st
     pushScope();
     
     for ( const auto& param_info : template_params_info )
-        rememberSymbol(param_info.first, (param_info.second.name() == "class" ? SymbolType_::STRUCT : SymbolType_::VARIABLE));
+        rememberSymbol(param_info.name(), (param_info.typeInfo().name() == "class" ? SymbolType_::STRUCT : SymbolType_::VARIABLE));
 
     auto params = formalParams();
     for ( const auto& param : params )
-        rememberSymbol(param.first, SymbolType_::VARIABLE);
+        rememberSymbol(param.name(), SymbolType_::VARIABLE);
 
     TypeInfo return_type;
 
@@ -413,7 +414,7 @@ std::unique_ptr<DeclarationNode> Parser::functionDecl(boost::optional<std::strin
     
     auto params = formalParams();
     for ( const auto& param : params )
-        rememberSymbol(param.first, SymbolType_::VARIABLE);
+        rememberSymbol(param.name(), SymbolType_::VARIABLE);
 
     TypeInfo return_type;
 
@@ -572,10 +573,12 @@ ASTExprNode Parser::lambda_expr()
 {
     match(TokenType::LBRACKET);
     // TODO add capture
+    std::vector<std::string> capture;
     match(TokenType::RBRACKET);
 
     auto params = formalParams();
-    return nullptr;
+    auto body = block();
+    return std::make_unique<LambdaNode>(capture, params, std::move(body));
 }
 
 ASTExprNode Parser::unary_right()

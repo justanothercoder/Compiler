@@ -58,10 +58,10 @@ std::string TemplateStructDeclarationNode::toString() const
     if ( !template_params.empty() )
     {
         auto it = std::begin(template_params);
-        res += it -> second.toString() + " " + it -> first;
+        res += it -> toString();
 
         for ( ++it; it != std::end(template_params); ++it )
-            res += ", " + it -> second.toString() + " " + it -> first;
+            res += ", " + it -> toString();
     }
 
     res += ">\n";

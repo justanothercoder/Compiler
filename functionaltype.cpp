@@ -25,16 +25,17 @@ boost::optional< std::map<std::string, TemplateArgument> > makeMappingOfParams(c
 
     for ( const auto& param : formal_params )
     {
-        if ( tmpl -> isIn(param.second.name()) )
+        if ( tmpl -> isIn(param.typeInfo().name()) )
         {
-            if ( template_params_map.count(param.second.name()) )
+            auto param_type_name = param.typeInfo().name();
+            if ( template_params_map.count(param_type_name) )
             {
-                if ( boost::get<TypeInfo>(template_params_map[param.second.name()]) != makeTypeInfo(*it) )
+                if ( boost::get<TypeInfo>(template_params_map[param_type_name]) != makeTypeInfo(*it) )
                     return boost::none;
             }
             else
             {
-                template_params_map[param.second.name()] = makeTypeInfo(*it);
+                template_params_map[param_type_name] = makeTypeInfo(*it);
             }
         }
 

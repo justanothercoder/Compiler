@@ -185,7 +185,7 @@ void RebuildTreeVisitor::visit(FunctionDeclarationNode* node)
     auto new_formal_params = std::vector<ParamInfo>{ };
 
     for ( auto param : node -> info().formalParams() )
-        new_formal_params.emplace_back(param.first, processTypeInfo(param.second));
+        new_formal_params.emplace_back(param.name(), processTypeInfo(param.typeInfo()));
 
     auto new_info = FunctionDeclarationInfo(new_return_type_info, new_formal_params);
 
@@ -241,6 +241,8 @@ void RebuildTreeVisitor::visit(TemplateFunctionNode* node)
 {
     _ast = std::make_unique<TemplateFunctionNode>(node -> name(), node -> templateArgumentsInfo());
 }
+
+void RebuildTreeVisitor::visit(LambdaNode*) { }
 
 void RebuildTreeVisitor::visit(NullNode* )         { _ast = std::make_unique<NullNode>(); }
 void RebuildTreeVisitor::visit(BreakNode* )        { _ast = std::make_unique<BreakNode>(); }

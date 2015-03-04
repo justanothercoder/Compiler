@@ -56,6 +56,8 @@ void MarkReturnAsInlineVisitor::visit(CallNode* node)
         child -> accept(*this);
 }
 
+void MarkReturnAsInlineVisitor::visit(LambdaNode*) { }
+
 void MarkReturnAsInlineVisitor::visit(DotNode* ) { }
 void MarkReturnAsInlineVisitor::visit(AddrNode* ) { }
 void MarkReturnAsInlineVisitor::visit(NullNode* ) { }

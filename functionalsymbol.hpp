@@ -21,7 +21,7 @@ public:
     virtual FunctionTraits traits() const = 0;
     virtual bool isCompatibleWith(FunctionTypeInfo ft) const = 0; 
 
-    virtual AST* getFunctionDecl() const = 0;
+    virtual AST* getFunctionBody() const = 0;
 };
 
 #endif

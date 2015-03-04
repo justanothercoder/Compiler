@@ -6,7 +6,7 @@ bool TemplateSymbol::isIn(std::string name) const
 
     return std::find_if(std::begin(template_params), std::end(template_params), [&](auto&& p) 
     { 
-        return name == p.first; 
+        return name == p.name(); 
     }) != std::end(template_params);
 }
 

@@ -8,6 +8,7 @@
 #include "whilenode.hpp"
 #include "importnode.hpp"
 #include "modulenode.hpp"
+#include "lambdanode.hpp"
 #include "returnnode.hpp"
 #include "bracketnode.hpp"
 #include "variablenode.hpp"
@@ -325,6 +326,12 @@ void CheckVisitor::visit(FunctionDeclarationNode* node)
     function_scopes.push(node -> functionScope());
     visitChildren(node); 
     function_scopes.pop();
+}
+
+void CheckVisitor::visit(LambdaNode* node)
+{
+    Logger::log("Checking " + node -> toString());
+    Logger::log("Node type " + node -> getType().getName());
 }
 
 void CheckVisitor::visit(IfNode* node)        { visitChildren(node); }

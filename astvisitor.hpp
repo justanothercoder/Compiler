@@ -17,6 +17,7 @@ class StringNode;
 class NumberNode;
 class ExternNode;
 class ModuleNode;
+class LambdaNode;
 class VariableNode;
 class FunctionNode;
 class StatementNode;
@@ -49,6 +50,7 @@ public:
     virtual void visit(NumberNode* node) = 0;
     virtual void visit(ExternNode* node) = 0;
     virtual void visit(ModuleNode* node) = 0;
+    virtual void visit(LambdaNode* node) = 0;
     virtual void visit(BracketNode* node) = 0;
     virtual void visit(ImportNode* node) = 0;
     virtual void visit(FunctionNode* node) = 0;

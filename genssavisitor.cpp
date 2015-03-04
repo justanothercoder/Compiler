@@ -466,6 +466,8 @@ void GenSSAVisitor::visit(FunctionNode* node)
     }
 }
 
+void GenSSAVisitor::visit(LambdaNode*) { }
+
 void GenSSAVisitor::visit(ModuleNode* ) { }
 void GenSSAVisitor::visit(ModuleMemberAccessNode* ) { }
 void GenSSAVisitor::visit(ImportNode *) { }
@@ -520,4 +522,3 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
 }
 
 void GenSSAVisitor::generateParam(Argument arg, ConversionInfo info) { code.add(makeCommand<ParamCommand>(arg, info)); }
-

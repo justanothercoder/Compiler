@@ -21,9 +21,9 @@ std::string FunctionDeclarationInfo::toString() const
     if ( !formal_parameters.empty() )
     {
         auto it = std::begin(formal_parameters);
-        result += it -> second.toString() + " " + it -> first;
+        result += it -> toString();
         for ( ++it; it != std::end(formal_parameters); ++it )
-            result += ", " + it -> second.toString() + " " + it -> first;
+            result += ", " + it -> toString();
     }
     result += ")";
     result += " : " + return_type_info.toString();

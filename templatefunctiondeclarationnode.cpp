@@ -36,10 +36,10 @@ std::string TemplateFunctionDeclarationNode::toString() const
     if ( !template_params_info.empty() )
     {
         auto it = std::begin(template_params_info);
-        res += it -> second.toString() + " " + it -> first;
+        res += it -> toString();
 
         for ( ++it; it != std::end(template_params_info); ++it )
-            res += ", " + it -> second.toString() + " " + it -> first;
+            res += ", " + it -> toString();
     }
 
     res += ">\n";
@@ -50,10 +50,10 @@ std::string TemplateFunctionDeclarationNode::toString() const
         const auto& params = info_.formalParams();
 
         auto it = std::begin(params);
-        res += it -> second.toString() + " " + it -> first;
+        res += it -> toString();
 
         for ( ++it; it != std::end(params); ++it )
-            res += ", " + it -> second.toString() + " " + it -> first;
+            res += ", " + it -> toString();
     }
 
     res += ")";
@@ -87,7 +87,7 @@ std::shared_ptr<DeclarationNode> TemplateFunctionDeclarationNode::instantiateWit
     auto new_formal_params = std::vector<ParamInfo>{ };
 
     for ( auto param : info_.formalParams() )
-        new_formal_params.emplace_back(param.first, rebuild.processTypeInfo(param.second));
+        new_formal_params.emplace_back(param.name(), rebuild.processTypeInfo(param.typeInfo()));
     auto new_info = FunctionDeclarationInfo(new_return_type_info, new_formal_params);
 
     auto decl = std::make_shared<FunctionDeclarationNode>(template_info.getInstName(), new_info, std::move(stat), traits_, is_unsafe);
