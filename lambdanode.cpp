@@ -10,6 +10,7 @@ LambdaNode::LambdaNode(std::vector<std::string> capture, std::vector<ParamInfo> 
 void LambdaNode::build_scope() 
 {
     body_ -> scope = scope;
+    body_ -> build_scope();    
 }
 
 ASTNode LambdaNode::copyTree() const { return std::make_unique<LambdaNode>(capture_, formal_params, body_ -> copyTree()); }

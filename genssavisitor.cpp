@@ -10,6 +10,7 @@
 #include "importnode.hpp"
 #include "returnnode.hpp"
 #include "externnode.hpp"
+#include "lambdanode.hpp"
 #include "numbernode.hpp"
 #include "bracketnode.hpp"
 #include "functionnode.hpp"
@@ -29,6 +30,7 @@
 #include "localscope.hpp"
 #include "typefactory.hpp"
 #include "globalconfig.hpp"
+#include "symbolfactory.hpp"
 
 #include "newcommand.hpp"
 #include "elemcommand.hpp"
@@ -466,7 +468,36 @@ void GenSSAVisitor::visit(FunctionNode* node)
     }
 }
 
-void GenSSAVisitor::visit(LambdaNode*) { }
+void GenSSAVisitor::visit(LambdaNode* node) 
+{
+    SymbolFactory factory;
+    
+    auto lambda_var = factory.makeVariable(node -> getType().getName(), node -> getType());
+    code.rememberVar(lambda_var.get());
+    _arg = makeArg<VariableArg>(lambda_var.get());
+   
+    node -> scope -> define(std::move(lambda_var));
+
+    auto function = static_cast<const ObjectType*>(node -> getType().unqualified()) -> resolveMethod("operator()", {/*TODO add args*/});
+    auto scope_name = function -> getScopedTypedName();
+
+    code.newBlock(function -> innerScope(), scope_name);
+    code.add(makeCommand<LabelCommand>(code.newLabel(scope_name)));
+
+    for ( auto param : function -> innerScope() -> getVars() )
+    {
+        if ( param -> isParam() )
+            code.rememberVar(param);
+    }
+
+    /* TODO add parameters remembering */
+//    for ( auto param : node -> paramsSymbols() )
+//        code.rememberVar(param);
+
+    node -> body() -> accept(*this);
+
+    code.popBlock();
+}
 
 void GenSSAVisitor::visit(ModuleNode* ) { }
 void GenSSAVisitor::visit(ModuleMemberAccessNode* ) { }

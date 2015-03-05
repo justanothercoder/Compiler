@@ -6,6 +6,8 @@
 #include "commandvisitor.hpp"
 #include "globalconfig.hpp"
 
+#include "builtins.hpp"
+
 CallCommand::CallCommand(const FunctionalSymbol* function, int params_size) : params_size(params_size), function_(function) { }
 
 void CallCommand::gen(const Block& block, CodeObject& code_obj) const
@@ -16,9 +18,12 @@ void CallCommand::gen(const Block& block, CodeObject& code_obj) const
         code_obj.emit("add rsp, " + std::to_string(params_size));
     }
     else
-    {       
-        code_obj.emit("lea rax, [rbp - " + std::to_string(block.addressOf(this)) + "]");
-        code_obj.emit("push rax");
+    {
+        if ( function_ -> type().returnType() != BuiltIns::void_type )
+        {
+            code_obj.emit("lea rax, [rbp - " + std::to_string(block.addressOf(this)) + "]");
+            code_obj.emit("push rax");
+        }
 
         code_obj.emit("call " + function_ -> getScopedTypedName());
         code_obj.emit("pop rax");

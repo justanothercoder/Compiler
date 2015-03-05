@@ -3,6 +3,8 @@
 #include "functionalsymbol.hpp"
 #include "typefactory.hpp"
 
+#include "logger.hpp"
+
 const Symbol* TypeSymbol::resolveMember(std::string name) const 
 {
     for ( auto mem : members() )

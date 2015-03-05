@@ -304,8 +304,8 @@ void CheckVisitor::visit(VarInferTypeDeclarationNode* node)
 {
     auto type = node -> expr() -> getType().unqualified();
     assert(type -> isObjectType());
-
-    auto ov_func = static_cast<const ObjectType*>(type) -> resolveMethod(type -> typeName(), {node -> expr() -> getType()});
+   
+    auto ov_func = static_cast<const ObjectType*>(type) -> resolveMethod(type -> typeName(), {TypeFactory::getReference(type)});
     node -> callInfo(checkCall(ov_func, {valueOf(node -> expr())}));
 }
 
@@ -330,8 +330,8 @@ void CheckVisitor::visit(FunctionDeclarationNode* node)
 
 void CheckVisitor::visit(LambdaNode* node)
 {
-    Logger::log("Checking " + node -> toString());
-    Logger::log("Node type " + node -> getType().getName());
+    /* TODO add captured variables check */
+    node -> body() -> accept(*this);
 }
 
 void CheckVisitor::visit(IfNode* node)        { visitChildren(node); }

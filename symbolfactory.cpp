@@ -4,8 +4,10 @@
 #include "structsymbol.hpp"
 #include "globalconfig.hpp"
 #include "comp.hpp"
+#include "typefactory.hpp"
 
 #include "builtins.hpp"
+#include "statementnode.hpp"
 
 std::unique_ptr<VarSymbol> SymbolFactory::makeVariable(std::string name, VariableType type, VariableSymbolType var_sym_type)
 {
@@ -29,12 +31,15 @@ std::unique_ptr<TypeSymbol> SymbolFactory::makeStruct(std::string name, StructSc
 std::unique_ptr<TypeSymbol> SymbolFactory::makeLambda(const std::vector<VarSymbol*>& capture, const std::vector<VarInfo>& formal_params, AST* body)
 {
     static int lambda_class_num = 0;
-    auto struct_name = "$_" + std::to_string(lambda_class_num++);
+    auto struct_name = "lambda_" + std::to_string(lambda_class_num++);
 
     auto struct_scope = new StructScope(struct_name, body -> scope.get());
     auto lambda_type = makeStruct(struct_name, struct_scope);
     
-    auto params = std::vector<VariableType>{ };
+    auto ref_to_lambda       = VariableType(TypeFactory::getReference(lambda_type.get()), false);
+    auto const_ref_to_lambda = VariableType(TypeFactory::getReference(lambda_type.get()), true);
+    
+    auto params = std::vector<VariableType>{ref_to_lambda};
     for ( auto param : formal_params )
         params.emplace_back(param.type());
 
@@ -46,8 +51,27 @@ std::unique_ptr<TypeSymbol> SymbolFactory::makeLambda(const std::vector<VarSymbo
 
     function_body -> scope = scope;
 
-    auto call_op = makeFunction("operator()", FunctionType(BuiltIns::void_type, params), FunctionTraits::method(), false, scope.get(), function_body);
+    auto call_op = makeFunction("operator()", FunctionType(BuiltIns::void_type, params), FunctionTraits::methodOper(), false, scope.get(), function_body);
+    call_op -> innerScope() -> define(makeVariable("this", ref_to_lambda, VariableSymbolType::PARAM));
     lambda_type -> defineMethod(std::move(call_op));
 
+    auto lambda_constructor = makeFunction(struct_name
+                                         , FunctionType(ref_to_lambda, {ref_to_lambda/* need to add captured variables */})
+                                         , FunctionTraits::constructor()
+                                         , false
+                                         , new FunctionScope(struct_scope -> getScopeName() + "_" + struct_name, struct_scope, false)
+                                         , new StatementNode({ }));
+
+    lambda_type -> defineMethod(std::move(lambda_constructor));
+
+    auto lambda_copy_constructor = makeFunction(struct_name
+                                            , FunctionType(ref_to_lambda, {ref_to_lambda, const_ref_to_lambda})
+                                            , FunctionTraits::constructor()
+                                            , false
+                                            , new FunctionScope(struct_scope -> getScopeName() + "_" + struct_name, struct_scope, false)
+                                            , new StatementNode({ }));
+    
+    lambda_type -> defineMethod(std::move(lambda_copy_constructor));
+                                          
     return std::move(lambda_type);
 }
