@@ -6,6 +6,8 @@
 #include "exprnode.hpp"
 #include "paraminfo.hpp"
 
+class FunctionalSymbol;
+
 class LambdaNode : public ExprNode
 {
 public:
@@ -29,6 +31,7 @@ public:
     AST* body() const;    
 
     void setLambdaType(Type* t);
+    const FunctionalSymbol* callOp() const;
 
 private:
 

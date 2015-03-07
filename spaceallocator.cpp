@@ -36,7 +36,7 @@ void SpaceAllocator::remember(const VarSymbol* sym)
 }
 
 int SpaceAllocator::addressOf(const Command* command) { return offsets.at(command); }
-int SpaceAllocator::addressOf(const VarSymbol* sym)   { return var_offsets.at(sym); }
+int SpaceAllocator::addressOf(const VarSymbol* sym)   { Logger::log(sym -> getName()); return var_offsets.at(sym); }
 
 int SpaceAllocator::totalSpaceUsed() const { return space_used; }
 

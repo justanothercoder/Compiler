@@ -79,7 +79,8 @@ InlineInfo InlineCallVisitor::inlineCall(const FunctionalSymbol* function)
     }
 */
     
-    for ( auto param : function_body -> scope -> getVars() ) 
+//    for ( auto param : function_body -> scope -> getVars() ) 
+    for ( auto param : function -> innerScope() -> getVars() )
     {
         if ( param -> isParam() )
         {

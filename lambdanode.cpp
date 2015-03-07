@@ -1,5 +1,7 @@
 #include "lambdanode.hpp"
-    
+#include "functionalsymbol.hpp"
+#include "objecttype.hpp"
+
 LambdaNode::LambdaNode(std::vector<std::string> capture, std::vector<ParamInfo> formal_params, ASTNode body) : capture_     (capture)
                                                                                                              , formal_params(formal_params)
                                                                                                              , body_        (std::move(body))
@@ -60,3 +62,18 @@ const std::vector<ParamInfo> LambdaNode::formalParams() const { return formal_pa
 AST* LambdaNode::body() const { return body_.get(); }
    
 void LambdaNode::setLambdaType(Type* t) { lambda_inner_type = t; }
+    
+const FunctionalSymbol* LambdaNode::callOp() const 
+{
+    auto methods = static_cast<const ObjectType*>(lambda_inner_type) -> methods();
+    for ( auto meth : methods )
+    {
+        if ( meth -> getName() == "operator()" )
+            return meth;
+    }
+
+    return nullptr;
+
+//    auto function = static_cast<const ObjectType*>(lambda_inner_type) -> resolveMethod("operator()", {/*TODO add args*/});
+//    return function;
+}

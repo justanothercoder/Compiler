@@ -43,20 +43,21 @@ std::unique_ptr<TypeSymbol> SymbolFactory::makeLambda(const std::vector<VarSymbo
     for ( auto param : formal_params )
         params.emplace_back(param.type());
 
-    auto function_body = body -> copyTree().release();
+    auto function_body = body/* -> copyTree().release()*/;
     auto scope = std::make_shared<FunctionScope>(struct_scope -> getScopeName() + "_" + Comp::config().getCodeOperatorName("operator()"), struct_scope, false);
 
+    function_body -> scope = scope;
+    function_body -> build_scope();
+
+    scope -> define(makeVariable("this", ref_to_lambda, VariableSymbolType::PARAM));
     for ( auto param : formal_params )
         scope -> define(makeVariable(param.name(), param.type(), VariableSymbolType::PARAM));
 
-    function_body -> scope = scope;
-
     auto call_op = makeFunction("operator()", FunctionType(BuiltIns::void_type, params), FunctionTraits::methodOper(), false, scope.get(), function_body);
-    call_op -> innerScope() -> define(makeVariable("this", ref_to_lambda, VariableSymbolType::PARAM));
     lambda_type -> defineMethod(std::move(call_op));
 
     auto lambda_constructor = makeFunction(struct_name
-                                         , FunctionType(ref_to_lambda, {ref_to_lambda/* need to add captured variables */})
+                                         , FunctionType(ref_to_lambda, {ref_to_lambda/* TODO need to add captured variables */})
                                          , FunctionTraits::constructor()
                                          , false
                                          , new FunctionScope(struct_scope -> getScopeName() + "_" + struct_name, struct_scope, false)

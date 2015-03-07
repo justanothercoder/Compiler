@@ -154,11 +154,16 @@ void DefineVisitor::visit(LambdaNode* node)
     auto capture = std::vector<VarSymbol*>{ };
     auto info    = std::vector<VarInfo>{ };
 
-    for ( auto var : node -> capture() )
+    for ( const auto& var : node -> capture() )
     {
         auto var_sym = node -> scope -> resolveVariable(var);
         capture.emplace_back(var_sym);
-        info.emplace_back(var, var_sym -> typeOf());
+    }
+
+    for ( const auto& param : node -> formalParams() )
+    {
+        auto param_type = fromTypeInfo(param.typeInfo(), node -> scope.get());
+        info.emplace_back(param.name(), param_type);
     }
 
     auto lambda_type = factory.makeLambda(capture, info, node -> body());

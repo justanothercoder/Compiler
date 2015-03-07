@@ -474,11 +474,11 @@ void GenSSAVisitor::visit(LambdaNode* node)
     
     auto lambda_var = factory.makeVariable(node -> getType().getName(), node -> getType());
     code.rememberVar(lambda_var.get());
-    _arg = makeArg<VariableArg>(lambda_var.get());
+    auto var_arg = makeArg<VariableArg>(lambda_var.get());
    
     node -> scope -> define(std::move(lambda_var));
 
-    auto function = static_cast<const ObjectType*>(node -> getType().unqualified()) -> resolveMethod("operator()", {/*TODO add args*/});
+    auto function = node -> callOp();
     auto scope_name = function -> getScopedTypedName();
 
     code.newBlock(function -> innerScope(), scope_name);
@@ -497,6 +497,7 @@ void GenSSAVisitor::visit(LambdaNode* node)
     node -> body() -> accept(*this);
 
     code.popBlock();
+    _arg = var_arg;
 }
 
 void GenSSAVisitor::visit(ModuleNode* ) { }

@@ -577,6 +577,10 @@ ASTExprNode Parser::lambda_expr()
     match(TokenType::RBRACKET);
 
     auto params = formalParams();
+
+    for ( const auto& param : params )
+        rememberSymbol(param.name(), SymbolType_::VARIABLE);
+
     auto body = block();
     return std::make_unique<LambdaNode>(capture, params, std::move(body));
 }

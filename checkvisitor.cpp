@@ -255,6 +255,7 @@ void CheckVisitor::visit(TemplateFunctionNode* node)
 void CheckVisitor::visit(VariableNode* node)
 {
     auto sym = node -> scope -> resolveVariable(node -> name());
+    assert(sym != nullptr);
     node -> variable(sym);
 }
 
