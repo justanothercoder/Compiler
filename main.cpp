@@ -64,8 +64,11 @@ int main(int argc, char** argv)
         CheckVisitor check_visitor;
         root -> accept(check_visitor);
 
-        InlineCallVisitor inline_call_visitor;
-        root -> accept(inline_call_visitor);
+        if ( !*Comp::config().flagValue("fnoinline") )            
+        {
+            InlineCallVisitor inline_call_visitor;
+            root -> accept(inline_call_visitor);
+        }
 
         GenSSAVisitor visitor(Comp::code);
         root -> accept(visitor);

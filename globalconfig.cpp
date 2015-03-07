@@ -5,6 +5,7 @@ GlobalConfig::GlobalConfig() : int_size(sizeof(int*))
     flags["fdumpTAC"]    = false;
     flags["optimize"]    = false;
     flags["fdumpmemory"] = false;
+    flags["fnoinline"]   = false;
 }
 
 boost::optional<bool> GlobalConfig::flagValue(std::string flag) const
