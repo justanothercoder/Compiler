@@ -7,7 +7,9 @@
 AssignCommand::AssignCommand(Argument lhs, Argument rhs, bool is_char) : lhs_(lhs), rhs_(rhs), is_char(is_char) { }
 
 void AssignCommand::gen(const Block& block, CodeObject& code_obj) const
-{
+{   
+    code_obj.comment("Assigning " + lhs_ -> toString() + " to " + rhs_ -> toString());
+
     if ( is_char )
     {
         rhs_ -> gen(block, code_obj);

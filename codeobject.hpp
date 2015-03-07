@@ -17,6 +17,8 @@ public:
     void gen() const;
     std::string getCode() const;
 
+    void comment(std::string text);
+
 private:
 
     std::string code;

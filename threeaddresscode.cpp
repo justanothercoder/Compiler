@@ -167,9 +167,12 @@ void ThreeAddressCode::addExternalFunction(const FunctionalSymbol* function)
 {
     globaltable.has_definition[function] = false;
 }    
+#include "varsymbol.hpp"
     
 void ThreeAddressCode::rememberVar(const VarSymbol* var) 
 {
     auto& current_block = blocks[blockStack.top()];
     current_block -> allocate(var);
+
+    Logger::log("Allocating space for " + var -> getName());
 }

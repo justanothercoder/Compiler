@@ -12,6 +12,8 @@ CallCommand::CallCommand(const FunctionalSymbol* function, int params_size) : pa
 
 void CallCommand::gen(const Block& block, CodeObject& code_obj) const
 {
+    code_obj.comment("Calling " + function_ -> getScopedTypedName());
+
     if ( function_ -> isConstructor() )
     {
         code_obj.emit("call " + function_ -> getScopedTypedName());

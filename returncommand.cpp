@@ -13,8 +13,10 @@ ReturnCommand::ReturnCommand(Argument expr, bool is_return_ref) : expr_(expr), i
 
 void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
 {
+    code_obj.comment("generating " + expr_ -> toString());        
+
     if ( is_return_ref )
-    {
+    {        
         expr_ -> gen(block, code_obj);
        
         code_obj.emit("mov rbx, [rax]"); 
