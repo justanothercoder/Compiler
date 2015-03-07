@@ -106,8 +106,6 @@ void ThreeAddressCode::genAsm(CodeObject& code_obj) const
 
     for ( auto block = blocks.cbegin(); block != blocks.cend(); ++block )
     {
-        Logger::log("Block:\n" + (*block) -> toString());
-
         if ( !dynamic_cast<FunctionScope*>((*block) -> scope()) )
         {
             mainblock = block;

@@ -104,11 +104,17 @@ void GenSSAVisitor::generateCall(std::vector<Argument> args, const CallInfo& cal
     for ( auto arg = args.rbegin(); arg != args.rend(); ++arg, ++it )
     {
         auto info = *it;
-        generateParam(*arg, info);
-        params_size += info.desired_type -> sizeOf();
+        auto param_size = info.desired_type -> sizeOf(); 
+
+        if ( info.desired_type -> removeRef() -> sizeOf() > 0 )
+        {
+            generateParam(*arg, info);
+            params_size += param_size;
+        }
     }
 
-    _arg = code.add(makeCommand<CallCommand>(call_info.callee, params_size));
+    if ( params_size > 0 )
+        _arg = code.add(makeCommand<CallCommand>(call_info.callee, params_size));
 }
 
 void GenSSAVisitor::visit(ExternNode* node) { code.addExternalFunction(static_cast<const FunctionalSymbol*>(node -> getDefinedSymbol())); }
@@ -525,23 +531,25 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
         auto var_type = var -> typeOf();
         auto var_arg = makeArg<VariableArg>(var);
 
-        if ( var_type.isReference() )
+        if ( var_type.unqualified() -> sizeOf() > 0 )
         {
-            code.add(makeCommand<AssignRefCommand>(var_arg, *param_it));
-        }
-        else if ( isSimpleType(var_type.base()) )
-        {
-            code.add(makeCommand<AssignCommand>(var_arg, *param_it, isCharType(var_type.base())));
-        }
-        else
-        {
-            auto copy_constructor = static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor();
+            if ( var_type.isReference() )
+            {
+                code.add(makeCommand<AssignRefCommand>(var_arg, *param_it));
+            }
+            else if ( isSimpleType(var_type.base()) )
+            {
+                code.add(makeCommand<AssignCommand>(var_arg, *param_it, isCharType(var_type.base())));
+            }
+            else
+            {
+                auto copy_constructor = static_cast<const StructSymbol*>(var_type.base()) -> getCopyConstructor();
 
-            generateParam(*param_it, ConversionInfo(nullptr, TypeFactory::getReference(var_type.base())));
-            generateParam(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base())));
-            _arg = code.add(makeCommand<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
+                generateParam(*param_it, ConversionInfo(nullptr, TypeFactory::getReference(var_type.base())));
+                generateParam(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base())));
+                _arg = code.add(makeCommand<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
+            }
         }
-
         ++param_it;
     }
 
