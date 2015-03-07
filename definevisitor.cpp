@@ -92,7 +92,7 @@ void DefineVisitor::visit(FunctionDeclarationNode* node)
     auto type = FunctionType(return_type, FunctionTypeInfo(params_types));
 
     auto function_name = node -> traits().is_constructor ? struc -> getName() : node -> name();
-    auto function = factory.makeFunction(function_name, type, node -> traits(), node -> isUnsafe(), node -> functionScope(), node);
+    auto function = factory.makeFunction(function_name, type, node -> traits(), node -> isUnsafe(), node -> functionScope(), node -> body());
 
     node -> setDefinedSymbol(function.get());
     node -> scope -> define(std::move(function));

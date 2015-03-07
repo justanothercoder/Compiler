@@ -63,23 +63,12 @@ InlineInfo InlineCallVisitor::inlineCall(const FunctionalSymbol* function)
     SymbolFactory factory;
 
     auto function_body = function -> getFunctionBody() -> copyTree();
-    //    auto local_scope = std::make_shared<LocalScope>(function_decl -> scope.get());
     auto local_scope = std::make_shared<LocalScope>(function -> innerScope());
 
     function_body -> scope = local_scope;
     function_body -> build_scope();
   
     std::vector<const VarSymbol*> locals;
-/*
-    for ( auto param : function_decl -> paramsSymbols() ) 
-    {
-        auto new_var = factory.makeVariable(param -> getName(), param -> typeOf());
-        locals.push_back(new_var.get());
-        local_scope -> define(std::move(new_var));
-    }
-*/
-    
-//    for ( auto param : function_body -> scope -> getVars() ) 
     for ( auto param : function -> innerScope() -> getVars() )
     {
         if ( param -> isParam() )
