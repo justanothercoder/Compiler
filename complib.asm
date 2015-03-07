@@ -28,7 +28,7 @@ _putchar_char:
 	push rdi
 	push rdx
 
-	lea rsi, [rbp + 24]
+	lea rsi, [rbp + 16]
 	mov rax, 1
 	mov rdi, 1
 	mov rdx, 1
@@ -202,7 +202,7 @@ _print_const~string~ref:
 	mov rbp, rsp
 
     mov rdx, 0
-    mov rdi, [rbp + 24]
+    mov rdi, [rbp + 16]
 
 .loop:
 
@@ -217,7 +217,7 @@ _print_const~string~ref:
 
     mov rax, 1
     mov rdi, 1
-    mov rsi, [rbp + 24]
+    mov rsi, [rbp + 16]
     syscall
 
 	mov rsp, rbp

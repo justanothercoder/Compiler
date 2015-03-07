@@ -44,6 +44,10 @@ public:
 
 private:
 
+    int getAllocOffset(Scope* scope);
+
+private:
+
     std::list<int> code_;
     Scope* scope_;
 
