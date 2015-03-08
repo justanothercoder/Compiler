@@ -490,15 +490,11 @@ void GenSSAVisitor::visit(LambdaNode* node)
     code.newBlock(function -> innerScope(), scope_name);
     code.add(makeCommand<LabelCommand>(code.newLabel(scope_name)));
 
-    for ( auto param : function -> innerScope() -> getVars() )
+    for ( auto param : function -> paramsSymbols() )
     {
         if ( param -> isParam() )
             code.rememberVar(param);
     }
-
-    /* TODO add parameters remembering */
-//    for ( auto param : node -> paramsSymbols() )
-//        code.rememberVar(param);
 
     node -> body() -> accept(*this);
 
