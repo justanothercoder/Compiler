@@ -529,9 +529,6 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
     {
         code.rememberVar(var);
         
-        Logger::log("Var: " + var -> getName());
-        Logger::log("Param: " + (*param_it) -> toString());
-            
         auto var_type = var -> typeOf();
         auto var_arg = makeArg<VariableArg>(var);
 

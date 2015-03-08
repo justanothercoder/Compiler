@@ -69,15 +69,11 @@ InlineInfo InlineCallVisitor::inlineCall(const FunctionalSymbol* function)
     function_body -> build_scope();
   
     std::vector<const VarSymbol*> locals;
-//    for ( auto param : function -> innerScope() -> getVars() )
     for ( auto param : function -> paramsSymbols() )
     {
-//        if ( param -> isParam() )
-//        {
-            auto new_var = factory.makeVariable(param -> getName(), param -> typeOf());
-            locals.push_back(new_var.get());
-            local_scope -> define(std::move(new_var));
-//        }
+        auto new_var = factory.makeVariable(param -> getName(), param -> typeOf());
+        locals.push_back(new_var.get());
+        local_scope -> define(std::move(new_var));
     }
     
     local_scope -> define(factory.makeVariable("$", function -> type().returnType()));
