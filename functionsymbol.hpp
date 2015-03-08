@@ -30,6 +30,7 @@ public:
     CallInfo resolveCall(std::vector<ValueInfo> arguments) const override;
 
     AST* getFunctionBody() const override;
+    std::vector<VarSymbol*> paramsSymbols() const override;
     bool is_constexpr = false;
 
     AST* function_body = nullptr;

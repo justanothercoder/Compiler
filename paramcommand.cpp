@@ -23,8 +23,7 @@ void ParamCommand::gen(const Block& block, CodeObject& code_obj) const
     {
         code_obj.emit("push rax");
     }
-    else if ( isIntType(param_type -> removeRef())
-           || param_type -> removeRef() -> isPointer() )
+    else if ( isIntType(param_type -> removeRef()) || param_type -> removeRef() -> isPointer() )
     {
         if ( param_type -> isReference() )
             code_obj.emit("mov rax, [rax]");

@@ -56,8 +56,7 @@ void BinaryOpCommand::gen(const Block& block, CodeObject& code_obj) const
             code_obj.emit("cmp rbx, 0");
             code_obj.emit("setne bl");
 
-            code_obj.emit("test al, bl");
-            code_obj.emit("setnz al");
+            code_obj.emit("and al, bl");
             break;
         }
         default:

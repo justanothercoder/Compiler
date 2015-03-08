@@ -13,24 +13,21 @@ CallCommand::CallCommand(const FunctionalSymbol* function, int params_size) : pa
 void CallCommand::gen(const Block& block, CodeObject& code_obj) const
 {
     code_obj.comment("Calling " + function_ -> getScopedTypedName());
+    
+    auto need_return_space = !function_ -> isConstructor() && function_ -> type().returnType() != BuiltIns::void_type;
 
-    if ( function_ -> isConstructor() )
+    if ( need_return_space )
     {
-        code_obj.emit("call " + function_ -> getScopedTypedName());
-        code_obj.emit("add rsp, " + std::to_string(params_size));
+        code_obj.emit("lea rax, [rbp - " + std::to_string(block.addressOf(this)) + "]");
+        code_obj.emit("push rax");
     }
-    else
-    {
-        if ( function_ -> type().returnType() != BuiltIns::void_type )
-        {
-            code_obj.emit("lea rax, [rbp - " + std::to_string(block.addressOf(this)) + "]");
-            code_obj.emit("push rax");
-        }
 
-        code_obj.emit("call " + function_ -> getScopedTypedName());
+    code_obj.emit("call " + function_ -> getScopedTypedName());
+
+    if ( need_return_space )
         code_obj.emit("pop rax");
-        code_obj.emit("add rsp, " +  std::to_string(params_size));
-    }
+
+    code_obj.emit("add rsp, " +  std::to_string(params_size));
 }
 
 std::string CallCommand::toString() const { return "call " + function_ -> getScopedTypedName() + ' ' + std::to_string(params_size); }

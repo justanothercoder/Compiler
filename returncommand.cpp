@@ -13,7 +13,7 @@ ReturnCommand::ReturnCommand(Argument expr, bool is_return_ref) : expr_(expr), i
 
 void ReturnCommand::gen(const Block& block, CodeObject& code_obj) const
 {
-    code_obj.comment("generating " + expr_ -> toString());        
+    code_obj.comment("returning " + expr_ -> toString());        
 
     if ( is_return_ref )
     {        

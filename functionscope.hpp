@@ -16,8 +16,11 @@ public:
     Scope* enclosingScope() const override;
 
     bool isUnsafeBlock() const override;
+    std::vector<VarSymbol*> paramsSymbols() const;
 
     const FunctionalSymbol* func = nullptr;
+    
+    void define(std::unique_ptr<VarSymbol> var) override;
 
     TemplateInfo template_info;
 
@@ -27,6 +30,8 @@ private:
     Scope* enclosing_scope;
 
     bool is_unsafe;
+
+    std::vector<VarSymbol*> params_symbols;
 };
 
 #endif

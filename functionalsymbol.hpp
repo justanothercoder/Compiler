@@ -5,6 +5,7 @@
 #include "functionaltype.hpp"
 #include "functiontraits.hpp"
 #include "functiontype.hpp"
+#include "varsymbol.hpp"
 
 class FunctionalSymbol : public ScopedSymbol, public FunctionalType
 {
@@ -22,6 +23,7 @@ public:
     virtual bool isCompatibleWith(FunctionTypeInfo ft) const = 0; 
 
     virtual AST* getFunctionBody() const = 0;
+    virtual std::vector<VarSymbol*> paramsSymbols() const = 0;
 };
 
 #endif

@@ -84,7 +84,7 @@ ___fclose_int:
 	mov rbp, rsp
 
 	mov rax, qword 3
-	mov rdi, [rbp + 24]
+	mov rdi, [rbp + 16]
 	syscall
 
 	mov rsp, rbp

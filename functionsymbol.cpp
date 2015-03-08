@@ -49,3 +49,10 @@ CallInfo FunctionSymbol::resolveCall(std::vector<ValueInfo> arguments) const
 AST* FunctionSymbol::getFunctionBody() const { return function_body; }
     
 bool FunctionSymbol::isFunction() const { return true; }
+    
+std::vector<VarSymbol*> FunctionSymbol::paramsSymbols() const
+{    
+    if ( scope == nullptr )
+        return { };
+    return scope -> paramsSymbols();
+}

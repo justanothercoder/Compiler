@@ -522,11 +522,15 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
     auto param_it = std::begin(params);
 
     auto return_var = inline_info.function_body -> scope -> resolveVariable("$");
-    code.rememberVar(return_var);
+    if ( return_var -> typeOf().base() != BuiltIns::void_type )
+        code.rememberVar(return_var);
 
     for ( const auto& var : inline_info.locals )
     {
         code.rememberVar(var);
+        
+        Logger::log("Var: " + var -> getName());
+        Logger::log("Param: " + (*param_it) -> toString());
             
         auto var_type = var -> typeOf();
         auto var_arg = makeArg<VariableArg>(var);
@@ -556,7 +560,8 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
     inline_info.function_body -> accept(*this);
     code.add(makeCommand<LabelCommand>(exit_from_function_label));
 
-    _arg = makeArg<VariableArg>(return_var);
+    if ( return_var -> typeOf().base() != BuiltIns::void_type )
+        _arg = makeArg<VariableArg>(return_var);
 
     loop_label.pop();
 }
