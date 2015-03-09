@@ -37,11 +37,11 @@
 #include "typefactory.hpp"
 #include "logger.hpp"
 
-const FunctionTypeInfo& CheckVisitor::getCallArguments() 
+const FunctionTypeInfo& CheckVisitor::getCallArguments()
 {
     if ( arguments_stack.empty() )
         throw SemanticError("Internal error");
-    return arguments_stack.top(); 
+    return arguments_stack.top();
 }
 
 void CheckVisitor::pushArguments(FunctionTypeInfo info) { arguments_stack.push(info); }
@@ -99,7 +99,7 @@ void CheckVisitor::visit(NewExpressionNode* node)
             boost::get< std::shared_ptr<ExprNode> >(param) -> accept(*this);
         }
     }
-    
+
     auto tp = fromTypeInfo(node -> typeInfo(), node -> scope.get()).base();
     assert(tp -> isObjectType());
     auto type = static_cast<const ObjectType*>(tp);
@@ -120,17 +120,17 @@ void CheckVisitor::visit(NewExpressionNode* node)
 void CheckVisitor::visit(StructDeclarationNode *node)
 {
     /*
-    	if ( node -> definedSymbol -> getDefaultConstructor() == nullptr )
-    	{
-    		auto default_constr = FunctionHelper::makeDefaultConstructor(node -> definedSymbol);
-    		node -> definedSymbol -> define(default_constr);
-    	}
+        if ( node -> definedSymbol -> getDefaultConstructor() == nullptr )
+        {
+            auto default_constr = FunctionHelper::makeDefaultConstructor(node -> definedSymbol);
+            node -> definedSymbol -> define(default_constr);
+        }
 
-    	if ( node -> definedSymbol -> getCopyConstructor() == nullptr )
-    	{
-    		auto copy_constr = FunctionHelper::makeDefaultCopyConstructor(node -> definedSymbol);
-    		node -> definedSymbol -> define(copy_constr);
-    	}
+        if ( node -> definedSymbol -> getCopyConstructor() == nullptr )
+        {
+            auto copy_constr = FunctionHelper::makeDefaultCopyConstructor(node -> definedSymbol);
+            node -> definedSymbol -> define(copy_constr);
+        }
     */
 
     visitChildren(node);
@@ -153,7 +153,7 @@ void CheckVisitor::visit(VariableDeclarationNode* node)
             param -> accept(*this);
             types.emplace_back(param -> getType());
         }
-       
+
         if ( !node -> typeInfo().isRef() && node -> typeInfo().modifiers().empty() )
         {
             auto var_type = fromTypeInfo(node -> typeInfo(), node -> scope.get());
@@ -167,7 +167,7 @@ void CheckVisitor::visit(VariableDeclarationNode* node)
             if ( constructor == nullptr ) {
                 throw SemanticError("No constructor defined");
             }
-            
+
             node -> callInfo(checkCall(constructor, arguments));
         }
     }
@@ -177,7 +177,7 @@ void CheckVisitor::visit(AddrNode* node)
 {
     node -> expr() -> accept(*this);
 
-    if ( node -> op() == AddrOp::REF ) 
+    if ( node -> op() == AddrOp::REF )
     {
         if ( !node -> expr() -> isLeftValue() ) {
             throw SemanticError("expression is not an lvalue");
@@ -221,7 +221,7 @@ void CheckVisitor::visit(ModuleMemberAccessNode* node)
     node -> memberSymbol(module_sym -> resolve(node -> member()));
 }
 
-void CheckVisitor::visit(ModuleNode* node) 
+void CheckVisitor::visit(ModuleNode* node)
 {
     auto sym = node -> scope -> resolve(node -> name());
     assert(sym && sym -> isModule());
@@ -229,11 +229,11 @@ void CheckVisitor::visit(ModuleNode* node)
     node -> module(static_cast<const ModuleSymbol*>(sym));
 }
 
-void CheckVisitor::visit(FunctionNode* node) 
+void CheckVisitor::visit(FunctionNode* node)
 {
     try { getCallArguments(); }
     catch ( SemanticError& e ) { throw SemanticError("No arguments provided to '" + node -> name() + "'"); }
-        
+
     auto sym = node -> scope -> resolveFunction(node -> name(), getCallArguments());
 
     if ( sym == nullptr )
@@ -242,7 +242,7 @@ void CheckVisitor::visit(FunctionNode* node)
     node -> function(sym);
 }
 
-void CheckVisitor::visit(TemplateFunctionNode* node) 
+void CheckVisitor::visit(TemplateFunctionNode* node)
 {
     auto sym = node -> scope -> resolveTemplateFunction(node -> name(), getTemplateArguments(node -> templateArgumentsInfo()), getCallArguments());
 
@@ -278,10 +278,10 @@ void CheckVisitor::visit(CallNode* node)
 void CheckVisitor::visit(ReturnNode* node)
 {
     node -> expr() -> accept(*this);
-    
+
     if ( node -> isInInlineCall() )
         return;
-    
+
     if ( function_scopes.empty() )
         throw SemanticError("return is not in a function");
 
@@ -305,7 +305,7 @@ void CheckVisitor::visit(VarInferTypeDeclarationNode* node)
 {
     auto type = node -> expr() -> getType().unqualified();
     assert(type -> isObjectType());
-   
+
     auto ov_func = static_cast<const ObjectType*>(type) -> resolveMethod(type -> typeName(), {TypeFactory::getReference(type)});
     node -> callInfo(checkCall(ov_func, {valueOf(node -> expr())}));
 }
@@ -315,24 +315,26 @@ void CheckVisitor::visit(TemplateStructDeclarationNode* node)
     for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
 }
-    
-void CheckVisitor::visit(TemplateFunctionDeclarationNode* node) 
+
+void CheckVisitor::visit(TemplateFunctionDeclarationNode* node)
 {
     for ( auto instance : node -> allInstances() )
         instance -> accept(*this);
 }
 
-void CheckVisitor::visit(FunctionDeclarationNode* node) 
-{ 
+void CheckVisitor::visit(FunctionDeclarationNode* node)
+{
     function_scopes.push(node -> functionScope());
-    visitChildren(node); 
+    visitChildren(node);
     function_scopes.pop();
 }
 
 void CheckVisitor::visit(LambdaNode* node)
 {
     /* TODO add captured variables check */
+    function_scopes.push(static_cast<FunctionScope*>(node -> callOp() -> innerScope()));
     node -> body() -> accept(*this);
+    function_scopes.pop();
 }
 
 void CheckVisitor::visit(IfNode* node)        { visitChildren(node); }
@@ -340,7 +342,7 @@ void CheckVisitor::visit(ForNode* node)       { visitChildren(node); }
 void CheckVisitor::visit(WhileNode* node)     { visitChildren(node); }
 void CheckVisitor::visit(StatementNode* node) { visitChildren(node); }
 
-void CheckVisitor::visit(NullNode*) { } 
+void CheckVisitor::visit(NullNode*) { }
 void CheckVisitor::visit(BreakNode* ) { }
 void CheckVisitor::visit(NumberNode *) { }
 void CheckVisitor::visit(StringNode *) { }
