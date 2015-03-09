@@ -57,6 +57,7 @@ private:
     void genInlineCall(const InlineInfo& inline_info, std::vector<Argument> params);
 
     void generateParam(Argument arg, ConversionInfo info);
+    void directInitialize(const Argument& lhs, const Argument& rhs);
 
     std::stack< std::pair<Argument, Argument> > loop_label;
 

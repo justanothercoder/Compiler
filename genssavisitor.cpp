@@ -399,9 +399,9 @@ void GenSSAVisitor::visit(ReturnNode* node)
 
     if ( node -> isInInlineCall() )
     {
-        auto expr_type = node -> expr() -> getType();
+//        auto expr_type = node -> expr() -> getType();
         auto var_arg = makeArg<VariableArg>(node -> scope -> resolveVariable("$"));
-
+/*
         if ( node -> function() -> type().returnType().isReference() )
         {
             code.add(makeCommand<AssignRefCommand>(var_arg, expr_arg));
@@ -418,6 +418,9 @@ void GenSSAVisitor::visit(ReturnNode* node)
             generateParam(var_arg , ConversionInfo(nullptr, TypeFactory::getReference(expr_type.base())));
             _arg = code.add(makeCommand<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
         }
+*/
+        directInitialize(var_arg, expr_arg);
+
         _arg = var_arg;
         code.add(makeCommand<GotoCommand>(loop_label.top().second));
         return;
@@ -481,8 +484,19 @@ void GenSSAVisitor::visit(LambdaNode* node)
     auto lambda_var = factory.makeVariable(node -> getType().getName(), node -> getType());
     code.rememberVar(lambda_var.get());
     auto var_arg = makeArg<VariableArg>(lambda_var.get());
-   
+       
     node -> scope -> define(std::move(lambda_var));
+    
+    auto lambda_inner_type = static_cast<const TypeSymbol*>(node -> getType().unqualified());
+    for ( auto var : node -> capture() )
+    {
+        auto var_sym = node -> scope -> resolveVariable(var);
+
+        auto member = static_cast<const VarSymbol*>(lambda_inner_type -> resolveMember(var));
+        auto offset = static_cast<const TypeSymbol*>(node -> getType().unqualified()) -> offsetOf(member -> getName());
+        auto mem_arg = makeArg<DotArg>(var_arg, offset, member);
+        directInitialize(mem_arg, makeArg<VariableArg>(var_sym));
+    }
 
     auto function = node -> callOp();
     auto scope_name = function -> getScopedTypedName();
@@ -491,10 +505,7 @@ void GenSSAVisitor::visit(LambdaNode* node)
     code.add(makeCommand<LabelCommand>(code.newLabel(scope_name)));
 
     for ( auto param : function -> paramsSymbols() )
-    {
-        if ( param -> isParam() )
-            code.rememberVar(param);
-    }
+        code.rememberVar(param);
 
     node -> body() -> accept(*this);
 
@@ -512,7 +523,6 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
     assert(inline_info.function_body);
 
     auto exit_from_function_label = code.newLabel();
-
     loop_label.emplace(nullptr, exit_from_function_label);
 
     auto param_it = std::begin(params);
@@ -530,6 +540,7 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
 
         if ( var_type.unqualified() -> sizeOf() > 0 )
         {
+            /*
             if ( var_type.isReference() )
             {
                 code.add(makeCommand<AssignRefCommand>(var_arg, *param_it));
@@ -546,6 +557,8 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
                 generateParam(var_arg  , ConversionInfo(nullptr, TypeFactory::getReference(var_type.base())));
                 _arg = code.add(makeCommand<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
             }
+            */
+            directInitialize(var_arg, *param_it);
         }
         ++param_it;
     }
@@ -560,3 +573,24 @@ void GenSSAVisitor::genInlineCall(const InlineInfo& inline_info, std::vector<Arg
 }
 
 void GenSSAVisitor::generateParam(Argument arg, ConversionInfo info) { code.add(makeCommand<ParamCommand>(arg, info)); }
+
+void GenSSAVisitor::directInitialize(const Argument& lhs, const Argument& rhs)
+{
+    auto type = lhs -> type();
+
+    if ( type -> sizeOf() > 0 )
+    {
+        if ( type -> isReference() )
+            code.add(makeCommand<AssignRefCommand>(lhs, rhs));
+        else if ( isSimpleType(type) )
+            code.add(makeCommand<AssignCommand>(lhs, rhs, isCharType(type)));
+        else
+        {
+            auto copy_constructor = static_cast<const StructSymbol*>(type) -> getCopyConstructor();
+
+            generateParam(rhs, ConversionInfo(nullptr, TypeFactory::getReference(type)));
+            generateParam(lhs, ConversionInfo(nullptr, TypeFactory::getReference(type)));
+            code.add(makeCommand<CallCommand>(copy_constructor, 2 * Comp::config().int_size));
+        }       
+    }
+}

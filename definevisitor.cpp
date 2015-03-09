@@ -1,6 +1,7 @@
 #include "definevisitor.hpp"
 #include "ifnode.hpp"
 #include "fornode.hpp"
+#include "callnode.hpp"
 #include "whilenode.hpp"
 #include "lambdanode.hpp"
 #include "externnode.hpp"
@@ -170,17 +171,18 @@ void DefineVisitor::visit(LambdaNode* node)
     node -> setLambdaType(lambda_type.get());
 
     node -> scope -> define(std::move(lambda_type));
+    node -> body() -> accept(*this);
 }
 
 void DefineVisitor::visit(IfNode *node)                { visitChildren(node); }
 void DefineVisitor::visit(ForNode *node)               { visitChildren(node); } 
 void DefineVisitor::visit(WhileNode *node)             { visitChildren(node); } 
 void DefineVisitor::visit(StatementNode* node)         { visitChildren(node); }
+void DefineVisitor::visit(CallNode* node)              { visitChildren(node); } 
 
 void DefineVisitor::visit(UnsafeBlockNode* node) { node -> block() -> accept(*this); }
 
 void DefineVisitor::visit(DotNode* ) { }
-void DefineVisitor::visit(CallNode* ) { } 
 void DefineVisitor::visit(AddrNode* ) { }
 void DefineVisitor::visit(NullNode* ) { }
 void DefineVisitor::visit(UnaryNode* ) { }

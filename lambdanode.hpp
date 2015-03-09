@@ -11,7 +11,7 @@ class FunctionalSymbol;
 class LambdaNode : public ExprNode
 {
 public:
-    
+
     LambdaNode(std::vector<std::string> capture, std::vector<ParamInfo> formal_params, ASTNode body);
 
     void build_scope() override;
@@ -28,10 +28,11 @@ public:
 
     const std::vector<std::string>& capture() const;
     const std::vector<ParamInfo> formalParams() const;
-    AST* body() const;    
+    AST* body() const;
 
     void setLambdaType(Type* t);
     const FunctionalSymbol* callOp() const;
+    const FunctionalSymbol* constructor() const;
 
 private:
 

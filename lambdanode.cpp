@@ -1,6 +1,7 @@
 #include "lambdanode.hpp"
 #include "functionalsymbol.hpp"
 #include "objecttype.hpp"
+#include "typefactory.hpp"
 
 LambdaNode::LambdaNode(std::vector<std::string> capture, std::vector<ParamInfo> formal_params, ASTNode body) : capture_     (capture)
                                                                                                              , formal_params(formal_params)
@@ -73,7 +74,19 @@ const FunctionalSymbol* LambdaNode::callOp() const
     }
 
     return nullptr;
+}
 
-//    auto function = static_cast<const ObjectType*>(lambda_inner_type) -> resolveMethod("operator()", {/*TODO add args*/});
-//    return function;
+const FunctionalSymbol* LambdaNode::constructor() const 
+{
+    auto methods = static_cast<const ObjectType*>(lambda_inner_type) -> methods();
+    for ( auto meth : methods )
+    {
+        if ( meth -> getName() == lambda_inner_type -> typeName() )
+        {
+            if ( !meth -> isCompatibleWith({TypeFactory::getReference(lambda_inner_type)}) )
+                return meth;
+        }
+    }
+
+    return nullptr;
 }
