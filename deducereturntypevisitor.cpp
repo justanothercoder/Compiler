@@ -14,6 +14,7 @@
 #include "binaryoperatornode.hpp"
 #include "returnnode.hpp"
 #include "checkvisitor.hpp"
+#include "builtins.hpp"
     
 void DeduceReturnTypeVisitor::visitChildren(AST* node)
 {
@@ -73,5 +74,5 @@ void DeduceReturnTypeVisitor::visit(ReturnNode* node)
 VariableType DeduceReturnTypeVisitor::deduceReturnType(AST* node)
 {
     node -> accept(*this);
-    return *current_type;
+    return current_type == boost::none ? BuiltIns::void_type : *current_type;
 }
