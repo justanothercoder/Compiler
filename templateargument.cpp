@@ -58,3 +58,14 @@ TemplateArguments getTemplateArguments(TemplateArgumentsInfo info)
 
     return template_arguments;
 }
+
+std::string toString(const TemplateArgument& arg)
+{
+    struct StringifyVisitor : boost::static_visitor<std::string>
+    {
+        auto operator()(const int& value) { return std::to_string(value); }
+        auto operator()(const TypeInfo& type_info) { return type_info.toString(); }
+    } stringify;
+
+    return boost::apply_visitor(stringify, arg);
+}

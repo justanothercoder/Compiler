@@ -19,7 +19,7 @@ SOURCES=main.cpp token.cpp abstractlexer.cpp lexer.cpp abstractparser.cpp parser
 	   	inlineinfo.cpp templatefunctiondeclarationnode.cpp templatefunctionnode.cpp templatefunctionsymbol.cpp templatestructsymbol.cpp \
 		functionaltype.cpp valueinfo.cpp objecttype.cpp typemodifier.cpp callablenode.cpp exprnode.cpp deducereturntypevisitor.cpp \
 	   	nodewithcall.cpp rebuildtreevisitor.cpp templatesymbol.cpp templateargument.cpp typesymbol.cpp symbolentry.cpp symbolfactory.cpp \
-	   	functionalsymbol.cpp aliassymbol.cpp symboltable.cpp
+	   	functionalsymbol.cpp aliassymbol.cpp symboltable.cpp templatespecializationerror.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=comp
 

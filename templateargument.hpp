@@ -14,4 +14,6 @@ std::string toString(const TemplateArgumentsInfo& info);
 
 TemplateArguments getTemplateArguments(TemplateArgumentsInfo info);
 
+std::string toString(const TemplateArgument& arg);
+
 #endif

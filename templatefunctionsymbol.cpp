@@ -7,6 +7,7 @@
 #include "expandtemplatesvisitor.hpp"
 #include "definevisitor.hpp"
 #include "checkvisitor.hpp"
+#include "templatespecializationerror.hpp"
 
 TemplateFunctionSymbol::TemplateFunctionSymbol(std::string name, TemplateParamsInfo template_params, TemplateDeclarationNode* _holder) 
     : name(name)
@@ -37,6 +38,9 @@ FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeI
             if ( template_params_map.count(template_param.name()) )
                 template_arguments.push_back(template_params_map[template_param.name()]);
         }
+
+        if ( template_params.size() != template_arguments.size() )
+            throw TemplateSpecializationError(this, template_arguments);
 
         auto new_decl = decl -> instantiateWithArguments(template_arguments);
         tmpl -> holder() -> addInstance(template_arguments, new_decl);
