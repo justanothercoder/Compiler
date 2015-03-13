@@ -6,6 +6,7 @@
 #include "comp.hpp"
 #include "typefactory.hpp"
 
+#include "deducereturntypevisitor.hpp"
 #include "builtins.hpp"
 #include "statementnode.hpp"
 #include "logger.hpp"
@@ -56,8 +57,11 @@ std::unique_ptr<TypeSymbol> SymbolFactory::makeLambda(const std::vector<VarSymbo
     scope -> define(makeVariable("this", ref_to_lambda, VariableSymbolType::PARAM));
     for ( auto param : formal_params )
         scope -> define(makeVariable(param.name(), param.type(), VariableSymbolType::PARAM));
+    
+    DeduceReturnTypeVisitor deduce;
+    auto return_type = deduce.deduceReturnType(function_body);
 
-    auto call_op = makeFunction("operator()", FunctionType(BuiltIns::void_type, params), FunctionTraits::methodOper(), false, scope.get(), function_body);
+    auto call_op = makeFunction("operator()", FunctionType(return_type, params), FunctionTraits::methodOper(), false, scope.get(), function_body);
     lambda_type -> defineMethod(std::move(call_op));
 
     auto constructor_params = std::vector<VariableType>{ref_to_lambda};
