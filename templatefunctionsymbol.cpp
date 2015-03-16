@@ -8,6 +8,7 @@
 #include "definevisitor.hpp"
 #include "checkvisitor.hpp"
 #include "templatespecializationerror.hpp"
+#include "logger.hpp"
 
 TemplateFunctionSymbol::TemplateFunctionSymbol(std::string name, TemplateParamsInfo template_params, TemplateDeclarationNode* _holder) 
     : name(name)
@@ -32,11 +33,21 @@ FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeI
     {
         auto template_params_map = *mapping;
         auto template_arguments = TemplateArguments(std::begin(partial), std::end(partial));
-
-        for ( auto template_param : tmpl -> templateParams() )
+        
         {
-            if ( template_params_map.count(template_param.name()) )
-                template_arguments.push_back(template_params_map[template_param.name()]);
+            const auto& template_params = tmpl -> templateParams();
+            auto it = std::begin(template_params);
+            for ( size_t i = 0; i < partial.size() && it != std::end(template_params); ++i)
+                ++it;
+            for ( ; it != std::end(template_params); ++it )
+            {
+                const auto& template_param = *it;
+
+                Logger::log("Searching for " + template_param.name());
+
+                if ( template_params_map.count(template_param.name()) )
+                    template_arguments.push_back(template_params_map[template_param.name()]);
+            }
         }
 
         if ( template_params.size() != template_arguments.size() )
@@ -49,8 +60,15 @@ FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeI
         DefineVisitor define;
         CheckVisitor check;
 
-        for ( auto visitor : std::vector<ASTVisitor*>{&expand, &define, &check} )
-            new_decl -> accept(*visitor);
+        try
+        {   
+            for ( auto visitor : std::vector<ASTVisitor*>{&expand, &define, &check} )
+                new_decl -> accept(*visitor);
+        }
+        catch ( SemanticError& e ) 
+        {
+            throw TemplateSpecializationError(this, template_arguments);
+        }
 
         return static_cast<FunctionSymbol*>(new_decl -> getDefinedSymbol());
     }

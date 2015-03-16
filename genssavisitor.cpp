@@ -549,6 +549,7 @@ void GenSSAVisitor::directInitialize(const Argument& lhs, const Argument& rhs)
         else
         {
             auto copy_constructor = static_cast<const StructSymbol*>(type) -> getCopyConstructor();
+            assert(copy_constructor != nullptr);
 
             generateParam(rhs, ConversionInfo(nullptr, TypeFactory::getReference(type)));
             generateParam(lhs, ConversionInfo(nullptr, TypeFactory::getReference(type)));

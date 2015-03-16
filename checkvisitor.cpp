@@ -279,20 +279,30 @@ void CheckVisitor::visit(ReturnNode* node)
 {
     node -> expr() -> accept(*this);
 
+    Logger::log(node -> toString());
+    Logger::log(node -> expr() -> getType().getName());
+
     if ( node -> isInInlineCall() )
         return;
 
     if ( function_scopes.empty() )
         throw SemanticError("return is not in a function");
 
-    node -> function(function_scopes.top() -> func);
+    auto enclosing_function = function_scopes.top() -> func;
+    node -> function(enclosing_function);
 
     auto unqualified_type = node -> expr() -> getType().unqualified();
     if ( unqualified_type -> isObjectType() )
     {
         auto obj_type = static_cast<const ObjectType*>(unqualified_type);
-        auto ov_func = obj_type -> resolveMethod(obj_type -> typeName(), {VariableType(TypeFactory::getReference(obj_type), true)});
-        checkCall(ov_func, {valueOf(node -> expr())});
+        auto ref_to_obj_type = TypeFactory::getReference(obj_type);
+//        auto copy_constr = obj_type -> resolveMethod(obj_type -> typeName(), {VariableType(TypeFactory::getReference(obj_type), true)});
+        auto copy_constr = obj_type -> methodWith(obj_type -> typeName(), {ref_to_obj_type, VariableType(ref_to_obj_type, true)});
+
+        if ( copy_constr == nullptr )
+            throw SemanticError("Cannot initialize return value of type '" + enclosing_function -> type().returnType().getName() + "' with value of type '" + obj_type -> typeName() + "'");
+
+        checkCall(copy_constr, {valueOf(node -> expr())});
     }
 }
 
