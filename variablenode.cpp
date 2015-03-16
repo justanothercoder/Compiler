@@ -5,7 +5,7 @@
 #include "functionsymbol.hpp"
 #include "templatestructsymbol.hpp"
 
-VariableNode::VariableNode(std::string name) : name_(name) { }
+VariableNode::VariableNode(std::string name, ModuleSymbol* sym) : name_(name), module_(sym) { }
 ASTNode VariableNode::copyTree() const { return std::make_unique<VariableNode>(name_); }
 
 VariableType VariableNode::getType() const { return variable_ -> typeOf(); }
@@ -21,3 +21,5 @@ const std::string& VariableNode::name() const { return name_; }
 
 const VarSymbol* VariableNode::variable() const { return variable_; }
 void VariableNode::variable(const VarSymbol* sym) { variable_ = sym; }
+
+ModuleSymbol* VariableNode::module() const { return module_; }

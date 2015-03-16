@@ -9,7 +9,7 @@ class ModuleNode : public ExprNode
 {
 public:
 
-    ModuleNode(std::string name);
+    ModuleNode(std::string name, ModuleSymbol* sym = nullptr);
 
     ASTNode copyTree() const override;
 
@@ -27,10 +27,14 @@ public:
     const ModuleSymbol* module() const;
     void module(const ModuleSymbol* module);
 
+    ModuleSymbol* outerModule() const;
+
 private:
 
     std::string name_;
     const ModuleSymbol* module_ = nullptr;
+
+    ModuleSymbol* outer_module;
 };
 
 #endif

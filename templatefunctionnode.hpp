@@ -4,13 +4,14 @@
 #include "exprnode.hpp"
 #include "typeinfo.hpp"
 
+class ModuleSymbol;
 class FunctionalSymbol;
 
 class TemplateFunctionNode : public ExprNode
 {
 public:
 
-    TemplateFunctionNode(std::string name, TemplateArgumentsInfo template_arguments);
+    TemplateFunctionNode(std::string name, TemplateArgumentsInfo template_arguments, ModuleSymbol* sym = nullptr);
 
     ASTNode copyTree() const override;
 
@@ -31,11 +32,15 @@ public:
 
     const TemplateArgumentsInfo& templateArgumentsInfo() const;
 
+    ModuleSymbol* module() const;
+
 private:
 
     std::string name_;    
     FunctionalSymbol* function_ = nullptr;
     TemplateArgumentsInfo template_arguments;
+
+    ModuleSymbol* module_;
 };
 
 #endif

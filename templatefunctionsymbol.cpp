@@ -43,11 +43,15 @@ FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeI
             {
                 const auto& template_param = *it;
 
-                Logger::log("Searching for " + template_param.name());
-
                 if ( template_params_map.count(template_param.name()) )
                     template_arguments.push_back(template_params_map[template_param.name()]);
             }
+        }
+
+        Logger::log("Arguments:");
+        for ( const auto& arg : template_arguments )
+        {
+            Logger::log(toString(arg));
         }
 
         if ( template_params.size() != template_arguments.size() )

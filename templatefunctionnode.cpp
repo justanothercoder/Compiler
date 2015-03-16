@@ -1,8 +1,9 @@
 #include "templatefunctionnode.hpp"
 #include "functionalsymbol.hpp"
 
-TemplateFunctionNode::TemplateFunctionNode(std::string name, TemplateArgumentsInfo template_arguments) : name_(name)
-                                                                                                       , template_arguments(template_arguments)
+TemplateFunctionNode::TemplateFunctionNode(std::string name, TemplateArgumentsInfo template_arguments, ModuleSymbol* sym) : name_(name)
+                                                                                                                          , template_arguments(template_arguments)
+                                                                                                                          , module_(sym)
 {
 
 }
@@ -32,3 +33,5 @@ FunctionalSymbol* TemplateFunctionNode::function() { return function_; }
 void TemplateFunctionNode::function(FunctionalSymbol* type) { function_ = type; }
 
 const TemplateArgumentsInfo& TemplateFunctionNode::templateArgumentsInfo() const { return template_arguments; }
+
+ModuleSymbol* TemplateFunctionNode::module() const { return module_; }

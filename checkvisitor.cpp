@@ -234,7 +234,7 @@ void CheckVisitor::visit(FunctionNode* node)
     try { getCallArguments(); }
     catch ( SemanticError& e ) { throw SemanticError("No arguments provided to '" + node -> name() + "'"); }
 
-    auto sym = node -> scope -> resolveFunction(node -> name(), getCallArguments());
+    auto sym = (node -> module() ? node -> module() : node -> scope.get()) -> resolveFunction(node -> name(), getCallArguments());
 
     if ( sym == nullptr )
         throw NoViableOverloadError(node -> name(), getCallArguments().params());
@@ -244,7 +244,14 @@ void CheckVisitor::visit(FunctionNode* node)
 
 void CheckVisitor::visit(TemplateFunctionNode* node)
 {
-    auto sym = node -> scope -> resolveTemplateFunction(node -> name(), getTemplateArguments(node -> templateArgumentsInfo()), getCallArguments());
+    Logger::log("Checking " + node -> toString());
+
+    if ( node -> module() )
+        Logger::log("Module " + node -> module() -> getName());
+    else
+        Logger::log("No module");
+
+    auto sym = (node -> module() ? node -> module() : node -> scope.get()) -> resolveTemplateFunction(node -> name(), getTemplateArguments(node -> templateArgumentsInfo()), getCallArguments());
 
     if ( sym == nullptr )
         throw NoViableOverloadError(node -> name(), getCallArguments().params());
@@ -254,7 +261,7 @@ void CheckVisitor::visit(TemplateFunctionNode* node)
 
 void CheckVisitor::visit(VariableNode* node)
 {
-    auto sym = node -> scope -> resolveVariable(node -> name());
+    auto sym = (node -> module() ? node -> module() : node -> scope.get()) -> resolveVariable(node -> name());
     assert(sym != nullptr);
     node -> variable(sym);
 }
@@ -314,10 +321,13 @@ void CheckVisitor::visit(UnsafeBlockNode* node)
 void CheckVisitor::visit(VarInferTypeDeclarationNode* node)
 {
     auto type = node -> expr() -> getType().unqualified();
-    assert(type -> isObjectType());
+//    assert(type -> isObjectType());
 
-    auto ov_func = static_cast<const ObjectType*>(type) -> resolveMethod(type -> typeName(), {TypeFactory::getReference(type)});
-    node -> callInfo(checkCall(ov_func, {valueOf(node -> expr())}));
+    if ( type -> isObjectType() )
+    {
+        auto copy_constructor = static_cast<const ObjectType*>(type) -> resolveMethod(type -> typeName(), {TypeFactory::getReference(type)});
+        node -> callInfo(checkCall(copy_constructor, {valueOf(node -> expr())}));
+    }
 }
 
 void CheckVisitor::visit(TemplateStructDeclarationNode* node)

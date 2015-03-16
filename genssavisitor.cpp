@@ -424,7 +424,7 @@ void GenSSAVisitor::visit(VarInferTypeDeclarationNode* node)
     auto expr_type = node -> expr() -> getType().unqualified();
     auto var = makeArg<VariableArg>(variable);
 
-    if ( isIntType(expr_type) || isCharType(expr_type) )
+    if ( isIntType(expr_type) || isCharType(expr_type) || expr_type -> isPointer() )
     {
         code.add(makeCommand<AssignCommand>(var, getArg(node -> expr()), isCharType(expr_type)));
         return;

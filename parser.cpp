@@ -34,6 +34,7 @@
 #include "nullnode.hpp"
 #include "lambdanode.hpp"
 #include "comp.hpp"
+#include "modulesymbol.hpp"
 
 #include "logger.hpp"
 
@@ -48,6 +49,7 @@ SymbolType_ Parser::getSymbolType(const Symbol* s)
     else if ( s -> isFunction() ) { return SymbolType_::FUNCTION; }
     else if ( s -> isType()     ) { return SymbolType_::STRUCT; }
     else if ( s -> isModule()   ) { return SymbolType_::MODULE; }
+    else if ( dynamic_cast<const TemplateSymbol*>(s) ) { return SymbolType_::TEMPLATEFUNCTION; }
     else { throw; }
 }
 
@@ -484,8 +486,26 @@ ASTExprNode Parser::literal()
 
 ASTExprNode Parser::variable()
 {
+    ModuleSymbol* module_sym = nullptr;
+
+    if ( tryModuleName() )
+    {
+        auto module_name = id();
+        module_sym = Comp::getUnit(module_name) -> module_symbol.get();
+
+        while ( getTokenType(1) == TokenType::DOT )
+        {
+            match(TokenType::DOT);
+            if ( !tryModuleName() )
+                break;
+            module_name = id();
+            module_sym = dynamic_cast<ModuleSymbol*>(module_sym -> resolve(module_name));
+            assert(module_sym && module_sym -> isModule());
+        }
+    }
+
     auto var_name = id();
-    auto sym_type = resolveSymbolType(var_name);
+    auto sym_type = ( module_sym ? getSymbolType(module_sym -> resolve(var_name)) : resolveSymbolType(var_name) ) ;
 
     if ( !isSpeculating() && !sym_type )
         throw SemanticError("No such symbol " + var_name);
@@ -494,9 +514,9 @@ ASTExprNode Parser::variable()
     {
         switch ( *sym_type )
         {
-            case SymbolType_::VARIABLE: return std::make_unique<VariableNode>(var_name);
-            case SymbolType_::MODULE  : return std::make_unique<ModuleNode>(var_name);
-            case SymbolType_::FUNCTION: return std::make_unique<FunctionNode>(var_name);
+            case SymbolType_::VARIABLE: return std::make_unique<VariableNode>(var_name, module_sym);
+            case SymbolType_::MODULE  : return std::make_unique<ModuleNode>(var_name, module_sym);
+            case SymbolType_::FUNCTION: return std::make_unique<FunctionNode>(var_name, module_sym);
             case SymbolType_::TEMPLATEFUNCTION:
             {
                 auto template_arguments = TemplateArgumentsInfo{ };
@@ -518,7 +538,7 @@ ASTExprNode Parser::variable()
                     match(TokenType::GREATER);
                 }
 
-                return std::make_unique<TemplateFunctionNode>(std::move(var_name), std::move(template_arguments));
+                return std::make_unique<TemplateFunctionNode>(std::move(var_name), std::move(template_arguments), module_sym);
             }
             default: throw std::logic_error("Internal error");
         }
@@ -591,19 +611,7 @@ ASTExprNode Parser::lambda_expr()
 
 ASTExprNode Parser::unary_right()
 {
-    ASTExprNode res;
-
-    if ( tryModuleName() )
-    {
-        auto module_name = id();
-        match(TokenType::DOT);
-        auto member = id();
-        res = std::make_unique<ModuleMemberAccessNode>(module_name, member);
-    }
-    else
-    {
-        res = primary();
-    }
+    auto res = primary();
 
     while ( getTokenType(1) == TokenType::LPAREN || getTokenType(1) == TokenType::DOT || getTokenType(1) == TokenType::LBRACKET )
     {

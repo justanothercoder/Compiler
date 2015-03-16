@@ -4,12 +4,13 @@
 #include "numbernode.hpp"
 
 class VarSymbol;
+class ModuleSymbol;
 
 class VariableNode : public ExprNode
 {
 public:
 
-    VariableNode(std::string name);
+    VariableNode(std::string name, ModuleSymbol* sym = nullptr);
 
     ASTNode copyTree() const override;
 
@@ -28,10 +29,13 @@ public:
     const VarSymbol* variable() const;
     void variable(const VarSymbol* sym);
 
+    ModuleSymbol* module() const;
+
 private:
 
     std::string name_;
     const VarSymbol* variable_ = nullptr;
+    ModuleSymbol* module_ = nullptr;
 };
 
 #endif
