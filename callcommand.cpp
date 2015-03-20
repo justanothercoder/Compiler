@@ -27,7 +27,8 @@ void CallCommand::gen(const Block& block, CodeObject& code_obj) const
     if ( need_return_space )
         code_obj.emit("pop rax");
 
-    code_obj.emit("add rsp, " +  std::to_string(params_size));
+    if ( params_size > 0 )
+        code_obj.emit("add rsp, " +  std::to_string(params_size));
 }
 
 std::string CallCommand::toString() const { return "call " + function_ -> getScopedTypedName() + ' ' + std::to_string(params_size); }

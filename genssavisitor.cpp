@@ -113,8 +113,7 @@ void GenSSAVisitor::generateCall(std::vector<Argument> args, const CallInfo& cal
         }
     }
 
-    if ( params_size > 0 )
-        _arg = code.add(makeCommand<CallCommand>(call_info.callee, params_size));
+    _arg = code.add(makeCommand<CallCommand>(call_info.callee, params_size));
 }
 
 void GenSSAVisitor::visit(ExternNode* node) { code.addExternalFunction(static_cast<const FunctionalSymbol*>(node -> getDefinedSymbol())); }

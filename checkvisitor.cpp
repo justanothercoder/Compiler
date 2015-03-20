@@ -53,7 +53,7 @@ void CheckVisitor::visitChildren(AST* node)
         child -> accept(*this);
 }
 
-std::vector<ValueInfo> CheckVisitor::extractArguments(const std::vector< std::unique_ptr<ExprNode> >& params)
+std::vector<ValueInfo> CheckVisitor::extractArguments(const std::vector<ASTExprNode>& params)
 {
     auto result = std::vector<ValueInfo>{ };
 
@@ -112,9 +112,9 @@ void CheckVisitor::visit(NewExpressionNode* node)
     }
 
     auto arguments = extractArguments(node -> params());
-    auto ov_func = type -> resolveMethod(type -> typeName(), types);
+    auto constructor = type -> resolveMethod(type -> typeName(), types);
 
-    node -> callInfo(checkCall(ov_func, arguments));
+    node -> callInfo(checkCall(constructor, arguments));
 }
 
 void CheckVisitor::visit(StructDeclarationNode *node)
