@@ -74,7 +74,6 @@ void MarkReturnAsInlineVisitor::visit(FunctionNode* ) { }
 void MarkReturnAsInlineVisitor::visit(NewExpressionNode* ) { }
 void MarkReturnAsInlineVisitor::visit(BinaryOperatorNode* ) { }
 void MarkReturnAsInlineVisitor::visit(StructDeclarationNode* ) { }
-void MarkReturnAsInlineVisitor::visit(ModuleMemberAccessNode* ) { }
 void MarkReturnAsInlineVisitor::visit(FunctionDeclarationNode* ) { }
 void MarkReturnAsInlineVisitor::visit(VariableDeclarationNode* ) { }
 void MarkReturnAsInlineVisitor::visit(VarInferTypeDeclarationNode* ) { }

@@ -198,4 +198,3 @@ void DefineVisitor::visit(FunctionNode* ) { }
 void DefineVisitor::visit(NewExpressionNode* ) { }
 void DefineVisitor::visit(BinaryOperatorNode* ) { }
 void DefineVisitor::visit(TemplateFunctionNode* ) { }
-void DefineVisitor::visit(ModuleMemberAccessNode* ) { }

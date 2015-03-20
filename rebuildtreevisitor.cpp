@@ -174,11 +174,6 @@ void RebuildTreeVisitor::visit(StructDeclarationNode* node)
     _ast = std::make_unique<StructDeclarationNode>(node -> name(), std::move(new_inner));
 }
 
-void RebuildTreeVisitor::visit(ModuleMemberAccessNode* node) 
-{
-    _ast = std::make_unique<ModuleMemberAccessNode>(node -> name(), node -> member());
-}
-
 void RebuildTreeVisitor::visit(FunctionDeclarationNode* node) 
 {
     auto new_return_type_info = processTypeInfo(node -> info().returnTypeInfo());

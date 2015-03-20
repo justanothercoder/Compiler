@@ -46,7 +46,6 @@ void DeduceReturnTypeVisitor::visit(ImportNode* )             { }
 void DeduceReturnTypeVisitor::visit(FunctionNode* )           { }
 void DeduceReturnTypeVisitor::visit(VariableNode* )           { }
 void DeduceReturnTypeVisitor::visit(TemplateFunctionNode* )   { }
-void DeduceReturnTypeVisitor::visit(ModuleMemberAccessNode* ) { }
 
 void DeduceReturnTypeVisitor::visit(StructDeclarationNode* )           { }
 void DeduceReturnTypeVisitor::visit(FunctionDeclarationNode* )         { }

@@ -11,7 +11,7 @@ SOURCES=main.cpp token.cpp abstractlexer.cpp lexer.cpp abstractparser.cpp parser
 	   	unsafeblocknode.cpp unsafescope.cpp referencetype.cpp pointertype.cpp typefactory.cpp type.cpp functionscope.cpp addrnode.cpp \
 	   	noviableoverloaderror.cpp nullnode.cpp genssavisitor.cpp checkvisitor.cpp threeaddresscode.cpp optimizer.cpp block.cpp \
 		definevisitor.cpp compiler.cpp globalconfig.cpp expandtemplatesvisitor.cpp arraytype.cpp functiontype.cpp externnode.cpp \
-		modulenode.cpp functionnode.cpp modulesymbol.cpp modulememberaccessnode.cpp comp.cpp compilableunit.cpp varinfo.cpp \
+		modulenode.cpp functionnode.cpp modulesymbol.cpp comp.cpp compilableunit.cpp varinfo.cpp \
 	   	recognitionerror.cpp breaknode.cpp variabletype.cpp iffalsecommand.cpp newcommand.cpp gotocommand.cpp labelcommand.cpp \
 	   	elemcommand.cpp paramcommand.cpp callcommand.cpp numberarg.cpp assigncommand.cpp binaryopcommand.cpp variablearg.cpp unaryopcommand.cpp \
 	   	stringarg.cpp returncommand.cpp labelarg.cpp temporaryarg.cpp spaceallocator.cpp substituteargvisitor.cpp checkforusevisitor.cpp \

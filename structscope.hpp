@@ -18,7 +18,7 @@ public:
 
     bool isUnsafeBlock() const override;
 
-    int type_size;
+    int type_size = 0;
 
     const std::string& structName() const;
 

@@ -25,7 +25,6 @@ class UnsafeBlockNode;
 class NewExpressionNode;
 class BinaryOperatorNode;
 class StructDeclarationNode;
-class ModuleMemberAccessNode;
 class FunctionDeclarationNode;
 class VariableDeclarationNode;
 class VarInferTypeDeclarationNode;
@@ -59,7 +58,6 @@ public:
     virtual void visit(UnsafeBlockNode* node) = 0;
     virtual void visit(NewExpressionNode* node) = 0;
     virtual void visit(BinaryOperatorNode* node) = 0;
-    virtual void visit(ModuleMemberAccessNode* node) = 0;
     virtual void visit(StructDeclarationNode* node) = 0;
     virtual void visit(FunctionDeclarationNode* node) = 0;
     virtual void visit(VariableDeclarationNode* node) = 0;

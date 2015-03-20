@@ -171,4 +171,3 @@ void InlineCallVisitor::visit(ExternNode* ) { }
 void InlineCallVisitor::visit(VariableNode* ) { }
 void InlineCallVisitor::visit(FunctionNode* ) { }
 void InlineCallVisitor::visit(TemplateFunctionNode* ) { }
-void InlineCallVisitor::visit(ModuleMemberAccessNode* ) { }

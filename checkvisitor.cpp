@@ -213,14 +213,6 @@ void CheckVisitor::visit(DotNode* node)
     node -> member(mem);
 }
 
-void CheckVisitor::visit(ModuleMemberAccessNode* node)
-{
-    auto module_sym = Comp::getUnit(node -> name()) -> module_symbol;
-    assert(module_sym && module_sym -> isModule());
-
-    node -> memberSymbol(module_sym -> resolve(node -> member()));
-}
-
 void CheckVisitor::visit(ModuleNode* node)
 {
     auto sym = node -> scope -> resolve(node -> name());
@@ -244,13 +236,6 @@ void CheckVisitor::visit(FunctionNode* node)
 
 void CheckVisitor::visit(TemplateFunctionNode* node)
 {
-    Logger::log("Checking " + node -> toString());
-
-    if ( node -> module() )
-        Logger::log("Module " + node -> module() -> getName());
-    else
-        Logger::log("No module");
-
     auto sym = (node -> module() ? node -> module() : node -> scope.get()) -> resolveTemplateFunction(node -> name(), getTemplateArguments(node -> templateArgumentsInfo()), getCallArguments());
 
     if ( sym == nullptr )
@@ -285,9 +270,6 @@ void CheckVisitor::visit(CallNode* node)
 void CheckVisitor::visit(ReturnNode* node)
 {
     node -> expr() -> accept(*this);
-
-    Logger::log(node -> toString());
-    Logger::log(node -> expr() -> getType().getName());
 
     if ( node -> isInInlineCall() )
         return;

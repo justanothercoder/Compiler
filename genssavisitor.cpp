@@ -496,7 +496,6 @@ void GenSSAVisitor::visit(LambdaNode* node)
 }
 
 void GenSSAVisitor::visit(ModuleNode* ) { }
-void GenSSAVisitor::visit(ModuleMemberAccessNode* ) { }
 void GenSSAVisitor::visit(ImportNode *) { }
 void GenSSAVisitor::visit(TemplateFunctionNode* ) { }
 

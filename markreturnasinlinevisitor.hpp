@@ -34,7 +34,6 @@ public:
     void visit(NewExpressionNode* node) override;
     void visit(BinaryOperatorNode* node) override;
     void visit(StructDeclarationNode* node) override;
-    void visit(ModuleMemberAccessNode* node) override;
     void visit(FunctionDeclarationNode* node) override;
     void visit(VariableDeclarationNode* node) override;
     void visit(VarInferTypeDeclarationNode* node) override;

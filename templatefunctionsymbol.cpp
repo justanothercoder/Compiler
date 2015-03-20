@@ -48,12 +48,6 @@ FunctionSymbol* TemplateFunctionSymbol::overloadOfTemplateFunction(FunctionTypeI
             }
         }
 
-        Logger::log("Arguments:");
-        for ( const auto& arg : template_arguments )
-        {
-            Logger::log(toString(arg));
-        }
-
         if ( template_params.size() != template_arguments.size() )
             throw TemplateSpecializationError(this, template_arguments);
 

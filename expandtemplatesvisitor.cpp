@@ -150,6 +150,5 @@ void ExpandTemplatesVisitor::visit(ModuleNode* ) { }
 void ExpandTemplatesVisitor::visit(VariableNode* ) { }
 void ExpandTemplatesVisitor::visit(FunctionNode* ) { }
 void ExpandTemplatesVisitor::visit(TemplateFunctionNode* ) { } 
-void ExpandTemplatesVisitor::visit(ModuleMemberAccessNode* ) { } 
 void ExpandTemplatesVisitor::visit(TemplateStructDeclarationNode* )   { }
 

@@ -61,7 +61,6 @@ void DefineTypesVisitor::visit(FunctionNode* ) { }
 void DefineTypesVisitor::visit(NewExpressionNode* ) { }
 void DefineTypesVisitor::visit(BinaryOperatorNode* ) { }
 void DefineTypesVisitor::visit(TemplateFunctionNode* ) { }
-void DefineTypesVisitor::visit(ModuleMemberAccessNode* ) { }
 void DefineTypesVisitor::visit(ExternNode* ) { }
 void DefineTypesVisitor::visit(ReturnNode* ) { }
 void DefineTypesVisitor::visit(FunctionDeclarationNode* ) { } 

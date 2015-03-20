@@ -4,7 +4,6 @@
 
 StructScope::StructScope(std::string name, Scope *enclosing_scope) : scope_name(enclosing_scope -> getScopeName() + "_" + name)
                                                                    , enclosing_scope(enclosing_scope), name(name)
-                                                                   , type_size(0)
 {
 
 }
